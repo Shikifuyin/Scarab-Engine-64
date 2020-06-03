@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\ThirdParty">
+      <UniqueIdentifier>{586564cf-b693-4c4f-8980-79217451a88e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty">
+      <UniqueIdentifier>{f222fb76-a43f-4a07-a5b8-e6f7db3a2f3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ThirdParty\System">
+      <UniqueIdentifier>{f77cd5ee-96a7-42f5-9040-362acfb0bad1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\System">
+      <UniqueIdentifier>{8b9a6a7b-9435-4f40-87bd-a3f61a681ff9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ThirdParty\System\Hardware">
+      <UniqueIdentifier>{f72671a5-8d7c-4fc8-a255-4261b9ba03ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\System\Hardware">
+      <UniqueIdentifier>{cc0fed2e-861d-4257-a456-ff4d8c74dfa3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ThirdParty\System\Platform.h">
+      <Filter>Header Files\ThirdParty\System</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\FPU.h">
+      <Filter>Header Files\ThirdParty\System\Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\String.h">
+      <Filter>Header Files\ThirdParty\System</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ThirdParty\System\Platform.inl">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\FPU.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware</Filter>
+    </None>
+    <None Include="ThirdParty\System\String.inl">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ThirdParty\System\Platform.cpp">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\FPU.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\String.cpp">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

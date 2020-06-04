@@ -106,6 +106,8 @@ public:
     Void GetWindowRect( D3D11Rectangle * outWindowRect ) const;
     Void GetClientRect( D3D11Rectangle * outClientRect ) const;
 
+    UInt GetDpi() const;
+
     Bool IsVisible() const;
     Void SetVisible( Bool bVisible ) const;
     //Void Update() const;

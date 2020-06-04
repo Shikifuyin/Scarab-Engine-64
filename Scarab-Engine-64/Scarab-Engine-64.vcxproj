@@ -143,6 +143,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Brush.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Geometry.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Layer.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Mesh.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1RenderState.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1StrokeStyle.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Text.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\D3D11Mappings.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\D3D11Renderer.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\D3D11Window.h" />
@@ -164,6 +174,16 @@
     <ClInclude Include="ThirdParty\System\Threading.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Brush.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Geometry.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Layer.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Mesh.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1RenderState.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1StrokeStyle.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Text.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\D3D11Mappings.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\D3D11Renderer.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\D3D11Window.inl" />
@@ -185,6 +205,16 @@
     <None Include="ThirdParty\System\Threading.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Brush.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Geometry.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Layer.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Mesh.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1RenderState.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1StrokeStyle.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Text.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\D3D11Mappings.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\D3D11Renderer.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\D3D11Window.cpp" />

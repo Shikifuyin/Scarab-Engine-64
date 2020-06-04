@@ -171,6 +171,11 @@ Void D3D11Window::GetClientRect( D3D11Rectangle * outClientRect ) const
     outClientRect->iBottom = hRECT.bottom;
 }
 
+UInt D3D11Window::GetDpi() const
+{
+    return GetDpiForWindow( (HWND)m_hWindow );
+}
+
 Bool D3D11Window::IsVisible() const
 {
     return ( IsWindowVisible((HWND)m_hWindow) == TRUE );

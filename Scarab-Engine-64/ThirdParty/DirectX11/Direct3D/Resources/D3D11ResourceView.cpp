@@ -140,7 +140,7 @@ Void D3D11RenderTargetView::Create( D3D11Texture * pTexture, UInt iMipSlice, UIn
 
     DebugAssert( pTexture->IsCreated() );
     DebugAssert( iMipSlice < pTexture->GetMipLevelCount() );
-    DebugAssert( iArraySlice + iArraySliceCount <= pTexture->GetArrayCount() );
+    DebugAssert( iArraySlice + iArraySliceCount <= pTexture->GetArraySize() );
 
     m_iBoundToBackBuffer = INVALID_OFFSET;
     m_pResource = pTexture;
@@ -277,7 +277,7 @@ Void D3D11DepthStencilView::Create( D3D11Texture * pTexture, UInt iMipSlice, UIn
 
     DebugAssert( pTexture->IsCreated() );
     DebugAssert( iMipSlice < pTexture->GetMipLevelCount() );
-    DebugAssert( iArraySlice + iArraySliceCount <= pTexture->GetArrayCount() );
+    DebugAssert( iArraySlice + iArraySliceCount <= pTexture->GetArraySize() );
 
     m_iBoundToBackBuffer = INVALID_OFFSET;
     m_pResource = pTexture;
@@ -441,7 +441,7 @@ Void D3D11ShaderView::Create( D3D11Texture * pTexture, UInt iMostDetailedMip, UI
     if ( iMipLevelCount == INVALID_OFFSET )
         iMipLevelCount = ( pTexture->GetMipLevelCount() - iMostDetailedMip );
     DebugAssert( iMostDetailedMip + iMipLevelCount <= pTexture->GetMipLevelCount() );
-    DebugAssert( iArraySlice + iArraySliceCount <= pTexture->GetArrayCount() );
+    DebugAssert( iArraySlice + iArraySliceCount <= pTexture->GetArraySize() );
 
     m_iBoundToBackBuffer = INVALID_OFFSET;
     m_pResource = pTexture;
@@ -624,7 +624,7 @@ Void D3D11UnorderedAccessView::Create( D3D11Texture * pTexture, UInt iMipSlice, 
 
     DebugAssert( pTexture->IsCreated() );
     DebugAssert( iMipSlice < pTexture->GetMipLevelCount() );
-    DebugAssert( iArraySlice + iArraySliceCount <= pTexture->GetArrayCount() );
+    DebugAssert( iArraySlice + iArraySliceCount <= pTexture->GetArraySize() );
 
     m_iBoundToBackBuffer = INVALID_OFFSET;
     m_pResource = pTexture;

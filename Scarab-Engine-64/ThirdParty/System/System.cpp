@@ -176,6 +176,10 @@ Void System::DebugMessage( const GChar * strMessage ) const
 {
     OutputDebugString( strMessage );
 }
+Void System::DebugBreak() const
+{
+    ::DebugBreak();
+}
 
 // Memory allocation ///////////////////////////////////////////
 Void * System::MemAlloc( UInt iSize ) const

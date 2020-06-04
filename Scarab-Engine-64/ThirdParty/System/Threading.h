@@ -114,8 +114,8 @@ typedef struct _CriticalSectionDesc {
     CriticalSectionDebugDesc DebugInfo;
     Long LockCount;
     Long RecursionCount;
-    HANDLE OwningThread;
-    HANDLE LockSemaphore;
+    Void * OwningThread;
+    Void * LockSemaphore;
     UIntPtr SpinCount;
 } CriticalSectionDesc;
 

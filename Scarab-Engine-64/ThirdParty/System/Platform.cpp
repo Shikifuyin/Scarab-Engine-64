@@ -19,7 +19,6 @@
 // Third-Party Includes
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <assert.h>
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
@@ -460,9 +459,15 @@ Int MemCmp64(const Void * pLeft, const Void * pRight, UInt64 size)
 
 /////////////////////////////////////////////////////////////////////////////////
 // Assertions support
-Void _DebugAssert( const GChar * strMessage, const GChar * strFilename, UInt iLine )
+Void _BasicDebug_Output( const GChar * strMessage, const GChar * strFilename, UInt iLine )
 {
-    _wassert( strMessage, strFilename, iLine );
+    GChar strBuffer[1024];
+    wsprintf( strBuffer, TEXT("Message = %s,\n -> Filename = %s\n -> Line Number = %d\n"), strMessage, strFilename, iLine );
+    OutputDebugString( strBuffer );
+}
+Void _BasicDebug_Break()
+{
+    DebugBreak();
 }
 
 /////////////////////////////////////////////////////////////////////////////////

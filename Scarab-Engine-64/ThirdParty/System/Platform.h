@@ -440,18 +440,20 @@ typedef const AChar * ACString;
 
 /////////////////////////////////////////////////////////////////////////////////
 // Assertions support
-Void _DebugAssert( const GChar * strMessage, const GChar * strFilename, UInt iLine );
+#define BASICDEBUG_ASSERTIONS_ENABLE // Comment for release builds
 
-#ifdef DEBUG_ASSERTIONS_ENABLE
-    #define _WIDE_(_s) L ## _s
-    #define _WIDE(_s) _WIDE_(_s)
-    #define DebugAssert( _expr ) (Void)(                    \
-            (!!(_expr)) ||                                  \
-            (_DebugAssert(_WIDE(#_expr), _WIDE(__FILE__), __LINE__), 0)   \
-        )
+Void _BasicDebug_Output( const GChar * strMessage, const GChar * strFilename, UInt iLine );
+Void _BasicDebug_Break();
+
+#ifdef BASICDEBUG_ASSERTIONS_ENABLE
+    #define DebugAssert( _expr ) \
+        if ( _expr ) {} else { \
+            _BasicDebug_Output( TEXT(#_expr), TEXT(__FILE__), __LINE__ ); \
+            _BasicDebug_Break(); \
+        }
 #else
     #define DebugAssert( _expr ) ((Void)0)
-#endif // DEBUG_ASSERTIONS
+#endif // BASICDEBUG_ASSERTIONS_ENABLE
 
 /////////////////////////////////////////////////////////////////////////////////
 // KeyCode definitions

@@ -66,7 +66,7 @@ inline const D3D11OutputDesc * D3D11Window::GetOutputDesc( UInt iOutput, UInt iA
         iAdapter = m_iAdapter;
     DebugAssert( iAdapter < m_iAdapterCount );
     UInt iOutputIndex = ( iAdapter * D3D11WINDOW_MAX_OUTPUTS ) + iOutput;
-    DebugAssert( iOutputIndex < m_arrOutputCounts[iAdapterIndex] );
+    DebugAssert( iOutputIndex < m_arrOutputCounts[iAdapter] );
     return ( m_arrOutputs + iOutputIndex );
 }
 
@@ -84,7 +84,7 @@ inline UInt D3D11Window::GetDisplayModeCount( UInt iOutput, UInt iAdapter ) cons
         iOutput = m_iOutput;
     DebugAssert( iAdapter < m_iAdapterCount );
     UInt iOutputIndex = ( iAdapter * D3D11WINDOW_MAX_OUTPUTS ) + iOutput;
-    DebugAssert( iOutputIndex < m_arrOutputCounts[iAdapterIndex] );
+    DebugAssert( iOutputIndex < m_arrOutputCounts[iAdapter] );
     return m_arrDisplayModeCounts[iOutputIndex];
 }
 inline const D3D11DisplayModeDesc * D3D11Window::GetDisplayModeDesc( UInt iDisplayMode, UInt iOutput, UInt iAdapter ) const {
@@ -94,7 +94,7 @@ inline const D3D11DisplayModeDesc * D3D11Window::GetDisplayModeDesc( UInt iDispl
         iOutput = m_iOutput;
     DebugAssert( iAdapter < m_iAdapterCount );
     UInt iOutputIndex = ( iAdapter * D3D11WINDOW_MAX_OUTPUTS ) + iOutput;
-    DebugAssert( iOutputIndex < m_arrOutputCounts[iAdapterIndex] );
+    DebugAssert( iOutputIndex < m_arrOutputCounts[iAdapter] );
     UInt iDisplayModeIndex = ( iOutputIndex * D3D11WINDOW_MAX_DISPLAYMODES ) + iDisplayMode;
     DebugAssert( iDisplayModeIndex < m_arrDisplayModeCounts[iOutputIndex] );
     return ( m_arrDisplayModes + iDisplayModeIndex );

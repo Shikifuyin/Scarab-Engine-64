@@ -61,6 +61,30 @@
     <Filter Include="Source Files\ThirdParty\DirectX11\Direct3D\2D\Resources">
       <UniqueIdentifier>{8cd93162-b603-47f1-84fd-60164f22f7af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Lib">
+      <UniqueIdentifier>{a67991e7-bab0-478a-8cce-d4450404d021}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib">
+      <UniqueIdentifier>{81732383-cf3e-4f8f-996e-62569306ef91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lib\Memory">
+      <UniqueIdentifier>{9450019c-9e45-4fdb-828b-e7d61f79fdd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Memory">
+      <UniqueIdentifier>{3a27024c-8bf6-437c-b95c-ac0388ba232d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lib\Memory\Allocators">
+      <UniqueIdentifier>{e5798813-d4cb-44d7-b65b-320649ea4d82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Memory\Allocators">
+      <UniqueIdentifier>{b04e1622-bf8a-4e38-b823-b84f48e5f5d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lib\Error">
+      <UniqueIdentifier>{620df4a6-8438-488d-bad8-a1cd23ac3b38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Error">
+      <UniqueIdentifier>{4001bcd6-12a5-40ca-b0f4-253a870f3e70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -149,6 +173,12 @@
     </ClInclude>
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Text.h">
       <Filter>Header Files\ThirdParty\DirectX11\Direct3D\2D\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Memory\Allocators\MemoryAllocator.h">
+      <Filter>Header Files\Lib\Memory\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Error\ErrorManager.h">
+      <Filter>Header Files\Lib\Error</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +269,12 @@
     <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Text.inl">
       <Filter>Source Files\ThirdParty\DirectX11\Direct3D\2D\Resources</Filter>
     </None>
+    <None Include="Lib\Memory\Allocators\MemoryAllocator.inl">
+      <Filter>Source Files\Lib\Memory\Allocators</Filter>
+    </None>
+    <None Include="Lib\Error\ErrorManager.inl">
+      <Filter>Source Files\Lib\Error</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -327,6 +363,12 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Text.cpp">
       <Filter>Source Files\ThirdParty\DirectX11\Direct3D\2D\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Memory\Allocators\MemoryAllocator.cpp">
+      <Filter>Source Files\Lib\Memory\Allocators</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Error\ErrorManager.cpp">
+      <Filter>Source Files\Lib\Error</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

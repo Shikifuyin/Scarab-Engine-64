@@ -598,7 +598,7 @@ Void D3D11Shader::_InitializeReflection()
     D3D_FEATURE_LEVEL iFeatureLevel;
     hRes = ((ID3D11ShaderReflection*)m_pReflector)->GetMinFeatureLevel( &iFeatureLevel );
     DebugAssert( hRes == S_OK );
-    DebugAssert( iFeatureLevel <= m_pRenderer->m_iFeatureLevel );
+    DebugAssert( ((DWord)iFeatureLevel) <= m_pRenderer->m_iFeatureLevel );
 }
 Void D3D11Shader::_CleanupReflection()
 {

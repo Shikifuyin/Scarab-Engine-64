@@ -143,6 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Lib\Error\ErrorManager.h" />
+    <ClInclude Include="Lib\Memory\Allocators\MemoryAllocator.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.h" />
@@ -174,6 +176,8 @@
     <ClInclude Include="ThirdParty\System\Threading.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Lib\Error\ErrorManager.inl" />
+    <None Include="Lib\Memory\Allocators\MemoryAllocator.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.inl" />
@@ -205,6 +209,8 @@
     <None Include="ThirdParty\System\Threading.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Lib\Error\ErrorManager.cpp" />
+    <ClCompile Include="Lib\Memory\Allocators\MemoryAllocator.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.cpp" />

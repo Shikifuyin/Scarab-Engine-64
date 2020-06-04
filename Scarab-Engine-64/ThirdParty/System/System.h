@@ -138,6 +138,7 @@ private:
 public:
     // Debug helpers ///////////////////////////////////////////////
     Void DebugMessage( const GChar * strMessage ) const;
+    Void DebugBreak() const;
 
     // Memory allocation ///////////////////////////////////////////
     Void * MemAlloc( UInt iSize ) const;

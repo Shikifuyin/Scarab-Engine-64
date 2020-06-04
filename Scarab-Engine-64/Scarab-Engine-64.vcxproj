@@ -143,19 +143,67 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\D3D11Mappings.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\D3D11Renderer.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\D3D11Window.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Asynchronous.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Buffer.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11DeferredContext.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11InputLayout.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11RenderState.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Resource.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11ResourceView.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Shader.h" />
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Texture.h" />
+    <ClInclude Include="ThirdParty\System\File.h" />
     <ClInclude Include="ThirdParty\System\Hardware\FPU.h" />
+    <ClInclude Include="ThirdParty\System\Networking.h" />
     <ClInclude Include="ThirdParty\System\Platform.h" />
     <ClInclude Include="ThirdParty\System\String.h" />
+    <ClInclude Include="ThirdParty\System\System.h" />
+    <ClInclude Include="ThirdParty\System\Threading.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ThirdParty\DirectX11\Direct3D\D3D11Mappings.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\D3D11Renderer.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\D3D11Window.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Asynchronous.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Buffer.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11DeferredContext.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11InputLayout.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11RenderState.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Resource.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11ResourceView.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Shader.inl" />
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Texture.inl" />
+    <None Include="ThirdParty\System\File.inl" />
     <None Include="ThirdParty\System\Hardware\FPU.inl" />
+    <None Include="ThirdParty\System\Networking.inl" />
     <None Include="ThirdParty\System\Platform.inl" />
     <None Include="ThirdParty\System\String.inl" />
+    <None Include="ThirdParty\System\System.inl" />
+    <None Include="ThirdParty\System\Threading.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\D3D11Mappings.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\D3D11Renderer.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\D3D11Window.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Asynchronous.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Buffer.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11DeferredContext.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11InputLayout.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11RenderState.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Resource.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11ResourceView.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Shader.cpp" />
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Texture.cpp" />
+    <ClCompile Include="ThirdParty\System\File.cpp" />
     <ClCompile Include="ThirdParty\System\Hardware\FPU.cpp" />
+    <ClCompile Include="ThirdParty\System\Networking.cpp" />
     <ClCompile Include="ThirdParty\System\Platform.cpp" />
     <ClCompile Include="ThirdParty\System\String.cpp" />
+    <ClCompile Include="ThirdParty\System\System.cpp" />
+    <ClCompile Include="ThirdParty\System\Threading.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

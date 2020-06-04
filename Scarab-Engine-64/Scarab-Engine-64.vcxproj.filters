@@ -31,6 +31,24 @@
     <Filter Include="Source Files\ThirdParty\System\Hardware">
       <UniqueIdentifier>{cc0fed2e-861d-4257-a456-ff4d8c74dfa3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ThirdParty\DirectX11">
+      <UniqueIdentifier>{7d8c3449-e3c4-46d3-801b-5365159fbe83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\DirectX11">
+      <UniqueIdentifier>{a3ed2a72-bb1d-4214-bc36-a428ee23d745}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ThirdParty\DirectX11\Direct3D">
+      <UniqueIdentifier>{d650d3b5-be1c-4214-9aac-96a87d636c8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\DirectX11\Direct3D">
+      <UniqueIdentifier>{b421fcdb-d9f8-48ac-9085-71d39e1d950b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ThirdParty\DirectX11\Direct3D\Resources">
+      <UniqueIdentifier>{e9e4612f-4fbb-4df0-98f5-3dac7620df2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\DirectX11\Direct3D\Resources">
+      <UniqueIdentifier>{1a8aacd9-aee4-4c2c-81cf-a8b716d38721}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -41,6 +59,54 @@
     </ClInclude>
     <ClInclude Include="ThirdParty\System\String.h">
       <Filter>Header Files\ThirdParty\System</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\File.h">
+      <Filter>Header Files\ThirdParty\System</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Networking.h">
+      <Filter>Header Files\ThirdParty\System</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Threading.h">
+      <Filter>Header Files\ThirdParty\System</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\System.h">
+      <Filter>Header Files\ThirdParty\System</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\D3D11Window.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\D3D11Mappings.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\D3D11Renderer.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Resource.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11DeferredContext.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11ResourceView.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Buffer.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Texture.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11InputLayout.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11RenderState.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Asynchronous.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Shader.h">
+      <Filter>Header Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +119,54 @@
     <None Include="ThirdParty\System\String.inl">
       <Filter>Source Files\ThirdParty\System</Filter>
     </None>
+    <None Include="ThirdParty\System\File.inl">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </None>
+    <None Include="ThirdParty\System\Networking.inl">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </None>
+    <None Include="ThirdParty\System\Threading.inl">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </None>
+    <None Include="ThirdParty\System\System.inl">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\D3D11Window.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\D3D11Mappings.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\D3D11Renderer.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Resource.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11DeferredContext.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11ResourceView.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Buffer.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Texture.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11InputLayout.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11RenderState.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Asynchronous.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </None>
+    <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Shader.inl">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -63,6 +177,54 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\System\String.cpp">
       <Filter>Source Files\ThirdParty\System</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\File.cpp">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Networking.cpp">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Threading.cpp">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\System.cpp">
+      <Filter>Source Files\ThirdParty\System</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\D3D11Window.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\D3D11Mappings.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\D3D11Renderer.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Resource.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11DeferredContext.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11ResourceView.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Buffer.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Texture.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11InputLayout.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11RenderState.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Asynchronous.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Shader.cpp">
+      <Filter>Source Files\ThirdParty\DirectX11\Direct3D\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

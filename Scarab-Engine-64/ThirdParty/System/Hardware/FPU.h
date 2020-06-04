@@ -28,7 +28,7 @@
 // Constants definitions
 #define FPUFn FPU::GetInstance()
 
-    // IEEE 754 specifications
+// IEEE 754 specifications
 typedef Word FPURoundingMode;
 #define FPU_ROUND_NEAREST  0 // floor if equally close
 #define FPU_ROUND_FLOOR    1 // toward -inf

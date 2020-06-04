@@ -111,7 +111,7 @@ Void D3D11Query::_NakedCreate()
     hD3D11Desc.MiscFlags = m_iMiscFlags;
 
     m_pQuery = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateQuery( &hD3D11Desc, (ID3D11Query**)&m_pQuery );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateQuery( &hD3D11Desc, (ID3D11Query**)&m_pQuery );
     DebugAssert( hRes == S_OK && m_pQuery != NULL );
 
     m_pAsynchronous = NULL;
@@ -152,7 +152,7 @@ Bool D3D11QueryCommandProcessing::Update( D3D11DeferredContext * pContext, Bool 
     if ( !bFlush )
         iFlags |= D3D11_ASYNC_GETDATA_DONOTFLUSH;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -195,7 +195,7 @@ Bool D3D11QueryOcclusion::Update( D3D11DeferredContext * pContext, Bool bFlush )
     if ( !bFlush )
         iFlags |= D3D11_ASYNC_GETDATA_DONOTFLUSH;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -240,7 +240,7 @@ Bool D3D11QueryTimeStampFrequency::Update( D3D11DeferredContext * pContext, Bool
     if ( !bFlush )
         iFlags |= D3D11_ASYNC_GETDATA_DONOTFLUSH;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -285,7 +285,7 @@ Bool D3D11QueryTimeStamp::Update( D3D11DeferredContext * pContext, Bool bFlush )
     if ( !bFlush )
         iFlags |= D3D11_ASYNC_GETDATA_DONOTFLUSH;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -349,7 +349,7 @@ Bool D3D11QueryStatsPipeline::Update( D3D11DeferredContext * pContext, Bool bFlu
     if ( !bFlush )
         iFlags |= D3D11_ASYNC_GETDATA_DONOTFLUSH;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -419,7 +419,7 @@ Bool D3D11QueryStatsStreamOutput::Update( D3D11DeferredContext * pContext, Bool 
     if ( !bFlush )
         iFlags |= D3D11_ASYNC_GETDATA_DONOTFLUSH;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -465,7 +465,7 @@ Void D3D11Predicate::_NakedCreate()
     hD3D11Desc.MiscFlags = m_iMiscFlags;
 
     m_pPredicate = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreatePredicate( &hD3D11Desc, (ID3D11Predicate**)&m_pPredicate );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreatePredicate( &hD3D11Desc, (ID3D11Predicate**)&m_pPredicate );
     DebugAssert( hRes == S_OK && m_pPredicate != NULL );
 
     m_pAsynchronous = NULL;
@@ -513,7 +513,7 @@ Bool D3D11PredicateOcclusion::Update( D3D11DeferredContext * pContext, Bool bFlu
     if ( !bFlush )
         iFlags |= D3D11_ASYNC_GETDATA_DONOTFLUSH;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -561,7 +561,7 @@ Bool D3D11PredicateStreamOutputOverflow::Update( D3D11DeferredContext * pContext
     if ( !bFlush )
         iFlags |= D3D11_ASYNC_GETDATA_DONOTFLUSH;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -592,7 +592,7 @@ D3D11Counter::D3D11Counter( D3D11Renderer * pRenderer, UInt iCounterID, D3D11Cou
 
     D3D11_COUNTER_TYPE iType;
     UInt iActiveHardwareCounters;
-    HRESULT hRes = m_pRenderer->m_pDevice->CheckCounter( &hD3D11Desc, &iType, &iActiveHardwareCounters, NULL, NULL, NULL, NULL, NULL, NULL );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CheckCounter( &hD3D11Desc, &iType, &iActiveHardwareCounters, NULL, NULL, NULL, NULL, NULL, NULL );
     DebugAssert( hRes == S_OK && iActiveHardwareCounters > 0 );
 
     m_iCounterID = ( D3D11_COUNTER_DEVICE_DEPENDENT_0 + iCounterID );
@@ -625,8 +625,8 @@ Void D3D11Counter::CheckDesc( D3D11Renderer * pRenderer, UInt iCounterID, D3D11C
     hD3D11Desc.MiscFlags = 0;
 
     D3D11_COUNTER_TYPE iTmpType = D3D11_COUNTER_TYPE_FLOAT32;
-    HRESULT hRes = pRenderer->m_pDevice->CheckCounter( &hD3D11Desc, &iTmpType, &(outCounterDesc->iActiveHardwareCounters), outCounterDesc->strCounterName, &(outCounterDesc->iCounterNameLength),
-                                                       outCounterDesc->strUnitName, &(outCounterDesc->iUnitNameLength), outCounterDesc->strDescription, &(outCounterDesc->iDescriptionLength) );
+    HRESULT hRes = ((ID3D11Device*)(pRenderer->m_pDevice))->CheckCounter( &hD3D11Desc, &iTmpType, &(outCounterDesc->iActiveHardwareCounters), outCounterDesc->strCounterName, &(outCounterDesc->iCounterNameLength),
+                                                                          outCounterDesc->strUnitName, &(outCounterDesc->iUnitNameLength), outCounterDesc->strDescription, &(outCounterDesc->iDescriptionLength) );
     DebugAssert( hRes == S_OK );
 
     outCounterDesc->iType = D3D11CounterTypeFromD3D11[iTmpType];
@@ -640,7 +640,7 @@ Bool D3D11Counter::Update( D3D11DeferredContext * pContext, Bool bFlush )
     if ( !bFlush )
         iFlags |= D3D11_ASYNC_GETDATA_DONOTFLUSH;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -708,7 +708,7 @@ Void D3D11Counter::_NakedCreate()
     hD3D11Desc.MiscFlags = m_iMiscFlags;
 
     m_pCounter = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateCounter( &hD3D11Desc, (ID3D11Counter**)&m_pCounter );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateCounter( &hD3D11Desc, (ID3D11Counter**)&m_pCounter );
     DebugAssert( hRes == S_OK && m_pCounter != NULL );
 
     m_pAsynchronous = NULL;

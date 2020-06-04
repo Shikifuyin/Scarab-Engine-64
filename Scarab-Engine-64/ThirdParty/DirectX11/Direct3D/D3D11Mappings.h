@@ -250,7 +250,7 @@ typedef struct _d3d11_pixelformat_support {
 } D3D11PixelFormatSupport;
 
 typedef struct _d3d11_counter_support {
-    Void ConvertFrom( const D3D11_COUNTER_INFO * pDesc );
+    Void ConvertFrom( const Void * pD3D11Desc );
 
     UInt iMaxCounters;
     UInt iMaxParallelCounters;
@@ -258,10 +258,10 @@ typedef struct _d3d11_counter_support {
 } D3D11CounterSupport;
 
 typedef struct _d3d11_device_features {
-    Void ConvertFrom( const D3D11_FEATURE_DATA_THREADING * pDescThreading, const D3D11_FEATURE_DATA_ARCHITECTURE_INFO * pDescArch,
-                      const D3D11_FEATURE_DATA_DOUBLES * pDescDoubles, const D3D11_FEATURE_DATA_SHADER_MIN_PRECISION_SUPPORT * pDescMinPrecision,
-                      const D3D11_FEATURE_DATA_D3D9_OPTIONS * pDescD3D9, const D3D11_FEATURE_DATA_D3D9_SHADOW_SUPPORT * pDescD3D9Shadows,
-                      const D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS * pDescD3D10, const D3D11_FEATURE_DATA_D3D11_OPTIONS * pDescD3D11 );
+    Void ConvertFrom( const Void * pD3D11DescThreading, const Void * pD3D11DescArch,
+                      const Void * pD3D11DescDoubles, const Void * pD3D11DescMinPrecision,
+                      const Void * pD3D11DescD3D9, const Void * pD3D11DescD3D9Shadows,
+                      const Void * pD3D11DescD3D10, const Void * pD3D11DescD3D11 );
 
     // Threading
     Bool bDriverConcurrentCreates;
@@ -311,7 +311,7 @@ enum D3D11SwapChainSwapEffect {
     D3D11SWAPCHAIN_SWAPEFFECT_COUNT
 };
 extern D3D11SwapChainSwapEffect D3D11SwapChainSwapEffectFromDXGI[D3D11SWAPCHAIN_SWAPEFFECT_COUNT];
-extern DXGI_SWAP_EFFECT D3D11SwapChainSwapEffectToDXGI[D3D11SWAPCHAIN_SWAPEFFECT_COUNT];
+extern DWord D3D11SwapChainSwapEffectToDXGI[D3D11SWAPCHAIN_SWAPEFFECT_COUNT];
 
 enum D3D11SwapChainBufferUsageFlags {
     D3D11SWAPCHAIN_BUFFERUSAGE_NONE = 0,
@@ -355,8 +355,8 @@ extern Byte D3D11PresentFlagsFromDXGI[D3D11PRESENT_FLAG_COUNT];
 extern Byte D3D11PresentFlagsToDXGI[D3D11PRESENT_FLAG_COUNT];
 
 typedef struct _d3d11_swapchain_desc {
-    Void ConvertFrom( const DXGI_SWAP_CHAIN_DESC * pDesc );
-    Void ConvertTo( DXGI_SWAP_CHAIN_DESC * outDesc ) const;
+    Void ConvertFrom( const Void * pD3D11Desc );
+    Void ConvertTo( Void * outD3D11Desc ) const;
 
     Void * pOutputWindow; // HWND
     Bool bWindowed;
@@ -382,8 +382,8 @@ typedef struct _d3d11_swapchain_desc {
 } D3D11SwapChainDesc;
 
 typedef struct _d3d11_frame_stats {
-    Void ConvertFrom( const DXGI_FRAME_STATISTICS * pDesc, UInt iLastPresentCount );
-    Void ConvertTo( DXGI_FRAME_STATISTICS * outDesc, UInt * outLastPresentCount ) const;
+    Void ConvertFrom( const Void * pD3D11Desc, UInt iLastPresentCount );
+    Void ConvertTo( Void * outD3D11Desc, UInt * outLastPresentCount ) const;
 
     UInt iLastPresentCount;
 

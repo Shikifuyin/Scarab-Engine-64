@@ -827,8 +827,8 @@ Int64 D3D11Window::_MsgProc_Virtual( Void * hWindow, UInt iMsg, UInt64 iWParam, 
                     if ( m_bInDisplayModeSwitchTransition ) {
                         m_pRenderer->m_pCallbacks->OnDestroySwapChain();
 
-                        HRESULT hRes = m_pRenderer->m_pSwapChain->ResizeBuffers( 0, m_hDisplayModeDesc.iWidth, m_hDisplayModeDesc.iHeight,
-                                                                                 DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH );
+                        HRESULT hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->ResizeBuffers( 0, m_hDisplayModeDesc.iWidth, m_hDisplayModeDesc.iHeight,
+                                                                                                      DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH );
                         DebugAssert( hRes == S_OK );
 
                         m_pRenderer->_UpdateSwapChainDesc();
@@ -894,8 +894,8 @@ Int64 D3D11Window::_MsgProc_Virtual( Void * hWindow, UInt iMsg, UInt64 iWParam, 
                     if ( m_bInDisplayModeSwitchTransition ) {
                         m_pRenderer->m_pCallbacks->OnDestroySwapChain();
 
-                        HRESULT hRes = m_pRenderer->m_pSwapChain->ResizeBuffers( 0, m_hDisplayModeDesc.iWidth, m_hDisplayModeDesc.iHeight,
-                                                                                 DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH );
+                        HRESULT hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->ResizeBuffers( 0, m_hDisplayModeDesc.iWidth, m_hDisplayModeDesc.iHeight,
+                                                                                                      DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH );
                         DebugAssert( hRes == S_OK );
 
                         m_pRenderer->_UpdateSwapChainDesc();
@@ -1647,12 +1647,12 @@ Void D3D11Window::_SwitchAdapter( UInt iAdapter, UInt iLandingOutput, UInt iLand
 
     HRESULT hRes;
     if ( m_bFullScreen )
-        hRes = m_pRenderer->m_pSwapChain->SetFullscreenState( TRUE, m_pOutput );
+        hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->SetFullscreenState( TRUE, (IDXGIOutput*)m_pOutput );
     else
-        hRes = m_pRenderer->m_pSwapChain->SetFullscreenState( FALSE, NULL );
+        hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->SetFullscreenState( FALSE, NULL );
     DebugAssert( hRes == S_OK );
 
-    hRes = m_pRenderer->m_pSwapChain->ResizeTarget( &hDXGIMode );
+    hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->ResizeTarget( &hDXGIMode );
     DebugAssert( hRes == S_OK );
 
     // End transition
@@ -1677,10 +1677,10 @@ Void D3D11Window::_SwitchOutput( UInt iOutput, UInt iLandingDisplayMode )
     // Start transition
     m_bInDisplayModeSwitchTransition = true;
 
-    HRESULT hRes = m_pRenderer->m_pSwapChain->SetFullscreenState( TRUE, m_pOutput );
+    HRESULT hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->SetFullscreenState( TRUE, (IDXGIOutput*)m_pOutput );
     DebugAssert( hRes == S_OK );
 
-    hRes = m_pRenderer->m_pSwapChain->ResizeTarget( &hDXGIMode );
+    hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->ResizeTarget( &hDXGIMode );
     DebugAssert( hRes == S_OK );
 
     // End transition
@@ -1704,7 +1704,7 @@ Void D3D11Window::_SwitchDisplayMode( UInt iDisplayMode )
     // Start transition
     m_bInDisplayModeSwitchTransition = true;
 
-    HRESULT hRes = m_pRenderer->m_pSwapChain->ResizeTarget( &hDXGIMode );
+    HRESULT hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->ResizeTarget( &hDXGIMode );
     DebugAssert( hRes == S_OK );
 
     // End transition
@@ -1728,12 +1728,12 @@ Void D3D11Window::_ToggleFullScreen( Bool bFullscreen )
 
     HRESULT hRes;
     if ( bFullscreen )
-        hRes = m_pRenderer->m_pSwapChain->SetFullscreenState( TRUE, m_pOutput );
+        hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->SetFullscreenState( TRUE, (IDXGIOutput*)m_pOutput );
     else
-        hRes = m_pRenderer->m_pSwapChain->SetFullscreenState( FALSE, NULL );
+        hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->SetFullscreenState( FALSE, NULL );
     DebugAssert( hRes == S_OK );
 
-    hRes = m_pRenderer->m_pSwapChain->ResizeTarget( &hDXGIMode );
+    hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->ResizeTarget( &hDXGIMode );
     DebugAssert( hRes == S_OK );
 
     // End transition
@@ -1747,7 +1747,7 @@ Bool D3D11Window::_UpdateOutputFromWindow()
 
     // Retrieve output containing our window
     IDXGIOutput * pOutput = NULL;
-    HRESULT hRes = m_pRenderer->m_pSwapChain->GetContainingOutput( &pOutput );
+    HRESULT hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->GetContainingOutput( &pOutput );
     DebugAssert( hRes == S_OK && pOutput != NULL );
 
     DXGI_OUTPUT_DESC hOutputDesc;
@@ -1784,10 +1784,10 @@ Bool D3D11Window::_UpdateOutputFromWindow()
     // Start transition
     m_bInDisplayModeSwitchTransition = true;
 
-    hRes = m_pRenderer->m_pSwapChain->SetFullscreenState( FALSE, NULL );
+    hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->SetFullscreenState( FALSE, NULL );
     DebugAssert( hRes == S_OK );
 
-    hRes = m_pRenderer->m_pSwapChain->ResizeTarget( &hDXGIMode );
+    hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->ResizeTarget( &hDXGIMode );
     DebugAssert( hRes == S_OK );
 
     // End transition

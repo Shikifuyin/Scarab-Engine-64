@@ -121,8 +121,8 @@ Void D3D11InputLayout::_NakedCreate()
         m_arrFields[i].ConvertTo( arrTemp + i );
 
     m_pInputLayout = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateInputLayout( arrTemp, m_iFieldCount, m_hCreationParameters.pCompiledShader->GetByteCode(),
-                                                              m_hCreationParameters.pCompiledShader->GetByteCodeLength(), (ID3D11InputLayout**)&m_pInputLayout );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateInputLayout( arrTemp, m_iFieldCount, m_hCreationParameters.pCompiledShader->GetByteCode(),
+                                                                                 m_hCreationParameters.pCompiledShader->GetByteCodeLength(), (ID3D11InputLayout**)&m_pInputLayout );
     DebugAssert( hRes == S_OK && m_pInputLayout != NULL );
 }
 Void D3D11InputLayout::_NakedDestroy()

@@ -786,8 +786,10 @@ Void D3D11PixelFormatSupport::ConvertFrom( UInt iD3D11Flags1, UInt iD3D11Flags2 
     iFlags2 = _D3D11ConvertFlags32( D3D11PixelFormatSupportFlags2FromD3D11, iD3D11Flags2 );
 }
 
-Void D3D11CounterSupport::ConvertFrom( const D3D11_COUNTER_INFO * pDesc )
+Void D3D11CounterSupport::ConvertFrom( const Void * pD3D11Desc )
 {
+    const D3D11_COUNTER_INFO * pDesc = (const D3D11_COUNTER_INFO *)pD3D11Desc;
+
     if ( pDesc->LastDeviceDependentCounter == 0 )
         iMaxCounters = 0;
     else
@@ -796,11 +798,20 @@ Void D3D11CounterSupport::ConvertFrom( const D3D11_COUNTER_INFO * pDesc )
     iMaxParallelUnitsDetection = pDesc->NumDetectableParallelUnits;
 }
 
-Void D3D11DeviceFeatures::ConvertFrom( const D3D11_FEATURE_DATA_THREADING * pDescThreading, const D3D11_FEATURE_DATA_ARCHITECTURE_INFO * pDescArch,
-                                       const D3D11_FEATURE_DATA_DOUBLES * pDescDoubles, const D3D11_FEATURE_DATA_SHADER_MIN_PRECISION_SUPPORT * pDescMinPrecision,
-                                       const D3D11_FEATURE_DATA_D3D9_OPTIONS * pDescD3D9, const D3D11_FEATURE_DATA_D3D9_SHADOW_SUPPORT * pDescD3D9Shadows,
-                                       const D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS * pDescD3D10, const D3D11_FEATURE_DATA_D3D11_OPTIONS * pDescD3D11 )
+Void D3D11DeviceFeatures::ConvertFrom( const Void * pD3D11DescThreading, const Void * pD3D11DescArch,
+                                       const Void * pD3D11DescDoubles, const Void * pD3D11DescMinPrecision,
+                                       const Void * pD3D11DescD3D9, const Void * pD3D11DescD3D9Shadows,
+                                       const Void * pD3D11DescD3D10, const Void * pD3D11DescD3D11 )
 {
+    const D3D11_FEATURE_DATA_THREADING * pDescThreading                         = (const D3D11_FEATURE_DATA_THREADING *)pD3D11DescThreading;
+    const D3D11_FEATURE_DATA_ARCHITECTURE_INFO * pDescArch                      = (const D3D11_FEATURE_DATA_ARCHITECTURE_INFO *)pD3D11DescArch;
+    const D3D11_FEATURE_DATA_DOUBLES * pDescDoubles                             = (const D3D11_FEATURE_DATA_DOUBLES *)pD3D11DescDoubles;
+    const D3D11_FEATURE_DATA_SHADER_MIN_PRECISION_SUPPORT * pDescMinPrecision   = (const D3D11_FEATURE_DATA_SHADER_MIN_PRECISION_SUPPORT *)pD3D11DescMinPrecision;
+    const D3D11_FEATURE_DATA_D3D9_OPTIONS * pDescD3D9                           = (const D3D11_FEATURE_DATA_D3D9_OPTIONS *)pD3D11DescD3D9;
+    const D3D11_FEATURE_DATA_D3D9_SHADOW_SUPPORT * pDescD3D9Shadows             = (const D3D11_FEATURE_DATA_D3D9_SHADOW_SUPPORT *)pD3D11DescD3D9Shadows;
+    const D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS * pDescD3D10              = (const D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS *)pD3D11DescD3D10;
+    const D3D11_FEATURE_DATA_D3D11_OPTIONS * pDescD3D11                         = (const D3D11_FEATURE_DATA_D3D11_OPTIONS *)pD3D11DescD3D11;
+
     bDriverConcurrentCreates = ( pDescThreading->DriverConcurrentCreates != FALSE );
     bDriverCommandLists = ( pDescThreading->DriverCommandLists != FALSE );
 
@@ -840,7 +851,7 @@ D3D11SwapChainSwapEffect D3D11SwapChainSwapEffectFromDXGI[D3D11SWAPCHAIN_SWAPEFF
     D3D11SWAPCHAIN_SWAPEFFECT_FLIP,
     D3D11SWAPCHAIN_SWAPEFFECT_FLIP_SEQUENTIAL
 };
-DXGI_SWAP_EFFECT D3D11SwapChainSwapEffectToDXGI[D3D11SWAPCHAIN_SWAPEFFECT_COUNT] = {
+DWord D3D11SwapChainSwapEffectToDXGI[D3D11SWAPCHAIN_SWAPEFFECT_COUNT] = {
     DXGI_SWAP_EFFECT_DISCARD,
     DXGI_SWAP_EFFECT_SEQUENTIAL,
     DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL,
@@ -903,8 +914,10 @@ Byte D3D11PresentFlagsToDXGI[D3D11PRESENT_FLAG_COUNT] = {
     6  // DXGI_PRESENT_RESTRICT_TO_OUTPUT
 };
 
-Void D3D11SwapChainDesc::ConvertFrom( const DXGI_SWAP_CHAIN_DESC * pDesc )
+Void D3D11SwapChainDesc::ConvertFrom( const Void * pD3D11Desc )
 {
+    const DXGI_SWAP_CHAIN_DESC * pDesc = (const DXGI_SWAP_CHAIN_DESC *)pD3D11Desc;
+
     pOutputWindow = (Void*)( pDesc->OutputWindow );
     bWindowed = ( pDesc->Windowed != FALSE );
 
@@ -927,8 +940,10 @@ Void D3D11SwapChainDesc::ConvertFrom( const DXGI_SWAP_CHAIN_DESC * pDesc )
     iSwapEffect = D3D11SwapChainSwapEffectFromDXGI[pDesc->SwapEffect];
     iFlags = _D3D11ConvertFlags32( D3D11SwapChainFlagsFromDXGI, pDesc->Flags );
 }
-Void D3D11SwapChainDesc::ConvertTo( DXGI_SWAP_CHAIN_DESC * outDesc ) const
+Void D3D11SwapChainDesc::ConvertTo( Void * outD3D11Desc ) const
 {
+    DXGI_SWAP_CHAIN_DESC * outDesc = (DXGI_SWAP_CHAIN_DESC*)outD3D11Desc;
+
     outDesc->OutputWindow = (HWND)pOutputWindow;
     outDesc->Windowed = (bWindowed) ? TRUE : FALSE;
 
@@ -936,24 +951,26 @@ Void D3D11SwapChainDesc::ConvertTo( DXGI_SWAP_CHAIN_DESC * outDesc ) const
     outDesc->BufferDesc.RefreshRate.Denominator = iRefreshRateDenominator;
 
     outDesc->BufferCount = iBufferCount;
-    outDesc->BufferUsage = _D3D11ConvertFlags32( D3D11SwapChainBufferUsageFlagsToDXGI, iBufferUsageFlags );
+    outDesc->BufferUsage = (DXGI_USAGE)( _D3D11ConvertFlags32(D3D11SwapChainBufferUsageFlagsToDXGI, iBufferUsageFlags) );
 
     outDesc->BufferDesc.Width = iWidth;
     outDesc->BufferDesc.Height = iHeight;
 
-    outDesc->BufferDesc.Format = PixelFormatToDXGI[iFormat];
+    outDesc->BufferDesc.Format = (DXGI_FORMAT)( PixelFormatToDXGI[iFormat] );
     outDesc->SampleDesc.Count = iSampleCount;
     outDesc->SampleDesc.Quality = iSampleQuality;
 
-    outDesc->BufferDesc.ScanlineOrdering = D3D11DisplayModeScanlineOrderingToDXGI[iScanlineOrdering];
-    outDesc->BufferDesc.Scaling = D3D11DisplayModeScalingToDXGI[iScaling];
+    outDesc->BufferDesc.ScanlineOrdering = (DXGI_MODE_SCANLINE_ORDER)( D3D11DisplayModeScanlineOrderingToDXGI[iScanlineOrdering] );
+    outDesc->BufferDesc.Scaling = (DXGI_MODE_SCALING)( D3D11DisplayModeScalingToDXGI[iScaling] );
 
-    outDesc->SwapEffect = D3D11SwapChainSwapEffectToDXGI[iSwapEffect];
+    outDesc->SwapEffect = (DXGI_SWAP_EFFECT)( D3D11SwapChainSwapEffectToDXGI[iSwapEffect] );
     outDesc->Flags = _D3D11ConvertFlags32( D3D11SwapChainFlagsToDXGI, iFlags );
 }
 
-Void D3D11FrameStats::ConvertFrom( const DXGI_FRAME_STATISTICS * pDesc, UInt iD3D11LastPresentCount )
+Void D3D11FrameStats::ConvertFrom( const Void * pD3D11Desc, UInt iD3D11LastPresentCount )
 {
+    const DXGI_FRAME_STATISTICS * pDesc = (const DXGI_FRAME_STATISTICS *)pD3D11Desc;
+
     iLastPresentCount = iD3D11LastPresentCount;
 
     iPresentCount = pDesc->PresentCount;
@@ -962,8 +979,10 @@ Void D3D11FrameStats::ConvertFrom( const DXGI_FRAME_STATISTICS * pDesc, UInt iD3
     iSyncQPCTime = pDesc->SyncQPCTime.QuadPart;
     iSyncGPUTime = pDesc->SyncGPUTime.QuadPart;
 }
-Void D3D11FrameStats::ConvertTo( DXGI_FRAME_STATISTICS * outDesc, UInt * outLastPresentCount ) const
+Void D3D11FrameStats::ConvertTo( Void * outD3D11Desc, UInt * outLastPresentCount ) const
 {
+    DXGI_FRAME_STATISTICS * outDesc = (DXGI_FRAME_STATISTICS*)outD3D11Desc;
+
     *outLastPresentCount = iLastPresentCount;
 
     outDesc->PresentCount = iPresentCount;

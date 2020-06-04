@@ -109,7 +109,7 @@ Void * D3D11Buffer::Lock( D3D11ResourceLock iLockType, UInt iResourceLockFlags, 
     hMappedSubResource.RowPitch = 0;
     hMappedSubResource.DepthPitch = 0;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -128,7 +128,7 @@ Void D3D11Buffer::UnLock( D3D11DeferredContext * pContext )
     DebugAssert( CanLock() );
     DebugAssert( m_bLocked );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -153,7 +153,7 @@ Void D3D11Buffer::Update( UInt iOffset, UInt iSize, const Void * pSrcData, D3D11
     hDstBox.front = 0;
     hDstBox.back = 1;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -172,7 +172,7 @@ Void D3D11Buffer::Copy( D3D11Buffer * pDstBuffer, D3D11DeferredContext * pContex
 
     DebugAssert( m_iByteSize <= pDstBuffer->m_iByteSize );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -198,7 +198,7 @@ Void D3D11Buffer::Copy( D3D11Buffer * pDstBuffer, UInt iDstOffset, UInt iSrcOffs
     hSrcBox.front = 0;
     hSrcBox.back = 1;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -223,7 +223,7 @@ Void D3D11Buffer::_NakedCreate()
     hDesc.StructureByteStride = (UINT)m_iStride;
 
     m_pBuffer = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateBuffer( &hDesc, (m_hCreationParameters.pData != NULL) ? &hInitialization : NULL, (ID3D11Buffer**)&m_pBuffer );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateBuffer( &hDesc, (m_hCreationParameters.pData != NULL) ? &hInitialization : NULL, (ID3D11Buffer**)&m_pBuffer );
     DebugAssert( hRes == S_OK && m_pBuffer != NULL );
 
     m_pResource = NULL;

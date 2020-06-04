@@ -87,7 +87,7 @@ Float D3D11Texture::GetMinLOD( D3D11DeferredContext * pContext ) const
 {
     DebugAssert( IsCreated() );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -97,7 +97,7 @@ Void D3D11Texture::SetMinLOD( Float fMinLOD, D3D11DeferredContext * pContext ) c
 {
     DebugAssert( IsCreated() );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -161,7 +161,7 @@ Void * D3D11Texture1D::Lock( const D3D11SubResourceIndex * pIndex, D3D11Resource
     hMappedSubResource.RowPitch = 0;
     hMappedSubResource.DepthPitch = 0;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -180,7 +180,7 @@ Void D3D11Texture1D::UnLock( const D3D11SubResourceIndex * pIndex, D3D11Deferred
 
     UInt iSubResource = _GetSubResourceIndex( pIndex, m_iMipLevels, m_iArraySize );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -209,7 +209,7 @@ Void D3D11Texture1D::Update( const D3D11SubResourceIndex * pIndex, UInt iX, UInt
     UInt iStride = PixelFormatBytes( m_iFormat );
     UInt iPitch = iStride * _GetBound( m_iWidth, pIndex->iMipSlice );
     
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -229,7 +229,7 @@ Void D3D11Texture1D::Copy( D3D11Texture1D * pDstTexture, D3D11DeferredContext * 
     DebugAssert( m_iArraySize == pDstTexture->m_iArraySize );
     DebugAssert( m_iWidth == pDstTexture->m_iWidth );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -257,7 +257,7 @@ Void D3D11Texture1D::Copy( D3D11Texture1D * pDstTexture, const D3D11SubResourceI
     hSrcBox.front = 0;
     hSrcBox.back = 1;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -284,7 +284,7 @@ Void D3D11Texture1D::_NakedCreate()
     hDesc.Width = (UINT)m_iWidth;
 
     m_pTexture = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateTexture1D( &hDesc, (m_hCreationParameters.pData != NULL) ? &hInitialization : NULL, (ID3D11Texture1D**)&m_pTexture );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateTexture1D( &hDesc, (m_hCreationParameters.pData != NULL) ? &hInitialization : NULL, (ID3D11Texture1D**)&m_pTexture );
     DebugAssert( hRes == S_OK && m_pTexture != NULL );
 
     m_pResource = NULL;
@@ -376,11 +376,11 @@ Void D3D11Texture2D::SetSampleCount( UInt iSampleCount )
         DXGI_FORMAT iDXGIFormat = (DXGI_FORMAT)( PixelFormatToDXGI[m_iFormat] );
 
         UInt iFmtSupport = 0;
-        HRESULT hRes = m_pRenderer->m_pDevice->CheckFormatSupport( iDXGIFormat, &iFmtSupport );
+        HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CheckFormatSupport( iDXGIFormat, &iFmtSupport );
         DebugAssert( iFmtSupport & D3D11_FORMAT_SUPPORT_MULTISAMPLE_LOAD );
 
         UInt iMaxSamplingQuality = 0;
-        hRes = m_pRenderer->m_pDevice->CheckMultisampleQualityLevels( iDXGIFormat, iSampleCount, &iMaxSamplingQuality );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CheckMultisampleQualityLevels( iDXGIFormat, iSampleCount, &iMaxSamplingQuality );
         DebugAssert( hRes == S_OK );
         DebugAssert( iMaxSamplingQuality > 0 );
 
@@ -415,7 +415,7 @@ Void * D3D11Texture2D::Lock( const D3D11SubResourceIndex * pIndex, D3D11Resource
     hMappedSubResource.RowPitch = 0;
     hMappedSubResource.DepthPitch = 0;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -436,7 +436,7 @@ Void D3D11Texture2D::UnLock( const D3D11SubResourceIndex * pIndex, D3D11Deferred
 
     UInt iSubResource = _GetSubResourceIndex( pIndex, m_iMipLevels, m_iArraySize );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -467,7 +467,7 @@ Void D3D11Texture2D::Update( const D3D11SubResourceIndex * pIndex, const D3D11Re
     UInt iPitch = iStride * _GetBound( m_iWidth, pIndex->iMipSlice );
     UInt iSlice = iPitch * _GetBound( m_iHeight, pIndex->iMipSlice );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -489,7 +489,7 @@ Void D3D11Texture2D::Copy( D3D11Texture2D * pDstTexture, D3D11DeferredContext * 
     DebugAssert( pDstTexture->m_iWidth == m_iWidth );
     DebugAssert( pDstTexture->m_iHeight == m_iHeight );
     
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -521,7 +521,7 @@ Void D3D11Texture2D::Copy( D3D11Texture2D * pDstTexture, const D3D11SubResourceI
     hSrcBox.front = 0;
     hSrcBox.back = 1;
     
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -554,11 +554,11 @@ Void D3D11Texture2D::_NakedCreate()
         hDesc.SampleDesc.Quality = (UINT)m_iSampleQuality;
 
         m_pTexture = NULL;
-        hRes = m_pRenderer->m_pDevice->CreateTexture2D( &hDesc, (m_hCreationParameters.pData != NULL) ? &hInitialization : NULL, (ID3D11Texture2D**)&m_pTexture );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateTexture2D( &hDesc, (m_hCreationParameters.pData != NULL) ? &hInitialization : NULL, (ID3D11Texture2D**)&m_pTexture );
         DebugAssert( hRes == S_OK && m_pTexture != NULL );
     } else {
         m_pTexture = NULL;
-        hRes = m_pRenderer->m_pSwapChain->GetBuffer( m_iBoundToBackBuffer, __uuidof(ID3D11Texture2D), &m_pTexture );
+        hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->GetBuffer( m_iBoundToBackBuffer, __uuidof(ID3D11Texture2D), &m_pTexture );
         DebugAssert( hRes == S_OK && m_pTexture != NULL );
 
         D3D11_TEXTURE2D_DESC hDesc;
@@ -653,7 +653,7 @@ Void * D3D11Texture3D::Lock( const D3D11SubResourceIndex * pIndex, D3D11Resource
     hMappedSubResource.RowPitch = 0;
     hMappedSubResource.DepthPitch = 0;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -675,7 +675,7 @@ Void D3D11Texture3D::UnLock( const D3D11SubResourceIndex * pIndex, D3D11Deferred
 
     UInt iSubResource = _GetSubResourceIndex( pIndex, m_iMipLevels, 1 );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -707,7 +707,7 @@ Void D3D11Texture3D::Update( const D3D11SubResourceIndex * pIndex, const D3D11Bo
     UInt iPitch = iStride * _GetBound( m_iWidth, pIndex->iMipSlice );
     UInt iSlice = iPitch * _GetBound( m_iHeight, pIndex->iMipSlice );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -728,7 +728,7 @@ Void D3D11Texture3D::Copy( D3D11Texture3D * pDstTexture, D3D11DeferredContext * 
     DebugAssert( pDstTexture->m_iHeight == m_iHeight );
     DebugAssert( pDstTexture->m_iDepth == m_iDepth );
     
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -761,7 +761,7 @@ Void D3D11Texture3D::Copy( D3D11Texture3D * pDstTexture, const D3D11SubResourceI
     hSrcBox.front = pSrcBox->iFront;
     hSrcBox.back = pSrcBox->iBack;
     
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -789,7 +789,7 @@ Void D3D11Texture3D::_NakedCreate()
     hDesc.Depth = (UINT)m_iDepth;
 
     m_pTexture = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateTexture3D( &hDesc, (m_hCreationParameters.pData != NULL) ? &hInitialization : NULL, (ID3D11Texture3D**)&m_pTexture );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateTexture3D( &hDesc, (m_hCreationParameters.pData != NULL) ? &hInitialization : NULL, (ID3D11Texture3D**)&m_pTexture );
     DebugAssert( hRes == S_OK && m_pTexture != NULL );
 
     m_pResource = NULL;
@@ -870,7 +870,7 @@ Void * D3D11TextureCube::Lock( const D3D11SubResourceIndex * pIndex, D3D11Textur
     hMappedSubResource.RowPitch = 0;
     hMappedSubResource.DepthPitch = 0;
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -891,7 +891,7 @@ Void D3D11TextureCube::UnLock( const D3D11SubResourceIndex * pIndex, D3D11Textur
 
     UInt iSubResource = _GetSubResourceIndex( pIndex, iFace, m_iMipLevels, m_iArraySize );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -922,7 +922,7 @@ Void D3D11TextureCube::Update( const D3D11SubResourceIndex * pIndex, D3D11Textur
     UInt iPitch = iStride * _GetBound( m_iWidth, pIndex->iMipSlice );
     UInt iSlice = iPitch * _GetBound( m_iHeight, pIndex->iMipSlice );
 
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -943,7 +943,7 @@ Void D3D11TextureCube::Copy( D3D11TextureCube * pDstTexture, D3D11DeferredContex
     DebugAssert( pDstTexture->m_iWidth == m_iWidth );
     DebugAssert( pDstTexture->m_iHeight == m_iHeight );
     
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -974,7 +974,7 @@ Void D3D11TextureCube::Copy( D3D11TextureCube * pDstTexture, const D3D11SubResou
     hSrcBox.front = 0;
     hSrcBox.back = 1;
     
-    ID3D11DeviceContext * pDeviceContext = m_pRenderer->m_pImmediateContext;
+    ID3D11DeviceContext * pDeviceContext = (ID3D11DeviceContext*)( m_pRenderer->m_pImmediateContext );
     if ( pContext != NULL && pContext->IsCreated() )
         pDeviceContext = (ID3D11DeviceContext*)( pContext->m_pDeferredContext );
 
@@ -1004,7 +1004,7 @@ Void D3D11TextureCube::_NakedCreate()
     hDesc.SampleDesc.Quality = (UINT)m_iSampleQuality;
 
     m_pTexture = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateTexture2D( &hDesc, (m_hCreationParameters.pData != NULL) ? &hInitialization : NULL, (ID3D11Texture2D**)&m_pTexture );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateTexture2D( &hDesc, (m_hCreationParameters.pData != NULL) ? &hInitialization : NULL, (ID3D11Texture2D**)&m_pTexture );
     DebugAssert( hRes == S_OK && m_pTexture != NULL );
 
     m_pResource = NULL;

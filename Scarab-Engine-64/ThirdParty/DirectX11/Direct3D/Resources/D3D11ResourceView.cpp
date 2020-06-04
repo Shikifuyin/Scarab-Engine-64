@@ -204,15 +204,15 @@ Void D3D11RenderTargetView::_NakedCreate()
 
     if ( m_iBoundToBackBuffer == INVALID_OFFSET ) {
         m_pRenderTargetView = NULL;
-        hRes = m_pRenderer->m_pDevice->CreateRenderTargetView( (ID3D11Resource*)(m_pResource->m_pResource), &hD3D11Desc, (ID3D11RenderTargetView**)&m_pRenderTargetView );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateRenderTargetView( (ID3D11Resource*)(m_pResource->m_pResource), &hD3D11Desc, (ID3D11RenderTargetView**)&m_pRenderTargetView );
         DebugAssert( hRes == S_OK && m_pRenderTargetView != NULL );
     } else {
         ID3D11Texture2D * pBackBuffer = NULL;
-        hRes = m_pRenderer->m_pSwapChain->GetBuffer( m_iBoundToBackBuffer, __uuidof(ID3D11Texture2D), (Void**)&pBackBuffer );
+        hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->GetBuffer( m_iBoundToBackBuffer, __uuidof(ID3D11Texture2D), (Void**)&pBackBuffer );
         DebugAssert( hRes == S_OK && pBackBuffer != NULL );
 
         m_pRenderTargetView = NULL;
-        hRes = m_pRenderer->m_pDevice->CreateRenderTargetView( pBackBuffer, &hD3D11Desc, (ID3D11RenderTargetView**)&m_pRenderTargetView );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateRenderTargetView( pBackBuffer, &hD3D11Desc, (ID3D11RenderTargetView**)&m_pRenderTargetView );
         DebugAssert( hRes == S_OK && m_pRenderTargetView != NULL );
 
         pBackBuffer->Release();
@@ -340,15 +340,15 @@ Void D3D11DepthStencilView::_NakedCreate()
 
     if ( m_iBoundToBackBuffer == INVALID_OFFSET ) {
         m_pDepthStencilView = NULL;
-        hRes = m_pRenderer->m_pDevice->CreateDepthStencilView( (ID3D11Resource*)(m_pResource->m_pResource), &hD3D11Desc, (ID3D11DepthStencilView**)&m_pDepthStencilView );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateDepthStencilView( (ID3D11Resource*)(m_pResource->m_pResource), &hD3D11Desc, (ID3D11DepthStencilView**)&m_pDepthStencilView );
         DebugAssert( hRes == S_OK && m_pDepthStencilView != NULL );
     } else {
         ID3D11Texture2D * pBackBuffer = NULL;
-        hRes = m_pRenderer->m_pSwapChain->GetBuffer( m_iBoundToBackBuffer, __uuidof(ID3D11Texture2D), (Void**)&pBackBuffer );
+        hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->GetBuffer( m_iBoundToBackBuffer, __uuidof(ID3D11Texture2D), (Void**)&pBackBuffer );
         DebugAssert( hRes == S_OK && pBackBuffer != NULL );
 
         m_pDepthStencilView = NULL;
-        hRes = m_pRenderer->m_pDevice->CreateDepthStencilView( pBackBuffer, &hD3D11Desc, (ID3D11DepthStencilView**)&m_pDepthStencilView );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateDepthStencilView( pBackBuffer, &hD3D11Desc, (ID3D11DepthStencilView**)&m_pDepthStencilView );
         DebugAssert( hRes == S_OK && m_pDepthStencilView != NULL );
 
         pBackBuffer->Release();
@@ -521,15 +521,15 @@ Void D3D11ShaderView::_NakedCreate()
 
     if ( m_iBoundToBackBuffer == INVALID_OFFSET ) {
         m_pShaderView = NULL;
-        hRes = m_pRenderer->m_pDevice->CreateShaderResourceView( (ID3D11Resource*)(m_pResource->m_pResource), &hD3D11Desc, (ID3D11ShaderResourceView**)&m_pShaderView );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateShaderResourceView( (ID3D11Resource*)(m_pResource->m_pResource), &hD3D11Desc, (ID3D11ShaderResourceView**)&m_pShaderView );
         DebugAssert( hRes == S_OK && m_pShaderView != NULL );
     } else {
         ID3D11Texture2D * pBackBuffer = NULL;
-        hRes = m_pRenderer->m_pSwapChain->GetBuffer( m_iBoundToBackBuffer, __uuidof(ID3D11Texture2D), (Void**)&pBackBuffer );
+        hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->GetBuffer( m_iBoundToBackBuffer, __uuidof(ID3D11Texture2D), (Void**)&pBackBuffer );
         DebugAssert( hRes == S_OK && pBackBuffer != NULL );
 
         m_pShaderView = NULL;
-        hRes = m_pRenderer->m_pDevice->CreateShaderResourceView( pBackBuffer, &hD3D11Desc, (ID3D11ShaderResourceView**)&m_pShaderView );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateShaderResourceView( pBackBuffer, &hD3D11Desc, (ID3D11ShaderResourceView**)&m_pShaderView );
         DebugAssert( hRes == S_OK && m_pShaderView != NULL );
 
         pBackBuffer->Release();
@@ -678,15 +678,15 @@ Void D3D11UnorderedAccessView::_NakedCreate()
 
     if ( m_iBoundToBackBuffer == INVALID_OFFSET ) {
         m_pUnorderedAccessView = NULL;
-        hRes = m_pRenderer->m_pDevice->CreateUnorderedAccessView( (ID3D11Resource*)(m_pResource->m_pResource), &hD3D11Desc, (ID3D11UnorderedAccessView**)&m_pUnorderedAccessView );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateUnorderedAccessView( (ID3D11Resource*)(m_pResource->m_pResource), &hD3D11Desc, (ID3D11UnorderedAccessView**)&m_pUnorderedAccessView );
         DebugAssert( hRes == S_OK && m_pUnorderedAccessView != NULL );
     } else {
         ID3D11Texture2D * pBackBuffer = NULL;
-        hRes = m_pRenderer->m_pSwapChain->GetBuffer( m_iBoundToBackBuffer, __uuidof(ID3D11Texture2D), (Void**)&pBackBuffer );
+        hRes = ((IDXGISwapChain*)(m_pRenderer->m_pSwapChain))->GetBuffer( m_iBoundToBackBuffer, __uuidof(ID3D11Texture2D), (Void**)&pBackBuffer );
         DebugAssert( hRes == S_OK && pBackBuffer != NULL );
 
         m_pUnorderedAccessView = NULL;
-        hRes = m_pRenderer->m_pDevice->CreateUnorderedAccessView( pBackBuffer, &hD3D11Desc, (ID3D11UnorderedAccessView**)&m_pUnorderedAccessView );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateUnorderedAccessView( pBackBuffer, &hD3D11Desc, (ID3D11UnorderedAccessView**)&m_pUnorderedAccessView );
         DebugAssert( hRes == S_OK && m_pUnorderedAccessView != NULL );
 
         pBackBuffer->Release();

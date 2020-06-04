@@ -142,7 +142,7 @@ Void D3D11DeferredContext::_NakedCreate()
     UInt iFlags = 0; // Future use for now ...
 
     m_pDeferredContext = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateDeferredContext( iFlags, (ID3D11DeviceContext**)&m_pDeferredContext );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateDeferredContext( iFlags, (ID3D11DeviceContext**)&m_pDeferredContext );
     DebugAssert( hRes == S_OK && m_pDeferredContext != NULL );
 }
 Void D3D11DeferredContext::_NakedDestroy()

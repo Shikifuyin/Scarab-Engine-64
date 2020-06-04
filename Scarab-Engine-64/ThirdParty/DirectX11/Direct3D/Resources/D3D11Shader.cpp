@@ -643,12 +643,12 @@ Void D3D11VertexShader::_NakedCreate()
 
     m_pClassLinkage = NULL;
     if ( m_bHasDynamicLinkage ) {
-        hRes = m_pRenderer->m_pDevice->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
         DebugAssert( hRes == S_OK && m_pClassLinkage != NULL );
     }
 
     m_pVertexShader = NULL;
-    hRes = m_pRenderer->m_pDevice->CreateVertexShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11VertexShader**)&m_pVertexShader );
+    hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateVertexShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11VertexShader**)&m_pVertexShader );
     DebugAssert( hRes == S_OK && m_pVertexShader != NULL );
 
     m_pShader = NULL;
@@ -741,7 +741,7 @@ Void D3D11GeometryShader::_NakedCreate()
 
     m_pClassLinkage = NULL;
     if ( m_bHasDynamicLinkage ) {
-        hRes = m_pRenderer->m_pDevice->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
         DebugAssert( hRes == S_OK && m_pClassLinkage != NULL );
     }
 
@@ -751,14 +751,14 @@ Void D3D11GeometryShader::_NakedCreate()
             m_arrSODeclarations[i].ConvertTo( arrTemp + i );
 
         m_pGeometryShader = NULL;
-        hRes = m_pRenderer->m_pDevice->CreateGeometryShaderWithStreamOutput( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(),
-                                                                             arrTemp, m_iSODeclarationCount, m_arrStrides, m_iStrideCount,
-                                                                             (m_iRasterStream != INVALID_OFFSET) ? m_iRasterStream : D3D11_SO_NO_RASTERIZED_STREAM,
-                                                                             (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11GeometryShader**)&m_pGeometryShader );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateGeometryShaderWithStreamOutput( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(),
+                                                                                                arrTemp, m_iSODeclarationCount, m_arrStrides, m_iStrideCount,
+                                                                                                (m_iRasterStream != INVALID_OFFSET) ? m_iRasterStream : D3D11_SO_NO_RASTERIZED_STREAM,
+                                                                                                (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11GeometryShader**)&m_pGeometryShader );
         DebugAssert( hRes == S_OK && m_pGeometryShader != NULL );
     } else {
         m_pGeometryShader = NULL;
-        hRes = m_pRenderer->m_pDevice->CreateGeometryShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11GeometryShader**)&m_pGeometryShader );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateGeometryShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11GeometryShader**)&m_pGeometryShader );
         DebugAssert( hRes == S_OK && m_pGeometryShader != NULL );
     }
 
@@ -813,12 +813,12 @@ Void D3D11PixelShader::_NakedCreate()
 
     m_pClassLinkage = NULL;
     if ( m_bHasDynamicLinkage ) {
-        hRes = m_pRenderer->m_pDevice->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
         DebugAssert( hRes == S_OK && m_pClassLinkage != NULL );
     }
 
     m_pPixelShader = NULL;
-    hRes = m_pRenderer->m_pDevice->CreatePixelShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11PixelShader**)&m_pPixelShader );
+    hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreatePixelShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11PixelShader**)&m_pPixelShader );
     DebugAssert( hRes == S_OK && m_pPixelShader != NULL );
 
     m_pShader = NULL;
@@ -873,12 +873,12 @@ Void D3D11HullShader::_NakedCreate()
 
     m_pClassLinkage = NULL;
     if ( m_bHasDynamicLinkage ) {
-        hRes = m_pRenderer->m_pDevice->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
         DebugAssert( hRes == S_OK && m_pClassLinkage != NULL );
     }
 
     m_pHullShader = NULL;
-    hRes = m_pRenderer->m_pDevice->CreateHullShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11HullShader**)&m_pHullShader );
+    hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateHullShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11HullShader**)&m_pHullShader );
     DebugAssert( hRes == S_OK && m_pHullShader != NULL );
 
     m_pShader = NULL;
@@ -932,12 +932,12 @@ Void D3D11DomainShader::_NakedCreate()
 
     m_pClassLinkage = NULL;
     if ( m_bHasDynamicLinkage ) {
-        hRes = m_pRenderer->m_pDevice->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
         DebugAssert( hRes == S_OK && m_pClassLinkage != NULL );
     }
 
     m_pDomainShader = NULL;
-    hRes = m_pRenderer->m_pDevice->CreateDomainShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11DomainShader**)&m_pDomainShader );
+    hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateDomainShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11DomainShader**)&m_pDomainShader );
     DebugAssert( hRes == S_OK && m_pDomainShader != NULL );
 
     m_pShader = NULL;
@@ -991,12 +991,12 @@ Void D3D11ComputeShader::_NakedCreate()
 
     m_pClassLinkage = NULL;
     if ( m_bHasDynamicLinkage ) {
-        hRes = m_pRenderer->m_pDevice->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
+        hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateClassLinkage( (ID3D11ClassLinkage**)&m_pClassLinkage );
         DebugAssert( hRes == S_OK && m_pClassLinkage != NULL );
     }
 
     m_pComputeShader = NULL;
-    hRes = m_pRenderer->m_pDevice->CreateComputeShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11ComputeShader**)&m_pComputeShader );
+    hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateComputeShader( m_pCompiledShader->GetByteCode(), m_pCompiledShader->GetByteCodeLength(), (ID3D11ClassLinkage*)m_pClassLinkage, (ID3D11ComputeShader**)&m_pComputeShader );
     DebugAssert( hRes == S_OK && m_pComputeShader != NULL );
 
     m_pShader = NULL;

@@ -252,8 +252,8 @@ private:
     // 2D Renderer bind
     friend class D2D1RenderingContext;
 
-    ID2D1Factory * m_pD2D1Factory;
-    IDWriteFactory * m_pDWFactory;
+    Void * m_pD2D1Factory;
+    Void * m_pDWFactory;
 
     // Device & SwapChain data
     Void _CreateDevice( Bool bFirstTime = false );
@@ -264,11 +264,11 @@ private:
 
     D3D11RendererCallbacks * m_pCallbacks;
 
-    D3D_FEATURE_LEVEL m_iFeatureLevel;
-    ID3D11Device * m_pDevice;
-    ID3D11DeviceContext * m_pImmediateContext;
+    DWord m_iFeatureLevel;
+    Void * m_pDevice;
+    Void * m_pImmediateContext;
 
-    IDXGISwapChain * m_pSwapChain;
+    Void * m_pSwapChain;
     D3D11SwapChainDesc m_hSwapChainDesc;
 
     Bool m_bIdleState;

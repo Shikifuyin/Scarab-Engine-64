@@ -136,7 +136,7 @@ Void D3D11SamplerState::_NakedCreate()
     m_hDesc.ConvertTo( &hD3D11Desc );
 
     m_pSamplerState = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateSamplerState( &hD3D11Desc, (ID3D11SamplerState**)&m_pSamplerState );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateSamplerState( &hD3D11Desc, (ID3D11SamplerState**)&m_pSamplerState );
     DebugAssert( hRes == S_OK && m_pSamplerState != NULL );
 
     m_pRenderState = NULL;
@@ -208,7 +208,7 @@ Void D3D11RasterizerState::_NakedCreate()
     m_hDesc.ConvertTo( &hD3D11Desc );
 
     m_pRasterizerState = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateRasterizerState( &hD3D11Desc, (ID3D11RasterizerState**)&m_pRasterizerState );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateRasterizerState( &hD3D11Desc, (ID3D11RasterizerState**)&m_pRasterizerState );
     DebugAssert( hRes == S_OK && m_pRasterizerState != NULL );
 
     m_pRenderState = NULL;
@@ -288,7 +288,7 @@ Void D3D11DepthStencilState::_NakedCreate()
     m_hDesc.ConvertTo( &hD3D11Desc );
 
     m_pDepthStencilState = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateDepthStencilState( &hD3D11Desc, (ID3D11DepthStencilState**)&m_pDepthStencilState );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateDepthStencilState( &hD3D11Desc, (ID3D11DepthStencilState**)&m_pDepthStencilState );
     DebugAssert( hRes == S_OK && m_pDepthStencilState != NULL );
 
     m_pRenderState = NULL;
@@ -364,7 +364,7 @@ Void D3D11BlendState::_NakedCreate()
     m_hDesc.ConvertTo( &hD3D11Desc );
 
     m_pBlendState = NULL;
-    HRESULT hRes = m_pRenderer->m_pDevice->CreateBlendState( &hD3D11Desc, (ID3D11BlendState**)&m_pBlendState );
+    HRESULT hRes = ((ID3D11Device*)(m_pRenderer->m_pDevice))->CreateBlendState( &hD3D11Desc, (ID3D11BlendState**)&m_pBlendState );
     DebugAssert( hRes == S_OK && m_pBlendState != NULL );
 
     m_pRenderState = NULL;

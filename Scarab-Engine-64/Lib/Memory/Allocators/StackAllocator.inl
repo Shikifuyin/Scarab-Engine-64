@@ -1,0 +1,45 @@
+/////////////////////////////////////////////////////////////////////////////////
+// File : Lib/Memory/Allocators/StackAllocator.inl
+/////////////////////////////////////////////////////////////////////////////////
+// Version : 0.1
+// Status : Alpha
+/////////////////////////////////////////////////////////////////////////////////
+// Description : Very simple, but efficient, LIFO allocator.
+/////////////////////////////////////////////////////////////////////////////////
+// Part of Scarab-Engine, licensed under the
+// Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
+//   http://creativecommons.org/licenses/by-nc-nd/3.0/
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+// Known Bugs : None
+/////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// StackAllocator implementation
+inline AllocatorType StackAllocator::GetType() const {
+    return ALLOCATOR_STACK;
+}
+inline UInt StackAllocator::GetBlockSize( Byte * pMemory ) const {
+    Assert( m_pBuffer != NULL );
+    Assert( pMemory >= m_pFrameBase );
+    Assert( pMemory < m_pStackTop );
+    return (UInt)( m_pStackTop - pMemory );
+}
+
+inline UInt StackAllocator::FrameLevel() const {
+    Assert( m_pBuffer != NULL );
+    return m_iFrameLevel;
+}
+inline UInt StackAllocator::FrameSize() const {
+    Assert( m_pBuffer != NULL );
+    return (UInt)( m_pStackTop - m_pFrameBase );
+}
+inline UInt StackAllocator::AllocatedSize() const {
+    Assert( m_pBuffer != NULL );
+    return (UInt)( m_pStackTop - m_pBuffer );
+}
+inline UInt StackAllocator::TotalSize() const {
+    Assert( m_pBuffer != NULL );
+    return m_iTotalSize;
+}

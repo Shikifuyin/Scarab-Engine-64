@@ -43,6 +43,12 @@
 //#pragma warning(disable:4512) // Could not generate assignment operator
 //#pragma warning(disable:4725) // fprem1 lacking precision on very old CPUs
 
+
+// Intellisense warnings
+//#pragma warning(disable:26451) // Overflow with '*' operatorm, cast to wider type after calling operator
+//#pragma warning(disable:26812) // Unscoped enum types, Prefer "enum class" over "enum"
+//#pragma warning(disable:28182) // Dereferencing NULL Pointer
+
 /////////////////////////////////////////////////////////////////////////////////
 // NULL pointer definition
 #ifndef NULL

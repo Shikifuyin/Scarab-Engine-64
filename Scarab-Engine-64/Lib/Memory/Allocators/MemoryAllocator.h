@@ -30,10 +30,10 @@
 
 enum AllocatorType {
     ALLOCATOR_RESIDENT = 0,
-    ALLOCATOR_STACK,
-    ALLOCATOR_POOL,
-    ALLOCATOR_BREAK,
-    ALLOCATOR_HEAP
+    ALLOCATOR_BREAK,        // Assembler-Like Allocator, completely unsafe !
+    ALLOCATOR_STACK,        // Fixed Order Allocator, constant time.
+    ALLOCATOR_POOL,         // Fixed Size Allocator, constant time.
+    ALLOCATOR_HEAP          // Usual AVLTree Implementation, logarithmic in worst case.
     // Add new child-classes an ID here ...
 };
 
@@ -50,10 +50,11 @@ typedef struct _allocator_report
 // The MemoryAllocator class
 class MemoryAllocator
 {
-public:
+protected:
     MemoryAllocator( UInt iContextID, const GChar * strContextName,
                      UInt iAllocatorID, const GChar * strAllocatorName );
-	~MemoryAllocator();
+public:
+	virtual ~MemoryAllocator();
 
     // Getters
     inline UInt GetContextID() const;
@@ -63,10 +64,6 @@ public:
 
     virtual AllocatorType GetType() const = 0;
     virtual UInt GetBlockSize( Byte * pMemory ) const = 0;
-
-    // Alloc/Free interface
-    virtual Byte * Allocate( UInt iSize ) = 0;
-    virtual Void Free( Byte * pMemory ) = 0;
 
     // Reporting
     virtual Void GenerateReport( AllocatorReport * outReport ) const = 0;

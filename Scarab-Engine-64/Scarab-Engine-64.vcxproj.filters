@@ -180,6 +180,18 @@
     <ClInclude Include="Lib\Error\ErrorManager.h">
       <Filter>Header Files\Lib\Error</Filter>
     </ClInclude>
+    <ClInclude Include="Lib\Memory\Allocators\BreakAllocator.h">
+      <Filter>Header Files\Lib\Memory\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Memory\Allocators\PoolAllocator.h">
+      <Filter>Header Files\Lib\Memory\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Memory\Allocators\StackAllocator.h">
+      <Filter>Header Files\Lib\Memory\Allocators</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Memory\Allocators\HeapAllocator.h">
+      <Filter>Header Files\Lib\Memory\Allocators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\System\Platform.inl">
@@ -275,6 +287,18 @@
     <None Include="Lib\Error\ErrorManager.inl">
       <Filter>Source Files\Lib\Error</Filter>
     </None>
+    <None Include="Lib\Memory\Allocators\BreakAllocator.inl">
+      <Filter>Source Files\Lib\Memory\Allocators</Filter>
+    </None>
+    <None Include="Lib\Memory\Allocators\PoolAllocator.inl">
+      <Filter>Source Files\Lib\Memory\Allocators</Filter>
+    </None>
+    <None Include="Lib\Memory\Allocators\StackAllocator.inl">
+      <Filter>Source Files\Lib\Memory\Allocators</Filter>
+    </None>
+    <None Include="Lib\Memory\Allocators\HeapAllocator.inl">
+      <Filter>Source Files\Lib\Memory\Allocators</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -369,6 +393,18 @@
     </ClCompile>
     <ClCompile Include="Lib\Error\ErrorManager.cpp">
       <Filter>Source Files\Lib\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Memory\Allocators\BreakAllocator.cpp">
+      <Filter>Source Files\Lib\Memory\Allocators</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Memory\Allocators\PoolAllocator.cpp">
+      <Filter>Source Files\Lib\Memory\Allocators</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Memory\Allocators\StackAllocator.cpp">
+      <Filter>Source Files\Lib\Memory\Allocators</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Memory\Allocators\HeapAllocator.cpp">
+      <Filter>Source Files\Lib\Memory\Allocators</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

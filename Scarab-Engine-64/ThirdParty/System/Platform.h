@@ -251,7 +251,7 @@ static const QWord _DOUBLE_NAN_REPR = 0x7ff8000000000000;
 // (noobs : _cdecl/_stdcall have arguments ordered with growing adresses ...)
 // For obvious portability and code readability reasons, you should make minimal use of this ...
 typedef Byte * VArgPtr;
-#define _VArg_SizeOf( _n )              ( (sizeof(_n) + sizeof(Int) - 1) & (~(sizeof(Int) - 1)) )
+#define _VArg_SizeOf( _n )              ( (sizeof(_n) + sizeof(IntPtr) - 1) & (~(sizeof(IntPtr) - 1)) )
 #define VArg_Init( _vargptr, _lastarg ) ( (_vargptr) = (VArgPtr)(&(_lastarg)) + _VArg_SizeOf(_lastarg) )
 #define VArg_Get( _vargptr, _argtype )  ( *(_argtype*)( ((_vargptr)+=_VArg_SizeOf(_argtype)) - _VArg_SizeOf(_argtype) ) )
 #define VArg_Destroy( _vargptr )        ( (_vargptr) = NULL )

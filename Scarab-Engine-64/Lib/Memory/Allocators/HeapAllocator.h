@@ -106,12 +106,13 @@ typedef struct _heap_report : public AllocatorReport
     Byte ** arrHeapNodes;  //
     Int * arrBalances;     // size = iBinHeapSize
     UInt * arrListSizes;   //
-    Byte *** arrListNodes; // <= size[i] = arrFreeListSizes[i]
+    Byte ** arrListNodes;  // <= size[i] = arrFreeListSizes[i]
 
     UInt iChunkMapSize;
-    Byte ** arrChunkMap; //
-    UInt * arrPrevSizes; //  size = iChunkMapSize
-    UInt * arrSizes;     //
+    Byte ** arrChunkMap;   //
+    UInt * arrPrevSizes;   //  size = iChunkMapSize
+    UInt * arrSizes;       //
+    Bool * arrIsAllocated; //
 } HeapReport;
 
 ///////////////////////////////////////////////////////////////////////////////

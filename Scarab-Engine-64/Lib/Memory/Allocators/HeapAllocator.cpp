@@ -173,10 +173,11 @@ Void HeapAllocator::GenerateReport( AllocatorReport * outReport ) const
     static Byte * s_ScratchMemory1[HEAPREPORT_MAX_TREESPAN];
     static Int s_ScratchMemory2[HEAPREPORT_MAX_TREESPAN];
     static UInt s_ScratchMemory3[HEAPREPORT_MAX_TREESPAN];
-    static Byte ** s_ScratchMemory4[HEAPREPORT_MAX_TREESPAN * HEAPREPORT_MAX_LISTSIZE];
+    static Byte * s_ScratchMemory4[HEAPREPORT_MAX_TREESPAN * HEAPREPORT_MAX_LISTSIZE];
     static Byte * s_ScratchMemory5[HEAPREPORT_MAX_CHUNKS];
     static UInt s_ScratchMemory6[HEAPREPORT_MAX_CHUNKS];
     static UInt s_ScratchMemory7[HEAPREPORT_MAX_CHUNKS];
+    static Bool s_ScratchMemory8[HEAPREPORT_MAX_CHUNKS];
 
     Assert( outReport != NULL );
     HeapReport * outHeapReport = (HeapReport*)outReport;
@@ -207,7 +208,7 @@ Void HeapAllocator::GenerateReport( AllocatorReport * outReport ) const
         if ( iRead >= HEAPREPORT_MAX_TREESPAN )
             iRead -= HEAPREPORT_MAX_TREESPAN;
 
-        // Update binheap size
+        // Update BinHeap size
         ++(outHeapReport->iBinHeapSize);
 
         // leave holes for empty leaves (at the deepest level)
@@ -227,7 +228,7 @@ Void HeapAllocator::GenerateReport( AllocatorReport * outReport ) const
         UInt iCount = 0;
         ChunkListNode * pListNode = pNode->pNext;
         while ( pListNode != NULL ) {
-            outHeapReport->arrListNodes[iIndex][iCount] = (Byte*)( _Chunk_GetHead(pListNode) );
+            outHeapReport->arrListNodes[iIndex*HEAPREPORT_MAX_LISTSIZE + iCount] = (Byte*)( _Chunk_GetHead(pListNode) );
             ++iCount;
             pListNode = pListNode->pNext;
         }
@@ -247,22 +248,23 @@ Void HeapAllocator::GenerateReport( AllocatorReport * outReport ) const
     outHeapReport->arrChunkMap = s_ScratchMemory5;
     outHeapReport->arrPrevSizes = s_ScratchMemory6;
     outHeapReport->arrSizes = s_ScratchMemory7;
+    outHeapReport->arrIsAllocated = s_ScratchMemory8;
     ChunkHead * pChunk = (ChunkHead*)m_pHeapMemory;
     ChunkHead * pHeapEnd = (ChunkHead*)( m_pHeapMemory + m_iHeapSize );
     iIndex = 0;
     while( pChunk < pHeapEnd ) {
-        // Update binheap size
+        // Update ChunkMap size
         ++(outHeapReport->iChunkMapSize);
 
         // record chunk
         outHeapReport->arrChunkMap[iIndex] = (Byte*)pChunk;
         outHeapReport->arrPrevSizes[iIndex] = _Chunk_PrevSize( pChunk ) * AlignUnit;
         outHeapReport->arrSizes[iIndex] = _Chunk_Size( pChunk ) * AlignUnit;
+        outHeapReport->arrIsAllocated[iIndex] = _Chunk_IsAllocated( pChunk );
 
         ++iIndex;
         pChunk = (ChunkHead*)_AU_Next( (Byte*)pChunk, _Chunk_Size(pChunk) );
     }
-
 }
 Void HeapAllocator::LogReport( const AllocatorReport * pReport ) const
 {
@@ -290,11 +292,13 @@ Void HeapAllocator::LogReport( const AllocatorReport * pReport ) const
     // BinHeap
     ErrorFn->Log( logFile, TEXT("\n => BinHeap Structure (Breadth-First, Span size = %ud) :"), pHeapReport->iBinHeapSize );
     for( i = 0; i < pHeapReport->iBinHeapSize; ++i ) {
-        ErrorFn->Log( logFile, TEXT("\n\t - HeapNode (%u8x) : Balance = %d, ListSize = %ud"),
-                      pHeapReport->arrHeapNodes[i], pHeapReport->arrBalances[i], pHeapReport->arrListSizes[i] );
+        ChunkHead * pHead = (ChunkHead*)( pHeapReport->arrHeapNodes[i] );
+        UInt iSize = (pHead != NULL) ? (_Chunk_Size(pHead) * AlignUnit) : 0;
+        ErrorFn->Log( logFile, TEXT("\n\t - HeapNode (%u8x) : ChunkSize = %ud, Balance = %d, ListSize = %ud"),
+                      pHeapReport->arrHeapNodes[i], iSize, pHeapReport->arrBalances[i], pHeapReport->arrListSizes[i] );
         ErrorFn->Log( logFile, TEXT("\n\t   -> ListNodes :") );
         for( j = 0; j < pHeapReport->arrListSizes[i]; ++j )
-            ErrorFn->Log( logFile, TEXT(" %u8x"), pHeapReport->arrListNodes[i][j] );
+            ErrorFn->Log( logFile, TEXT(" %u8x"), pHeapReport->arrListNodes[i*HEAPREPORT_MAX_LISTSIZE + j] );
     }
 
     // ChunkMap
@@ -302,6 +306,10 @@ Void HeapAllocator::LogReport( const AllocatorReport * pReport ) const
     for( i = 0; i < pHeapReport->iChunkMapSize; ++i ) {
         ErrorFn->Log ( logFile, TEXT("\n\t - Chunk (%u8x) : PrevSize = %ud, Size = %ud"),
                        pHeapReport->arrChunkMap[i], pHeapReport->arrPrevSizes[i], pHeapReport->arrSizes[i] );
+        if ( pHeapReport->arrIsAllocated[i] )
+            ErrorFn->Log( logFile, TEXT(" - Allocated") );
+        else
+            ErrorFn->Log( logFile, TEXT(" - Free") );
         if ( pHeapReport->arrChunkMap[i] == pHeapReport->pLastFreed )
             ErrorFn->Log( logFile, TEXT(" (LastFreed)") );
     }
@@ -325,7 +333,7 @@ ChunkHead * HeapAllocator::_BinHeap_RequestChunk( UInt iMinSize )
 		_rec_Remove( &m_pBinHeapRoot, m_iHeightChange, pChunk );
 	else {
         ChunkListNode * pListNode = pHeapNode->pNext;
-        pChunk = _Chunk_GetHead( pListNode);
+        pChunk = _Chunk_GetHead( pListNode );
         pHeapNode->pNext = pListNode->pNext;
         if ( pListNode->pNext != NULL )
             pListNode->pNext->pPrev = (ChunkListNode*)pHeapNode;

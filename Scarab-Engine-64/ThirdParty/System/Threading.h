@@ -116,7 +116,7 @@ typedef struct _CriticalSectionDesc {
     Long RecursionCount;
     Void * OwningThread;
     Void * LockSemaphore;
-    UIntPtr SpinCount;
+    SizeT SpinCount;
 } CriticalSectionDesc;
 
     // Prototypes

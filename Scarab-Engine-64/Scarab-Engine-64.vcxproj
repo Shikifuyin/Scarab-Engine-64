@@ -157,6 +157,7 @@
     <ClInclude Include="Lib\Memory\Allocators\MemoryAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\PoolAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\StackAllocator.h" />
+    <ClInclude Include="Lib\Memory\MemoryManager.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.h" />
@@ -194,6 +195,7 @@
     <None Include="Lib\Memory\Allocators\MemoryAllocator.inl" />
     <None Include="Lib\Memory\Allocators\PoolAllocator.inl" />
     <None Include="Lib\Memory\Allocators\StackAllocator.inl" />
+    <None Include="Lib\Memory\MemoryManager.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.inl" />
@@ -231,6 +233,7 @@
     <ClCompile Include="Lib\Memory\Allocators\MemoryAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\PoolAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\StackAllocator.cpp" />
+    <ClCompile Include="Lib\Memory\MemoryManager.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.cpp" />

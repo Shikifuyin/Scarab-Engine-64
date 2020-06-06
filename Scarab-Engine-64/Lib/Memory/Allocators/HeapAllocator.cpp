@@ -21,9 +21,8 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // HeapAllocator implementation
-HeapAllocator::HeapAllocator( UInt iContextID, const GChar * strContextName,
-                              UInt iAllocatorID, const GChar * strAllocatorName ):
-    MemoryAllocator( iContextID, strContextName, iAllocatorID, strAllocatorName ),
+HeapAllocator::HeapAllocator( const MemoryContext * pParentContext, MemoryAllocatorID iAllocatorID, const GChar * strAllocatorName, SizeT iHeapSize ):
+    MemoryAllocator( pParentContext, iAllocatorID, strAllocatorName ),
     AlignUnit( HEAPMEMORY_ALIGN_NATIVE ), AlignUnitShift( HEAPMEMORY_ALIGN_SHIFT_NATIVE ),
 	ChunkHeadAUSize( _AU_ConvertSize( sizeof(ChunkHead) ) ),
     ChunkHeapNodeAUSize( _AU_ConvertSize( sizeof(ChunkHeapNode) ) ),
@@ -31,24 +30,6 @@ HeapAllocator::HeapAllocator( UInt iContextID, const GChar * strContextName,
 	DummyChunkAUSize( ChunkHeadAUSize ), DummyChunkByteSize( DummyChunkAUSize * AlignUnit ), 
 	MinimalChunkAUSize( ChunkHeadAUSize + ChunkHeapNodeAUSize )
 {
-    m_pBinHeapRoot = NULL;
-    m_iHeightChange = BINHEAP_HEIGHT_NOCHANGE;
-
-    m_pLastFreed = NULL;
-
-    m_pHeapMemory = NULL;
-    m_iHeapSize = 0;
-    m_iTotalFree = 0;
-}
-HeapAllocator::~HeapAllocator()
-{
-    if ( m_pHeapMemory != NULL )
-        SystemFn->MemFree( m_pHeapMemory );
-}
-
-Void HeapAllocator::Initialize( UInt iHeapSize )
-{
-    Assert( m_pHeapMemory == NULL );
     Assert( (iHeapSize & (AlignUnit - 1)) == 0 ); // Forbid unaligned size
 
     // Allocate from system, set whole memory to 0
@@ -63,7 +44,7 @@ Void HeapAllocator::Initialize( UInt iHeapSize )
 
     m_pLastFreed = NULL;
 
-	// Simple & dumb, should make a basic partition with size-hierarchic chunks ...
+    // Simple & dumb, should make a basic partition with size-hierarchic chunks ...
 	// That woudl require another tricky system to avoid coalescing those ones ...
 	ChunkHead * pNewBin = (ChunkHead*)m_pHeapMemory;
 	pNewBin->thisAUSize = _AU_ConvertSize( m_iHeapSize - DummyChunkByteSize );
@@ -74,29 +55,16 @@ Void HeapAllocator::Initialize( UInt iHeapSize )
 	// Add Dummy
 	ChunkHead * pDummy = (ChunkHead*)( m_pHeapMemory + m_iHeapSize - DummyChunkByteSize );
 	pDummy->thisAUSize = DummyChunkAUSize;
-	pDummy->prevAUSize = pNewBin->thisAUSize; // Notice this is dependant from above
+	pDummy->prevAUSize = pNewBin->thisAUSize;
 }
-Void HeapAllocator::Cleanup()
+HeapAllocator::~HeapAllocator()
 {
-    Assert( m_pHeapMemory != NULL );
-
     SystemFn->MemFree( m_pHeapMemory );
-
-    m_pBinHeapRoot = NULL;
-    m_iHeightChange = BINHEAP_HEIGHT_NOCHANGE;
-
-    m_pLastFreed = NULL;
-
-    m_pHeapMemory = NULL;
-    m_iHeapSize = 0;
-    m_iTotalFree = 0;    
 }
 
-Byte * HeapAllocator::Allocate( UInt iSize )
+Void * HeapAllocator::Allocate( SizeT iSize )
 {
-    Assert( m_pHeapMemory != NULL );
-
-	UInt iAUSize = _AU_ConvertSize(iSize);
+    AUSize iAUSize = _AU_ConvertSize(iSize);
     if ( iAUSize < ChunkHeapNodeAUSize )
         iAUSize = ChunkHeapNodeAUSize;
 	iAUSize += ChunkHeadAUSize; // Total Size to alloc in AUs
@@ -129,7 +97,7 @@ Byte * HeapAllocator::Allocate( UInt iSize )
         return NULL;
 
 	// Split chunk to fit requested size
-	UInt iRemain = ( _Chunk_Size(pHead) - iAUSize );
+	AUSize iRemain = ( _Chunk_Size(pHead) - iAUSize );
 	if ( iRemain >= MinimalChunkAUSize ) {
 		ChunkHead * pRemain = (ChunkHead*)_AU_Next( (Byte*)pHead, iAUSize );
 		ChunkHead * pNext = (ChunkHead*)_AU_Next( (Byte*)pHead, _Chunk_Size(pHead) );
@@ -145,9 +113,8 @@ Byte * HeapAllocator::Allocate( UInt iSize )
 	_Chunk_MarkAllocated( pHead );
 	return (Byte*)( _Chunk_GetHeapNode(pHead) );
 }
-Void HeapAllocator::Free( Byte * pMemory )
+Void HeapAllocator::Free( Void * pMemory )
 {
-    Assert( m_pHeapMemory != NULL );
     Assert( pMemory != NULL );
 
     ChunkListNode * pListNode = (ChunkListNode*)pMemory;
@@ -175,17 +142,17 @@ Void HeapAllocator::GenerateReport( AllocatorReport * outReport ) const
     static UInt s_ScratchMemory3[HEAPREPORT_MAX_TREESPAN];
     static Byte * s_ScratchMemory4[HEAPREPORT_MAX_TREESPAN * HEAPREPORT_MAX_LISTSIZE];
     static Byte * s_ScratchMemory5[HEAPREPORT_MAX_CHUNKS];
-    static UInt s_ScratchMemory6[HEAPREPORT_MAX_CHUNKS];
-    static UInt s_ScratchMemory7[HEAPREPORT_MAX_CHUNKS];
+    static SizeT s_ScratchMemory6[HEAPREPORT_MAX_CHUNKS];
+    static SizeT s_ScratchMemory7[HEAPREPORT_MAX_CHUNKS];
     static Bool s_ScratchMemory8[HEAPREPORT_MAX_CHUNKS];
 
     Assert( outReport != NULL );
     HeapReport * outHeapReport = (HeapReport*)outReport;
     UInt iIndex;
 
-    outHeapReport->idMemoryContext = m_idContext;
-    outHeapReport->strContextName = m_strContextName;
-    outHeapReport->idMemoryAllocator = m_idAllocator;
+    outHeapReport->iContextID = m_pParentContext->iContextID;
+    outHeapReport->strContextName = m_pParentContext->strName;
+    outHeapReport->iAllocatorID = m_iAllocatorID;
     outHeapReport->strAllocatorName = m_strAllocatorName;
     outHeapReport->pBaseAddress = m_pHeapMemory;
     outHeapReport->iTotalSize = m_iHeapSize;
@@ -277,13 +244,13 @@ Void HeapAllocator::LogReport( const AllocatorReport * pReport ) const
     Bool bOk = logFile.Seek( FILE_SEEK_END, 0 );
     Assert( bOk );
 
-    ErrorFn->Log( logFile, TEXT("Heap Report :") ); // Add Timestamps ? maybe usefull later ...
+    ErrorFn->Log( logFile, TEXT("Heap Report :") );
 
-    ErrorFn->Log( logFile, TEXT("\n => Memory Context ID     : %ud"),  pHeapReport->idMemoryContext );
+    ErrorFn->Log( logFile, TEXT("\n => Memory Context ID     : %ud"),  pHeapReport->iContextID );
     ErrorFn->Log( logFile, TEXT("\n => Memory Context Name   : %s"),   pHeapReport->strContextName );
-    ErrorFn->Log( logFile, TEXT("\n => Memory Allocator ID   : %ud"),  pHeapReport->idMemoryAllocator );
+    ErrorFn->Log( logFile, TEXT("\n => Memory Allocator ID   : %ud"),  pHeapReport->iAllocatorID );
     ErrorFn->Log( logFile, TEXT("\n => Memory Allocator Name : %s"),   pHeapReport->strAllocatorName );
-    ErrorFn->Log( logFile, TEXT("\n => Base Address          : %u8x"), pHeapReport->pBaseAddress );
+    ErrorFn->Log( logFile, TEXT("\n => Base Address          : %u8x"), (UIntPtr)(pHeapReport->pBaseAddress) );
     ErrorFn->Log( logFile, TEXT("\n => Total size            : %ud"),  pHeapReport->iTotalSize );
     ErrorFn->Log( logFile, TEXT("\n => Allocated size        : %ud"),  pHeapReport->iAllocatedSize );
     ErrorFn->Log( logFile, TEXT("\n => Free size             : %ud"),  pHeapReport->iFreeSize );
@@ -293,19 +260,19 @@ Void HeapAllocator::LogReport( const AllocatorReport * pReport ) const
     ErrorFn->Log( logFile, TEXT("\n => BinHeap Structure (Breadth-First, Span size = %ud) :"), pHeapReport->iBinHeapSize );
     for( i = 0; i < pHeapReport->iBinHeapSize; ++i ) {
         ChunkHead * pHead = (ChunkHead*)( pHeapReport->arrHeapNodes[i] );
-        UInt iSize = (pHead != NULL) ? (_Chunk_Size(pHead) * AlignUnit) : 0;
+        SizeT iSize = (pHead != NULL) ? (_Chunk_Size(pHead) * AlignUnit) : 0;
         ErrorFn->Log( logFile, TEXT("\n\t - HeapNode (%u8x) : ChunkSize = %ud, Balance = %d, ListSize = %ud"),
                       pHeapReport->arrHeapNodes[i], iSize, pHeapReport->arrBalances[i], pHeapReport->arrListSizes[i] );
         ErrorFn->Log( logFile, TEXT("\n\t   -> ListNodes :") );
         for( j = 0; j < pHeapReport->arrListSizes[i]; ++j )
-            ErrorFn->Log( logFile, TEXT(" %u8x"), pHeapReport->arrListNodes[i*HEAPREPORT_MAX_LISTSIZE + j] );
+            ErrorFn->Log( logFile, TEXT(" %u8x"), (UIntPtr)(pHeapReport->arrListNodes[i*HEAPREPORT_MAX_LISTSIZE + j]) );
     }
 
     // ChunkMap
     ErrorFn->Log( logFile, TEXT("\n => ChunkMap Structure (Starting from BaseAddress, Chunk count = %ud) :"), pHeapReport->iChunkMapSize );
     for( i = 0; i < pHeapReport->iChunkMapSize; ++i ) {
-        ErrorFn->Log ( logFile, TEXT("\n\t - Chunk (%u8x) : PrevSize = %ud, Size = %ud"),
-                       pHeapReport->arrChunkMap[i], pHeapReport->arrPrevSizes[i], pHeapReport->arrSizes[i] );
+        ErrorFn->Log ( logFile, TEXT("\n\t -> Chunk (%u8x) : PrevSize = %ud, Size = %ud"),
+                       (UIntPtr)(pHeapReport->arrChunkMap[i]), pHeapReport->arrPrevSizes[i], pHeapReport->arrSizes[i] );
         if ( pHeapReport->arrIsAllocated[i] )
             ErrorFn->Log( logFile, TEXT(" - Allocated") );
         else
@@ -321,7 +288,7 @@ Void HeapAllocator::LogReport( const AllocatorReport * pReport ) const
 
 /////////////////////////////////////////////////////////////////////////////////
 
-ChunkHead * HeapAllocator::_BinHeap_RequestChunk( UInt iMinSize )
+ChunkHead * HeapAllocator::_BinHeap_RequestChunk( AUSize iMinSize )
 {
     ChunkHeapNode * pHeapNode = _Search( iMinSize );
     if ( pHeapNode == NULL )
@@ -628,14 +595,14 @@ Bool HeapAllocator::_rec_Remove( ChunkHeapNode ** ppNode, BinHeapHeightChange & 
 		heightChange = BINHEAP_HEIGHT_NOCHANGE;
 	return true;
 }
-ChunkHeapNode * HeapAllocator::_Search( UInt iMinSize ) const
+ChunkHeapNode * HeapAllocator::_Search( AUSize iMinSize ) const
 {
     ChunkHeapNode * pNode = m_pBinHeapRoot;
     ChunkHeapNode * pBestNode = NULL;
 
     while( pNode != NULL ) {
         ChunkHead * pNodeChunk = _Chunk_GetHead( pNode );
-        UInt iNodeSize = _Chunk_Size( pNodeChunk );
+        AUSize iNodeSize = _Chunk_Size( pNodeChunk );
         // Perfect fit, return ASAP !
         if ( iNodeSize == iMinSize )
             return pNode;

@@ -20,12 +20,16 @@
 inline AllocatorType HeapAllocator::GetType() const {
     return ALLOCATOR_HEAP;
 }
-inline UInt HeapAllocator::GetBlockSize( Byte * pMemory ) const {
-    Assert( m_pHeapMemory != NULL );
-    Assert( pMemory != NULL );
-    Assert( pMemory >= m_pHeapMemory );
-    Assert( pMemory < (m_pHeapMemory + m_iHeapSize) );
-
+inline Bool HeapAllocator::CheckAddressRange( Void * pMemory ) const {
+    Byte * pAddress = (Byte*)pMemory;
+    if ( pMemory < m_pHeapMemory )
+        return false;
+    if ( pMemory >= m_pHeapMemory + m_iTotalFree )
+        return false;
+    return true;
+}
+inline SizeT HeapAllocator::GetBlockSize( Void * pMemory ) const {
+    Assert( CheckAddressRange(pMemory) );
     ChunkListNode * pNode = (ChunkListNode*)pMemory;
 	ChunkHead * pHead = _Chunk_GetHead( pNode );
     return ( _Chunk_Size(pHead) - ChunkHeadAUSize ) * AlignUnit;
@@ -33,7 +37,7 @@ inline UInt HeapAllocator::GetBlockSize( Byte * pMemory ) const {
 
 /////////////////////////////////////////////////////////////////////////////////
 
-inline AUSize HeapAllocator::_AU_ConvertSize( UInt iSize ) const {
+inline AUSize HeapAllocator::_AU_ConvertSize( SizeT iSize ) const {
     if ( iSize < AlignUnit )
         iSize = AlignUnit;
     else {
@@ -49,13 +53,13 @@ inline Bool HeapAllocator::_AU_IsAllocated( AUSize iAUSize ) const {
 inline Bool HeapAllocator::_AU_IsFree( AUSize iAUSize ) const {
     return ( (iAUSize & AUSIZE_FREE_MASK) == 0 );
 }
-inline UInt HeapAllocator::_AU_Size( AUSize iAUSize ) const {
+inline AUSize HeapAllocator::_AU_Size( AUSize iAUSize ) const {
     return ( iAUSize & AUSIZE_SIZE_MASK );
 }
-inline Byte * HeapAllocator::_AU_Next( Byte * pChunk, UInt nAAU ) const {
+inline Byte * HeapAllocator::_AU_Next( Byte * pChunk, AUSize nAAU ) const {
     return ( pChunk + (nAAU * AlignUnit) );
 }
-inline Byte * HeapAllocator::_AU_Prev( Byte * pChunk, UInt nAAU ) const {
+inline Byte * HeapAllocator::_AU_Prev( Byte * pChunk, AUSize nAAU ) const {
     return ( pChunk - (nAAU * AlignUnit) );
 }
 
@@ -71,10 +75,10 @@ inline Bool HeapAllocator::_Chunk_IsAllocated( const ChunkHead * pChunk ) const 
 inline Bool HeapAllocator::_Chunk_IsFree( const ChunkHead * pChunk ) const {
     return _AU_IsFree( pChunk->thisAUSize );
 }
-inline UInt HeapAllocator::_Chunk_PrevSize( const ChunkHead * pChunk ) const {
+inline AUSize HeapAllocator::_Chunk_PrevSize( const ChunkHead * pChunk ) const {
     return _AU_Size( pChunk->prevAUSize );
 }
-inline UInt HeapAllocator::_Chunk_Size( const ChunkHead * pChunk ) const {
+inline AUSize HeapAllocator::_Chunk_Size( const ChunkHead * pChunk ) const {
     return _AU_Size( pChunk->thisAUSize );
 }
 inline ChunkHeapNode * HeapAllocator::_Chunk_GetHeapNode( ChunkHead * pChunk ) const {
@@ -90,8 +94,8 @@ inline ChunkHead * HeapAllocator::_Chunk_GetHead( ChunkListNode * pListNode ) co
     return (ChunkHead*)_AU_Prev( (Byte*)pListNode, ChunkHeadAUSize );
 }
 inline Int HeapAllocator::_Compare( const ChunkHead * pLHS, const ChunkHead * pRHS ) const {
-    UInt lhsSize = _Chunk_Size(pLHS);
-    UInt rhsSize = _Chunk_Size(pRHS);
+    AUSize lhsSize = _Chunk_Size(pLHS);
+    AUSize rhsSize = _Chunk_Size(pRHS);
     if (lhsSize < rhsSize) return +1;
     if (lhsSize > rhsSize) return -1;
     return 0;

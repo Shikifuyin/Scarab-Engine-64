@@ -21,36 +21,34 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // BreakAllocator implementation
-BreakAllocator::BreakAllocator( UInt iContextID, const GChar * strContextName,
-                                UInt iAllocatorID, const GChar * strAllocatorName ):
-    MemoryAllocator( iContextID, strContextName, iAllocatorID, strAllocatorName )
+BreakAllocator::BreakAllocator( const MemoryContext * pParentContext, MemoryAllocatorID iAllocatorID, const GChar * strAllocatorName, SizeT iRangeSize, SizeT iBlockSize ):
+    MemoryAllocator( pParentContext, iAllocatorID, strAllocatorName )
 {
     m_pMemoryRange = NULL;
+    m_iRangeSize = iRangeSize;
+    m_iBlockSize = iBlockSize;
+    m_pFirstBlock = NULL;
+    m_pCurrentBlock = NULL;
+
+    ////////////////////////////
 
     Assert( false );
 }
 BreakAllocator::~BreakAllocator()
 {
-    if ( m_pMemoryRange != NULL )
-        SystemFn->MemFree( m_pMemoryRange );
-}
-
-Void BreakAllocator::Initialize( UInt /*iBlockSize*/, UInt /*iRangeSize*/ )
-{
-    ////////////////////////////
-}
-Void BreakAllocator::Cleanup()
-{
     ////////////////////////////
 }
 
-Byte * BreakAllocator::Allocate( UInt /*iSize*/ )
+Void * BreakAllocator::Allocate( SizeT /*iSize*/ )
 {
     ////////////////////////////
+
     return NULL;
 }
-Void BreakAllocator::Free( Byte * /*pMemory*/ )
+Void BreakAllocator::Free( Void * pMemory )
 {
+    Assert( pMemory != NULL );
+
     ////////////////////////////
 }
 

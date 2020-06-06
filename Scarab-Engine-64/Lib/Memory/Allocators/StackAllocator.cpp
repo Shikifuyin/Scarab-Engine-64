@@ -21,75 +21,54 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // StackAllocator implementation
-StackAllocator::StackAllocator( UInt iContextID, const GChar * strContextName,
-                                UInt iAllocatorID, const GChar * strAllocatorName ):
-    MemoryAllocator( iContextID, strContextName, iAllocatorID, strAllocatorName )
+StackAllocator::StackAllocator( const MemoryContext * pParentContext, MemoryAllocatorID iAllocatorID, const GChar * strAllocatorName, SizeT iStackSize ):
+    MemoryAllocator( pParentContext, iAllocatorID, strAllocatorName )
 {
-    m_pBuffer = NULL;
-    m_iTotalSize = 0;
-    m_pStackTop = NULL;
-    m_pFrameBase = NULL;
-    m_iFrameLevel = 0;
-}
-StackAllocator::~StackAllocator()
-{
-    if ( m_pBuffer != NULL )
-        SystemFn->MemFree( m_pBuffer );
-}
-
-Void StackAllocator::Initialize( UInt iStackSize )
-{
-    Assert( m_pBuffer == NULL );
-
+    m_pBuffer = (Byte*)( SystemFn->MemAlloc(iStackSize) );
     m_iTotalSize = iStackSize;
-    m_pBuffer = (Byte*)( SystemFn->MemAlloc(m_iTotalSize) );
 
     m_pStackTop = m_pBuffer;
     m_pFrameBase = m_pBuffer;
     m_iFrameLevel = 0;
 }
-Void StackAllocator::Cleanup()
+StackAllocator::~StackAllocator()
 {
-    Assert( m_pBuffer != NULL );
-    
     SystemFn->MemFree( m_pBuffer );
-
-    m_pBuffer = NULL;
-    m_iTotalSize = 0;
-    m_pStackTop = NULL;
-    m_pFrameBase = NULL;
-    m_iFrameLevel = 0;
 }
 
-Byte * StackAllocator::Allocate( UInt iSize )
+Void * StackAllocator::Allocate( SizeT iSize )
 {
-    Assert( m_pBuffer != NULL );
-    if ( ((UInt)(m_pStackTop - m_pBuffer)) + iSize > m_iTotalSize )
+    if ( ((SizeT)(m_pStackTop - m_pBuffer)) + iSize > m_iTotalSize )
         return NULL;
 
     Byte * pPtr = m_pStackTop;
     m_pStackTop += iSize;
     return pPtr;
 }
-Void StackAllocator::Free( UInt iSize )
+Void StackAllocator::Free( Void * pMemory )
 {
-    Assert( m_pBuffer != NULL );
+    Assert( pMemory != NULL );
 
-    if ( iSize > (UInt)(m_pStackTop - m_pFrameBase) )
+    Byte * pTmp = (Byte *)pMemory;
+    Assert( pTmp >= m_pFrameBase && pTmp < m_pStackTop );
+    SizeT iSize = ( m_pStackTop - (Byte*)pMemory );
+    Free( iSize );
+}
+
+Void StackAllocator::Free( SizeT iSize )
+{
+    if ( iSize > (SizeT)(m_pStackTop - m_pFrameBase) )
         m_pStackTop = m_pFrameBase;
     else
         m_pStackTop -= iSize;
 }
 Void StackAllocator::Free()
 {
-    Assert( m_pBuffer != NULL );
-
     m_pStackTop = m_pFrameBase;
 }
 
 UInt StackAllocator::BeginFrame()
 {
-    Assert( m_pBuffer != NULL );
     Assert( (m_pStackTop + sizeof(UIntPtr) - m_pBuffer) < m_iTotalSize );
 
     *((UIntPtr*)m_pStackTop) = (UIntPtr)m_pFrameBase;
@@ -101,7 +80,6 @@ UInt StackAllocator::BeginFrame()
 }
 Void StackAllocator::EndFrame()
 {
-    Assert( m_pBuffer != NULL );
     Assert( m_iFrameLevel > 0 );
 
     m_pStackTop = m_pFrameBase;
@@ -111,7 +89,6 @@ Void StackAllocator::EndFrame()
 }
 Void StackAllocator::UnrollFrames( UInt iTargetFrame )
 {
-    Assert( m_pBuffer != NULL );
     Assert( m_iFrameLevel > iTargetFrame );
 
     while( m_iFrameLevel > iTargetFrame )
@@ -121,18 +98,18 @@ Void StackAllocator::UnrollFrames( UInt iTargetFrame )
 Void StackAllocator::GenerateReport( AllocatorReport * outReport ) const
 {
     static Byte * s_ScratchMemory1[STACKREPORT_MAX_FRAMES];
-    static UInt s_ScratchMemory2[STACKREPORT_MAX_FRAMES];
+    static SizeT s_ScratchMemory2[STACKREPORT_MAX_FRAMES];
     Assert( m_iFrameLevel < STACKREPORT_MAX_FRAMES );
 
     Assert( outReport != NULL );
     StackReport * outStackReport = (StackReport*)outReport;
-    outStackReport->idMemoryContext = m_idContext;
-    outStackReport->strContextName = m_strContextName;
-    outStackReport->idMemoryAllocator = m_idAllocator;
+    outStackReport->iContextID = m_pParentContext->iContextID;
+    outStackReport->strContextName = m_pParentContext->strName;
+    outStackReport->iAllocatorID = m_iAllocatorID;
     outStackReport->strAllocatorName = m_strAllocatorName;
     outStackReport->pBaseAddress = m_pBuffer;
     outStackReport->iTotalSize = m_iTotalSize;
-    outStackReport->iAllocatedSize = (UInt)( m_pStackTop - m_pBuffer );
+    outStackReport->iAllocatedSize = (SizeT)( m_pStackTop - m_pBuffer );
     outStackReport->iFreeSize = ( m_iTotalSize - outStackReport->iAllocatedSize );
     outStackReport->iFrameLevel = m_iFrameLevel;
     outStackReport->iFrameCount = m_iFrameLevel + 1;
@@ -145,7 +122,7 @@ Void StackAllocator::GenerateReport( AllocatorReport * outReport ) const
     Byte * pCurBase = m_pFrameBase;
     while( true ) {
         outStackReport->arrFrameBases[iCurFrame] = pCurBase;
-        outStackReport->arrFrameSizes[iCurFrame] = (UInt)( pCurTop - pCurBase );
+        outStackReport->arrFrameSizes[iCurFrame] = (SizeT)( pCurTop - pCurBase );
         if ( iCurFrame == 0 )
             break;
         pCurTop = pCurBase - sizeof(UIntPtr);
@@ -163,13 +140,13 @@ Void StackAllocator::LogReport( const AllocatorReport * pReport ) const
     Bool bOk = logFile.Seek( FILE_SEEK_END, 0 );
     Assert( bOk );
 
-    ErrorFn->Log( logFile, TEXT("Stack Report :") ); // Add Timestamps ? maybe usefull later ...
+    ErrorFn->Log( logFile, TEXT("Stack Report :") );
 
-    ErrorFn->Log( logFile, TEXT("\n => Memory Context ID       : %ud"),  pStackReport->idMemoryContext );
+    ErrorFn->Log( logFile, TEXT("\n => Memory Context ID       : %ud"),  pStackReport->iContextID );
     ErrorFn->Log( logFile, TEXT("\n => Memory Context Name     : %s"),   pStackReport->strContextName );
-    ErrorFn->Log( logFile, TEXT("\n => Memory Allocator ID     : %ud"),  pStackReport->idMemoryAllocator );
+    ErrorFn->Log( logFile, TEXT("\n => Memory Allocator ID     : %ud"),  pStackReport->iAllocatorID );
     ErrorFn->Log( logFile, TEXT("\n => Memory Allocator Name   : %s"),   pStackReport->strAllocatorName );
-    ErrorFn->Log( logFile, TEXT("\n => Base Address            : %u8x"), pStackReport->pBaseAddress );
+    ErrorFn->Log( logFile, TEXT("\n => Base Address            : %u8x"), (UIntPtr)(pStackReport->pBaseAddress) );
     ErrorFn->Log( logFile, TEXT("\n => Total size              : %ud"),  pStackReport->iTotalSize );
     ErrorFn->Log( logFile, TEXT("\n => Allocated size          : %ud"),  pStackReport->iAllocatedSize );
     ErrorFn->Log( logFile, TEXT("\n => Free size               : %ud"),  pStackReport->iFreeSize );
@@ -178,7 +155,7 @@ Void StackAllocator::LogReport( const AllocatorReport * pReport ) const
 
     ErrorFn->Log( logFile, TEXT("\n => FrameLayout (Address,Size) :") );
     for( UInt i = 0; i < pStackReport->iFrameCount; ++i )
-        ErrorFn->Log( logFile, TEXT(" (%u8x,%ud)"), (UIntPtr)(pStackReport->arrFrameBases[i]), pStackReport->arrFrameSizes[i] );
+        ErrorFn->Log( logFile, TEXT("\n\t -> (%u8x,%ud)"), (UIntPtr)(pStackReport->arrFrameBases[i]), pStackReport->arrFrameSizes[i] );
 
     ErrorFn->Log( logFile, TEXT("\n\n") );
 

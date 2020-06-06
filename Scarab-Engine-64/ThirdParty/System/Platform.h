@@ -142,6 +142,8 @@ typedef	UInt64  QWord;
     typedef UInt32 UIntPtr;
 #endif
 
+typedef UIntPtr SizeT;
+
 /////////////////////////////////////////////////////////////////////////////////
 // Built-in types limits
     // Byte
@@ -255,6 +257,40 @@ typedef Byte * VArgPtr;
 #define VArg_Init( _vargptr, _lastarg ) ( (_vargptr) = (VArgPtr)(&(_lastarg)) + _VArg_SizeOf(_lastarg) )
 #define VArg_Get( _vargptr, _argtype )  ( *(_argtype*)( ((_vargptr)+=_VArg_SizeOf(_argtype)) - _VArg_SizeOf(_argtype) ) )
 #define VArg_Destroy( _vargptr )        ( (_vargptr) = NULL )
+
+/////////////////////////////////////////////////////////////////////////////////
+// Variadic Macros : Default parameters / Overloading !
+// This is a piece of preprocessor art !
+// Supports up to 8 arguments ... More than enough !
+
+    // Internals
+#define _VARIADIC_MACRO_COLLAPSE( _f0, _f1, _f2, _f3, _f4, _f5, _f6, _f7, _f8, ... ) \
+    _f8
+
+#define _VARIADIC_MACRO_RECOMPOSE( _args_with_parentheses ) \
+    _VARIADIC_MACRO_COLLAPSE _args_with_parentheses
+
+#define _VARIADIC_MACRO_PICK_FROM_ARGCOUNT( F, ... ) \
+    _VARIADIC_MACRO_RECOMPOSE (( \
+        __VA_ARGS__, \
+        F##_8, F##_7, F##_6, F##_5, F##_4, F##_3, F##_2, F##_1, \
+    ))
+
+#define _VARIADIC_MACRO_NOARG_EXPAND(F) \
+    ,,,,,,,,F##_0
+
+#define _VARIADIC_MACRO_SELECTOR( F, ... ) \
+    _VARIADIC_MACRO_PICK_FROM_ARGCOUNT( F, _VARIADIC_MACRO_NOARG_EXPAND __VA_ARGS__ (F) )
+
+    // Main Macro
+#define VARIADIC_MACRO( F, ... ) \
+    _VARIADIC_MACRO_SELECTOR( F, __VA_ARGS__ ) (__VA_ARGS__)
+
+    // Usage
+//#define my_var_macro(...)           VARIADIC_MACRO( basename, __VA_ARGS__ )
+//#define basename_0()                basename_1( default_arg_1 )
+//#define basename_1( arg1 )          basename_2( arg1, default_arg_2 )
+//#define basename_2( arg1, arg2 )    printf( arg1, arg2 )
 
 /////////////////////////////////////////////////////////////////////////////////
 // Bit-wise functions

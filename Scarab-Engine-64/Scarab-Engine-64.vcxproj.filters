@@ -192,6 +192,9 @@
     <ClInclude Include="Lib\Memory\Allocators\HeapAllocator.h">
       <Filter>Header Files\Lib\Memory\Allocators</Filter>
     </ClInclude>
+    <ClInclude Include="Lib\Memory\MemoryManager.h">
+      <Filter>Header Files\Lib\Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\System\Platform.inl">
@@ -299,6 +302,9 @@
     <None Include="Lib\Memory\Allocators\HeapAllocator.inl">
       <Filter>Source Files\Lib\Memory\Allocators</Filter>
     </None>
+    <None Include="Lib\Memory\MemoryManager.inl">
+      <Filter>Source Files\Lib\Memory</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -405,6 +411,9 @@
     </ClCompile>
     <ClCompile Include="Lib\Memory\Allocators\HeapAllocator.cpp">
       <Filter>Source Files\Lib\Memory\Allocators</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Memory\MemoryManager.cpp">
+      <Filter>Source Files\Lib\Memory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

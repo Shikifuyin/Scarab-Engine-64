@@ -20,11 +20,20 @@
 inline AllocatorType PoolAllocator::GetType() const {
     return ALLOCATOR_POOL;
 }
-inline UInt PoolAllocator::GetBlockSize( Byte * /*pMemory*/ ) const {
+inline Bool PoolAllocator::CheckAddressRange( Void * pMemory ) const {
+    Byte * pAddress = (Byte*)pMemory;
+    if ( pAddress < m_pBuffer )
+        return false;
+    if ( pAddress >= m_pBuffer + (m_iTotalChunks * m_iChunkSize) )
+        return false;
+    return true;
+}
+inline SizeT PoolAllocator::GetBlockSize( Void * pMemory ) const {
+    Assert( CheckAddressRange(pMemory) );
     return m_iChunkSize;
 }
 
-inline UInt PoolAllocator::ChunkSize() const {
+inline SizeT PoolAllocator::ChunkSize() const {
     return m_iChunkSize;
 }
 inline UInt PoolAllocator::ChunkCount() const {

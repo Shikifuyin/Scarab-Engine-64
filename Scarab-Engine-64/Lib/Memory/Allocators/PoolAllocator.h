@@ -30,13 +30,16 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
+
+// Reporting System
 #define POOLREPORT_LOGFILE      TEXT("Logs/Memory/PoolReports.log")
 #define POOLREPORT_MAX_FREELIST 1024
+
 typedef struct _pool_report : public AllocatorReport
 {
-    Byte * pBaseAddress;
-    UInt64 iTotalSize;
-    UInt iChunkSize;
+    Void * pBaseAddress;
+    SizeT iTotalSize;
+    SizeT iChunkSize;
     UInt iTotalChunks;
     UInt iAllocatedChunks;
     UInt iFreeChunks;
@@ -48,33 +51,29 @@ typedef struct _pool_report : public AllocatorReport
 class PoolAllocator : public MemoryAllocator
 {
 public:
-	PoolAllocator( UInt iContextID, const GChar * strContextName,
-                   UInt iAllocatorID, const GChar * strAllocatorName );
+	PoolAllocator( const MemoryContext * pParentContext, MemoryAllocatorID iAllocatorID, const GChar * strAllocatorName, SizeT iChunkSize, UInt iTotalChunks );
 	virtual ~PoolAllocator();
 
-    // Deferred initialization
-    Void Initialize( UInt iChunkSize, UInt iTotalChunks );
-    Void Cleanup();
-
     // Getters
-    inline AllocatorType GetType() const;
-    inline UInt GetBlockSize( Byte * pMemory ) const;
+    inline virtual AllocatorType GetType() const;
+    inline virtual Bool CheckAddressRange( Void * pMemory ) const;
+    inline virtual SizeT GetBlockSize( Void * pMemory ) const;
 
-    inline UInt ChunkSize() const;
+    inline SizeT ChunkSize() const;
 	inline UInt ChunkCount() const;
     inline UInt ChunkTotal() const;
 
     // Alloc/Free interface
-    Byte * Allocate();
-	Void Free( Byte * pMemory );
+    virtual Void * Allocate( SizeT );
+	virtual Void Free( Void * pMemory );
 
     // Reporting
-    Void GenerateReport( AllocatorReport * outReport ) const;
-    Void LogReport( const AllocatorReport * pReport ) const;
+    virtual Void GenerateReport( AllocatorReport * outReport ) const;
+    virtual Void LogReport( const AllocatorReport * pReport ) const;
 
 private:
 	Byte * m_pBuffer;
-    UInt m_iChunkSize;
+    SizeT m_iChunkSize;
 	UInt m_iTotalChunks;
 	UInt m_iNextFree;
     UInt m_iChunkCount;

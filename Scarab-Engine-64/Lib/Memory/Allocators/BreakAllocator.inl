@@ -20,14 +20,21 @@
 inline AllocatorType BreakAllocator::GetType() const {
     return ALLOCATOR_BREAK;
 }
-inline UInt BreakAllocator::GetBlockSize( Byte * pMemory ) const {
-    Assert( m_pMemoryRange != NULL );
-    Assert( pMemory >= m_pMemoryRange );
-    Assert( pMemory < (m_pMemoryRange + m_iRangeSize) );
+inline Bool BreakAllocator::CheckAddressRange( Void * pMemory ) const {
+    Byte * pAddress = (Byte*)pMemory;
+    if ( pAddress < m_pMemoryRange )
+        return false;
+    if ( pAddress >= m_pMemoryRange + m_iRangeSize )
+        return false;
+    return true;
+}
+inline SizeT BreakAllocator::GetBlockSize( Void * pMemory ) const {
+    Assert( CheckAddressRange(pMemory) );
 
     ////////////////////////////////////
     return 0;
 }
+
 
 //inline UInt BreakAllocator::_ChunkBlockSize( Byte * pMemory, MemoryContextID idContext ) {
 //    if (idContext == INVALID_OFFSET)

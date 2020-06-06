@@ -33,13 +33,14 @@ typedef struct _block_break_header
     UIntPtr iBreak;
 } BlockBreakHeader;
 
-// Reporting
-#define BREAKREPORT_LOGFILE    TEXT("Logs/Memory/BreakReports.log")
+// Reporting System
+#define BREAKREPORT_LOGFILE TEXT("Logs/Memory/BreakReports.log")
+
 typedef struct _break_report : public AllocatorReport
 {
     Byte * pBaseAddress;
-    UInt64 iTotalSize;
-    UInt iBlockSize;
+    SizeT iTotalSize;
+    SizeT iBlockSize;
     UInt iAllocatedBlocks;
     UInt iFreeBlocks;
     UInt iCurrentBlock;
@@ -51,21 +52,17 @@ typedef struct _break_report : public AllocatorReport
 class BreakAllocator : public MemoryAllocator
 {
 public:
-	BreakAllocator( UInt iContextID, const GChar * strContextName,
-                    UInt iAllocatorID, const GChar * strAllocatorName );
-	~BreakAllocator();
-
-    // Deferred initialization
-    Void Initialize( UInt iBlockSize, UInt iRangeSize );
-    Void Cleanup();
+	BreakAllocator( const MemoryContext * pParentContext, MemoryAllocatorID iAllocatorID, const GChar * strAllocatorName, SizeT iRangeSize, SizeT iBlockSize );
+	virtual ~BreakAllocator();
 
     // Getters
-    inline AllocatorType GetType() const;
-    inline UInt GetBlockSize( Byte * pMemory ) const;
+    inline virtual AllocatorType GetType() const;
+    inline virtual Bool CheckAddressRange( Void * pMemory ) const;
+    inline virtual SizeT GetBlockSize( Void * pMemory ) const;
 
     // Alloc/Free interface
-    Byte * Allocate( UInt iSize );
-    Void Free( Byte * pMemory );
+    virtual Void * Allocate( SizeT iSize );
+    virtual Void Free( Void * pMemory );
 
         // Chunk-Break allocations
     //Void ChunkRequest( UInt iMinFreeSize, MemoryContextID idContext = INVALID_OFFSET );
@@ -77,14 +74,14 @@ public:
     //Byte * ChunkBreak( UInt iSize, MemoryContextID idContext = INVALID_OFFSET );
     //Void ChunkUnbreak( Byte * pMemory, MemoryContextID idContext = INVALID_OFFSET );
 
-    // Reporting
-    Void GenerateReport( AllocatorReport * outReport ) const;
-    Void LogReport( const AllocatorReport * pReport ) const;
+    // Reporting System
+    virtual Void GenerateReport( AllocatorReport * outReport ) const;
+    virtual Void LogReport( const AllocatorReport * pReport ) const;
 
 private:
     Byte * m_pMemoryRange;
-    UInt64 m_iRangeSize;
-    UInt m_iBlockSize;
+    SizeT m_iRangeSize;
+    SizeT m_iBlockSize;
     BlockBreakHeader * m_pFirstBlock;
     BlockBreakHeader * m_pCurrentBlock;
 };

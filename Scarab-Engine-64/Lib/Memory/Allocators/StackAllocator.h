@@ -26,18 +26,21 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
+
+// Reporting System
 #define STACKREPORT_LOGFILE    TEXT("Logs/Memory/StackReports.log")
 #define STACKREPORT_MAX_FRAMES 1024
+
 typedef struct _stack_report : public AllocatorReport
 {
-    Byte * pBaseAddress;
-    UInt iTotalSize;
-    UInt iAllocatedSize;
-    UInt iFreeSize;
+    Void * pBaseAddress;
+    SizeT iTotalSize;
+    SizeT iAllocatedSize;
+    SizeT iFreeSize;
     UInt iFrameLevel;
     UInt iFrameCount;
     Byte ** arrFrameBases; // size = iFrameCount
-    UInt * arrFrameSizes;  // size = iFrameCount
+    SizeT * arrFrameSizes; // size = iFrameCount
 } StackReport;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,26 +48,24 @@ typedef struct _stack_report : public AllocatorReport
 class StackAllocator : public MemoryAllocator
 {
 public:
-	StackAllocator( UInt iContextID, const GChar * strContextName,
-                    UInt iAllocatorID, const GChar * strAllocatorName );
+	StackAllocator( const MemoryContext * pParentContext, MemoryAllocatorID iAllocatorID, const GChar * strAllocatorName, SizeT iStackSize );
 	virtual ~StackAllocator();
 
-    // Deferred initialization
-    Void Initialize( UInt iStackSize );
-    Void Cleanup();
-
     // Getters
-    inline AllocatorType GetType() const;
-    inline UInt GetBlockSize( Byte * pMemory ) const;
+    inline virtual AllocatorType GetType() const;
+    inline virtual Bool CheckAddressRange( Void * pMemory ) const;
+    inline virtual SizeT GetBlockSize( Void * pMemory ) const;
 
     inline UInt FrameLevel() const;
     inline UInt FrameSize() const;
-    inline UInt AllocatedSize() const;
-    inline UInt TotalSize() const;
+    inline SizeT AllocatedSize() const;
+    inline SizeT TotalSize() const;
 
     // Alloc/Free interface
-    Byte * Allocate( UInt iSize );
-    Void Free( UInt iSize );
+    virtual Void * Allocate( SizeT iSize );
+    virtual Void Free( Void * pMemory );
+
+    Void Free( SizeT iSize );
     Void Free();
 
     // Frame management
@@ -73,12 +74,12 @@ public:
     Void UnrollFrames( UInt iTargetFrame );
 
     // Reporting
-    Void GenerateReport( AllocatorReport * outReport ) const;
-    Void LogReport( const AllocatorReport * pReport ) const;
+    virtual Void GenerateReport( AllocatorReport * outReport ) const;
+    virtual Void LogReport( const AllocatorReport * pReport ) const;
 
 private:
 	Byte * m_pBuffer;
-	UInt m_iTotalSize;
+	SizeT m_iTotalSize;
     Byte * m_pStackTop;
     Byte * m_pFrameBase;
     UInt m_iFrameLevel;

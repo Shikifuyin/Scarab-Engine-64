@@ -141,7 +141,7 @@ public:
     Void DebugBreak() const;
 
     // Memory allocation ///////////////////////////////////////////
-    Void * MemAlloc( UInt iSize ) const;
+    Void * MemAlloc( SizeT iSize ) const;
     Void MemFree( Void * pMemory ) const;    
 
     // Time ////////////////////////////////////////////////////////

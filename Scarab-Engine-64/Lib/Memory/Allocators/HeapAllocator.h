@@ -40,9 +40,14 @@
 // | prevAUSize | AUSize | User Data ............................................... | (allocated)
 // |     "      |    "   | pNext | pLeftChild | pRightChild |   iBalance   | ....... | (free, binheapnode)
 // |     "      |    "   | pNext |   pPrev    |   Padding   | FakeBalance  | ....... | (free, binlistnode)
-typedef UInt32 AUSize;
-#define AUSIZE_FREE_MASK 0x80000000 // Mask of the free-flag bit in an AU's size-pointers
-#define AUSIZE_SIZE_MASK 0x7fffffff // Mask of the size bits in an AU's size-pointers
+typedef SizeT AUSize;
+#if defined(SCARAB_ARCHITECTURE_X64)
+    #define AUSIZE_FREE_MASK 0x8000000000000000 // Mask of the free-flag bit in an AU's size-pointers
+    #define AUSIZE_SIZE_MASK 0x7fffffffffffffff // Mask of the size bits in an AU's size-pointers
+#elif defined(SCARAB_ARCHITECTURE_X86)
+    #define AUSIZE_FREE_MASK 0x80000000 // Mask of the free-flag bit in an AU's size-pointers
+    #define AUSIZE_SIZE_MASK 0x7fffffff // Mask of the size bits in an AU's size-pointers
+#endif
 
 typedef struct _chunk_head
 {
@@ -89,17 +94,18 @@ enum BinHeapChild
 #define BINHEAP_IMBALANCE_LEFT(_bal) ( (_bal) < BINHEAP_LEFT_HEAVY )
 #define BINHEAP_IMBALANCE_RIGHT(_bal) ( (_bal) > BINHEAP_RIGHT_HEAVY )
 
-// Reporting
-#define HEAPREPORT_LOGFILE   TEXT("Logs/Memory/HeapReports.log")
+// Reporting System
+#define HEAPREPORT_LOGFILE      TEXT("Logs/Memory/HeapReports.log")
 #define HEAPREPORT_MAX_TREESPAN 256
 #define HEAPREPORT_MAX_LISTSIZE 16
 #define HEAPREPORT_MAX_CHUNKS   1024
+
 typedef struct _heap_report : public AllocatorReport
 {
-    Byte * pBaseAddress;
-    UInt iTotalSize;
-    UInt iAllocatedSize;
-    UInt iFreeSize;
+    Void * pBaseAddress;
+    SizeT iTotalSize;
+    SizeT iAllocatedSize;
+    SizeT iFreeSize;
     Byte * pLastFreed;
 
     UInt iBinHeapSize;    
@@ -110,8 +116,8 @@ typedef struct _heap_report : public AllocatorReport
 
     UInt iChunkMapSize;
     Byte ** arrChunkMap;   //
-    UInt * arrPrevSizes;   //  size = iChunkMapSize
-    UInt * arrSizes;       //
+    SizeT * arrPrevSizes;  //  size = iChunkMapSize
+    SizeT * arrSizes;      //
     Bool * arrIsAllocated; //
 } HeapReport;
 
@@ -120,52 +126,48 @@ typedef struct _heap_report : public AllocatorReport
 class HeapAllocator : public MemoryAllocator
 {
 public:
-    HeapAllocator( UInt iContextID, const GChar * strContextName,
-                   UInt iAllocatorID, const GChar * strAllocatorName );
-	~HeapAllocator();
-
-    // Deferred initialization
-    Void Initialize( UInt iHeapSize );
-    Void Cleanup();
+    HeapAllocator( const MemoryContext * pParentContext, MemoryAllocatorID iAllocatorID, const GChar * strAllocatorName, SizeT iHeapSize );
+	virtual ~HeapAllocator();
 
     // Getters
-    inline AllocatorType GetType() const;
-    inline UInt GetBlockSize( Byte * pMemory ) const;
+    inline virtual AllocatorType GetType() const;
+    inline virtual Bool CheckAddressRange( Void * pMemory ) const;
+    inline virtual SizeT GetBlockSize( Void * pMemory ) const;
 
     // Alloc/Free interface
-	Byte * Allocate( UInt iSize );
-	Void Free( Byte * pMemory );
+	virtual Void * Allocate( SizeT iSize );
+	virtual Void Free( Void * pMemory );
 
     // Reporting
-    Void GenerateReport( AllocatorReport * outReport ) const;
-    Void LogReport( const AllocatorReport * pReport ) const;
+    virtual Void GenerateReport( AllocatorReport * outReport ) const;
+    virtual Void LogReport( const AllocatorReport * pReport ) const;
 
 private:
     // Internal constants
-    const UInt AlignUnit;           // Size of an AU, must be power of 2
-    const UInt AlignUnitShift;      // Shift-size of an AU, 2^Shift = Size
-    const UInt ChunkHeadAUSize;     // Size of ChunkHead, in AUs
-    const UInt ChunkHeapNodeAUSize; // Size of ChunkHeapNode, in AUs
-    const UInt ChunkListNodeAUSize; // Size of ChunkListNode, in AUs
-	const UInt DummyChunkAUSize;
-	const UInt DummyChunkByteSize;
-	const UInt MinimalChunkAUSize;
+    const UInt AlignUnit;             // Size of an AU, must be power of 2
+    const UInt AlignUnitShift;        // Shift-size of an AU, 2^Shift = Size
+    const AUSize ChunkHeadAUSize;     // Size of ChunkHead, in AUs
+    const AUSize ChunkHeapNodeAUSize; // Size of ChunkHeapNode, in AUs
+    const AUSize ChunkListNodeAUSize; // Size of ChunkListNode, in AUs
+	const AUSize DummyChunkAUSize;
+	const SizeT DummyChunkByteSize;
+	const AUSize MinimalChunkAUSize;
 
     // AU helpers
-    inline AUSize _AU_ConvertSize( UInt iSize ) const;
+    inline AUSize _AU_ConvertSize( SizeT iSize ) const;
     inline Bool _AU_IsAllocated( AUSize iAUSize ) const;
 	inline Bool _AU_IsFree( AUSize iAUSize ) const;
-	inline UInt _AU_Size( AUSize iAUSize ) const;
-	inline Byte * _AU_Next( Byte * pChunk, UInt nAAU ) const;
-	inline Byte * _AU_Prev( Byte * pChunk, UInt nAAU ) const;
+	inline AUSize _AU_Size( AUSize iAUSize ) const;
+	inline Byte * _AU_Next( Byte * pChunk, AUSize nAAU ) const;
+	inline Byte * _AU_Prev( Byte * pChunk, AUSize nAAU ) const;
 
     // Chunk helpers
     inline Void _Chunk_MarkAllocated( ChunkHead * pChunk ) const;
 	inline Void _Chunk_MarkFree( ChunkHead * pChunk ) const;
 	inline Bool _Chunk_IsAllocated( const ChunkHead * pChunk ) const;
 	inline Bool _Chunk_IsFree( const ChunkHead * pChunk ) const;
-	inline UInt _Chunk_PrevSize( const ChunkHead * pChunk ) const;
-	inline UInt _Chunk_Size( const ChunkHead * pChunk ) const;
+	inline AUSize _Chunk_PrevSize( const ChunkHead * pChunk ) const;
+	inline AUSize _Chunk_Size( const ChunkHead * pChunk ) const;
     inline ChunkHeapNode * _Chunk_GetHeapNode( ChunkHead * pChunk ) const;
 	inline ChunkListNode * _Chunk_GetListNode( ChunkHead * pChunk ) const;
     inline ChunkHead * _Chunk_GetHead( ChunkHeapNode * pHeapNode ) const;
@@ -173,7 +175,7 @@ private:
     inline Int _Compare( const ChunkHead * pLHS, const ChunkHead * pRHS ) const;
 
     // BinHeap interface
-    ChunkHead * _BinHeap_RequestChunk( UInt iMinSize );
+    ChunkHead * _BinHeap_RequestChunk( AUSize iMinSize );
 	Void _BinHeap_ReleaseChunk( ChunkHead * pChunk );
 
     // Deferred coalescing
@@ -186,7 +188,7 @@ private:
 	BinHeapHeightChange _ReBalance( ChunkHeapNode ** ppNode );
 	ChunkHeapNode * _rec_Insert( ChunkHeapNode ** ppNode, BinHeapHeightChange & heightChange, ChunkHead * pChunk );
 	Bool _rec_Remove( ChunkHeapNode ** ppNode, BinHeapHeightChange & heightChange, ChunkHead * pChunk );
-    ChunkHeapNode * _Search( UInt iMinSize ) const;
+    ChunkHeapNode * _Search( AUSize iMinSize ) const;
     ChunkHeapNode * _Match( const ChunkHead * pChunk ) const;
     ChunkHead * _Replace( ChunkHead * pNewChunk );
 
@@ -195,8 +197,8 @@ private:
 
     // Heap memory
 	Byte * m_pHeapMemory;
-	UInt m_iHeapSize;
-    UInt m_iTotalFree;
+	SizeT m_iHeapSize;
+    SizeT m_iTotalFree;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

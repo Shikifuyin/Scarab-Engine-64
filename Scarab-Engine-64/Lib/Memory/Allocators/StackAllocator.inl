@@ -20,26 +20,28 @@
 inline AllocatorType StackAllocator::GetType() const {
     return ALLOCATOR_STACK;
 }
-inline UInt StackAllocator::GetBlockSize( Byte * pMemory ) const {
-    Assert( m_pBuffer != NULL );
-    Assert( pMemory >= m_pFrameBase );
-    Assert( pMemory < m_pStackTop );
-    return (UInt)( m_pStackTop - pMemory );
+inline Bool StackAllocator::CheckAddressRange( Void * pMemory ) const {
+    Byte * pAddress = (Byte*)pMemory;
+    if ( pAddress < m_pFrameBase )
+        return false;
+    if ( pAddress >= m_pStackTop )
+        return false;
+    return true;
+}
+inline SizeT StackAllocator::GetBlockSize( Void * pMemory ) const {
+    Assert( CheckAddressRange(pMemory) );
+    return (SizeT)( m_pStackTop - (Byte*)pMemory );
 }
 
 inline UInt StackAllocator::FrameLevel() const {
-    Assert( m_pBuffer != NULL );
     return m_iFrameLevel;
 }
 inline UInt StackAllocator::FrameSize() const {
-    Assert( m_pBuffer != NULL );
     return (UInt)( m_pStackTop - m_pFrameBase );
 }
-inline UInt StackAllocator::AllocatedSize() const {
-    Assert( m_pBuffer != NULL );
-    return (UInt)( m_pStackTop - m_pBuffer );
+inline SizeT StackAllocator::AllocatedSize() const {
+    return (SizeT)( m_pStackTop - m_pBuffer );
 }
-inline UInt StackAllocator::TotalSize() const {
-    Assert( m_pBuffer != NULL );
+inline SizeT StackAllocator::TotalSize() const {
     return m_iTotalSize;
 }

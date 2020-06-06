@@ -182,7 +182,7 @@ Void System::DebugBreak() const
 }
 
 // Memory allocation ///////////////////////////////////////////
-Void * System::MemAlloc( UInt iSize ) const
+Void * System::MemAlloc( SizeT iSize ) const
 {
     return HeapAlloc( m_hMainHeap, 0, iSize );
 }

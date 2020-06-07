@@ -152,6 +152,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Lib\Error\ErrorManager.h" />
+    <ClInclude Include="Lib\Math\Formats\Fixed.h" />
+    <ClInclude Include="Lib\Math\Formats\Integer.h" />
+    <ClInclude Include="Lib\Math\Formats\Rational.h" />
+    <ClInclude Include="Lib\Math\Formats\Scalar.h" />
     <ClInclude Include="Lib\Memory\Allocators\HeapAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\MemoryAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\PoolAllocator.h" />
@@ -189,6 +193,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Lib\Error\ErrorManager.inl" />
+    <None Include="Lib\Math\Formats\Fixed.inl" />
+    <None Include="Lib\Math\Formats\Integer.inl" />
+    <None Include="Lib\Math\Formats\Rational.inl" />
+    <None Include="Lib\Math\Formats\Scalar.inl" />
     <None Include="Lib\Memory\Allocators\HeapAllocator.inl" />
     <None Include="Lib\Memory\Allocators\MemoryAllocator.inl" />
     <None Include="Lib\Memory\Allocators\PoolAllocator.inl" />
@@ -226,6 +234,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Lib\Error\ErrorManager.cpp" />
+    <ClCompile Include="Lib\Math\Formats\Fixed.cpp" />
+    <ClCompile Include="Lib\Math\Formats\Integer.cpp" />
+    <ClCompile Include="Lib\Math\Formats\Rational.cpp" />
+    <ClCompile Include="Lib\Math\Formats\Scalar.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\HeapAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\MemoryAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\PoolAllocator.cpp" />

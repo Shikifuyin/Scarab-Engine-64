@@ -1,10 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////////
-// File : Main.cpp
+// File : Lib/Math/Formats/Scalar.inl
 /////////////////////////////////////////////////////////////////////////////////
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Test Entry Point
+// Description : Scalar provides floating point arithmetic support
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -16,19 +16,16 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-// Includes
-#include "Lib/Memory/MemoryManager.h"
+// Representations as integer values
+#if defined(MATH_SCALAR_SINGLE_PRECISION)
+inline DWord IntRepr(Scalar f) { return *( (DWord*)(&f) ); }
+inline Scalar ScalarRepr(DWord i) { return *( (Scalar*)(&i) ); }
 
-/////////////////////////////////////////////////////////////////////////////////
-// Entry Point
-int main()
-{
-	MemoryManager::Create();
+#elif defined(MATH_SCALAR_DOUBLE_PRECISION)
+inline QWord IntRepr(Scalar f) { return *( (QWord*)(&f) ); }
+inline Scalar ScalarRepr(QWord i) { return *( (Scalar*)(&i) ); }
+
+#endif
 
 
-
-	MemoryManager::Destroy();
-
-	return 0;
-}
 

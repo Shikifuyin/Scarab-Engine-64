@@ -85,6 +85,18 @@
     <Filter Include="Source Files\Lib\Error">
       <UniqueIdentifier>{4001bcd6-12a5-40ca-b0f4-253a870f3e70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Lib\Math">
+      <UniqueIdentifier>{2b530667-790d-4cda-8f96-93e1f699bd32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Math">
+      <UniqueIdentifier>{ac3c5b92-763f-43fa-84aa-50d902e751d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lib\Math\Formats">
+      <UniqueIdentifier>{c7198854-26b5-42eb-8262-535132aef4a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Math\Formats">
+      <UniqueIdentifier>{e38f0eaf-9fb6-4a67-bf97-dfa3ebe632ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -191,6 +203,18 @@
     </ClInclude>
     <ClInclude Include="Lib\Memory\MemoryManager.h">
       <Filter>Header Files\Lib\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Formats\Scalar.h">
+      <Filter>Header Files\Lib\Math\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Formats\Fixed.h">
+      <Filter>Header Files\Lib\Math\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Formats\Integer.h">
+      <Filter>Header Files\Lib\Math\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Formats\Rational.h">
+      <Filter>Header Files\Lib\Math\Formats</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -299,6 +323,18 @@
     <None Include="Lib\Memory\MemoryManager.inl">
       <Filter>Source Files\Lib\Memory</Filter>
     </None>
+    <None Include="Lib\Math\Formats\Scalar.inl">
+      <Filter>Source Files\Lib\Math\Formats</Filter>
+    </None>
+    <None Include="Lib\Math\Formats\Fixed.inl">
+      <Filter>Source Files\Lib\Math\Formats</Filter>
+    </None>
+    <None Include="Lib\Math\Formats\Integer.inl">
+      <Filter>Source Files\Lib\Math\Formats</Filter>
+    </None>
+    <None Include="Lib\Math\Formats\Rational.inl">
+      <Filter>Source Files\Lib\Math\Formats</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -405,6 +441,18 @@
     </ClCompile>
     <ClCompile Include="Lib\Memory\MemoryManager.cpp">
       <Filter>Source Files\Lib\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Formats\Scalar.cpp">
+      <Filter>Source Files\Lib\Math\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Formats\Fixed.cpp">
+      <Filter>Source Files\Lib\Math\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Formats\Integer.cpp">
+      <Filter>Source Files\Lib\Math\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Formats\Rational.cpp">
+      <Filter>Source Files\Lib\Math\Formats</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

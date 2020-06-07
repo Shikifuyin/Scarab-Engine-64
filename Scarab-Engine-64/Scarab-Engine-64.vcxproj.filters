@@ -97,6 +97,12 @@
     <Filter Include="Source Files\Lib\Math\Formats">
       <UniqueIdentifier>{e38f0eaf-9fb6-4a67-bf97-dfa3ebe632ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Lib\Math\Hash">
+      <UniqueIdentifier>{278eaccd-160d-4c41-a5d1-7ef33f7d3a61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Math\Hash">
+      <UniqueIdentifier>{48940e8f-53e0-4fc9-ac06-c9b916abae29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -215,6 +221,15 @@
     </ClInclude>
     <ClInclude Include="Lib\Math\Formats\Rational.h">
       <Filter>Header Files\Lib\Math\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Hash\Hashing.h">
+      <Filter>Header Files\Lib\Math\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Hash\MD5.h">
+      <Filter>Header Files\Lib\Math\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Hash\SHA1.h">
+      <Filter>Header Files\Lib\Math\Hash</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -335,6 +350,15 @@
     <None Include="Lib\Math\Formats\Rational.inl">
       <Filter>Source Files\Lib\Math\Formats</Filter>
     </None>
+    <None Include="Lib\Math\Hash\Hashing.inl">
+      <Filter>Source Files\Lib\Math\Hash</Filter>
+    </None>
+    <None Include="Lib\Math\Hash\MD5.inl">
+      <Filter>Source Files\Lib\Math\Hash</Filter>
+    </None>
+    <None Include="Lib\Math\Hash\SHA1.inl">
+      <Filter>Source Files\Lib\Math\Hash</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -453,6 +477,15 @@
     </ClCompile>
     <ClCompile Include="Lib\Math\Formats\Rational.cpp">
       <Filter>Source Files\Lib\Math\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Hash\Hashing.cpp">
+      <Filter>Source Files\Lib\Math\Hash</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Hash\MD5.cpp">
+      <Filter>Source Files\Lib\Math\Hash</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Hash\SHA1.cpp">
+      <Filter>Source Files\Lib\Math\Hash</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

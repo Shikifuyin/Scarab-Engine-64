@@ -27,39 +27,6 @@
 #pragma warning(disable:4312) // type cast to greater size (UInt to pointer)
 
 /////////////////////////////////////////////////////////////////////////////////
-// Wrappers
-Bool _dat_save( _dat * pSaved, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
-{
-    _dat * pDAT = _dat_get_ptr();
-    Bool bValid = pDAT->bIsValid;
-    if (bValid) {
-        pSaved->strFile = pDAT->strFile;
-        pSaved->iLine = pDAT->iLine;
-        pSaved->iAllocatorID = pDAT->iAllocatorID;
-        pSaved->iContextID = pDAT->iContextID;
-        pSaved->bIsValid = pDAT->bIsValid;
-    }
-    pDAT->strFile = strFile;
-    pDAT->iLine = iLine;
-    pDAT->iAllocatorID = iAllocatorID;
-    pDAT->iContextID = iContextID;
-    pDAT->bIsValid = true;
-    return bValid;
-}
-Void _dat_restore( _dat * pSaved, Bool bValid )
-{
-    _dat * pDAT = _dat_get_ptr();
-    if (bValid) {
-        pDAT->strFile = pSaved->strFile;
-        pDAT->iLine = pSaved->iLine;
-        pDAT->iAllocatorID = pSaved->iAllocatorID;
-        pDAT->iContextID = pSaved->iContextID;
-        pDAT->bIsValid = pSaved->bIsValid;
-    } else
-        pDAT->bIsValid = false;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
 // MemoryManager implementation
 MemoryManager * MemoryManager::sm_pInstance = NULL;
 

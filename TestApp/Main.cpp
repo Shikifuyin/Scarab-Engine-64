@@ -17,11 +17,36 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
+#include "Lib/Memory/MemoryManager.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Entry Point
+class obj
+{
+public:
+	obj(int i) {
+		data = i;
+	}
+	~obj() {
+		data = 0;
+	}
+
+	int data;
+};
+
 int main()
 {
+	MemoryManager::Create();
+
+	obj * tmp = New() obj(1);
+
+	tmp->data = 2;
+
+	Delete( tmp );
+	tmp = NULL;
+
+	MemoryManager::Destroy();
+
 	return 0;
 }
 

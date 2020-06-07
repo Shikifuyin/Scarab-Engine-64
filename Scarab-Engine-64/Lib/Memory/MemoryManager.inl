@@ -18,8 +18,15 @@
 /////////////////////////////////////////////////////////////////////////////////
 // Wrappers
 inline _dat * _dat_get_ptr() {
-    static _dat _dat_values = { NULL, 0, INVALID_OFFSET, INVALID_OFFSET, false };
+    static _dat _dat_values = { NULL, 0, INVALID_OFFSET, INVALID_OFFSET };
     return &(_dat_values);
+}
+inline Void _dat_save( const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ) {
+    _dat * pDAT = _dat_get_ptr();
+    pDAT->strFile = strFile;
+    pDAT->iLine = iLine;
+    pDAT->iAllocatorID = iAllocatorID;
+    pDAT->iContextID = iContextID;
 }
 
 inline Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ) {
@@ -28,11 +35,13 @@ inline Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, Mem
 inline Void * operator new[] ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ) {
     return MemoryFn->Allocate( iSize, true, strFile, iLine, iAllocatorID, iContextID );
 }
-inline Void operator delete ( Void * pMemory , const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ) {
-    MemoryFn->Free( pMemory, false, strFile, iLine, iAllocatorID, iContextID );
+inline Void operator delete ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ ) {
+    _dat * pDAT = _dat_get_ptr();
+    MemoryFn->Free( pMemory, false, pDAT->strFile, pDAT->iLine, pDAT->iAllocatorID, pDAT->iContextID );
 }
-inline Void operator delete[] ( Void * pMemory , const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ) {
-    MemoryFn->Free( pMemory, true, strFile, iLine, iAllocatorID, iContextID );
+inline Void operator delete[] ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ ) {
+    _dat * pDAT = _dat_get_ptr();
+    MemoryFn->Free( pMemory, true, pDAT->strFile, pDAT->iLine, pDAT->iAllocatorID, pDAT->iContextID );
 }
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -43,8 +43,8 @@
 // new/new[]/delete/delete[] wrappers
 inline Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
 inline Void * operator new[] ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
-inline Void operator delete ( Void * pMemory , const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
-inline Void operator delete[] ( Void * pMemory , const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
+inline Void operator delete ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ );
+inline Void operator delete[] ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ );
 
 // Work-around trick to pass arguments to delete, which has no placement syntax
 typedef struct _delete_argument_trick {
@@ -52,11 +52,9 @@ typedef struct _delete_argument_trick {
     UInt iLine;
     MemoryAllocatorID iAllocatorID;
     MemoryContextID iContextID;
-    Bool bIsValid;
 } _dat;
 inline _dat * _dat_get_ptr();
-Bool _dat_save( _dat * pSaved, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
-Void _dat_restore( _dat * pSaved, Bool bValid );
+Void _dat_save( const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
 
 // Macro interface
 #define New(...)                             VARIADIC_MACRO( _New, __VA_ARGS__ )
@@ -69,16 +67,16 @@ Void _dat_restore( _dat * pSaved, Bool bValid );
 #define _Delete_1( _pointer )                             _Delete_2( _pointer, 0 )
 #define _Delete_2( _pointer, _allocator_id )              _Delete_3( _pointer, _allocator_id, MEMORY_CONTEXT_SHARED )
 #define _Delete_3( _pointer, _allocator_id, _context_id ) { \
-    _dat datSaved; Bool bValid = _dat_save( &datSaved, TEXT(__FILE__), __LINE__, _allocator_id, _context_id ); \
-    delete _pointer; _dat_restore( &datSaved, bValid ); \
+    _dat_save( TEXT(__FILE__), __LINE__, _allocator_id, _context_id ); \
+    delete _pointer; \
 }
 
 #define DeleteA(...)                                       VARIADIC_MACRO( _DeleteA, __VA_ARGS__ )
 #define _DeleteA_1( _pointer )                             _DeleteA_2( _pointer, 0 )
 #define _DeleteA_2( _pointer, _allocator_id )              _DeleteA_3( _pointer, _allocator_id, MEMORY_CONTEXT_SHARED )
 #define _DeleteA_3( _pointer, _allocator_id, _context_id ) { \
-    _dat datSaved; Bool bValid = _dat_save( &datSaved, TEXT(__FILE__), __LINE__, _allocator_id, _context_id ); \
-    delete[] _pointer; _dat_restore( &datSaved, bValid ); \
+    _dat_save( TEXT(__FILE__), __LINE__, _allocator_id, _context_id ); \
+    delete[] _pointer; \
 }
 
 /////////////////////////////////////////////////////////////////////////////////

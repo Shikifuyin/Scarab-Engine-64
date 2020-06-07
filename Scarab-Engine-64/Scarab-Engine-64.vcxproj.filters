@@ -103,6 +103,12 @@
     <Filter Include="Source Files\Lib\Math\Hash">
       <UniqueIdentifier>{48940e8f-53e0-4fc9-ac06-c9b916abae29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Lib\Math\Random">
+      <UniqueIdentifier>{c66493a8-2639-4997-a503-7cf25888b64a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Math\Random">
+      <UniqueIdentifier>{cf247442-10b3-4403-8bde-3641030c811d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -230,6 +236,9 @@
     </ClInclude>
     <ClInclude Include="Lib\Math\Hash\SHA1.h">
       <Filter>Header Files\Lib\Math\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Random\Random.h">
+      <Filter>Header Files\Lib\Math\Random</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -359,6 +368,9 @@
     <None Include="Lib\Math\Hash\SHA1.inl">
       <Filter>Source Files\Lib\Math\Hash</Filter>
     </None>
+    <None Include="Lib\Math\Random\Random.inl">
+      <Filter>Source Files\Lib\Math\Random</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -486,6 +498,9 @@
     </ClCompile>
     <ClCompile Include="Lib\Math\Hash\SHA1.cpp">
       <Filter>Source Files\Lib\Math\Hash</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Random\Random.cpp">
+      <Filter>Source Files\Lib\Math\Random</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

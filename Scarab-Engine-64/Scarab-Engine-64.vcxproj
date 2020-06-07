@@ -159,6 +159,7 @@
     <ClInclude Include="Lib\Math\Hash\Hashing.h" />
     <ClInclude Include="Lib\Math\Hash\MD5.h" />
     <ClInclude Include="Lib\Math\Hash\SHA1.h" />
+    <ClInclude Include="Lib\Math\Random\Random.h" />
     <ClInclude Include="Lib\Memory\Allocators\HeapAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\MemoryAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\PoolAllocator.h" />
@@ -203,6 +204,7 @@
     <None Include="Lib\Math\Hash\Hashing.inl" />
     <None Include="Lib\Math\Hash\MD5.inl" />
     <None Include="Lib\Math\Hash\SHA1.inl" />
+    <None Include="Lib\Math\Random\Random.inl" />
     <None Include="Lib\Memory\Allocators\HeapAllocator.inl" />
     <None Include="Lib\Memory\Allocators\MemoryAllocator.inl" />
     <None Include="Lib\Memory\Allocators\PoolAllocator.inl" />
@@ -247,6 +249,7 @@
     <ClCompile Include="Lib\Math\Hash\Hashing.cpp" />
     <ClCompile Include="Lib\Math\Hash\MD5.cpp" />
     <ClCompile Include="Lib\Math\Hash\SHA1.cpp" />
+    <ClCompile Include="Lib\Math\Random\Random.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\HeapAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\MemoryAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\PoolAllocator.cpp" />

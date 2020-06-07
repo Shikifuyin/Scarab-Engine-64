@@ -109,6 +109,12 @@
     <Filter Include="Source Files\Lib\Math\Random">
       <UniqueIdentifier>{cf247442-10b3-4403-8bde-3641030c811d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Lib\Math\Functions">
+      <UniqueIdentifier>{a36f458e-ce9d-4bbc-af77-b02ff054eb87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Math\Functions">
+      <UniqueIdentifier>{9f418b24-c485-402b-90a3-d4b642bbb4c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -239,6 +245,9 @@
     </ClInclude>
     <ClInclude Include="Lib\Math\Random\Random.h">
       <Filter>Header Files\Lib\Math\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Functions\MathFunction.h">
+      <Filter>Header Files\Lib\Math\Functions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -371,6 +380,9 @@
     <None Include="Lib\Math\Random\Random.inl">
       <Filter>Source Files\Lib\Math\Random</Filter>
     </None>
+    <None Include="Lib\Math\Functions\MathFunction.inl">
+      <Filter>Source Files\Lib\Math\Functions</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -501,6 +513,9 @@
     </ClCompile>
     <ClCompile Include="Lib\Math\Random\Random.cpp">
       <Filter>Source Files\Lib\Math\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Functions\MathFunction.cpp">
+      <Filter>Source Files\Lib\Math\Functions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

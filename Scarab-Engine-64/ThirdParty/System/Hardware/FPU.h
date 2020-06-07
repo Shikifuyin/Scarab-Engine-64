@@ -169,10 +169,10 @@ public:
     inline virtual Float Erf( Float fValue ); // Gauss Error Function
     inline virtual Double Erf( Double fValue );
 
-    inline virtual Float Gamma( Float fValue ); // Gamma function, (x-1)! for positive integers
+    inline virtual Float Gamma( Float fValue ); // Gamma Function, (x-1)! for positive integers
     inline virtual Double Gamma( Double fValue );
 
-    inline virtual Float LnGamma( Float fValue ); // Ln of Gamma function
+    inline virtual Float LnGamma( Float fValue ); // Ln of Gamma Function
     inline virtual Double LnGamma( Double fValue );
 
     inline virtual Double BesselJ( Double fValue, UInt iOrder ); // Bessel Function, 1st kind

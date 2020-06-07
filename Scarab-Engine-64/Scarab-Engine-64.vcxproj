@@ -156,6 +156,7 @@
     <ClInclude Include="Lib\Math\Formats\Integer.h" />
     <ClInclude Include="Lib\Math\Formats\Rational.h" />
     <ClInclude Include="Lib\Math\Formats\Scalar.h" />
+    <ClInclude Include="Lib\Math\Functions\MathFunction.h" />
     <ClInclude Include="Lib\Math\Hash\Hashing.h" />
     <ClInclude Include="Lib\Math\Hash\MD5.h" />
     <ClInclude Include="Lib\Math\Hash\SHA1.h" />
@@ -201,6 +202,7 @@
     <None Include="Lib\Math\Formats\Integer.inl" />
     <None Include="Lib\Math\Formats\Rational.inl" />
     <None Include="Lib\Math\Formats\Scalar.inl" />
+    <None Include="Lib\Math\Functions\MathFunction.inl" />
     <None Include="Lib\Math\Hash\Hashing.inl" />
     <None Include="Lib\Math\Hash\MD5.inl" />
     <None Include="Lib\Math\Hash\SHA1.inl" />
@@ -246,6 +248,7 @@
     <ClCompile Include="Lib\Math\Formats\Integer.cpp" />
     <ClCompile Include="Lib\Math\Formats\Rational.cpp" />
     <ClCompile Include="Lib\Math\Formats\Scalar.cpp" />
+    <ClCompile Include="Lib\Math\Functions\MathFunction.cpp" />
     <ClCompile Include="Lib\Math\Hash\Hashing.cpp" />
     <ClCompile Include="Lib\Math\Hash\MD5.cpp" />
     <ClCompile Include="Lib\Math\Hash\SHA1.cpp" />

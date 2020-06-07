@@ -29,21 +29,6 @@ inline Void _dat_save( const GChar * strFile, UInt iLine, MemoryAllocatorID iAll
     pDAT->iContextID = iContextID;
 }
 
-inline Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ) {
-    return MemoryFn->Allocate( iSize, false, strFile, iLine, iAllocatorID, iContextID );
-}
-inline Void * operator new[] ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ) {
-    return MemoryFn->Allocate( iSize, true, strFile, iLine, iAllocatorID, iContextID );
-}
-inline Void operator delete ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ ) {
-    _dat * pDAT = _dat_get_ptr();
-    MemoryFn->Free( pMemory, false, pDAT->strFile, pDAT->iLine, pDAT->iAllocatorID, pDAT->iContextID );
-}
-inline Void operator delete[] ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ ) {
-    _dat * pDAT = _dat_get_ptr();
-    MemoryFn->Free( pMemory, true, pDAT->strFile, pDAT->iLine, pDAT->iAllocatorID, pDAT->iContextID );
-}
-
 /////////////////////////////////////////////////////////////////////////////////
 // MemoryManager implementation
 inline Void MemoryManager::Create() {
@@ -88,9 +73,6 @@ inline Void * MemoryManager::GetContextResidentMemory( MemoryContextID iContextI
     return pContext->pResidentMemory;
 }
 
-inline MemoryAllocatorID MemoryManager::CreateBreak( const GChar * strName, SizeT iBlockSize, SizeT iRangeSize, MemoryContextID iContextID ) {
-    return _MemoryAllocator_Create( iContextID, ALLOCATOR_BREAK, strName, iRangeSize, iBlockSize );
-}
 inline MemoryAllocatorID MemoryManager::CreateStack( const GChar * strName, SizeT iStackSize, MemoryContextID iContextID ) {
     return _MemoryAllocator_Create( iContextID, ALLOCATOR_STACK, strName, iStackSize, 0 );
 }

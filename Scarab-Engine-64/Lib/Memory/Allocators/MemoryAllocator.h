@@ -33,7 +33,6 @@
 // Allocator Types
 enum AllocatorType {
     ALLOCATOR_RESIDENT = 0, // Reserved for internal use
-    ALLOCATOR_BREAK,        // Assembler-Like Allocator, completely unsafe !
     ALLOCATOR_STACK,        // Fixed Order Allocator, constant time.
     ALLOCATOR_POOL,         // Fixed Size Allocator, constant time.
     ALLOCATOR_HEAP          // Usual AVLTree Implementation, logarithmic in worst case.

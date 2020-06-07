@@ -24,7 +24,6 @@
 // Includes
 #include "../Error/ErrorManager.h"
 
-#include "Allocators/BreakAllocator.h"
 #include "Allocators/StackAllocator.h"
 #include "Allocators/PoolAllocator.h"
 #include "Allocators/HeapAllocator.h"
@@ -41,10 +40,12 @@
 #define MEMORY_CONTEXT_SHARED_SCRATCH_SIZE 4194304 // 4 mb
 
 // new/new[]/delete/delete[] wrappers
-inline Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
-inline Void * operator new[] ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
-inline Void operator delete ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ );
-inline Void operator delete[] ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ );
+Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
+Void * operator new[] ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
+Void operator delete ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );   // Required if constructor throws
+Void operator delete[] ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ); // an exception ...
+Void operator delete ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ );
+Void operator delete[] ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ );
 
 // Work-around trick to pass arguments to delete, which has no placement syntax
 typedef struct _delete_argument_trick {
@@ -108,7 +109,6 @@ public:
     inline Void * GetContextResidentMemory( MemoryContextID iContextID, SizeT * outSize = NULL );
 
     // Allocators Management
-    inline MemoryAllocatorID CreateBreak( const GChar * strName, SizeT iBlockSize, SizeT iRangeSize,  MemoryContextID iContextID = MEMORY_CONTEXT_SHARED );
     inline MemoryAllocatorID CreateStack( const GChar * strName, SizeT iStackSize,                    MemoryContextID iContextID = MEMORY_CONTEXT_SHARED );
     inline MemoryAllocatorID CreatePool( const GChar * strName, SizeT iChunkSize, SizeT iTotalChunks, MemoryContextID iContextID = MEMORY_CONTEXT_SHARED );
     inline MemoryAllocatorID CreateHeap( const GChar * strName, SizeT iHeapSize,                      MemoryContextID iContextID = MEMORY_CONTEXT_SHARED );
@@ -152,7 +152,6 @@ private:
     Void _MemoryAllocator_Destroy( MemoryContextID iContextID, MemoryAllocatorID iAllocatorID );
 
     // Allocator Factories
-    PoolAllocator m_hBreakFactory;
     PoolAllocator m_hStackFactory;
     PoolAllocator m_hPoolFactory;
     PoolAllocator m_hHeapFactory;

@@ -152,7 +152,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Lib\Error\ErrorManager.h" />
-    <ClInclude Include="Lib\Memory\Allocators\BreakAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\HeapAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\MemoryAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\PoolAllocator.h" />
@@ -190,7 +189,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Lib\Error\ErrorManager.inl" />
-    <None Include="Lib\Memory\Allocators\BreakAllocator.inl" />
     <None Include="Lib\Memory\Allocators\HeapAllocator.inl" />
     <None Include="Lib\Memory\Allocators\MemoryAllocator.inl" />
     <None Include="Lib\Memory\Allocators\PoolAllocator.inl" />
@@ -228,7 +226,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Lib\Error\ErrorManager.cpp" />
-    <ClCompile Include="Lib\Memory\Allocators\BreakAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\HeapAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\MemoryAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\PoolAllocator.cpp" />

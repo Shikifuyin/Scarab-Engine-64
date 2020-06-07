@@ -38,12 +38,17 @@ int main()
 {
 	MemoryManager::Create();
 
+	MemoryFn->TraceStart( 0 );
+
 	obj * tmp = New() obj(1);
 
 	tmp->data = 2;
 
 	Delete( tmp );
 	tmp = NULL;
+
+	MemoryFn->TraceStop( 0 );
+	MemoryFn->TraceFlush( 0 );
 
 	MemoryManager::Destroy();
 

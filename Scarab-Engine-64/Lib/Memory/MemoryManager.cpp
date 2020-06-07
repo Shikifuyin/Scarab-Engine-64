@@ -27,11 +27,39 @@
 #pragma warning(disable:4312) // type cast to greater size (UInt to pointer)
 
 /////////////////////////////////////////////////////////////////////////////////
+// Wrappers
+Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
+{
+    return MemoryFn->Allocate( iSize, false, strFile, iLine, iAllocatorID, iContextID );
+}
+Void * operator new[] ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
+{
+    return MemoryFn->Allocate( iSize, true, strFile, iLine, iAllocatorID, iContextID );
+}
+Void operator delete ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
+{
+    MemoryFn->Free( pMemory, false, strFile, iLine, iAllocatorID, iContextID );
+}
+Void operator delete[] ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
+{
+    MemoryFn->Free( pMemory, true, strFile, iLine, iAllocatorID, iContextID );
+}
+Void operator delete ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ )
+{
+    _dat * pDAT = _dat_get_ptr();
+    MemoryFn->Free( pMemory, false, pDAT->strFile, pDAT->iLine, pDAT->iAllocatorID, pDAT->iContextID );
+}
+Void operator delete[] ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ )
+{
+    _dat * pDAT = _dat_get_ptr();
+    MemoryFn->Free( pMemory, true, pDAT->strFile, pDAT->iLine, pDAT->iAllocatorID, pDAT->iContextID );
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // MemoryManager implementation
 MemoryManager * MemoryManager::sm_pInstance = NULL;
 
 MemoryManager::MemoryManager():
-    m_hBreakFactory( NULL, INVALID_OFFSET, TEXT("_ManagerFactory_Break_"), sizeof(BreakAllocator), MEMORY_MAX_ALLOCATORS ),
     m_hStackFactory( NULL, INVALID_OFFSET, TEXT("_ManagerFactory_Stack_"), sizeof(StackAllocator), MEMORY_MAX_ALLOCATORS ),
     m_hPoolFactory( NULL, INVALID_OFFSET, TEXT("_ManagerFactory_Pool_"), sizeof(PoolAllocator), MEMORY_MAX_ALLOCATORS ),
     m_hHeapFactory( NULL, INVALID_OFFSET, TEXT("_ManagerFactory_Heap_"), sizeof(HeapAllocator), MEMORY_MAX_ALLOCATORS )
@@ -74,8 +102,10 @@ Void * MemoryManager::Allocate( SizeT iSize, Bool bIsArray, const GChar * strFil
     Void * pMemory = pAllocator->Allocate( iSize );
     Assert( pMemory != NULL );
 
-    if ( pAllocator->IsTracing() )
+    if ( pAllocator->IsTracing() ) {
+        iSize = pAllocator->GetBlockSize( pMemory );
         pAllocator->_Tracing_Record( pMemory, iSize, true, bIsArray, strFile, iLine );
+    }
 
     return pMemory;
 }
@@ -188,12 +218,6 @@ MemoryAllocatorID MemoryManager::_MemoryAllocator_Create( MemoryContextID iConte
 
     // Initialize Allocator
     switch( iType ) {
-        case ALLOCATOR_BREAK: {
-            Assert( iBlockSize != 0 );
-            Void * pMemory = m_hBreakFactory.Allocate(0);
-            BreakAllocator * pBreak = new(pMemory) BreakAllocator( pContext, iAllocatorID, strName, iSize, iBlockSize );
-            pContext->arrAllocators[iAllocatorID] = pBreak;
-        } break;
         case ALLOCATOR_STACK: {
             Assert( iBlockSize == 0 );
             Void * pMemory = m_hStackFactory.Allocate(0);
@@ -226,10 +250,6 @@ Void MemoryManager::_MemoryAllocator_Destroy( MemoryContextID iContextID, Memory
 
     // Cleanup Allocator
     switch( pAllocator->GetType() ) {
-        case ALLOCATOR_BREAK:
-            delete pAllocator;
-            m_hBreakFactory.Free( (Byte*)pAllocator );
-            break;
         case ALLOCATOR_STACK:
             delete pAllocator;
             m_hStackFactory.Free( (Byte*)pAllocator );

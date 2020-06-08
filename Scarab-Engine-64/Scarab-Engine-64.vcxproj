@@ -161,6 +161,7 @@
     <ClInclude Include="Lib\Math\Hash\MD5.h" />
     <ClInclude Include="Lib\Math\Hash\SHA1.h" />
     <ClInclude Include="Lib\Math\Random\Random.h" />
+    <ClInclude Include="Lib\Math\Types\Vector\Vector4.h" />
     <ClInclude Include="Lib\Memory\Allocators\HeapAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\MemoryAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\PoolAllocator.h" />
@@ -189,6 +190,7 @@
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Shader.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Texture.h" />
     <ClInclude Include="ThirdParty\System\File.h" />
+    <ClInclude Include="ThirdParty\System\Hardware\CPUID.h" />
     <ClInclude Include="ThirdParty\System\Hardware\FPU.h" />
     <ClInclude Include="ThirdParty\System\Networking.h" />
     <ClInclude Include="ThirdParty\System\Platform.h" />
@@ -207,6 +209,7 @@
     <None Include="Lib\Math\Hash\MD5.inl" />
     <None Include="Lib\Math\Hash\SHA1.inl" />
     <None Include="Lib\Math\Random\Random.inl" />
+    <None Include="Lib\Math\Types\Vector\Vector4.inl" />
     <None Include="Lib\Memory\Allocators\HeapAllocator.inl" />
     <None Include="Lib\Memory\Allocators\MemoryAllocator.inl" />
     <None Include="Lib\Memory\Allocators\PoolAllocator.inl" />
@@ -235,6 +238,7 @@
     <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Shader.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Texture.inl" />
     <None Include="ThirdParty\System\File.inl" />
+    <None Include="ThirdParty\System\Hardware\CPUID.inl" />
     <None Include="ThirdParty\System\Hardware\FPU.inl" />
     <None Include="ThirdParty\System\Networking.inl" />
     <None Include="ThirdParty\System\Platform.inl" />
@@ -253,6 +257,7 @@
     <ClCompile Include="Lib\Math\Hash\MD5.cpp" />
     <ClCompile Include="Lib\Math\Hash\SHA1.cpp" />
     <ClCompile Include="Lib\Math\Random\Random.cpp" />
+    <ClCompile Include="Lib\Math\Types\Vector\Vector4.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\HeapAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\MemoryAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\PoolAllocator.cpp" />
@@ -281,6 +286,7 @@
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Shader.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\Resources\D3D11Texture.cpp" />
     <ClCompile Include="ThirdParty\System\File.cpp" />
+    <ClCompile Include="ThirdParty\System\Hardware\CPUID.cpp" />
     <ClCompile Include="ThirdParty\System\Hardware\FPU.cpp" />
     <ClCompile Include="ThirdParty\System\Networking.cpp" />
     <ClCompile Include="ThirdParty\System\Platform.cpp" />

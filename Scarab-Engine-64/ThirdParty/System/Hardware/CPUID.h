@@ -166,12 +166,12 @@ typedef struct _cpu_descriptor_intel
         Bool bHasFSGSBASE;          // RDFSBASE, RDGSBASE, WRDFSBASE, WRDGSBASE instructions
         Bool bHasTSCAdjust;         // TSC adjust (IA32_TSC_ADJUST MSR)
         Bool bHasSGX;               // Software Guard Extensions
-        Bool bHasBMI1;              // ???
-        Bool bHasHLE;               // ???
+        Bool bHasBMI1;              // Bit Manipulation instruction set 1
+        Bool bHasHLE;               // Hardware Lock Elision
         Bool bHasAVX2;              // AVX2 instructions extension
         Bool bHasFDPExcptOnly;      // only update FPU data pointer on FPU exception
         Bool bHasSMEP;              // Supervisor-Mode Execution Prevention
-        Bool bHasBMI2;              // ???
+        Bool bHasBMI2;              // Bit Manipulation instruction set 2
         Bool bHasEREP;              // Enhanced REP MOVSB / STOSB instructions
         Bool bHasINVPCID;           // INVPCID instruction for Process-Context identifiers
         Bool bHasRTM;               // ???
@@ -182,7 +182,7 @@ typedef struct _cpu_descriptor_intel
         Bool bHasAVX512_F;          // AVX512F instructions extension
         Bool bHasAVX512_DQ;         // AVX512DQ instructions extension
         Bool bHasRDSEED;            // RDSEED instruction
-        Bool bHasADX;               // ???
+        Bool bHasADX;               // arbitrary precision arithmetics (ADCX and ADOX instructions)
         Bool bHasSMAP;              // Supervisor-Mode Access Prevention (and CLAC/STAC instructions)
         Bool bHasAVX512_IFMA;       // AVX512 IFMA instructions extension
         Bool bHasCLFLUSHOPT;        // CLFLUSHOPT instruction

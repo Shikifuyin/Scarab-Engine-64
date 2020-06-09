@@ -267,6 +267,9 @@
     <ClInclude Include="ThirdParty\System\Hardware\CPUID.h">
       <Filter>Header Files\ThirdParty\System\Hardware</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SSE.h">
+      <Filter>Header Files\ThirdParty\System\Hardware</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\System\Platform.inl">
@@ -407,6 +410,9 @@
     <None Include="ThirdParty\System\Hardware\CPUID.inl">
       <Filter>Source Files\ThirdParty\System\Hardware</Filter>
     </None>
+    <None Include="ThirdParty\System\Hardware\SSE.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -545,6 +551,9 @@
       <Filter>Source Files\Lib\Math\Types\Vector</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\System\Hardware\CPUID.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SSE.cpp">
       <Filter>Source Files\ThirdParty\System\Hardware</Filter>
     </ClCompile>
   </ItemGroup>

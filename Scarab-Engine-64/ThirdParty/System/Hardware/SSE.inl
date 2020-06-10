@@ -936,58 +936,127 @@ inline __m256i SIMDMath::UnpackInt64H( __m256i mSrcEven, __m256i mSrcOdd ) const
 }
 
 ////////////////////////////////////////////////////////////// Shuffle
-inline __m128 SIMDMath::ShuffleFloat( __m128 mSrcLow, __m128 mSrcHigh, Int iMask4 ) const {
+inline __m128 SIMDMath::Shuffle128Float( __m128 mSrcLow, __m128 mSrcHigh, Int iMask4x4 ) const {
     DebugAssert( CPUIDFn->HasSSE() );
-    return _mm_shuffle_ps( mSrcLow, mSrcHigh, (unsigned)iMask4 );
+    return _mm_shuffle_ps( mSrcLow, mSrcHigh, (unsigned)iMask4x4 );
 }
-inline __m256 SIMDMath::ShuffleFloat( __m256 mSrcLow, __m256 mSrcHigh, Int iMask4 ) const {
+inline __m128 SIMDMath::Shuffle128Float( __m128 mSrc, Int iMask4x4 ) const {
     DebugAssert( CPUIDFn->HasAVX() );
-    return _mm256_shuffle_ps( mSrcLow, mSrcHigh, iMask4 );
+    return _mm_permute_ps( mSrc, iMask4x4 );
+}
+inline __m128 SIMDMath::Shuffle128Float( __m128 mSrc, __m128i mMask1x4 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm_permutevar_ps( mSrc, mMask1x4 );
 }
 
-inline __m128d SIMDMath::ShuffleDouble( __m128d mSrcLow, __m128d mSrcHigh, Int iMask2 ) const {
+inline __m256 SIMDMath::Shuffle128Float( __m256 mSrcLow, __m256 mSrcHigh, Int iMask4x4 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_shuffle_ps( mSrcLow, mSrcHigh, iMask4x4 );
+}
+inline __m256 SIMDMath::Shuffle128Float( __m256 mSrc, Int iMask4x4 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute_ps( mSrc, iMask4x4 );
+}
+inline __m256 SIMDMath::Shuffle128Float( __m256 mSrc, __m256i mMask1x4 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permutevar_ps( mSrc, mMask1x4 );
+}
+
+inline __m256 SIMDMath::Shuffle256Float( __m256 mSrc, __m256i mMask1x8 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_permutevar8x32_ps( mSrc, mMask1x8 );
+}
+
+inline __m256 SIMDMath::Shuffle512FourFloat( __m256 mSrc1, __m256 mSrc2, Int iMask2x4_Z ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute2f128_ps( mSrc1, mSrc2, iMask2x4_Z );
+}
+
+inline __m128d SIMDMath::Shuffle128Double( __m128d mSrcLow, __m128d mSrcHigh, Int iMask2x2 ) const {
     DebugAssert( CPUIDFn->HasSSE2() );
-    return _mm_shuffle_pd( mSrcLow, mSrcHigh, iMask2 );
+    return _mm_shuffle_pd( mSrcLow, mSrcHigh, iMask2x2 );
 }
-inline __m256d SIMDMath::ShuffleDouble( __m256d mSrcEven, __m256d mSrcOdd, Int iMask4 ) const {
+inline __m128d SIMDMath::Shuffle128Double( __m128d mSrc, Int iMask2x2 ) const {
     DebugAssert( CPUIDFn->HasAVX() );
-    return _mm256_shuffle_pd( mSrcEven, mSrcOdd, iMask4 );
+    return _mm_permute_pd( mSrc, iMask2x2 );
+}
+inline __m128d SIMDMath::Shuffle128Double( __m128d mSrc, __m128i mMask1x2 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm_permutevar_pd( mSrc, mMask1x2 );
 }
 
-inline __m128i SIMDMath::ShuffleInt8( __m128i mSrc, __m128i mMaskEmbed ) const {
+inline __m256d SIMDMath::Shuffle128Double( __m256d mSrcLow, __m256d mSrcHigh, Int iMask4x2 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_shuffle_pd( mSrcLow, mSrcHigh, iMask4x2 );
+}
+inline __m256d SIMDMath::Shuffle128Double( __m256d mSrc, Int iMask4x2 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute_pd( mSrc, iMask4x2 );
+}
+inline __m256d SIMDMath::Shuffle128Double( __m256d mSrc, __m256i mMask1x2 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permutevar_pd( mSrc, mMask1x2 );
+}
+
+inline __m256d SIMDMath::Shuffle256Double( __m256d mSrc, Int iMask4x4 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_permute4x64_pd( mSrc, iMask4x4 );
+}
+
+inline __m256d SIMDMath::Shuffle512TwoDouble( __m256d mSrc1, __m256d mSrc2, Int iMask2x4_Z ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute2f128_pd( mSrc1, mSrc2, iMask2x4_Z );
+}
+
+inline __m128i SIMDMath::Shuffle128Int8( __m128i mSrc, __m128i mMask1x16_Z ) const {
     DebugAssert( CPUIDFn->HasSSSE3() );
-    return _mm_shuffle_epi8( mSrc, mMaskEmbed );
+    return _mm_shuffle_epi8( mSrc, mMask1x16_Z );
 }
-inline __m256i SIMDMath::ShuffleInt8( __m256i mSrc, __m256i mMaskEmbed ) const {
+inline __m256i SIMDMath::Shuffle128Int8( __m256i mSrc, __m256i mMask1x16_Z ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
-    return _mm256_shuffle_epi8( mSrc, mMaskEmbed );
+    return _mm256_shuffle_epi8( mSrc, mMask1x16_Z );
 }
 
-inline __m128i SIMDMath::ShuffleInt16L( __m128i mSrc, Int iMask4 ) const {
+inline __m128i SIMDMath::Shuffle64Int16L( __m128i mSrc, Int iMask4x4 ) const {
     DebugAssert( CPUIDFn->HasSSE2() );
-    return _mm_shufflelo_epi16( mSrc, iMask4 );
+    return _mm_shufflelo_epi16( mSrc, iMask4x4 );
 }
-inline __m256i SIMDMath::ShuffleInt16L( __m256i mSrc, Int iMask4 ) const {
+inline __m256i SIMDMath::Shuffle64Int16L( __m256i mSrc, Int iMask4x4 ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
-    return _mm256_shufflelo_epi16( mSrc, iMask4 );
+    return _mm256_shufflelo_epi16( mSrc, iMask4x4 );
 }
 
-inline __m128i SIMDMath::ShuffleInt16H( __m128i mSrc, Int iMask4 ) const {
+inline __m128i SIMDMath::Shuffle64Int16H( __m128i mSrc, Int iMask4x4 ) const {
     DebugAssert( CPUIDFn->HasSSE2() );
-    return _mm_shufflehi_epi16( mSrc, iMask4 );
+    return _mm_shufflehi_epi16( mSrc, iMask4x4 );
 }
-inline __m256i SIMDMath::ShuffleInt16H( __m256i mSrc, Int iMask4 ) const {
+inline __m256i SIMDMath::Shuffle64Int16H( __m256i mSrc, Int iMask4x4 ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
-    return _mm256_shufflehi_epi16( mSrc, iMask4 );
+    return _mm256_shufflehi_epi16( mSrc, iMask4x4 );
 }
 
-inline __m128i SIMDMath::ShuffleInt32( __m128i mSrc, Int iMask4 ) const {
+inline __m128i SIMDMath::Shuffle128Int32( __m128i mSrc, Int iMask4x4 ) const {
     DebugAssert( CPUIDFn->HasSSE2() );
-    return _mm_shuffle_epi32( mSrc, iMask4 );
+    return _mm_shuffle_epi32( mSrc, iMask4x4 );
 }
-inline __m256i SIMDMath::ShuffleInt32( __m256i mSrc, Int iMask4 ) const {
+inline __m256i SIMDMath::Shuffle128Int32( __m256i mSrc, Int iMask4x4 ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
-    return _mm256_shuffle_epi32( mSrc, iMask4 );
+    return _mm256_shuffle_epi32( mSrc, iMask4x4 );
+}
+
+inline __m256i SIMDMath::Shuffle256Int32( __m256i mSrc, __m256i mMask1x8 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_permutevar8x32_epi32( mSrc, mMask1x8 );
+}
+
+inline __m256i SIMDMath::Shuffle512FourInt32( __m256i mSrc1, __m256i mSrc2, Int iMask2x4_Z ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_permute2x128_si256( mSrc1, mSrc2, iMask2x4_Z );
+}
+
+inline __m256i SIMDMath::Shuffle256Int64( __m256i mSrc, Int iMask4x4 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_permute4x64_epi64( mSrc, iMask4x4 );
 }
 
 ////////////////////////////////////////////////////////////// Fast Invert & SquareRoot Functions

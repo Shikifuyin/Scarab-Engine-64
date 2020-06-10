@@ -43,14 +43,36 @@
 #define SIMDFn SIMDMath::GetInstance()
 
 // Shuffle Control Mask
-#define SIMD_SHUFFLE_MASK_4( _selsrc_dst0, _selsrc_dst1, _selsrc_dst2, _selsrc_dst3 ) \
-    ( ((_selsrc_dst0) & 0x03) | (((_selsrc_dst1) & 0x03) << 2) | (((_selsrc_dst2) & 0x03) << 4) | (((_selsrc_dst3) & 0x03) << 6) )
+// Naming Convention : SIMD_SHUFFLE_MASK_NxP(_Z)
+// N = Number of elements being picked.
+// P = Number of elements to choose from.
+// _Z = Has a Set to Zero flag.
 
-#define SIMD_SHUFFLE_MASK_2( _selsrc_dst0, _selsrc_dst1 ) \
-    ( ((_selsrc_dst0) & 0x01) | (((_selsrc_dst1) & 0x01) << 1) )
+// TODO : Something odd in Intel documentation, check if this one really needs to be shifted by 1
+#define SIMD_SHUFFLE_MASK_1x2( _element_0 ) \
+    ( (_element_0) & 0x01 )
 
-#define SIMD_SHUFFLE_MASK_EMBED( _set_zero, _selsrc ) \
-    ( ((_set_zero) ? 0x80 : 0) | ((_selsrc) & 0x0f) )
+#define SIMD_SHUFFLE_MASK_1x4( _element_0 ) \
+    ( (_element_0) & 0x03 )
+
+#define SIMD_SHUFFLE_MASK_1x8( _element_0 ) \
+    ( (_element_0) & 0x07 )
+
+#define SIMD_SHUFFLE_MASK_1x16_Z( _element_0, _zeroflag_0 ) \
+    ( ((_element_0) & 0x0f) | (((_zeroflag_0) & 0x01) << 7) )
+
+#define SIMD_SHUFFLE_MASK_2x2( _element_0, _element_1 ) \
+    ( ((_element_0) & 0x01) | (((_element_1) & 0x01) << 1) )
+
+#define SIMD_SHUFFLE_MASK_2x4_Z( _element_0, _zeroflag_0, _element_1, _zeroflag_1 ) \
+    ( ((_element_0) & 0x03) | (((_zeroflag_0) & 0x01) << 3) | (((_element_1) & 0x03) << 4) | (((_zeroflag_1) & 0x01) << 7) )
+
+#define SIMD_SHUFFLE_MASK_4x2( _element_0, _element_1, _element_2, _element_3 ) \
+    ( ((_element_0) & 0x01) | (((_element_1) & 0x01) << 2) | (((_element_2) & 0x01) << 4) | (((_element_3) & 0x01) << 6) )
+
+#define SIMD_SHUFFLE_MASK_4x4( _element_0, _element_1, _element_2, _element_3 ) \
+    ( ((_element_0) & 0x03) | (((_element_1) & 0x03) << 2) | (((_element_2) & 0x03) << 4) | (((_element_3) & 0x03) << 6) )
+
 
 // Blend Control Mask
 
@@ -396,48 +418,49 @@ public:
     inline __m256i UnpackInt64H( __m256i mSrcEven, __m256i mSrcOdd ) const; // AVX2
 
     ////////////////////////////////////////////////////////////// Shuffle
-    inline __m128 ShuffleFloat( __m128 mSrcLow, __m128 mSrcHigh, Int iMask4 ) const; // SSE
-    inline __m256 ShuffleFloat( __m256 mSrcLow, __m256 mSrcHigh, Int iMask4 ) const; // AVX
+    inline __m128 Shuffle128Float( __m128 mSrcLow, __m128 mSrcHigh, Int iMask4x4 ) const;   // SSE
+    inline __m128 Shuffle128Float( __m128 mSrc, Int iMask4x4 ) const;                       // AVX
+    inline __m128 Shuffle128Float( __m128 mSrc, __m128i mMask1x4 ) const;                   // AVX
 
-    inline __m128d ShuffleDouble( __m128d mSrcLow, __m128d mSrcHigh, Int iMask2 ) const; // SSE2
-    inline __m256d ShuffleDouble( __m256d mSrcEven, __m256d mSrcOdd, Int iMask4 ) const; // AVX
+    inline __m256 Shuffle128Float( __m256 mSrcLow, __m256 mSrcHigh, Int iMask4x4 ) const;   // AVX
+    inline __m256 Shuffle128Float( __m256 mSrc, Int iMask4x4 ) const;                       // AVX
+    inline __m256 Shuffle128Float( __m256 mSrc, __m256i mMask1x4 ) const;                   // AVX
 
-    inline __m128i ShuffleInt8( __m128i mSrc, __m128i mMaskEmbed ) const; // SSSE3
-    inline __m256i ShuffleInt8( __m256i mSrc, __m256i mMaskEmbed ) const; // AVX2
+    inline __m256 Shuffle256Float( __m256 mSrc, __m256i mMask1x8 ) const;   // AVX2
 
-    inline __m128i ShuffleInt16L( __m128i mSrc, Int iMask4 ) const; // SSE2
-    inline __m256i ShuffleInt16L( __m256i mSrc, Int iMask4 ) const; // AVX2
+    inline __m256 Shuffle512FourFloat( __m256 mSrc1, __m256 mSrc2, Int iMask2x4_Z ) const;  // AVX
 
-    inline __m128i ShuffleInt16H( __m128i mSrc, Int iMask4 ) const; // SSE2
-    inline __m256i ShuffleInt16H( __m256i mSrc, Int iMask4 ) const; // AVX2
+    inline __m128d Shuffle128Double( __m128d mSrcLow, __m128d mSrcHigh, Int iMask2x2 ) const;   // SSE2
+    inline __m128d Shuffle128Double( __m128d mSrc, Int iMask2x2 ) const;                        // AVX
+    inline __m128d Shuffle128Double( __m128d mSrc, __m128i mMask1x2 ) const;                    // AVX
 
-    inline __m128i ShuffleInt32( __m128i mSrc, Int iMask4 ) const; // SSE2
-    inline __m256i ShuffleInt32( __m256i mSrc, Int iMask4 ) const; // AVX2
+    inline __m256d Shuffle128Double( __m256d mSrcLow, __m256d mSrcHigh, Int iMask4x2 ) const;   // AVX
+    inline __m256d Shuffle128Double( __m256d mSrc, Int iMask4x2 ) const;                        // AVX
+    inline __m256d Shuffle128Double( __m256d mSrc, __m256i mMask1x2 ) const;                    // AVX
 
-    ////////////////////////////////////////////////////////////// Permutation
+    inline __m256d Shuffle256Double( __m256d mSrc, Int iMask4x4 ) const;    // AVX2
+
+    inline __m256d Shuffle512TwoDouble( __m256d mSrc1, __m256d mSrc2, Int iMask2x4_Z ) const;   // AVX
+
+    inline __m128i Shuffle128Int8( __m128i mSrc, __m128i mMask1x16_Z ) const;   // SSSE3
+    inline __m256i Shuffle128Int8( __m256i mSrc, __m256i mMask1x16_Z ) const;   // AVX2
+
+    inline __m128i Shuffle64Int16L( __m128i mSrc, Int iMask4x4 ) const; // SSE2
+    inline __m256i Shuffle64Int16L( __m256i mSrc, Int iMask4x4 ) const; // AVX2
+
+    inline __m128i Shuffle64Int16H( __m128i mSrc, Int iMask4x4 ) const; // SSE2
+    inline __m256i Shuffle64Int16H( __m256i mSrc, Int iMask4x4 ) const; // AVX2
+
+    inline __m128i Shuffle128Int32( __m128i mSrc, Int iMask4x4 ) const; // SSE2
+    inline __m256i Shuffle128Int32( __m256i mSrc, Int iMask4x4 ) const; // AVX2
+
+    inline __m256i Shuffle256Int32( __m256i mSrc, __m256i mMask1x8 ) const; // AVX2
+
+    inline __m256i Shuffle512FourInt32( __m256i mSrc1, __m256i mSrc2, Int iMask2x4_Z ) const;   // AVX2
+
+    inline __m256i Shuffle256Int64( __m256i mSrc, Int iMask4x4 ) const; // AVX2
 
 
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// PERMUTE
-// __m128d _mm_permute_pd(__m128d, int)      - AVX
-// __m128 _mm_permute_ps(__m128, int)        - AVX
-// __m256d _mm256_permute_pd(__m256d, int)   - AVX
-// __m256 _mm256_permute_ps(__m256, int)     - AVX
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// PERMUTE2
-// __m256d _mm256_permute2f128_pd(__m256d, __m256d, int)            - AVX
-// __m256 _mm256_permute2f128_ps(__m256, __m256, int)               - AVX
-// __m256i _mm256_permute2f128_si256(__m256i, __m256i, int)         - AVX
-// __m256i _mm256_permute2x128_si256(__m256i, __m256i, const int)   - AVX2
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// PERMUTE4
-// __m256i _mm256_permute4x64_epi64 (__m256i, const int)    - AVX2
-// __m256d _mm256_permute4x64_pd(__m256d, const int)        - AVX2
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// PERMUTEVAR
-// __m128d _mm_permutevar_pd(__m128d, __m128i)              - AVX
-// __m128 _mm_permutevar_ps(__m128, __m128i)                - AVX
-// __m256d _mm256_permutevar_pd(__m256d, __m256i)           - AVX
-// __m256 _mm256_permutevar_ps(__m256, __m256i)             - AVX
-// __m256i _mm256_permutevar8x32_epi32(__m256i, __m256i)    - AVX2
-// __m256 _mm256_permutevar8x32_ps (__m256, __m256i)        - AVX2
 
 
     // Convert operations

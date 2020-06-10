@@ -1614,10 +1614,577 @@ inline __m256i SIMDMath::ZeroExtend256Int32To64( __m128i mSrc ) const {
     return _mm256_cvtepu32_epi64( mSrc );
 }
 
+////////////////////////////////////////////////////////////// Absolute Value
+inline __m128i SIMDMath::Abs8( __m128i mValue ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_abs_epi8( mValue );
+}
+inline __m256i SIMDMath::Abs8( __m256i mValue ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_abs_epi8( mValue );
+}
 
+inline __m128i SIMDMath::Abs16( __m128i mValue ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_abs_epi16( mValue );
+}
+inline __m256i SIMDMath::Abs16( __m256i mValue ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_abs_epi16( mValue );
+}
 
+inline __m128i SIMDMath::Abs32( __m128i mValue ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_abs_epi32( mValue );
+}
+inline __m256i SIMDMath::Abs32( __m256i mValue ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_abs_epi32( mValue );
+}
 
+inline __m128i SIMDMath::Abs64( __m128i mValue ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_abs_epi64( mValue );
+}
+inline __m256i SIMDMath::Abs64( __m256i mValue ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_abs_epi64( mValue );
+}
 
+////////////////////////////////////////////////////////////// Sign Change
+inline __m128i SIMDMath::Negate8( __m128i mValue, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_sign_epi8( mValue, mSigns );
+}
+inline __m256i SIMDMath::Negate8( __m256i mValue, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_sign_epi8( mValue, mSigns );
+}
+
+inline __m128i SIMDMath::Negate16( __m128i mValue, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_sign_epi16( mValue, mSigns );
+}
+inline __m256i SIMDMath::Negate16( __m256i mValue, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_sign_epi16( mValue, mSigns );
+}
+
+inline __m128i SIMDMath::Negate32( __m128i mValue, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_sign_epi32( mValue, mSigns );
+}
+inline __m256i SIMDMath::Negate32( __m256i mValue, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_sign_epi32( mValue, mSigns );
+}
+
+////////////////////////////////////////////////////////////// Rounding
+inline __m128 SIMDMath::FloorLower( __m128 mDst, __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_floor_ss( mDst, mSrc );
+}
+inline __m128d SIMDMath::FloorLower( __m128d mDst, __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_floor_sd( mDst, mSrc );
+}
+
+inline __m128 SIMDMath::Floor( __m128 mValue ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_floor_ps( mValue );
+}
+inline __m256 SIMDMath::Floor( __m256 mValue ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_floor_ps( mValue );
+}
+
+inline __m128d SIMDMath::Floor( __m128d mValue ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_floor_pd( mValue );
+}
+inline __m256d SIMDMath::Floor( __m256d mValue ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_floor_pd( mValue );
+}
+
+inline __m128 SIMDMath::CeilLower( __m128 mDst, __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_ceil_ss( mDst, mSrc );
+}
+inline __m128d SIMDMath::CeilLower( __m128d mDst, __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm_ceil_sd( mDst, mSrc );
+}
+
+inline __m128 SIMDMath::Ceil( __m128 mValue ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_ceil_ps( mValue );
+}
+inline __m256 SIMDMath::Ceil( __m256 mValue ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_ceil_ps( mValue );
+}
+
+inline __m128d SIMDMath::Ceil( __m128d mValue ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_ceil_pd( mValue );
+}
+inline __m256d SIMDMath::Ceil( __m256d mValue ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_ceil_pd( mValue );
+}
+
+inline __m128 SIMDMath::RoundLower( __m128 mDst, __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_round_ss( mDst, mSrc, _MM_FROUND_NINT );
+}
+inline __m128d SIMDMath::RoundLower( __m128d mDst, __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm_round_sd( mDst, mSrc, _MM_FROUND_NINT );
+}
+
+inline __m128 SIMDMath::Round( __m128 mValue ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_round_ps( mValue, _MM_FROUND_NINT );
+}
+inline __m256 SIMDMath::Round( __m256 mValue ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_round_ps( mValue, _MM_FROUND_NINT );
+}
+
+inline __m128d SIMDMath::Round( __m128d mValue ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_round_pd( mValue, _MM_FROUND_NINT );
+}
+inline __m256d SIMDMath::Round( __m256d mValue ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_round_pd( mValue, _MM_FROUND_NINT );
+}
+
+////////////////////////////////////////////////////////////// Addition
+inline __m128 SIMDMath::AddLower( __m128 mDst, __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_add_ss( mDst, mSrc );
+}
+inline __m128d SIMDMath::AddLower( __m128d mDst, __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_add_sd( mDst, mSrc );
+}
+
+inline __m128 SIMDMath::Add( __m128 mDst, __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_add_ps( mDst, mSrc );
+}
+inline __m256 SIMDMath::Add( __m256 mDst, __m256 mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_add_ps( mDst, mSrc );
+}
+
+inline __m128d SIMDMath::Add( __m128d mDst, __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_add_pd( mDst, mSrc );
+}
+inline __m256d SIMDMath::Add( __m256d mDst, __m256d mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_add_pd( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::Add8( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_add_epi8( mDst, mSrc );
+}
+inline __m256i SIMDMath::Add8( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_add_epi8( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::Add16( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_add_epi16( mDst, mSrc );
+}
+inline __m256i SIMDMath::Add16( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_add_epi16( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::Add32( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_add_epi32( mDst, mSrc );
+}
+inline __m256i SIMDMath::Add32( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_add_epi32( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::Add64( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_add_epi64( mDst, mSrc );
+}
+inline __m256i SIMDMath::Add64( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_add_epi64( mDst, mSrc );
+}
+
+////////////////////////////////////////////////////////////// Addition with Saturation
+inline __m128i SIMDMath::AddSigned8( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_adds_epi8( mDst, mSrc );
+}
+inline __m256i SIMDMath::AddSigned8( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_adds_epi8( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::AddSigned16( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_adds_epi16( mDst, mSrc );
+}
+inline __m256i SIMDMath::AddSigned16( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_adds_epi16( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::AddUnsigned8( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_adds_epu8( mDst, mSrc );
+}
+inline __m256i SIMDMath::AddUnsigned8( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_adds_epu8( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::AddUnsigned16( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_adds_epu16( mDst, mSrc );
+}
+inline __m256i SIMDMath::AddUnsigned16( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_adds_epu16( mDst, mSrc );
+}
+
+////////////////////////////////////////////////////////////// Horizontal Addition
+inline __m128 SIMDMath::HAdd( __m128 mSrc1, __m128 mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasSSE3() );
+    return _mm_hadd_ps( mSrc1, mSrc2 );
+}
+inline __m256 SIMDMath::HAdd( __m256 mSrc1, __m256 mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_hadd_ps( mSrc1, mSrc2 );
+}
+
+inline __m128d SIMDMath::HAdd( __m128d mSrc1, __m128d mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasSSE3() );
+    return _mm_hadd_pd( mSrc1, mSrc2 );
+}
+inline __m256d SIMDMath::HAdd( __m256d mSrc1, __m256d mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_hadd_pd( mSrc1, mSrc2 );
+}
+
+inline __m128i SIMDMath::HAdd16( __m128i mSrc1, __m128i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_hadd_epi16( mSrc1, mSrc2 );
+}
+inline __m256i SIMDMath::HAdd16( __m256i mSrc1, __m256i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_hadd_epi16( mSrc1, mSrc2 );
+}
+
+inline __m128i SIMDMath::HAdd32( __m128i mSrc1, __m128i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_hadd_epi32( mSrc1, mSrc2 );
+}
+inline __m256i SIMDMath::HAdd32( __m256i mSrc1, __m256i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_hadd_epi32( mSrc1, mSrc2 );
+}
+
+////////////////////////////////////////////////////////////// Horizontal Addition with Saturation
+inline __m128i SIMDMath::HAddSigned16( __m128i mSrc1, __m128i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_hadds_epi16( mSrc1, mSrc2 );
+}
+inline __m256i SIMDMath::HAddSigned16( __m256i mSrc1, __m256i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_hadds_epi16( mSrc1, mSrc2 );
+}
+
+////////////////////////////////////////////////////////////// Substraction
+inline __m128 SIMDMath::SubLower( __m128 mDst, __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_sub_ss( mDst, mSrc );
+}
+inline __m128d SIMDMath::SubLower( __m128d mDst, __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_sub_sd( mDst, mSrc );
+}
+
+inline __m128 SIMDMath::Sub( __m128 mDst, __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_sub_ps( mDst, mSrc );
+}
+inline __m256 SIMDMath::Sub( __m256 mDst, __m256 mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_sub_ps( mDst, mSrc );
+}
+
+inline __m128d SIMDMath::Sub( __m128d mDst, __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_sub_pd( mDst, mSrc );
+}
+inline __m256d SIMDMath::Sub( __m256d mDst, __m256d mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_sub_pd( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::Sub8( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_sub_epi8( mDst, mSrc );
+}
+inline __m256i SIMDMath::Sub8( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_sub_epi8( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::Sub16( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_sub_epi16( mDst, mSrc );
+}
+inline __m256i SIMDMath::Sub16( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_sub_epi16( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::Sub32( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_sub_epi32( mDst, mSrc );
+}
+inline __m256i SIMDMath::Sub32( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_sub_epi32( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::Sub64( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_sub_epi64( mDst, mSrc );
+}
+inline __m256i SIMDMath::Sub64( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_sub_epi64( mDst, mSrc );
+}
+
+////////////////////////////////////////////////////////////// Substraction with Saturation
+inline __m128i SIMDMath::SubSigned8( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_subs_epi8( mDst, mSrc );
+}
+inline __m256i SIMDMath::SubSigned8( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_subs_epi8( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::SubSigned16( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_subs_epi16( mDst, mSrc );
+}
+inline __m256i SIMDMath::SubSigned16( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_subs_epi16( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::SubUnsigned8( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_subs_epu8( mDst, mSrc );
+}
+inline __m256i SIMDMath::SubUnsigned8( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_subs_epu8( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::SubUnsigned16( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_subs_epu16( mDst, mSrc );
+}
+inline __m256i SIMDMath::SubUnsigned16( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_subs_epu16( mDst, mSrc );
+}
+
+////////////////////////////////////////////////////////////// Horizontal Substraction
+inline __m128 SIMDMath::HSub( __m128 mSrc1, __m128 mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasSSE3() );
+    return _mm_hsub_ps( mSrc1, mSrc2 );
+}
+inline __m256 SIMDMath::HSub( __m256 mSrc1, __m256 mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_hsub_ps( mSrc1, mSrc2 );
+}
+
+inline __m128d SIMDMath::HSub( __m128d mSrc1, __m128d mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasSSE3() );
+    return _mm_hsub_pd( mSrc1, mSrc2 );
+}
+inline __m256d SIMDMath::HSub( __m256d mSrc1, __m256d mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_hsub_pd( mSrc1, mSrc2 );
+}
+
+inline __m128i SIMDMath::HSub16( __m128i mSrc1, __m128i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_hsub_epi16( mSrc1, mSrc2 );
+}
+inline __m256i SIMDMath::HSub16( __m256i mSrc1, __m256i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_hsub_epi16( mSrc1, mSrc2 );
+}
+
+inline __m128i SIMDMath::HSub32( __m128i mSrc1, __m128i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_hsub_epi32( mSrc1, mSrc2 );
+}
+inline __m256i SIMDMath::HSub32( __m256i mSrc1, __m256i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_hsub_epi32( mSrc1, mSrc2 );
+}
+
+////////////////////////////////////////////////////////////// Horizontal Substraction with Saturation
+inline __m128i SIMDMath::HSubSigned16( __m128i mSrc1, __m128i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasSSSE3() );
+    return _mm_hsubs_epi16( mSrc1, mSrc2 );
+}
+inline __m256i SIMDMath::HSubSigned16( __m256i mSrc1, __m256i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_hsubs_epi16( mSrc1, mSrc2 );
+}
+
+////////////////////////////////////////////////////////////// Interleaved Add & Sub
+inline __m128 SIMDMath::AddSub( __m128 mDst, __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE3() );
+    return _mm_addsub_ps( mDst, mSrc );
+}
+inline __m256 SIMDMath::AddSub( __m256 mDst, __m256 mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_addsub_ps( mDst, mSrc );
+}
+
+inline __m128d SIMDMath::AddSub( __m128d mDst, __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE3() );
+    return _mm_addsub_pd( mDst, mSrc );
+}
+inline __m256d SIMDMath::AddSub( __m256d mDst, __m256d mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_addsub_pd( mDst, mSrc );
+}
+
+////////////////////////////////////////////////////////////// SAD (Sum Absolute Differences)
+inline __m128i SIMDMath::SAD( __m128i mSrc1, __m128i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_sad_epu8( mSrc1, mSrc2 );
+}
+inline __m256i SIMDMath::SAD( __m256i mSrc1, __m256i mSrc2 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_sad_epu8( mSrc1, mSrc2 );
+}
+
+inline __m128i SIMDMath::SAD( __m128i mSrc1, __m128i mSrc2, Int iMask ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_mpsadbw_epu8( mSrc1, mSrc2, iMask );
+}
+inline __m256i SIMDMath::SAD( __m256i mSrc1, __m256i mSrc2, Int iMask ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mpsadbw_epu8( mSrc1, mSrc2, iMask );
+}
+
+////////////////////////////////////////////////////////////// Multiplication
+inline __m128 SIMDMath::MulLower( __m128 mDst, __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_mul_ss( mDst, mSrc );
+}
+inline __m128d SIMDMath::MulLower( __m128d mDst, __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_mul_sd( mDst, mSrc );
+}
+
+inline __m128 SIMDMath::Mul( __m128 mDst, __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_mul_ps( mDst, mSrc );
+}
+inline __m256 SIMDMath::Mul( __m256 mDst, __m256 mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_mul_ps( mDst, mSrc );
+}
+
+inline __m128d SIMDMath::Mul( __m128d mDst, __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_mul_pd( mDst, mSrc );
+}
+inline __m256d SIMDMath::Mul( __m256d mDst, __m256d mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_mul_pd( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::MulSigned16L( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_mullo_epi16( mDst, mSrc );
+}
+inline __m256i SIMDMath::MulSigned16L( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mullo_epi16( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::MulSigned16H( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_mulhi_epi16( mDst, mSrc );
+}
+inline __m256i SIMDMath::MulSigned16H( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mulhi_epi16( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::MulSigned32( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_mul_epi32( mDst, mSrc );
+}
+inline __m256i SIMDMath::MulSigned32( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mul_epi32( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::MulSigned32L( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_mullo_epi32( mDst, mSrc );
+}
+inline __m256i SIMDMath::MulSigned32L( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mullo_epi32( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::MulSigned64L( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_mullo_epi64( mDst, mSrc );
+}
+inline __m256i SIMDMath::MulSigned64L( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mullo_epi64( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::MulUnsigned16H( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_mulhi_epu16( mDst, mSrc );
+}
+inline __m256i SIMDMath::MulUnsigned16H( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mulhi_epu16( mDst, mSrc );
+}
+
+inline __m128i SIMDMath::MulUnsigned32( __m128i mDst, __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_mul_epu32( mDst, mSrc );
+}
+inline __m256i SIMDMath::MulUnsigned32( __m256i mDst, __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mul_epu32( mDst, mSrc );
+}
 
 
 

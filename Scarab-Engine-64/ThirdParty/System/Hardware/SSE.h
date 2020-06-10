@@ -88,6 +88,14 @@
 #define SIMD_SAD_MASK( _sel_src1, _sel_src2 ) \
     ( (((_sel_src1) & 0x01) << 2) | ((_sel_src2) & 0x03) )
 
+// DotP Control Mask
+#define SIMD_DOTP_MASK_2( _element_0, _element_1, _dest_0, _dest_1 ) \
+    ( (((_element_0) & 0x01) << 4) | (((_element_1) & 0x01) << 5) | \
+      ((_dest_0) & 0x01) | (((_dest_1) & 0x01) << 1) )
+
+#define SIMD_DOTP_MASK_4( _element_0, _element_1, _element_2, _element_3, _dest_0, _dest_1, _dest_2, _dest_3 ) \
+    ( (((_element_0) & 0x01) << 4) | (((_element_1) & 0x01) << 5) | (((_element_2) & 0x01) << 6) | (((_element_3) & 0x01) << 7) | \
+      ((_dest_0) & 0x01) | (((_dest_1) & 0x01) << 1) | (((_dest_2) & 0x01) << 2) | (((_dest_3) & 0x01) << 3) )
 
 /////////////////////////////////////////////////////////////////////////////////
 // The SIMDMath class
@@ -844,23 +852,24 @@ public:
     inline __m256i MulUnsigned32( __m256i mDst, __m256i mSrc ) const;   // AVX2
 
     ////////////////////////////////////////////////////////////// MADD (Multiply and Add)
+        // Signed 16-bits -> Signed 32-bits
+    inline __m128i MAdd( __m128i mDst, __m128i mSrc ) const;   // SSE2
+    inline __m256i MAdd( __m256i mDst, __m256i mSrc ) const;   // AVX2
+
+        // Unsigned-Signed 8-bits -> Signed 16-bits
+    inline __m128i MAddUS( __m128i mDst, __m128i mSrc ) const;   // SSSE3
+    inline __m256i MAddUS( __m256i mDst, __m256i mSrc ) const;   // AVX2
+
+    ////////////////////////////////////////////////////////////// DP (Dot Product)
+    inline __m128 DotP( __m128 mDst, __m128 mSrc, Int iMask4 ) const; // SSE41
+    inline __m256 DotP( __m256 mDst, __m256 mSrc, Int iMask4 ) const; // AVX
+
+    inline __m128d DotP( __m128d mDst, __m128d mSrc, Int iMask2 ) const; // SSE41
 
 
 
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// MADD
-// __m64 _m_pmaddwd(__m64, __m64)                   - MMX
-// __m64 _mm_madd_pi16(__m64, __m64)                - MMX*
-// __m128i _mm_madd_epi16(__m128i, __m128i)         - SSE2
-// __m128i _mm_maddubs_epi16(__m128i, __m128i)      - SSSE3
-// __m64 _mm_maddubs_pi16(__m64, __m64)             - SSSE3
-// __m256i _mm256_madd_epi16(__m256i, __m256i)      - AVX2
-// __m256i _mm256_maddubs_epi16(__m256i, __m256i)   - AVX2
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// DP
-// __m128d _mm_dp_pd(__m128d, __m128d, const int)   - SSE41
-// __m128 _mm_dp_ps(__m128, __m128, const int)      - SSE41
-// __m256 _mm256_dp_ps(__m256, __m256, const int)   - AVX
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// DIV
 // __m128 _mm_div_ps(__m128, __m128)        - SSE
 // __m128 _mm_div_ss(__m128, __m128)        - SSE
@@ -869,8 +878,6 @@ public:
 // __m256d _mm256_div_pd(__m256d, __m256d)  - AVX
 // __m256 _mm256_div_ps(__m256, __m256)     - AVX
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// AVG
-// __m64 _m_pavgb(__m64, __m64)                 - SSE
-// __m64 _m_pavgw(__m64, __m64)                 - SSE
 // __m128i _mm_avg_epu16(__m128i, __m128i)      - SSE2
 // __m128i _mm_avg_epu8(__m128i, __m128i)       - SSE2
 // __m256i _mm256_avg_epu16(__m256i, __m256i)   - AVX2

@@ -73,15 +73,19 @@
 #define SIMD_SHUFFLE_MASK_4x4( _element_0, _element_1, _element_2, _element_3 ) \
     ( ((_element_0) & 0x03) | (((_element_1) & 0x03) << 2) | (((_element_2) & 0x03) << 4) | (((_element_3) & 0x03) << 6) )
 
-
 // Blend Control Mask
+#define SIMD_BLEND_MASK_2( _element_0, _element_1 ) \
+    ( ((_element_0) & 0x01) | (((_element_1) & 0x01) << 1) )
+
+#define SIMD_BLEND_MASK_4( _element_0, _element_1, _element_2, _element_3 ) \
+    ( ((_element_0) & 0x01) | (((_element_1) & 0x01) << 1) | (((_element_2) & 0x01) << 2) | (((_element_3) & 0x01) << 3) )
+
+#define SIMD_BLEND_MASK_8( _element_0, _element_1, _element_2, _element_3, _element_4, _element_5, _element_6, _element_7 ) \
+    (        ((_element_0) & 0x01) | (((_element_1) & 0x01) << 1) | (((_element_2) & 0x01) << 2) | (((_element_3) & 0x01) << 3) | \
+      (((_element_4) & 0x01) << 4) | (((_element_5) & 0x01) << 5) | (((_element_6) & 0x01) << 6) | (((_element_7) & 0x01) << 7) )
 
 
 
-#define _SSE_IBLEND_MASK_PS( _pick_0, _pick_1, _pick_2, _pick_3 ) \
-    ( ((_pick_0) & 0x01) | (((_pick_1) & 0x01) << 1) | (((_pick_2) & 0x01) << 2) | (((_pick_3) & 0x01) << 3) )
-#define _SSE_IBLEND_MASK_PD( _pick_0, _pick_1 ) \
-    ( ((_pick_0) & 0x01) | (((_pick_1) & 0x01) << 1) )
 
 /////////////////////////////////////////////////////////////////////////////////
 // The SIMDMath class
@@ -114,6 +118,9 @@ public:
     ////////////////////////////////////////////////////////////// Values -> Registers
     inline __m128 SetLower( Float f0 ) const;   // SSE
     inline __m128d SetLower( Double f0 ) const; // SSE2
+
+    inline __m128i SetLower( Int32 i0 ) const; // SSE2
+    inline __m128i SetLower( Int64 i0 ) const; // SSE2
 
     inline __m128 Set128( Float f0, Float f1, Float f2, Float f3 ) const;                                           // SSE
     inline __m256 Set256( Float f0, Float f1, Float f2, Float f3, Float f4, Float f5, Float f6, Float f7 ) const;   // AVX
@@ -175,6 +182,18 @@ public:
     inline __m256i Set64I( __m256i mDst, Int64 iSrc, Int32 iIndex ) const; // AVX
 
     ////////////////////////////////////////////////////////////// Registers -> Values
+    inline Float GetLowerFloat( __m128 mSrc ) const; // SSE
+    inline Float GetLowerFloat( __m256 mSrc ) const; // AVX
+
+    inline Double GetLowerDouble( __m128d mSrc ) const; // SSE2
+    inline Double GetLowerDouble( __m256d mSrc ) const; // AVX
+
+    inline Int32 GetLowerInt32( __m128i mSrc ) const; // SSE2
+    inline Int32 GetLowerInt32( __m256i mSrc ) const; // AVX
+
+    inline Int64 GetLowerInt64( __m128i mSrc ) const; // SSE2
+    inline Int64 GetLowerInt64( __m256i mSrc ) const; // AVX
+
     inline Int32 Get8I( __m128i mSrc, Int32 iIndex ) const; // SSE41
     inline Int32 Get8I( __m256i mSrc, Int32 iIndex ) const; // AVX2
 
@@ -208,10 +227,20 @@ public:
     inline __m256i Load256Aligned( const __m256i * arrSrc ) const; // AVX
 
     inline __m128 Load128( const Float * arrF ) const; // SSE
+    inline __m128 Load128( const Float * arrF, __m128i mSigns ) const; // AVX
     inline __m256 Load256( const Float * arrF ) const; // AVX
+    inline __m256 Load256( const Float * arrF, __m256i mSigns ) const; // AVX
 
     inline __m128d Load128( const Double * arrF ) const; // SSE2
+    inline __m128d Load128( const Double * arrF, __m128i mSigns ) const; // AVX
     inline __m256d Load256( const Double * arrF ) const; // AVX
+    inline __m256d Load256( const Double * arrF, __m256i mSigns ) const; // AVX
+
+    inline __m128i Load128( const Int32 * arrI, __m128i mSigns ) const; // AVX2
+    inline __m256i Load256( const Int32 * arrI, __m256i mSigns ) const; // AVX2
+
+    inline __m128i Load128( const Int64 * arrI, __m128i mSigns ) const; // AVX2
+    inline __m256i Load256( const Int64 * arrI, __m256i mSigns ) const; // AVX2
 
     inline __m128i Load128( const __m128i * arrSrc ) const; // SSE3
     inline __m256i Load256( const __m256i * arrSrc ) const; // AVX
@@ -239,30 +268,46 @@ public:
     inline __m256d Dupe256TwoDouble( const __m128d * pSrc ) const; // AVX
 
         // Sparse memory, 32-bit indices
-    inline __m128 Load32FourFloat( const Float * pSrc, __m128i mIndices, Int32 iStride ) const;  // AVX2
-    inline __m256 Load32EightFloat( const Float * pSrc, __m256i mIndices, Int32 iStride ) const; // AVX2
+    inline __m128 Load32FourFloat( const Float * pSrc, __m128i mIndices, Int32 iStride ) const;                                 // AVX2
+    inline __m128 Load32FourFloat( __m128 mDst, const Float * pSrc, __m128i mIndices, Int32 iStride, __m128 mSigns ) const;     // AVX2
+    inline __m256 Load32EightFloat( const Float * pSrc, __m256i mIndices, Int32 iStride ) const;                                // AVX2
+    inline __m256 Load32EightFloat( __m256 mDst, const Float * pSrc, __m256i mIndices, Int32 iStride, __m256 mSigns ) const;    // AVX2
 
-    inline __m128d Load32TwoDouble( const Double * pSrc, __m128i mIndices, Int32 iStride ) const;  // AVX2
-    inline __m256d Load32FourDouble( const Double * pSrc, __m128i mIndices, Int32 iStride ) const; // AVX2
+    inline __m128d Load32TwoDouble( const Double * pSrc, __m128i mIndices, Int32 iStride ) const;                                   // AVX2
+    inline __m128d Load32TwoDouble( __m128d mDst, const Double * pSrc, __m128i mIndices, Int32 iStride, __m128d mSigns ) const;     // AVX2
+    inline __m256d Load32FourDouble( const Double * pSrc, __m128i mIndices, Int32 iStride ) const;                                  // AVX2
+    inline __m256d Load32FourDouble( __m256d mDst, const Double * pSrc, __m128i mIndices, Int32 iStride, __m256d mSigns ) const;    // AVX2
 
-    inline __m128i Load32FourInt32( const Int32 * pSrc, __m128i mIndices, Int32 iStride ) const;  // AVX2
-    inline __m256i Load32EightInt32( const Int32 * pSrc, __m256i mIndices, Int32 iStride ) const; // AVX2
+    inline __m128i Load32FourInt32( const Int32 * pSrc, __m128i mIndices, Int32 iStride ) const;                                // AVX2
+    inline __m128i Load32FourInt32( __m128i mDst, const Int32 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns ) const;  // AVX2
+    inline __m256i Load32EightInt32( const Int32 * pSrc, __m256i mIndices, Int32 iStride ) const;                               // AVX2
+    inline __m256i Load32EightInt32( __m256i mDst, const Int32 * pSrc, __m256i mIndices, Int32 iStride, __m256i mSigns ) const; // AVX2
 
     inline __m128i Load32TwoInt64( const Int64 * pSrc, __m128i mIndices, Int32 iStride ) const;  // AVX2
+    inline __m128i Load32TwoInt64( __m128i mDst, const Int64 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns ) const;  // AVX2
     inline __m256i Load32FourInt64( const Int64 * pSrc, __m128i mIndices, Int32 iStride ) const; // AVX2
+    inline __m256i Load32FourInt64( __m256i mDst, const Int64 * pSrc, __m128i mIndices, Int32 iStride, __m256i mSigns ) const; // AVX2
 
         // Sparse memory, 64-bit indices
-    inline __m128 Load64TwoFloat( const Float * pSrc, __m128i mIndices, Int32 iStride ) const;  // AVX2
-    inline __m128 Load64FourFloat( const Float * pSrc, __m256i mIndices, Int32 iStride ) const; // AVX2
+    inline __m128 Load64TwoFloat( const Float * pSrc, __m128i mIndices, Int32 iStride ) const;                              // AVX2
+    inline __m128 Load64TwoFloat( __m128 mDst, const Float * pSrc, __m128i mIndices, Int32 iStride, __m128 mSigns ) const;  // AVX2
+    inline __m128 Load64FourFloat( const Float * pSrc, __m256i mIndices, Int32 iStride ) const;                             // AVX2
+    inline __m128 Load64FourFloat( __m128 mDst, const Float * pSrc, __m256i mIndices, Int32 iStride, __m128 mSigns ) const; // AVX2
 
-    inline __m128d Load64TwoDouble( const Double * pSrc, __m128i mIndices, Int32 iStride ) const;  // AVX2
-    inline __m256d Load64FourDouble( const Double * pSrc, __m256i mIndices, Int32 iStride ) const; // AVX2
+    inline __m128d Load64TwoDouble( const Double * pSrc, __m128i mIndices, Int32 iStride ) const;                                   // AVX2
+    inline __m128d Load64TwoDouble( __m128d mDst, const Double * pSrc, __m128i mIndices, Int32 iStride, __m128d mSigns ) const;     // AVX2
+    inline __m256d Load64FourDouble( const Double * pSrc, __m256i mIndices, Int32 iStride ) const;                                  // AVX2
+    inline __m256d Load64FourDouble( __m256d mDst, const Double * pSrc, __m256i mIndices, Int32 iStride, __m256d mSigns ) const;    // AVX2
 
-    inline __m128i Load64TwoInt32( const Int32 * pSrc, __m128i mIndices, Int32 iStride ) const;  // AVX2
-    inline __m128i Load64FourInt32( const Int32 * pSrc, __m256i mIndices, Int32 iStride ) const; // AVX2
+    inline __m128i Load64TwoInt32( const Int32 * pSrc, __m128i mIndices, Int32 iStride ) const;                                 // AVX2
+    inline __m128i Load64TwoInt32( __m128i mDst, const Int32 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns ) const;   // AVX2
+    inline __m128i Load64FourInt32( const Int32 * pSrc, __m256i mIndices, Int32 iStride ) const;                                // AVX2
+    inline __m128i Load64FourInt32( __m128i mDst, const Int32 * pSrc, __m256i mIndices, Int32 iStride, __m128i mSigns ) const;  // AVX2
 
-    inline __m128i Load64TwoInt64( const Int64 * pSrc, __m128i mIndices, Int32 iStride ) const;  // AVX2
-    inline __m256i Load64FourInt64( const Int64 * pSrc, __m256i mIndices, Int32 iStride ) const; // AVX2
+    inline __m128i Load64TwoInt64( const Int64 * pSrc, __m128i mIndices, Int32 iStride ) const;                                 // AVX2
+    inline __m128i Load64TwoInt64( __m128i mDst, const Int64 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns ) const;   // AVX2
+    inline __m256i Load64FourInt64( const Int64 * pSrc, __m256i mIndices, Int32 iStride ) const;                                // AVX2
+    inline __m256i Load64FourInt64( __m256i mDst, const Int64 * pSrc, __m256i mIndices, Int32 iStride, __m256i mSigns ) const;  // AVX2
 
         // Non-Temporal variants (stream_load instructions)
     inline __m128i LoadNT128Aligned( const __m128i * arrSrc ) const; // SSE41
@@ -316,6 +361,19 @@ public:
 
     inline Void StoreNT128Aligned( __m128i * outDst, __m128i mSrc ) const; // SSE2
     inline Void StoreNT256Aligned( __m256i * outDst, __m256i mSrc ) const; // AVX
+
+        // Masks
+    inline Void Store128( Float * outDst, __m128 mSrc, __m128i mSigns ) const; // AVX
+    inline Void Store256( Float * outDst, __m256 mSrc, __m256i mSigns ) const; // AVX
+
+    inline Void Store128( Double * outDst, __m128d mSrc, __m128i mSigns ) const; // AVX
+    inline Void Store256( Double * outDst, __m256d mSrc, __m256i mSigns ) const; // AVX
+
+    inline Void Store128( Int32 * outDst, __m128i mSrc, __m128i mSigns ) const; // AVX2
+    inline Void Store256( Int32 * outDst, __m256i mSrc, __m256i mSigns ) const; // AVX2
+
+    inline Void Store128( Int64 * outDst, __m128i mSrc, __m128i mSigns ) const; // AVX2
+    inline Void Store256( Int64 * outDst, __m256i mSrc, __m256i mSigns ) const; // AVX2
 
     ////////////////////////////////////////////////////////////// Registers <-> Registers
         // Move
@@ -460,12 +518,133 @@ public:
 
     inline __m256i Shuffle256Int64( __m256i mSrc, Int iMask4x4 ) const; // AVX2
 
+    ////////////////////////////////////////////////////////////// Blend
+    inline __m128 BlendFloat( __m128 mDst, __m128 mSrc, Int iMask4 ) const;     // SSE41
+    inline __m128 BlendFloat( __m128 mDst, __m128 mSrc, __m128 mSigns ) const;  // SSE41
+    inline __m256 BlendFloat( __m256 mDst, __m256 mSrc, Int iMask8 ) const;     // AVX
+    inline __m256 BlendFloat( __m256 mDst, __m256 mSrc, __m256 mSigns ) const;  // AVX
+
+    inline __m128d BlendDouble( __m128d mDst, __m128d mSrc, Int iMask2 ) const;     // SSE41
+    inline __m128d BlendDouble( __m128d mDst, __m128d mSrc, __m128d mSigns ) const; // SSE41
+    inline __m256d BlendDouble( __m256d mDst, __m256d mSrc, Int iMask4 ) const;     // AVX
+    inline __m256d BlendDouble( __m256d mDst, __m256d mSrc, __m256d mSigns ) const; // AVX
+
+    inline __m128i BlendInt8( __m128i mDst, __m128i mSrc, __m128i mSigns ) const;   // SSE41
+    inline __m256i BlendInt8( __m256i mDst, __m256i mSrc, __m256i mSigns ) const;   // AVX2
+
+    inline __m128i BlendInt16( __m128i mDst, __m128i mSrc, Int iMask8 ) const;  // SSE41
+    inline __m256i BlendInt16( __m256i mDst, __m256i mSrc, Int iMask8 ) const;  // AVX2
+
+    inline __m128i BlendInt32( __m128i mDst, __m128i mSrc, Int iMask4 ) const;  // AVX2
+    inline __m256i BlendInt32( __m256i mDst, __m256i mSrc, Int iMask8 ) const;  // AVX2
+
+    ////////////////////////////////////////////////////////////// Cast (Free, 0 instruction generated)
+    inline __m128 CastToFloat( __m128d mDouble ) const;     // SSE2
+    inline __m128 CastToFloat( __m128i mInteger ) const;    // SSE2
+    inline __m256 CastToFloat( __m256d mDouble ) const;     // AVX
+    inline __m256 CastToFloat( __m256i mInteger ) const;    // AVX
+
+    inline __m128d CastToDouble( __m128 mFloat ) const;     // SSE2
+    inline __m128d CastToDouble( __m128i mInteger ) const;  // SSE2
+    inline __m256d CastToDouble( __m256 mFloat ) const;     // AVX
+    inline __m256d CastToDouble( __m256i mInteger ) const;  // AVX
+
+    inline __m128i CastToInteger( __m128 mFloat ) const;    // SSE2
+    inline __m128i CastToInteger( __m128d mDouble ) const;  // SSE2
+    inline __m256i CastToInteger( __m256 mFloat ) const;    // AVX
+    inline __m256i CastToInteger( __m256d mDouble ) const;  // AVX
+
+    inline __m128 CastDown( __m256 mFloat ) const;      // AVX
+    inline __m128d CastDown( __m256d mDouble ) const;   // AVX
+    inline __m128i CastDown( __m256i mInteger ) const;  // AVX
+
+    inline __m256 CastUp( __m128 mFloat ) const;        // AVX
+    inline __m256d CastUp( __m128d mDouble ) const;     // AVX
+    inline __m256i CastUp( __m128i mInteger ) const;    // AVX
+
+    ////////////////////////////////////////////////////////////// Convert & Truncate
+        // Convert and Copy
+    inline __m128 ConvertLower( __m128 mDst, Int32 iSrc ) const;    // SSE
+    inline __m128 ConvertLower( __m128 mDst, Int64 iSrc ) const;    // SSE
+
+    inline __m128d ConvertLower( __m128d mDst, Int32 iSrc ) const;  // SSE2
+    inline __m128d ConvertLower( __m128d mDst, Int64 iSrc ) const;  // SSE2
+
+    inline __m128 ConvertLower( __m128 mDst, __m128d mSrc ) const;  // SSE2
+    inline __m128d ConvertLower( __m128d mDst, __m128 mSrc ) const; // SSE2
+
+        // Convert
+    inline Int32 ConvertLowerToInt32( __m128 mSrc ) const;      // SSE
+    inline Int32 ConvertLowerToInt32( __m128d mSrc ) const;     // SSE2
+
+    inline Int64 ConvertLowerToInt64( __m128 mSrc ) const;      // SSE
+    inline Int64 ConvertLowerToInt64( __m128d mSrc ) const;     // SSE2
+
+    inline __m128 Convert128ToFloat( __m128d mSrc ) const;      // SSE2
+    inline __m128 Convert128ToFloat( __m256d mSrc ) const;      // AVX
+
+    inline __m128 Convert128ToFloat( __m128i mSrc ) const;      // SSE2
+    inline __m256 Convert256ToFloat( __m256i mSrc ) const;      // AVX
+
+    inline __m128d Convert128ToDouble( __m128 mSrc ) const;     // SSE2
+    inline __m256d Convert256ToDouble( __m128 mSrc ) const;     // AVX
+
+    inline __m128d Convert128ToDouble( __m128i mSrc ) const;    // SSE2
+    inline __m256d Convert256ToDouble( __m128i mSrc ) const;    // AVX
+
+    inline __m128i Convert128ToInt32( __m128 mSrc ) const;      // SSE2
+    inline __m256i Convert256ToInt32( __m256 mSrc ) const;      // AVX
+
+    inline __m128i Convert128ToInt32( __m128d mSrc ) const;     // SSE2
+    inline __m128i Convert128ToInt32( __m256d mSrc ) const;     // AVX
+
+        // Truncate
+    inline Int32 TruncateLowerToInt32( __m128 mSrc ) const;     // SSE
+    inline Int32 TruncateLowerToInt32( __m128d mSrc ) const;    // SSE2
+
+    inline Int64 TruncateLowerToInt64( __m128 mSrc ) const;     // SSE
+    inline Int64 TruncateLowerToInt64( __m128d mSrc ) const;    // SSE2
+
+    inline __m128i TruncateToInt32( __m128 mSrc ) const;    // SSE2
+    inline __m256i TruncateToInt32( __m256 mSrc ) const;    // AVX
+
+    inline __m128i TruncateToInt32( __m128d mSrc ) const;   // SSE2
+    inline __m128i TruncateToInt32( __m256d mSrc ) const;   // AVX
+
+        // Sign-Extend
+    inline __m128i SignExtend128Int8To16( __m128i mSrc ) const;     // SSE41
+    inline __m128i SignExtend128Int8To32( __m128i mSrc ) const;     // SSE41
+    inline __m128i SignExtend128Int8To64( __m128i mSrc ) const;     // SSE41
+    inline __m128i SignExtend128Int16To32( __m128i mSrc ) const;    // SSE41
+    inline __m128i SignExtend128Int16To64( __m128i mSrc ) const;    // SSE41
+    inline __m128i SignExtend128Int32To64( __m128i mSrc ) const;    // SSE41
+
+    inline __m256i SignExtend256Int8To16( __m128i mSrc ) const;     // AVX2
+    inline __m256i SignExtend256Int8To32( __m128i mSrc ) const;     // AVX2
+    inline __m256i SignExtend256Int8To64( __m128i mSrc ) const;     // AVX2
+    inline __m256i SignExtend256Int16To32( __m128i mSrc ) const;    // AVX2
+    inline __m256i SignExtend256Int16To64( __m128i mSrc ) const;    // AVX2
+    inline __m256i SignExtend256Int32To64( __m128i mSrc ) const;    // AVX2
+
+        // Zero-Extend
+    inline __m128i ZeroExtend128Int8To16( __m128i mSrc ) const;     // SSE41
+    inline __m128i ZeroExtend128Int8To32( __m128i mSrc ) const;     // SSE41
+    inline __m128i ZeroExtend128Int8To64( __m128i mSrc ) const;     // SSE41
+    inline __m128i ZeroExtend128Int16To32( __m128i mSrc ) const;    // SSE41
+    inline __m128i ZeroExtend128Int16To64( __m128i mSrc ) const;    // SSE41
+    inline __m128i ZeroExtend128Int32To64( __m128i mSrc ) const;    // SSE41
+
+    inline __m256i ZeroExtend256Int8To16( __m128i mSrc ) const;     // AVX2
+    inline __m256i ZeroExtend256Int8To32( __m128i mSrc ) const;     // AVX2
+    inline __m256i ZeroExtend256Int8To64( __m128i mSrc ) const;     // AVX2
+    inline __m256i ZeroExtend256Int16To32( __m128i mSrc ) const;    // AVX2
+    inline __m256i ZeroExtend256Int16To64( __m128i mSrc ) const;    // AVX2
+    inline __m256i ZeroExtend256Int32To64( __m128i mSrc ) const;    // AVX2
 
 
 
-    // Convert operations
 
-    // Cast operations (Free, 0 instruction generated)
+
 
     // Logical operations
 
@@ -564,132 +743,16 @@ private:
 // __m128i _mm_insert_si64(__m128i, __m128i)                - SSE4a
 // __m128i _mm_inserti_si64(__m128i, __m128i, int, int)     - SSE4a
 // __m128 _mm_insert_ps(__m128, __m128, const int)          - SSE41
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// GATHER MASK
-// __m128i _mm_mask_i32gather_epi32(__m128i, int const *, __m128i, __m128i, const int)          - AVX2
-// __m128i _mm_mask_i32gather_epi64(__m128i, __int64 const *, __m128i, __m128i, const int)      - AVX2
-// __m128d _mm_mask_i32gather_pd(__m128d, double const *, __m128i, __m128d, const int)          - AVX2
-// __m128 _mm_mask_i32gather_ps(__m128, float const *, __m128i, __m128, const int)              - AVX2
-// __m256i _mm256_mask_i32gather_epi32(__m256i, int const *, __m256i, __m256i, const int)       - AVX2
-// __m256i _mm256_mask_i32gather_epi64(__m256i, __int64 const *, __m128i, __m256i, const int)   - AVX2
-// __m256d _mm256_mask_i32gather_pd(__m256d, double const *, __m128i, __m256d, const int)       - AVX2
-// __m256 _mm256_mask_i32gather_ps(__m256, float const *, __m256i, __m256, const int)           - AVX2
-// __m128i _mm_mask_i64gather_epi32(__m128i, int const *, __m128i, __m128i, const int)          - AVX2
-// __m128i _mm_mask_i64gather_epi64(__m128i, __int64 const *, __m128i, __m128i, const int)      - AVX2
-// __m128d _mm_mask_i64gather_pd(__m128d, double const *, __m128i, __m128d, const int)          - AVX2
-// __m128 _mm_mask_i64gather_ps(__m128, float const *, __m128i, __m128, const int)              - AVX2
-// __m128i _mm256_mask_i64gather_epi32(__m128i, int const *, __m256i, __m128i, const int)       - AVX2
-// __m256i _mm256_mask_i64gather_epi64(__m256i, __int64 const *, __m256i, __m256i, const int)   - AVX2
-// __m256d _mm256_mask_i64gather_pd(__m256d, double const *, __m256i, __m256d, const int)       - AVX2
-// __m128 _mm256_mask_i64gather_ps(__m128, float const *, __m256i, __m128, const int)           - AVX2
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// MASKMOVE
 // void _m_maskmovq(__m64, __m64, char*)                - SSE
 // void _mm_maskmoveu_si128(__m128i, __m128i, char*)    - SSE2
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// MASKLOAD
-// __m128d _mm_maskload_pd(double const *, __m128i)         - AVX
-//  __m128 _mm_maskload_ps(float const *, __m128i)          - AVX
-// __m256d _mm256_maskload_pd(double const *, __m256i)      - AVX
-// __m256 _mm256_maskload_ps(float const *, __m256i)        - AVX
-// __m128i _mm_maskload_epi32(int const *, __m128i)         - AVX2
-// __m128i _mm_maskload_epi64(__int64 const *, __m128i)     - AVX2
-// __m256i _mm256_maskload_epi32(int const *, __m256i)      - AVX2
-// __m256i _mm256_maskload_epi64(__int64 const *, __m256i)  - AVX2
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// MASKSTORE
-// void _mm_maskstore_pd(double *, __m128i, __m128d)        - AVX
-// void _mm_maskstore_ps(float *, __m128i, __m128)          - AVX
-// void _mm256_maskstore_pd(double *, __m256i, __m256d)     - AVX
-// void _mm256_maskstore_ps(float *, __m256i, __m256)       - AVX
-// void _mm_maskstore_epi32(int *, __m128i, __m128i)        - AVX2
-// void _mm_maskstore_epi64(__int64 *, __m128i, __m128i)    - AVX2
-// void _mm256_maskstore_epi32(int *, __m256i, __m256i)     - AVX2
-// void _mm256_maskstore_epi64(__int64 *, __m256i, __m256i) - AVX2
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// MOVEMASK
-// int _m_pmovmskb(__m64)               - SSE
 // int _mm_movemask_ps(__m128)          - SSE
 // int _mm_movemask_epi8(__m128i)       - SSE2
 // int _mm_movemask_pd(__m128d)         - SSE2
 // int _mm256_movemask_pd(__m256d)      - AVX
 // int _mm256_movemask_ps(__m256)       - AVX
 // int _mm256_movemask_epi8(__m256i)    - AVX2
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// CONVERT
-// __m64 _mm_cvtsi32_si64(int)              - MMX*
-// int _mm_cvtsi64_si32 (__m64)             - MMX*
-// __m128 _mm_cvt_pi2ps(__m128, __m64)      - SSE
-// __m64 _mm_cvt_ps2pi(__m128)              - SSE
-// __m128 _mm_cvt_si2ss(__m128, int)        - SSE
-// int _mm_cvt_ss2si(__m128)                - SSE
-// __m64 _mm_cvtt_ps2pi(__m128)             - SSE
-// int _mm_cvtt_ss2si(__m128)               - SSE
-// __m128d _mm_cvtepi32_pd(__m128i)         - SSE2
-// __m128 _mm_cvtepi32_ps(__m128i)          - SSE2
-// __m128i _mm_cvtpd_epi32(__m128d)         - SSE2
-// __m64 _mm_cvtpd_pi32(__m128d)            - SSE2
-// __m128 _mm_cvtpd_ps(__m128d)             - SSE2
-// __m128d _mm_cvtpi32_pd(__m64)            - SSE2
-// __m128i _mm_cvtps_epi32(__m128)          - SSE2
-// __m128d _mm_cvtps_pd(__m128)             - SSE2
-// int _mm_cvtsd_si32(__m128d)              - SSE2
-// __m128 _mm_cvtsd_ss(__m128, __m128d)     - SSE2
-// int _mm_cvtsi128_si32(__m128i)           - SSE2
-// __m128d _mm_cvtsi32_sd(__m128d, int)     - SSE2
-// __m128i _mm_cvtsi32_si128(int)           - SSE2
-// __m128d _mm_cvtss_sd(__m128d, __m128)    - SSE2
-// __m128i _mm_cvttpd_epi32(__m128d)        - SSE2
-// __m64 _mm_cvttpd_pi32(__m128d)           - SSE2
-// __m128i _mm_cvttps_epi32(__m128)         - SSE2
-// int _mm_cvttsd_si32(__m128d)             - SSE2
-// double _mm_cvtsd_f64(__m128d)            - SSSE3
-// float _mm_cvtss_f32(__m128)              - SSSE3
-// __m128i _mm_cvtepi16_epi32(__m128i)      - SSE41
-// __m128i _mm_cvtepi16_epi64(__m128i)      - SSE41
-// __m128i _mm_cvtepi32_epi64(__m128i)      - SSE41
-// __m128i _mm_cvtepi8_epi16 (__m128i)      - SSE41
-// __m128i _mm_cvtepi8_epi32 (__m128i)      - SSE41
-// __m128i _mm_cvtepi8_epi64 (__m128i)      - SSE41
-// __m128i _mm_cvtepu16_epi32(__m128i)      - SSE41
-// __m128i _mm_cvtepu16_epi64(__m128i)      - SSE41
-// __m128i _mm_cvtepu32_epi64(__m128i)      - SSE41
-// __m128i _mm_cvtepu8_epi16 (__m128i)      - SSE41
-// __m128i _mm_cvtepu8_epi32 (__m128i)      - SSE41
-// __m128i _mm_cvtepu8_epi64 (__m128i)      - SSE41
-// __m256d _mm256_cvtepi32_pd(__m128i)      - AVX
-// __m256 _mm256_cvtepi32_ps(__m256i)       - AVX
-// __m128i _mm256_cvtpd_epi32(__m256d)      - AVX
-// __m128 _mm256_cvtpd_ps(__m256d)          - AVX
-// __m256i _mm256_cvtps_epi32(__m256)       - AVX
-// __m256d _mm256_cvtps_pd(__m128)          - AVX
-// __m128i _mm256_cvttpd_epi32(__m256d)     - AVX
-// __m256i _mm256_cvttps_epi32(__m256)      - AVX
-// __m256i _mm256_cvtepi16_epi32(__m128i)   - AVX2
-// __m256i _mm256_cvtepi16_epi64(__m128i)   - AVX2
-// __m256i _mm256_cvtepi32_epi64(__m128i)   - AVX2
-// __m256i _mm256_cvtepi8_epi16(__m128i)    - AVX2
-// __m256i _mm256_cvtepi8_epi32(__m128i)    - AVX2
-// __m256i _mm256_cvtepi8_epi64(__m128i)    - AVX2
-// __m256i _mm256_cvtepu16_epi32(__m128i)   - AVX2
-// __m256i _mm256_cvtepu16_epi64(__m128i)   - AVX2
-// __m256i _mm256_cvtepu32_epi64(__m128i)   - AVX2
-// __m256i _mm256_cvtepu8_epi16(__m128i)    - AVX2
-// __m256i _mm256_cvtepu8_epi32(__m128i)    - AVX2
-// __m256i _mm256_cvtepu8_epi64(__m128i)    - AVX2
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// CAST
-// __m128 _mm_castpd_ps(__m128d)            - SSSE3
-// __m128i _mm_castpd_si128(__m128d)        - SSSE3
-// __m128d _mm_castps_pd(__m128)            - SSSE3
-// __m128i _mm_castps_si128(__m128)         - SSSE3
-// __m128d _mm_castsi128_pd(__m128i)        - SSSE3
-// __m128 _mm_castsi128_ps(__m128i)         - SSSE3
-// __m256 _mm256_castpd_ps(__m256d)         - AVX
-// __m256i _mm256_castpd_si256(__m256d)     - AVX
-// __m256d _mm256_castpd128_pd256(__m128d)  - AVX
-// __m128d _mm256_castpd256_pd128(__m256d)  - AVX
-// __m256d _mm256_castps_pd(__m256)         - AVX
-// __m256i _mm256_castps_si256(__m256)      - AVX
-// __m256 _mm256_castps128_ps256(__m128)    - AVX
-// __m128 _mm256_castps256_ps128(__m256)    - AVX
-// __m256i _mm256_castsi128_si256(__m128i)  - AVX
-// __m256d _mm256_castsi256_pd(__m256i)     - AVX
-// __m256 _mm256_castsi256_ps(__m256i)      - AVX
-// __m128i _mm256_castsi256_si128(__m256i)  - AVX
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// ABS
 // __m128i _mm_abs_epi16(__m128i)       - SSSE3
 // __m128i _mm_abs_epi32(__m128i)       - SSSE3
@@ -868,21 +931,6 @@ private:
 // __m64 _mm_maddubs_pi16(__m64, __m64)             - SSSE3
 // __m256i _mm256_madd_epi16(__m256i, __m256i)      - AVX2
 // __m256i _mm256_maddubs_epi16(__m256i, __m256i)   - AVX2
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// BLEND
-// __m128i _mm_blend_epi16 (__m128i, __m128i, const int)    - SSE41
-// __m128d _mm_blend_pd (__m128d, __m128d, const int)       - SSE41
-// __m128 _mm_blend_ps (__m128, __m128, const int)          - SSE41
-// __m128i _mm_blendv_epi8 (__m128i, __m128i, __m128i)      - SSE41
-// __m128d _mm_blendv_pd(__m128d, __m128d, __m128d)         - SSE41
-// __m128 _mm_blendv_ps(__m128, __m128, __m128)             - SSE41
-// __m256d _mm256_blend_pd(__m256d, __m256d, const int)     - AVX
-// __m256 _mm256_blend_ps(__m256, __m256, const int)        - AVX
-// __m256d _mm256_blendv_pd(__m256d, __m256d, __m256d)      - AVX
-// __m256 _mm256_blendv_ps(__m256, __m256, __m256)          - AVX
-// __m128i _mm_blend_epi32(__m128i, __m128i, const int)     - AVX2
-// __m256i _mm256_blend_epi16(__m256i, __m256i, const int)  - AVX2
-// __m256i _mm256_blend_epi32(__m256i, __m256i, const int)  - AVX2
-// __m256i _mm256_blendv_epi8(__m256i, __m256i, __m256i)    - AVX2
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// DP
 // __m128d _mm_dp_pd(__m128d, __m128d, const int)   - SSE41
 // __m128 _mm_dp_ps(__m128, __m128, const int)      - SSE41

@@ -74,6 +74,15 @@ inline __m128d SIMDMath::SetLower( Double f0 ) const {
     return _mm_set_sd( f0 );
 }
 
+inline __m128i SIMDMath::SetLower( Int32 i0 ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtsi32_si128( i0 );
+}
+inline __m128i SIMDMath::SetLower( Int64 i0 ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtsi64_si128( i0 );
+}
+
 inline __m128 SIMDMath::Set128( Float f0, Float f1, Float f2, Float f3 ) const {
     DebugAssert( CPUIDFn->HasSSE() );
     return _mm_set_ps( f0, f1, f2, f3 );
@@ -243,6 +252,42 @@ inline __m256i SIMDMath::Set64I( __m256i mDst, Int64 iSrc, Int32 iIndex ) const 
 }
 
 ////////////////////////////////////////////////////////////// Registers -> Values
+inline Float SIMDMath::GetLowerFloat( __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_cvtss_f32( mSrc );
+}
+inline Float SIMDMath::GetLowerFloat( __m256 mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvtss_f32( mSrc );
+}
+
+inline Double SIMDMath::GetLowerDouble( __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtsd_f64( mSrc );
+}
+inline Double SIMDMath::GetLowerDouble( __m256d mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvtsd_f64( mSrc );
+}
+
+inline Int32 SIMDMath::GetLowerInt32( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtsi128_si32( mSrc );
+}
+inline Int32 SIMDMath::GetLowerInt32( __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvtsi256_si32( mSrc );
+}
+
+inline Int64 SIMDMath::GetLowerInt64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtsi128_si64( mSrc );
+}
+inline Int64 SIMDMath::GetLowerInt64( __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvtsi256_si64( mSrc );
+}
+
 inline Int32 SIMDMath::Get8I( __m128i mSrc, Int32 iIndex ) const {
     DebugAssert( CPUIDFn->HasSSE41() );
     return _mm_extract_epi8( mSrc, iIndex );
@@ -346,18 +391,52 @@ inline __m128 SIMDMath::Load128( const Float * arrF ) const {
     DebugAssert( CPUIDFn->HasSSE() );
     return _mm_loadu_ps( arrF );
 }
+inline __m128 SIMDMath::Load128( const Float * arrF, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm_maskload_ps( arrF, mSigns );
+}
 inline __m256 SIMDMath::Load256( const Float * arrF ) const {
     DebugAssert( CPUIDFn->HasAVX() );
     return _mm256_loadu_ps( arrF );
+}
+inline __m256 SIMDMath::Load256( const Float * arrF, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_maskload_ps( arrF, mSigns );
 }
 
 inline __m128d SIMDMath::Load128( const Double * arrF ) const {
     DebugAssert( CPUIDFn->HasSSE2() );
     return _mm_loadu_pd( arrF );
 }
+inline __m128d SIMDMath::Load128( const Double * arrF, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm_maskload_pd( arrF, mSigns );
+}
 inline __m256d SIMDMath::Load256( const Double * arrF ) const {
     DebugAssert( CPUIDFn->HasAVX() );
     return _mm256_loadu_pd( arrF );
+}
+inline __m256d SIMDMath::Load256( const Double * arrF, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_maskload_pd( arrF, mSigns );
+}
+
+inline __m128i SIMDMath::Load128( const Int32 * arrI, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_maskload_epi32( arrI, mSigns );
+}
+inline __m256i SIMDMath::Load256( const Int32 * arrI, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_maskload_epi32( arrI, mSigns );
+}
+
+inline __m128i SIMDMath::Load128( const Int64 * arrI, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_maskload_epi64( arrI, mSigns );
+}
+inline __m256i SIMDMath::Load256( const Int64 * arrI, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_maskload_epi64( arrI, mSigns );
 }
 
 inline __m128i SIMDMath::Load128( const __m128i * arrSrc ) const {
@@ -437,72 +516,136 @@ inline __m128 SIMDMath::Load32FourFloat( const Float * pSrc, __m128i mIndices, I
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm_i32gather_ps( pSrc, mIndices, iStride );
 }
+inline __m128 SIMDMath::Load32FourFloat( __m128 mDst, const Float * pSrc, __m128i mIndices, Int32 iStride, __m128 mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_mask_i32gather_ps( mDst, pSrc, mIndices, mSigns, iStride );
+}
 inline __m256 SIMDMath::Load32EightFloat( const Float * pSrc, __m256i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm256_i32gather_ps( pSrc, mIndices, iStride );
+}
+inline __m256 SIMDMath::Load32EightFloat( __m256 mDst, const Float * pSrc, __m256i mIndices, Int32 iStride, __m256 mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mask_i32gather_ps( mDst, pSrc, mIndices, mSigns, iStride );
 }
 
 inline __m128d SIMDMath::Load32TwoDouble( const Double * pSrc, __m128i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm_i32gather_pd( pSrc, mIndices, iStride );
 }
+inline __m128d SIMDMath::Load32TwoDouble( __m128d mDst, const Double * pSrc, __m128i mIndices, Int32 iStride, __m128d mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_mask_i32gather_pd( mDst, pSrc, mIndices, mSigns, iStride );
+}
 inline __m256d SIMDMath::Load32FourDouble( const Double * pSrc, __m128i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm256_i32gather_pd( pSrc, mIndices, iStride );
+}
+inline __m256d SIMDMath::Load32FourDouble( __m256d mDst, const Double * pSrc, __m128i mIndices, Int32 iStride, __m256d mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mask_i32gather_pd( mDst, pSrc, mIndices, mSigns, iStride );
 }
 
 inline __m128i SIMDMath::Load32FourInt32( const Int32 * pSrc, __m128i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm_i32gather_epi32( pSrc, mIndices, iStride );
 }
+inline __m128i SIMDMath::Load32FourInt32( __m128i mDst, const Int32 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_mask_i32gather_epi32( mDst, pSrc, mIndices, mSigns, iStride );
+}
 inline __m256i SIMDMath::Load32EightInt32( const Int32 * pSrc, __m256i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm256_i32gather_epi32( pSrc, mIndices, iStride );
+}
+inline __m256i SIMDMath::Load32EightInt32( __m256i mDst, const Int32 * pSrc, __m256i mIndices, Int32 iStride, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mask_i32gather_epi32( mDst, pSrc, mIndices, mSigns, iStride );
 }
 
 inline __m128i SIMDMath::Load32TwoInt64( const Int64 * pSrc, __m128i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm_i32gather_epi64( pSrc, mIndices, iStride );
 }
+inline __m128i SIMDMath::Load32TwoInt64( __m128i mDst, const Int64 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_mask_i32gather_epi64( mDst, pSrc, mIndices, mSigns, iStride );
+}
 inline __m256i SIMDMath::Load32FourInt64( const Int64 * pSrc, __m128i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm256_i32gather_epi64( pSrc, mIndices, iStride );
+}
+inline __m256i SIMDMath::Load32FourInt64( __m256i mDst, const Int64 * pSrc, __m128i mIndices, Int32 iStride, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mask_i32gather_epi64( mDst, pSrc, mIndices, mSigns, iStride );
 }
 
 inline __m128 SIMDMath::Load64TwoFloat( const Float * pSrc, __m128i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm_i64gather_ps( pSrc, mIndices, iStride );
 }
+inline __m128 SIMDMath::Load64TwoFloat( __m128 mDst, const Float * pSrc, __m128i mIndices, Int32 iStride, __m128 mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_mask_i64gather_ps( mDst, pSrc, mIndices, mSigns, iStride );
+}
 inline __m128 SIMDMath::Load64FourFloat( const Float * pSrc, __m256i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm256_i64gather_ps( pSrc, mIndices, iStride );
+}
+inline __m128 SIMDMath::Load64FourFloat( __m128 mDst, const Float * pSrc, __m256i mIndices, Int32 iStride, __m128 mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mask_i64gather_ps( mDst, pSrc, mIndices, mSigns, iStride );
 }
 
 inline __m128d SIMDMath::Load64TwoDouble( const Double * pSrc, __m128i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm_i64gather_pd( pSrc, mIndices, iStride );
 }
+inline __m128d SIMDMath::Load64TwoDouble( __m128d mDst, const Double * pSrc, __m128i mIndices, Int32 iStride, __m128d mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_mask_i64gather_pd( mDst, pSrc, mIndices, mSigns, iStride );
+}
 inline __m256d SIMDMath::Load64FourDouble( const Double * pSrc, __m256i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm256_i64gather_pd( pSrc, mIndices, iStride );
+}
+inline __m256d SIMDMath::Load64FourDouble( __m256d mDst, const Double * pSrc, __m256i mIndices, Int32 iStride, __m256d mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mask_i64gather_pd( mDst, pSrc, mIndices, mSigns, iStride );
 }
 
 inline __m128i SIMDMath::Load64TwoInt32( const Int32 * pSrc, __m128i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm_i64gather_epi32( pSrc, mIndices, iStride );
 }
+inline __m128i SIMDMath::Load64TwoInt32( __m128i mDst, const Int32 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_mask_i64gather_epi32( mDst, pSrc, mIndices, mSigns, iStride );
+}
 inline __m128i SIMDMath::Load64FourInt32( const Int32 * pSrc, __m256i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm256_i64gather_epi32( pSrc, mIndices, iStride );
+}
+inline __m128i SIMDMath::Load64FourInt32( __m128i mDst, const Int32 * pSrc, __m256i mIndices, Int32 iStride, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mask_i64gather_epi32( mDst, pSrc, mIndices, mSigns, iStride );
 }
 
 inline __m128i SIMDMath::Load64TwoInt64( const Int64 * pSrc, __m128i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm_i64gather_epi64( pSrc, mIndices, iStride );
 }
+inline __m128i SIMDMath::Load64TwoInt64( __m128i mDst, const Int64 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_mask_i64gather_epi64( mDst, pSrc, mIndices, mSigns, iStride );
+}
 inline __m256i SIMDMath::Load64FourInt64( const Int64 * pSrc, __m256i mIndices, Int32 iStride ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm256_i64gather_epi64( pSrc, mIndices, iStride );
+}
+inline __m256i SIMDMath::Load64FourInt64( __m256i mDst, const Int64 * pSrc, __m256i mIndices, Int32 iStride, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_mask_i64gather_epi64( mDst, pSrc, mIndices, mSigns, iStride );
 }
 
 inline __m128i SIMDMath::LoadNT128Aligned( const __m128i * arrSrc ) const {
@@ -653,6 +796,42 @@ inline Void SIMDMath::StoreNT128Aligned( __m128i * outDst, __m128i mSrc ) const 
 inline Void SIMDMath::StoreNT256Aligned( __m256i * outDst, __m256i mSrc ) const {
     DebugAssert( CPUIDFn->HasAVX() );
     __mm256_stream_si256( outDst, mSrc );
+}
+
+inline Void SIMDMath::Store128( Float * outDst, __m128 mSrc, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    _mm_maskstore_ps( outDst, mSigns, mSrc );
+}
+inline Void SIMDMath::Store256( Float * outDst, __m256 mSrc, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    _mm256_maskstore_ps( outDst, mSigns, mSrc );
+}
+
+inline Void SIMDMath::Store128( Double * outDst, __m128d mSrc, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    _mm_maskstore_pd( outDst, mSigns, mSrc );
+}
+inline Void SIMDMath::Store256( Double * outDst, __m256d mSrc, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    _mm256_maskstore_pd( outDst, mSigns, mSrc );
+}
+
+inline Void SIMDMath::Store128( Int32 * outDst, __m128i mSrc, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    _mm_maskstore_epi32( outDst, mSigns, mSrc );
+}
+inline Void SIMDMath::Store256( Int32 * outDst, __m256i mSrc, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    _mm256_maskstore_epi32( outDst, mSigns, mSrc );
+}
+
+inline Void SIMDMath::Store128( Int64 * outDst, __m128i mSrc, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    _mm_maskstore_epi64( outDst, mSigns, mSrc );
+}
+inline Void SIMDMath::Store256( Int64 * outDst, __m256i mSrc, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    _mm256_maskstore_epi64( outDst, mSigns, mSrc );
 }
 
 ////////////////////////////////////////////////////////////// Registers <-> Registers
@@ -1058,6 +1237,394 @@ inline __m256i SIMDMath::Shuffle256Int64( __m256i mSrc, Int iMask4x4 ) const {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm256_permute4x64_epi64( mSrc, iMask4x4 );
 }
+
+////////////////////////////////////////////////////////////// Blend
+inline __m128 SIMDMath::BlendFloat( __m128 mDst, __m128 mSrc, Int iMask4 ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_blend_ps( mDst, mSrc, iMask4 );
+}
+inline __m128 SIMDMath::BlendFloat( __m128 mDst, __m128 mSrc, __m128 mSigns ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_blendv_ps( mDst, mSrc, mSigns );
+}
+inline __m256 SIMDMath::BlendFloat( __m256 mDst, __m256 mSrc, Int iMask8 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_blend_ps( mDst, mSrc, iMask8 );
+}
+inline __m256 SIMDMath::BlendFloat( __m256 mDst, __m256 mSrc, __m256 mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_blendv_ps( mDst, mSrc, mSigns );
+}
+
+inline __m128d SIMDMath::BlendDouble( __m128d mDst, __m128d mSrc, Int iMask2 ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_blend_pd( mDst, mSrc, iMask2 );
+}
+inline __m128d SIMDMath::BlendDouble( __m128d mDst, __m128d mSrc, __m128d mSigns ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_blendv_pd( mDst, mSrc, mSigns );
+}
+inline __m256d SIMDMath::BlendDouble( __m256d mDst, __m256d mSrc, Int iMask4 ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_blend_pd( mDst, mSrc, iMask4 );
+}
+inline __m256d SIMDMath::BlendDouble( __m256d mDst, __m256d mSrc, __m256d mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_blendv_pd( mDst, mSrc, mSigns );
+}
+
+inline __m128i SIMDMath::BlendInt8( __m128i mDst, __m128i mSrc, __m128i mSigns ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_blendv_epi8( mDst, mSrc, mSigns );
+}
+inline __m256i SIMDMath::BlendInt8( __m256i mDst, __m256i mSrc, __m256i mSigns ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_blendv_epi8( mDst, mSrc, mSigns );
+}
+
+inline __m128i SIMDMath::BlendInt16( __m128i mDst, __m128i mSrc, Int iMask8 ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_blend_epi16( mDst, mSrc, iMask8 );
+}
+inline __m256i SIMDMath::BlendInt16( __m256i mDst, __m256i mSrc, Int iMask8 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_blend_epi16( mDst, mSrc, iMask8 );
+}
+
+inline __m128i SIMDMath::BlendInt32( __m128i mDst, __m128i mSrc, Int iMask4 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_blend_epi32( mDst, mSrc, iMask4 );
+}
+inline __m256i SIMDMath::BlendInt32( __m256i mDst, __m256i mSrc, Int iMask8 ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_blend_epi32( mDst, mSrc, iMask8 );
+}
+
+////////////////////////////////////////////////////////////// Cast (Free, 0 instruction generated)
+inline __m128 SIMDMath::CastToFloat( __m128d mDouble ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_castpd_ps( mDouble );
+}
+inline __m128 SIMDMath::CastToFloat( __m128i mInteger ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_castsi128_ps( mInteger );
+}
+inline __m256 SIMDMath::CastToFloat( __m256d mDouble ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castpd_ps( mDouble );
+}
+inline __m256 SIMDMath::CastToFloat( __m256i mInteger ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castsi256_ps( mInteger );
+}
+
+inline __m128d SIMDMath::CastToDouble( __m128 mFloat ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_castps_pd( mFloat );
+}
+inline __m128d SIMDMath::CastToDouble( __m128i mInteger ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_castsi128_pd( mInteger );
+}
+inline __m256d SIMDMath::CastToDouble( __m256 mFloat ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castps_pd( mFloat );
+}
+inline __m256d SIMDMath::CastToDouble( __m256i mInteger ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castsi256_pd( mInteger );
+}
+
+inline __m128i SIMDMath::CastToInteger( __m128 mFloat ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_castps_si128( mFloat );
+}
+inline __m128i SIMDMath::CastToInteger( __m128d mDouble ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_castpd_si128( mDouble );
+}
+inline __m256i SIMDMath::CastToInteger( __m256 mFloat ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castps_si256( mFloat );
+}
+inline __m256i SIMDMath::CastToInteger( __m256d mDouble ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castpd_si256( mDouble );
+}
+
+inline __m128 SIMDMath::CastDown( __m256 mFloat ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castps256_ps128( mFloat );
+}
+inline __m128d SIMDMath::CastDown( __m256d mDouble ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castpd256_pd128( mDouble );
+}
+inline __m128i SIMDMath::CastDown( __m256i mInteger ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castsi256_si128( mInteger );
+}
+
+inline __m256 SIMDMath::CastUp( __m128 mFloat ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castps128_ps256( mFloat );
+}
+inline __m256d SIMDMath::CastUp( __m128d mDouble ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castpd128_pd256( mDouble );
+}
+inline __m256i SIMDMath::CastUp( __m128i mInteger ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_castsi128_si256( mInteger );
+}
+
+////////////////////////////////////////////////////////////// Convert & Truncate
+inline __m128 SIMDMath::ConvertLower( __m128 mDst, Int32 iSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_cvtsi32_ss( mDst, iSrc );
+}
+inline __m128 SIMDMath::ConvertLower( __m128 mDst, Int64 iSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_cvtsi64_ss( mDst, iSrc );
+}
+
+inline __m128d SIMDMath::ConvertLower( __m128d mDst, Int32 iSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtsi32_sd( mDst, iSrc );
+}
+inline __m128d SIMDMath::ConvertLower( __m128d mDst, Int64 iSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtsi64_sd( mDst, iSrc );
+}
+
+inline __m128 SIMDMath::ConvertLower( __m128 mDst, __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtsd_ss( mDst, mSrc );
+}
+inline __m128d SIMDMath::ConvertLower( __m128d mDst, __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtss_sd( mDst, mSrc );
+}
+
+inline Int32 SIMDMath::ConvertLowerToInt32( __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_cvtss_si32( mSrc );
+}
+inline Int32 SIMDMath::ConvertLowerToInt32( __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtsd_si32( mSrc );
+}
+
+inline Int64 SIMDMath::ConvertLowerToInt64( __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_cvtss_si64( mSrc );
+}
+inline Int64 SIMDMath::ConvertLowerToInt64( __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtsd_si64( mSrc );
+}
+
+inline __m128 SIMDMath::Convert128ToFloat( __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtpd_ps( mSrc );
+}
+inline __m128 SIMDMath::Convert128ToFloat( __m256d mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvtpd_ps( mSrc );
+}
+
+inline __m128 SIMDMath::Convert128ToFloat( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtepi32_ps( mSrc );
+}
+inline __m256 SIMDMath::Convert256ToFloat( __m256i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvtepi32_ps( mSrc );
+}
+
+inline __m128d SIMDMath::Convert128ToDouble( __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtps_pd( mSrc );
+}
+inline __m256d SIMDMath::Convert256ToDouble( __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvtps_pd( mSrc );
+}
+
+inline __m128d SIMDMath::Convert128ToDouble( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtepi32_pd( mSrc );
+}
+inline __m256d SIMDMath::Convert256ToDouble( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvtepi32_pd( mSrc );
+}
+
+inline __m128i SIMDMath::Convert128ToInt32( __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtps_epi32( mSrc );
+}
+inline __m256i SIMDMath::Convert256ToInt32( __m256 mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvtps_epi32( mSrc );
+}
+
+inline __m128i SIMDMath::Convert128ToInt32( __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvtpd_epi32( mSrc );
+}
+inline __m128i SIMDMath::Convert128ToInt32( __m256d mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvtpd_epi32( mSrc );
+}
+
+inline Int32 SIMDMath::TruncateLowerToInt32( __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_cvttss_si32( mSrc );
+}
+inline Int32 SIMDMath::TruncateLowerToInt32( __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvttsd_si32( mSrc );
+}
+
+inline Int64 SIMDMath::TruncateLowerToInt64( __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE() );
+    return _mm_cvttss_si64( mSrc );
+}
+inline Int64 SIMDMath::TruncateLowerToInt64( __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvttsd_si64( mSrc );
+}
+
+inline __m128i SIMDMath::TruncateToInt32( __m128 mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvttps_epi32( mSrc );
+}
+inline __m256i SIMDMath::TruncateToInt32( __m256 mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvttps_epi32( mSrc );
+}
+
+inline __m128i SIMDMath::TruncateToInt32( __m128d mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_cvttpd_epi32( mSrc );
+}
+inline __m128i SIMDMath::TruncateToInt32( __m256d mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_cvttpd_epi32( mSrc );
+}
+
+inline __m128i SIMDMath::SignExtend128Int8To16( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepi8_epi16( mSrc );
+}
+inline __m128i SIMDMath::SignExtend128Int8To32( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepi8_epi32( mSrc );
+}
+inline __m128i SIMDMath::SignExtend128Int8To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepi8_epi64( mSrc );
+}
+inline __m128i SIMDMath::SignExtend128Int16To32( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepi16_epi32( mSrc );
+}
+inline __m128i SIMDMath::SignExtend128Int16To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepi16_epi64( mSrc );
+}
+inline __m128i SIMDMath::SignExtend128Int32To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepi32_epi64( mSrc );
+}
+
+inline __m256i SIMDMath::SignExtend256Int8To16( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepi8_epi16( mSrc );
+}
+inline __m256i SIMDMath::SignExtend256Int8To32( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepi8_epi32( mSrc );
+}
+inline __m256i SIMDMath::SignExtend256Int8To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepi8_epi64( mSrc );
+}
+inline __m256i SIMDMath::SignExtend256Int16To32( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepi16_epi32( mSrc );
+}
+inline __m256i SIMDMath::SignExtend256Int16To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepi16_epi64( mSrc );
+}
+inline __m256i SIMDMath::SignExtend256Int32To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepi32_epi64( mSrc );
+}
+
+inline __m128i SIMDMath::ZeroExtend128Int8To16( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepu8_epi16( mSrc );
+}
+inline __m128i SIMDMath::ZeroExtend128Int8To32( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepu8_epi32( mSrc );
+}
+inline __m128i SIMDMath::ZeroExtend128Int8To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepu8_epi64( mSrc );
+}
+inline __m128i SIMDMath::ZeroExtend128Int16To32( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepu16_epi32( mSrc );
+}
+inline __m128i SIMDMath::ZeroExtend128Int16To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepu16_epi64( mSrc );
+}
+inline __m128i SIMDMath::ZeroExtend128Int32To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_cvtepu32_epi64( mSrc );
+}
+
+inline __m256i SIMDMath::ZeroExtend256Int8To16( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepu8_epi16( mSrc );
+}
+inline __m256i SIMDMath::ZeroExtend256Int8To32( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepu8_epi32( mSrc );
+}
+inline __m256i SIMDMath::ZeroExtend256Int8To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepu8_epi64( mSrc );
+}
+inline __m256i SIMDMath::ZeroExtend256Int16To32( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepu16_epi32( mSrc );
+}
+inline __m256i SIMDMath::ZeroExtend256Int16To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepu16_epi64( mSrc );
+}
+inline __m256i SIMDMath::ZeroExtend256Int32To64( __m128i mSrc ) const {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_cvtepu32_epi64( mSrc );
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 ////////////////////////////////////////////////////////////// Fast Invert & SquareRoot Functions
 inline __m128 SIMDMath::InvertLower( __m128 mFloat4 ) const {

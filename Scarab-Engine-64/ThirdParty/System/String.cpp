@@ -677,7 +677,7 @@ Float String::ToFloatW( const WChar * inStr, const WChar ** outStr ) const
             iExponent = (iExponent << 3) + (iExponent << 1) + (Int)CharToDecW(*inStr++);
         if ( bNegativeExponent )
             iExponent = -iExponent;
-        fValue *= FPUFn->Power10f( iExponent );
+        fValue *= FPU::Power10f( iExponent );
     }
 
     if ( outStr != NULL )
@@ -723,7 +723,7 @@ Float String::ToFloatMB( const MBChar * inStr, const MBChar ** outStr ) const
             iExponent = (iExponent << 3) + (iExponent << 1) + (Int)CharToDecMB(*inStr++);
         if ( bNegativeExponent )
             iExponent = -iExponent;
-        fValue *= FPUFn->Power10f( iExponent );
+        fValue *= FPU::Power10f( iExponent );
     }
 
     if ( outStr != NULL )
@@ -770,7 +770,7 @@ Double String::ToDoubleW( const WChar * inStr, const WChar ** outStr ) const
             iExponent = (iExponent << 3) + (iExponent << 1) + (Int)CharToDecW(*inStr++);
         if ( bNegativeExponent )
             iExponent = -iExponent;
-        fValue *= FPUFn->Power10d( iExponent );
+        fValue *= FPU::Power10d( iExponent );
     }
 
     if ( outStr != NULL )
@@ -816,7 +816,7 @@ Double String::ToDoubleMB( const MBChar * inStr, const MBChar ** outStr ) const
             iExponent = (iExponent << 3) + (iExponent << 1) + (Int)CharToDecMB(*inStr++);
         if ( bNegativeExponent )
             iExponent = -iExponent;
-        fValue *= FPUFn->Power10d( iExponent );
+        fValue *= FPU::Power10d( iExponent );
     }
 
     if ( outStr != NULL )

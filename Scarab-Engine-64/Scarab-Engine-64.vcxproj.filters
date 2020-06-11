@@ -267,7 +267,7 @@
     <ClInclude Include="ThirdParty\System\Hardware\CPUID.h">
       <Filter>Header Files\ThirdParty\System\Hardware</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\System\Hardware\SSE.h">
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD.h">
       <Filter>Header Files\ThirdParty\System\Hardware</Filter>
     </ClInclude>
   </ItemGroup>
@@ -410,7 +410,7 @@
     <None Include="ThirdParty\System\Hardware\CPUID.inl">
       <Filter>Source Files\ThirdParty\System\Hardware</Filter>
     </None>
-    <None Include="ThirdParty\System\Hardware\SSE.inl">
+    <None Include="ThirdParty\System\Hardware\SIMD.inl">
       <Filter>Source Files\ThirdParty\System\Hardware</Filter>
     </None>
   </ItemGroup>
@@ -553,7 +553,7 @@
     <ClCompile Include="ThirdParty\System\Hardware\CPUID.cpp">
       <Filter>Source Files\ThirdParty\System\Hardware</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\System\Hardware\SSE.cpp">
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD.cpp">
       <Filter>Source Files\ThirdParty\System\Hardware</Filter>
     </ClCompile>
   </ItemGroup>

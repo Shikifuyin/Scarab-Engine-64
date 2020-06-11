@@ -56,11 +56,11 @@ inline Bool MathFunction<Real>::IsNan( Real f ) const {
 }
 template<>
 inline Bool MathFunction<Float>::IsNan( Float f ) const {
-    return FPUFn->IsNAN(f);
+    return FPU::IsNAN(f);
 }
 template<>
 inline Bool MathFunction<Double>::IsNan( Double f ) const {
-    return FPUFn->IsNAN(f);
+    return FPU::IsNAN(f);
 }
 
 template<typename Real>
@@ -69,11 +69,11 @@ inline Bool MathFunction<Real>::IsInfinite( Real f ) const {
 }
 template<>
 inline Bool MathFunction<Float>::IsInfinite( Float f ) const {
-    return !( FPUFn->IsFinite(f) );
+    return !( FPU::IsFinite(f) );
 }
 template<>
 inline Bool MathFunction<Double>::IsInfinite( Double f ) const {
-    return !( FPUFn->IsFinite(f) );
+    return !( FPU::IsFinite(f) );
 }
 
 template<typename Real>
@@ -82,11 +82,11 @@ inline Bool MathFunction<Real>::IsZero( Real f ) const {
 }
 template<>
 inline Bool MathFunction<Float>::IsZero( Float f ) const {
-    return ( FPUFn->Classify(f) == FPU_CLASS_ZERO );
+    return ( FPU::Classify(f) == FPU_CLASS_ZERO );
 }
 template<>
 inline Bool MathFunction<Double>::IsZero( Double f ) const {
-    return ( FPUFn->Classify(f) == FPU_CLASS_ZERO );
+    return ( FPU::Classify(f) == FPU_CLASS_ZERO );
 }
 
 template<typename Real>
@@ -95,11 +95,11 @@ inline Int MathFunction<Real>::Floor( Real f ) const {
 }
 template<>
 inline Int MathFunction<Float>::Floor( Float f ) const {
-    return (Int)( FPUFn->FloorF(f) );
+    return (Int)( FPU::FloorF(f) );
 }
 template<>
 inline Int MathFunction<Double>::Floor( Double f ) const {
-    return (Int)( FPUFn->FloorF(f) );
+    return (Int)( FPU::FloorF(f) );
 }
 
 template<typename Real>
@@ -111,11 +111,11 @@ inline Int MathFunction<Real>::Ceil( Real f ) const {
 }
 template<>
 inline Int MathFunction<Float>::Ceil( Float f ) const {
-    return (Int)( FPUFn->CeilF(f) );
+    return (Int)( FPU::CeilF(f) );
 }
 template<>
 inline Int MathFunction<Double>::Ceil( Double f ) const {
-    return (Int)( FPUFn->CeilF(f) );
+    return (Int)( FPU::CeilF(f) );
 }
 
 template<typename Real>
@@ -124,11 +124,11 @@ inline Int MathFunction<Real>::Round( Real f ) const {
 }
 template<>
 inline Int MathFunction<Float>::Round( Float f ) const {
-    return (Int)( FPUFn->RoundF(f) );
+    return (Int)( FPU::RoundF(f) );
 }
 template<>
 inline Int MathFunction<Double>::Round( Double f ) const {
-    return (Int)( FPUFn->RoundF(f) );
+    return (Int)( FPU::RoundF(f) );
 }
 
 template<typename Real>
@@ -137,11 +137,11 @@ inline Real MathFunction<Real>::Floorf( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Floorf( Float f ) const {
-    return FPUFn->FloorF(f);
+    return FPU::FloorF(f);
 }
 template<>
 inline Double MathFunction<Double>::Floorf( Double f ) const {
-    return FPUFn->FloorF(f);
+    return FPU::FloorF(f);
 }
 
 template<typename Real>
@@ -150,11 +150,11 @@ inline Real MathFunction<Real>::Ceilf( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Ceilf( Float f ) const {
-    return FPUFn->CeilF(f);
+    return FPU::CeilF(f);
 }
 template<>
 inline Double MathFunction<Double>::Ceilf( Double f ) const {
-    return FPUFn->CeilF(f);
+    return FPU::CeilF(f);
 }
 
 template<typename Real>
@@ -163,11 +163,11 @@ inline Real MathFunction<Real>::Roundf( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Roundf( Float f ) const {
-    return FPUFn->RoundF(f);
+    return FPU::RoundF(f);
 }
 template<>
 inline Double MathFunction<Double>::Roundf( Double f ) const {
-    return FPUFn->RoundF(f);
+    return FPU::RoundF(f);
 }
 
 template<typename Real>
@@ -193,11 +193,11 @@ inline Real MathFunction<Real>::Split( Real f, Real * outIntPart ) const {
 }
 template<>
 inline Float MathFunction<Float>::Split( Float f, Float * outIntPart ) const {
-    return FPUFn->Split( f, outIntPart );
+    return FPU::Split( f, outIntPart );
 }
 template<>
 inline Double MathFunction<Double>::Split( Double f, Double * outIntPart ) const {
-    return FPUFn->Split( f, outIntPart );
+    return FPU::Split( f, outIntPart );
 }
 
 template<typename Real>
@@ -215,11 +215,11 @@ inline Real MathFunction<Real>::Abs( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Abs( Float f ) const {
-    return FPUFn->Abs(f);
+    return FPU::Abs(f);
 }
 template<>
 inline Double MathFunction<Double>::Abs( Double f ) const {
-    return FPUFn->Abs(f);
+    return FPU::Abs(f);
 }
 
 template<typename Real>
@@ -228,11 +228,11 @@ inline Real MathFunction<Real>::Mod( Real f, Real g ) const {
 }
 template<>
 inline Float MathFunction<Float>::Mod( Float f, Float g ) const {
-    return FPUFn->Mod( f, g );
+    return FPU::Mod( f, g );
 }
 template<>
 inline Double MathFunction<Double>::Mod( Double f, Double g ) const {
-    return FPUFn->Mod( f, g );
+    return FPU::Mod( f, g );
 }
 
 template<typename Real>
@@ -271,11 +271,11 @@ inline Real MathFunction<Real>::Sqrt( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Sqrt( Float f ) const {
-    return FPUFn->Sqrt(f);
+    return FPU::Sqrt(f);
 }
 template<>
 inline Double MathFunction<Double>::Sqrt( Double f ) const {
-    return FPUFn->Sqrt(f);
+    return FPU::Sqrt(f);
 }
 
 template<typename Real>
@@ -284,11 +284,11 @@ inline Real MathFunction<Real>::Cbrt( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Cbrt( Float f ) const {
-    return FPUFn->Cbrt(f);
+    return FPU::Cbrt(f);
 }
 template<>
 inline Double MathFunction<Double>::Cbrt( Double f ) const {
-    return FPUFn->Cbrt(f);
+    return FPU::Cbrt(f);
 }
 
 template<typename Real>
@@ -300,7 +300,7 @@ inline Float MathFunction<Float>::InvSqrt( Float f ) const {
 #if defined(MATHFUNCTION_USE_TRICKS)
     return _Tricked_InvSqrt(f);
 #else
-    return ( 1.0f / FPUFn->Sqrt(f) );
+    return ( 1.0f / FPU::Sqrt(f) );
 #endif
 }
 template<>
@@ -308,7 +308,7 @@ inline Double MathFunction<Double>::InvSqrt( Double f ) const {
 #if defined(MATHFUNCTION_USE_TRICKS)
     return _Tricked_InvSqrt(f);
 #else
-    return ( 1.0 / FPUFn->Sqrt(f) );
+    return ( 1.0 / FPU::Sqrt(f) );
 #endif
 }
 
@@ -323,11 +323,11 @@ inline Real MathFunction<Real>::Hypot( Real fX, Real fY ) const {
 }
 template<>
 inline Float MathFunction<Float>::Hypot( Float fX, Float fY ) const {
-    return FPUFn->Hypot( fX, fY );
+    return FPU::Hypot( fX, fY );
 }
 template<>
 inline Double MathFunction<Double>::Hypot( Double fX, Double fY ) const {
-    return FPUFn->Hypot( fX, fY );
+    return FPU::Hypot( fX, fY );
 }
 
 template<typename Real>
@@ -336,11 +336,11 @@ inline Real MathFunction<Real>::Ln( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Ln( Float f ) const {
-    return FPUFn->Ln(f);
+    return FPU::Ln(f);
 }
 template<>
 inline Double MathFunction<Double>::Ln( Double f ) const {
-    return FPUFn->Ln(f);
+    return FPU::Ln(f);
 }
 
 template<typename Real>
@@ -349,11 +349,11 @@ inline Real MathFunction<Real>::Log2( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Log2( Float f ) const {
-    return FPUFn->Log2(f);
+    return FPU::Log2(f);
 }
 template<>
 inline Double MathFunction<Double>::Log2( Double f ) const {
-    return FPUFn->Log2(f);
+    return FPU::Log2(f);
 }
 
 template<typename Real>
@@ -362,11 +362,11 @@ inline Real MathFunction<Real>::Log10( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Log10( Float f ) const {
-    return FPUFn->Log10(f);
+    return FPU::Log10(f);
 }
 template<>
 inline Double MathFunction<Double>::Log10( Double f ) const {
-    return FPUFn->Log10(f);
+    return FPU::Log10(f);
 }
 
 template<typename Real>
@@ -375,11 +375,11 @@ inline Real MathFunction<Real>::LogN( Real n, Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::LogN( Float n, Float f ) const {
-    return FPUFn->LogN( n, f );
+    return FPU::LogN( n, f );
 }
 template<>
 inline Double MathFunction<Double>::LogN( Double n, Double f ) const {
-    return FPUFn->LogN( n, f );
+    return FPU::LogN( n, f );
 }
 
 template<typename Real>
@@ -388,11 +388,11 @@ inline Real MathFunction<Real>::Exp( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Exp( Float f ) const {
-    return FPUFn->Exp(f);
+    return FPU::Exp(f);
 }
 template<>
 inline Double MathFunction<Double>::Exp( Double f ) const {
-    return FPUFn->Exp(f);
+    return FPU::Exp(f);
 }
 
 template<typename Real>
@@ -401,11 +401,11 @@ inline Real MathFunction<Real>::Exp2( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Exp2( Float f ) const {
-    return FPUFn->Exp2(f);
+    return FPU::Exp2(f);
 }
 template<>
 inline Double MathFunction<Double>::Exp2( Double f ) const {
-    return FPUFn->Exp2(f);
+    return FPU::Exp2(f);
 }
 
 template<typename Real>
@@ -414,11 +414,11 @@ inline Real MathFunction<Real>::Exp10( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Exp10( Float f ) const {
-    return FPUFn->Exp10(f);
+    return FPU::Exp10(f);
 }
 template<>
 inline Double MathFunction<Double>::Exp10( Double f ) const {
-    return FPUFn->Exp10(f);
+    return FPU::Exp10(f);
 }
 
 template<typename Real>
@@ -427,11 +427,11 @@ inline Real MathFunction<Real>::ExpN( Real n, Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::ExpN( Float n, Float f ) const {
-    return FPUFn->ExpN( n, f );
+    return FPU::ExpN( n, f );
 }
 template<>
 inline Double MathFunction<Double>::ExpN( Double n, Double f ) const {
-    return FPUFn->ExpN( n, f );
+    return FPU::ExpN( n, f );
 }
 
 template<typename Real>
@@ -440,11 +440,11 @@ inline Real MathFunction<Real>::Power2( Int iExponent ) const {
 }
 template<>
 inline Float MathFunction<Float>::Power2( Int iExponent ) const {
-    return FPUFn->Power2f(iExponent);
+    return FPU::Power2f(iExponent);
 }
 template<>
 inline Double MathFunction<Double>::Power2( Int iExponent ) const {
-    return FPUFn->Power2d(iExponent);
+    return FPU::Power2d(iExponent);
 }
 
 template<typename Real>
@@ -453,11 +453,11 @@ inline Real MathFunction<Real>::Power10( Int iExponent ) const {
 }
 template<>
 inline Float MathFunction<Float>::Power10( Int iExponent ) const {
-    return FPUFn->Power10f(iExponent);
+    return FPU::Power10f(iExponent);
 }
 template<>
 inline Double MathFunction<Double>::Power10( Int iExponent ) const {
-    return FPUFn->Power10d(iExponent);
+    return FPU::Power10d(iExponent);
 }
 
 template<typename Real>
@@ -466,11 +466,11 @@ inline Real MathFunction<Real>::PowerN( Real n, Int iExponent ) const {
 }
 template<>
 inline Float MathFunction<Float>::PowerN( Float n, Int iExponent ) const {
-    return FPUFn->PowerN( n, iExponent );
+    return FPU::PowerN( n, iExponent );
 }
 template<>
 inline Double MathFunction<Double>::PowerN( Double n, Int iExponent ) const {
-    return FPUFn->PowerN( n, iExponent );
+    return FPU::PowerN( n, iExponent );
 }
 
 template<typename Real>
@@ -489,11 +489,11 @@ inline Real MathFunction<Real>::Sin( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Sin( Float f ) const {
-    return FPUFn->Sin(f);
+    return FPU::Sin(f);
 }
 template<>
 inline Double MathFunction<Double>::Sin( Double f ) const {
-    return FPUFn->Sin(f);
+    return FPU::Sin(f);
 }
 
 template<typename Real>
@@ -502,11 +502,11 @@ inline Real MathFunction<Real>::Cos( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Cos( Float f ) const {
-    return FPUFn->Cos(f);
+    return FPU::Cos(f);
 }
 template<>
 inline Double MathFunction<Double>::Cos( Double f ) const {
-    return FPUFn->Cos(f);
+    return FPU::Cos(f);
 }
 
 template<typename Real>
@@ -515,11 +515,11 @@ inline Real MathFunction<Real>::Tan( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Tan( Float f ) const {
-    return FPUFn->Tan(f);
+    return FPU::Tan(f);
 }
 template<>
 inline Double MathFunction<Double>::Tan( Double f ) const {
-    return FPUFn->Tan(f);
+    return FPU::Tan(f);
 }
 
 template<typename Real>
@@ -528,11 +528,11 @@ inline Real MathFunction<Real>::ArcSin( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::ArcSin( Float f ) const {
-    return FPUFn->ArcSin(f);
+    return FPU::ArcSin(f);
 }
 template<>
 inline Double MathFunction<Double>::ArcSin( Double f ) const {
-    return FPUFn->ArcSin(f);
+    return FPU::ArcSin(f);
 }
 
 template<typename Real>
@@ -541,11 +541,11 @@ inline Real MathFunction<Real>::ArcCos( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::ArcCos( Float f ) const {
-    return FPUFn->ArcCos(f);
+    return FPU::ArcCos(f);
 }
 template<>
 inline Double MathFunction<Double>::ArcCos( Double f ) const {
-    return FPUFn->ArcCos(f);
+    return FPU::ArcCos(f);
 }
 
 template<typename Real>
@@ -554,11 +554,11 @@ inline Real MathFunction<Real>::ArcTan( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::ArcTan( Float f ) const {
-    return FPUFn->ArcTan(f);
+    return FPU::ArcTan(f);
 }
 template<>
 inline Double MathFunction<Double>::ArcTan( Double f ) const {
-    return FPUFn->ArcTan(f);
+    return FPU::ArcTan(f);
 }
 
 template<typename Real>
@@ -567,11 +567,11 @@ inline Real MathFunction<Real>::ArcTan2( Real f, Real g ) const {
 }
 template<>
 inline Float MathFunction<Float>::ArcTan2( Float f, Float g ) const {
-    return FPUFn->ArcTan2( f, g );
+    return FPU::ArcTan2( f, g );
 }
 template<>
 inline Double MathFunction<Double>::ArcTan2( Double f, Double g ) const {
-    return FPUFn->ArcTan2( f, g );
+    return FPU::ArcTan2( f, g );
 }
 
 template<typename Real>
@@ -581,11 +581,11 @@ inline Real MathFunction<Real>::SinH( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::SinH( Float f ) const {
-    return FPUFn->SinH(f);
+    return FPU::SinH(f);
 }
 template<>
 inline Double MathFunction<Double>::SinH( Double f ) const {
-    return FPUFn->SinH(f);
+    return FPU::SinH(f);
 }
 
 template<typename Real>
@@ -595,11 +595,11 @@ inline Real MathFunction<Real>::CosH( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::CosH( Float f ) const {
-    return FPUFn->CosH(f);
+    return FPU::CosH(f);
 }
 template<>
 inline Double MathFunction<Double>::CosH( Double f ) const {
-    return FPUFn->CosH(f);
+    return FPU::CosH(f);
 }
 
 template<typename Real>
@@ -609,11 +609,11 @@ inline Real MathFunction<Real>::TanH( Real f) const {
 }
 template<>
 inline Float MathFunction<Float>::TanH( Float f ) const {
-    return FPUFn->TanH(f);
+    return FPU::TanH(f);
 }
 template<>
 inline Double MathFunction<Double>::TanH( Double f ) const {
-    return FPUFn->TanH(f);
+    return FPU::TanH(f);
 }
 
 template<typename Real>
@@ -622,11 +622,11 @@ inline Real MathFunction<Real>::ArgSinH( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::ArgSinH( Float f ) const {
-    return FPUFn->ArcSinH(f);
+    return FPU::ArgSinH(f);
 }
 template<>
 inline Double MathFunction<Double>::ArgSinH( Double f ) const {
-    return FPUFn->ArcSinH(f);
+    return FPU::ArgSinH(f);
 }
 
 template<typename Real>
@@ -635,11 +635,11 @@ inline Real MathFunction<Real>::ArgCosH( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::ArgCosH( Float f ) const {
-    return FPUFn->ArcCosH(f);
+    return FPU::ArgCosH(f);
 }
 template<>
 inline Double MathFunction<Double>::ArgCosH( Double f ) const {
-    return FPUFn->ArcCosH(f);
+    return FPU::ArgCosH(f);
 }
 
 template<typename Real>
@@ -648,11 +648,11 @@ inline Real MathFunction<Real>::ArgTanH( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::ArgTanH( Float f ) const {
-    return FPUFn->ArcTanH(f);
+    return FPU::ArgTanH(f);
 }
 template<>
 inline Double MathFunction<Double>::ArgTanH( Double f ) const {
-    return FPUFn->ArcTanH(f);
+    return FPU::ArgTanH(f);
 }
 
 template<typename Real>
@@ -661,11 +661,11 @@ inline Real MathFunction<Real>::Erf( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Erf( Float f ) const {
-    return FPUFn->Erf(f);
+    return FPU::Erf(f);
 }
 template<>
 inline Double MathFunction<Double>::Erf( Double f ) const {
-    return FPUFn->Erf(f);
+    return FPU::Erf(f);
 }
 
 template<typename Real>
@@ -674,11 +674,11 @@ inline Real MathFunction<Real>::Gamma( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::Gamma( Float f ) const {
-    return FPUFn->Gamma(f);
+    return FPU::Gamma(f);
 }
 template<>
 inline Double MathFunction<Double>::Gamma( Double f ) const {
-    return FPUFn->Gamma(f);
+    return FPU::Gamma(f);
 }
 
 template<typename Real>
@@ -687,11 +687,11 @@ inline Real MathFunction<Real>::LnGamma( Real f ) const {
 }
 template<>
 inline Float MathFunction<Float>::LnGamma( Float f ) const {
-    return FPUFn->LnGamma(f);
+    return FPU::LnGamma(f);
 }
 template<>
 inline Double MathFunction<Double>::LnGamma( Double f ) const {
-    return FPUFn->LnGamma(f);
+    return FPU::LnGamma(f);
 }
 
 template<typename Real>
@@ -700,11 +700,11 @@ inline Real MathFunction<Real>::BesselJ( Real f, UInt iOrder ) const {
 }
 template<>
 inline Float MathFunction<Float>::BesselJ( Float f, UInt iOrder ) const {
-    return FPUFn->BesselJ(f, iOrder);
+    return FPU::BesselJ(f, iOrder);
 }
 template<>
 inline Double MathFunction<Double>::BesselJ( Double f, UInt iOrder ) const {
-    return FPUFn->BesselJ(f, iOrder);
+    return FPU::BesselJ(f, iOrder);
 }
 
 template<typename Real>
@@ -713,11 +713,11 @@ inline Real MathFunction<Real>::BesselY( Real f, UInt iOrder ) const {
 }
 template<>
 inline Float MathFunction<Float>::BesselY( Float f, UInt iOrder ) const {
-    return FPUFn->BesselY(f, iOrder);
+    return FPU::BesselY(f, iOrder);
 }
 template<>
 inline Double MathFunction<Double>::BesselY( Double f, UInt iOrder ) const {
-    return FPUFn->BesselY(f, iOrder);
+    return FPU::BesselY(f, iOrder);
 }
 
 template<typename Real>

@@ -192,7 +192,7 @@
     <ClInclude Include="ThirdParty\System\File.h" />
     <ClInclude Include="ThirdParty\System\Hardware\CPUID.h" />
     <ClInclude Include="ThirdParty\System\Hardware\FPU.h" />
-    <ClInclude Include="ThirdParty\System\Hardware\SSE.h" />
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD.h" />
     <ClInclude Include="ThirdParty\System\Networking.h" />
     <ClInclude Include="ThirdParty\System\Platform.h" />
     <ClInclude Include="ThirdParty\System\String.h" />
@@ -241,7 +241,7 @@
     <None Include="ThirdParty\System\File.inl" />
     <None Include="ThirdParty\System\Hardware\CPUID.inl" />
     <None Include="ThirdParty\System\Hardware\FPU.inl" />
-    <None Include="ThirdParty\System\Hardware\SSE.inl" />
+    <None Include="ThirdParty\System\Hardware\SIMD.inl" />
     <None Include="ThirdParty\System\Networking.inl" />
     <None Include="ThirdParty\System\Platform.inl" />
     <None Include="ThirdParty\System\String.inl" />
@@ -290,7 +290,7 @@
     <ClCompile Include="ThirdParty\System\File.cpp" />
     <ClCompile Include="ThirdParty\System\Hardware\CPUID.cpp" />
     <ClCompile Include="ThirdParty\System\Hardware\FPU.cpp" />
-    <ClCompile Include="ThirdParty\System\Hardware\SSE.cpp" />
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD.cpp" />
     <ClCompile Include="ThirdParty\System\Networking.cpp" />
     <ClCompile Include="ThirdParty\System\Platform.cpp" />
     <ClCompile Include="ThirdParty\System\String.cpp" />

@@ -26,18 +26,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // FPU implementation
-FPU::FPU():
-	m_fHalfF(0.5f), m_fHalfD(0.5)
-{
-	// nothing to do
-}
-FPU::~FPU()
-{
-    // nothing to do
-}
-
-FPURoundingMode FPU::GetRoundingMode()
-{
+inline FPURoundingMode FPU::GetRoundingMode() {
 	int iRoundingMode = fegetround();
 	switch( iRoundingMode ) {
 		case FE_TONEAREST:	return FPU_ROUND_NEAREST; break;
@@ -48,8 +37,7 @@ FPURoundingMode FPU::GetRoundingMode()
 	}
 	return (FPURoundingMode)INVALID_OFFSET;
 }
-Void FPU::SetRoundingMode( FPURoundingMode iRoundingMode )
-{
+inline Void FPU::SetRoundingMode( FPURoundingMode iRoundingMode ) {
 	switch ( iRoundingMode ) {
 		case FPU_ROUND_NEAREST:		fesetround( FE_TONEAREST ); break;
 		case FPU_ROUND_FLOOR:		fesetround( FE_DOWNWARD ); break;
@@ -59,8 +47,7 @@ Void FPU::SetRoundingMode( FPURoundingMode iRoundingMode )
 	}
 }
 
-FPUClass FPU::Classify( Float fValue )
-{
+inline FPUClass FPU::Classify( Float fValue ) {
 	int iClass = fpclassify( fValue );
 	switch( iClass ) {
 		case FP_NAN:		return FPU_CLASS_NAN; break;
@@ -72,8 +59,7 @@ FPUClass FPU::Classify( Float fValue )
 	}
 	return (FPUClass)INVALID_OFFSET;
 }
-FPUClass FPU::Classify( Double fValue )
-{
+inline FPUClass FPU::Classify( Double fValue ) {
 	int iClass = fpclassify( fValue );
 	switch ( iClass ) {
 		case FP_NAN:		return FPU_CLASS_NAN; break;
@@ -247,25 +233,11 @@ inline Double FPU::Sin( Double fValue ) {
 	return sin( fValue );
 }
 
-inline Float FPU::SinH( Float fValue ) {
-	return sinh( fValue );
-}
-inline Double FPU::SinH( Double fValue ) {
-	return sinh( fValue );
-}
-
 inline Float FPU::Cos( Float fValue ) {
 	return cos( fValue );
 }
 inline Double FPU::Cos( Double fValue ) {
 	return cos( fValue );
-}
-
-inline Float FPU::CosH( Float fValue ) {
-	return cosh( fValue );
-}
-inline Double FPU::CosH( Double fValue ) {
-	return cosh( fValue );
 }
 
 inline Float FPU::Tan( Float fValue ) {
@@ -275,13 +247,6 @@ inline Double FPU::Tan( Double fValue ) {
 	return tan( fValue );
 }
 
-inline Float FPU::TanH( Float fValue ) {
-	return tanh( fValue );
-}
-inline Double FPU::TanH( Double fValue ) {
-	return tanh( fValue );
-}
-
 inline Float FPU::ArcSin( Float fValue ) {
 	return asin( fValue );
 }
@@ -289,25 +254,11 @@ inline Double FPU::ArcSin( Double fValue ) {
 	return asin( fValue );
 }
 
-inline Float FPU::ArcSinH( Float fValue ) {
-	return asinh( fValue );
-}
-inline Double FPU::ArcSinH( Double fValue ) {
-	return asinh( fValue );
-}
-
 inline Float FPU::ArcCos( Float fValue ) {
 	return acos( fValue );
 }
 inline Double FPU::ArcCos( Double fValue ) {
 	return acos( fValue );
-}
-
-inline Float FPU::ArcCosH( Float fValue ) {
-	return acosh( fValue );
-}
-inline Double FPU::ArcCosH( Double fValue ) {
-	return acosh( fValue );
 }
 
 inline Float FPU::ArcTan( Float fValue ) {
@@ -324,10 +275,45 @@ inline Double FPU::ArcTan2( Double fNum, Double fDenom ) {
 	return atan2( fNum, fDenom );
 }
 
-inline Float FPU::ArcTanH( Float fValue ) {
+inline Float FPU::SinH( Float fValue ) {
+	return sinh( fValue );
+}
+inline Double FPU::SinH( Double fValue ) {
+	return sinh( fValue );
+}
+
+inline Float FPU::CosH( Float fValue ) {
+	return cosh( fValue );
+}
+inline Double FPU::CosH( Double fValue ) {
+	return cosh( fValue );
+}
+
+inline Float FPU::TanH( Float fValue ) {
+	return tanh( fValue );
+}
+inline Double FPU::TanH( Double fValue ) {
+	return tanh( fValue );
+}
+
+inline Float FPU::ArgSinH( Float fValue ) {
+	return asinh( fValue );
+}
+inline Double FPU::ArgSinH( Double fValue ) {
+	return asinh( fValue );
+}
+
+inline Float FPU::ArgCosH( Float fValue ) {
+	return acosh( fValue );
+}
+inline Double FPU::ArgCosH( Double fValue ) {
+	return acosh( fValue );
+}
+
+inline Float FPU::ArgTanH( Float fValue ) {
 	return atanh( fValue );
 }
-inline Double FPU::ArcTanH( Double fValue ) {
+inline Double FPU::ArgTanH( Double fValue ) {
 	return atanh( fValue );
 }
 

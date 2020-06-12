@@ -32,9 +32,8 @@
 // Includes
 #include "CPUID.h"
 
-// General define for SIMD use in a lot of math code, comment those lines accordingly
-//#define MATH_USE_SIMD_SSE // Assumes SSE42
-#define MATH_USE_SIMD_AVX // Assumes AVX2 and SSE42
+// General define for SIMD use in a lot of math code, comment accordingly
+#define SIMD_ENABLE // Assumes AVX2 and SSE42
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
@@ -986,23 +985,15 @@ namespace SIMD
     inline __m128i Avg16( __m128i mDst, __m128i mSrc ); // SSE2
     inline __m256i Avg16( __m256i mDst, __m256i mSrc ); // AVX2
 
-    ////////////////////////////////////////////////////////////// Compare (Generic)
-    //inline __m128 CmpLower( __m128 mDst, __m128 mSrc, Int iCmpMode );    // AVX
-    //inline __m128d CmpLower( __m128d mDst, __m128d mSrc, Int iCmpMode ); // AVX
-
-    //inline __m128 Cmp( __m128 mDst, __m128 mSrc, Int iCmpMode ); // AVX
-    //inline __m256 Cmp( __m256 mDst, __m256 mSrc, Int iCmpMode ); // AVX
-
-    //inline __m128d Cmp( __m128d mDst, __m128d mSrc, Int iCmpMode ); // AVX
-    //inline __m256d Cmp( __m256d mDst, __m256d mSrc, Int iCmpMode ); // AVX
-
     ////////////////////////////////////////////////////////////// Compare (Equal)
     inline __m128 CmpEQLower( __m128 mDst, __m128 mSrc );    // SSE
     inline __m128d CmpEQLower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpEQ( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpEQ( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpEQ( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpEQ( __m256d mDst, __m256d mSrc ); // AVX
 
     inline __m128i CmpEQ8( __m128i mDst, __m128i mSrc ); // SSE2
     inline __m256i CmpEQ8( __m256i mDst, __m256i mSrc ); // AVX2
@@ -1021,16 +1012,20 @@ namespace SIMD
     inline __m128d CmpNEQLower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpNEQ( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpNEQ( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpNEQ( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpNEQ( __m256d mDst, __m256d mSrc ); // AVX
 
     ////////////////////////////////////////////////////////////// Compare (Lesser-Than)
     inline __m128 CmpLTLower( __m128 mDst, __m128 mSrc );    // SSE
     inline __m128d CmpLTLower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpLT( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpLT( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpLT( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpLT( __m256d mDst, __m256d mSrc ); // AVX
 
     inline __m128i CmpLT8( __m128i mDst, __m128i mSrc ); // SSE2
 
@@ -1043,32 +1038,40 @@ namespace SIMD
     inline __m128d CmpNLTLower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpNLT( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpNLT( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpNLT( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpNLT( __m256d mDst, __m256d mSrc ); // AVX
 
     ////////////////////////////////////////////////////////////// Compare (Lesser-or-Equal)
     inline __m128 CmpLELower( __m128 mDst, __m128 mSrc );    // SSE
     inline __m128d CmpLELower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpLE( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpLE( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpLE( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpLE( __m256d mDst, __m256d mSrc ); // AVX
 
     ////////////////////////////////////////////////////////////// Compare (Not Lesser-or-Equal)
     inline __m128 CmpNLELower( __m128 mDst, __m128 mSrc );    // SSE
     inline __m128d CmpNLELower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpNLE( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpNLE( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpNLE( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpNLE( __m256d mDst, __m256d mSrc ); // AVX
 
     ////////////////////////////////////////////////////////////// Compare (Greater-Than)
     inline __m128 CmpGTLower( __m128 mDst, __m128 mSrc );    // SSE
     inline __m128d CmpGTLower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpGT( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpGT( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpGT( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpGT( __m256d mDst, __m256d mSrc ); // AVX
 
     inline __m128i CmpGT8( __m128i mDst, __m128i mSrc ); // SSE2
     inline __m256i CmpGT8( __m256i mDst, __m256i mSrc ); // AVX2
@@ -1087,40 +1090,50 @@ namespace SIMD
     inline __m128d CmpNGTLower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpNGT( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpNGT( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpNGT( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpNGT( __m256d mDst, __m256d mSrc ); // AVX
 
     ////////////////////////////////////////////////////////////// Compare (Greater-or-Equal)
     inline __m128 CmpGELower( __m128 mDst, __m128 mSrc );    // SSE
     inline __m128d CmpGELower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpGE( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpGE( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpGE( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpGE( __m256d mDst, __m256d mSrc ); // AVX
 
     ////////////////////////////////////////////////////////////// Compare (Not Greater-or-Equal)
     inline __m128 CmpNGELower( __m128 mDst, __m128 mSrc );    // SSE
     inline __m128d CmpNGELower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpNGE( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpNGE( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpNGE( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpNGE( __m256d mDst, __m256d mSrc ); // AVX
 
     ////////////////////////////////////////////////////////////// Compare (Ordered)
     inline __m128 CmpORDLower( __m128 mDst, __m128 mSrc );    // SSE
     inline __m128d CmpORDLower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpORD( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpORD( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpORD( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpORD( __m256d mDst, __m256d mSrc ); // AVX
 
     ////////////////////////////////////////////////////////////// Compare (Unordered)
     inline __m128 CmpUNORDLower( __m128 mDst, __m128 mSrc );    // SSE
     inline __m128d CmpUNORDLower( __m128d mDst, __m128d mSrc ); // SSE2
 
     inline __m128 CmpUNORD( __m128 mDst, __m128 mSrc ); // SSE
+    inline __m256 CmpUNORD( __m256 mDst, __m256 mSrc ); // AVX
 
     inline __m128d CmpUNORD( __m128d mDst, __m128d mSrc ); // SSE2
+    inline __m256d CmpUNORD( __m256d mDst, __m256d mSrc ); // AVX
 
     ////////////////////////////////////////////////////////////// Compare (Bool results, always on lower element, _Q = non signaling versions)
     inline Int IsEQ( __m128 mDst, __m128 mSrc );     // SSE

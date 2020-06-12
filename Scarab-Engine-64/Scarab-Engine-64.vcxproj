@@ -161,6 +161,8 @@
     <ClInclude Include="Lib\Math\Hash\MD5.h" />
     <ClInclude Include="Lib\Math\Hash\SHA1.h" />
     <ClInclude Include="Lib\Math\Random\Random.h" />
+    <ClInclude Include="Lib\Math\Types\Vector\Vector2.h" />
+    <ClInclude Include="Lib\Math\Types\Vector\Vector3.h" />
     <ClInclude Include="Lib\Math\Types\Vector\Vector4.h" />
     <ClInclude Include="Lib\Memory\Allocators\HeapAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\MemoryAllocator.h" />
@@ -210,6 +212,8 @@
     <None Include="Lib\Math\Hash\MD5.inl" />
     <None Include="Lib\Math\Hash\SHA1.inl" />
     <None Include="Lib\Math\Random\Random.inl" />
+    <None Include="Lib\Math\Types\Vector\Vector2.inl" />
+    <None Include="Lib\Math\Types\Vector\Vector3.inl" />
     <None Include="Lib\Math\Types\Vector\Vector4.inl" />
     <None Include="Lib\Memory\Allocators\HeapAllocator.inl" />
     <None Include="Lib\Memory\Allocators\MemoryAllocator.inl" />
@@ -259,6 +263,8 @@
     <ClCompile Include="Lib\Math\Hash\MD5.cpp" />
     <ClCompile Include="Lib\Math\Hash\SHA1.cpp" />
     <ClCompile Include="Lib\Math\Random\Random.cpp" />
+    <ClCompile Include="Lib\Math\Types\Vector\Vector2.cpp" />
+    <ClCompile Include="Lib\Math\Types\Vector\Vector3.cpp" />
     <ClCompile Include="Lib\Math\Types\Vector\Vector4.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\HeapAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\MemoryAllocator.cpp" />

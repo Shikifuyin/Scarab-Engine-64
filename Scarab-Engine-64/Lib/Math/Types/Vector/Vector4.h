@@ -27,10 +27,8 @@
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
     // prototypes
-template<typename Real>
-class TVector2;
-template<typename Real>
-class TVector3;
+template<typename Real> class TVector2;
+template<typename Real> class TVector3;
 
 /////////////////////////////////////////////////////////////////////////////////
 // The TVector4 class
@@ -46,7 +44,7 @@ public:
 
 	// Constructors
 	TVector4(); // uninitialized
-	TVector4( Real x, Real y, Real z, Real w = (Real)0 );
+	TVector4( const Real & x, const Real & y, const Real & z, const Real & w = (Real)0 );
 	TVector4( const Real vArr[4] );
 	TVector4( const TVector2<Real> & rhs );
 	TVector4( const TVector3<Real> & rhs );
@@ -62,9 +60,9 @@ public:
 
 	// Index operations
     inline Real & operator[]( Int i );
-	inline Real operator[]( Int i ) const;
+	inline const Real & operator[]( Int i ) const;
 	inline Real & operator[]( UInt i );
-	inline Real operator[]( UInt i ) const;
+	inline const Real & operator[]( UInt i ) const;
 
 	// Unary operations
 	inline TVector4<Real> operator+() const;
@@ -75,15 +73,15 @@ public:
 	inline Bool operator!=( const TVector4<Real> & rhs ) const;
 
 	// Real operations
-	inline TVector4<Real> operator+( Real rhs ) const;
-	inline TVector4<Real> operator-( Real rhs ) const;
-	inline TVector4<Real> operator*( Real rhs ) const;
-	inline TVector4<Real> operator/( Real rhs ) const;
+	inline TVector4<Real> operator+( const Real & rhs ) const;
+	inline TVector4<Real> operator-( const Real & rhs ) const;
+	inline TVector4<Real> operator*( const Real & rhs ) const;
+	inline TVector4<Real> operator/( const Real & rhs ) const;
 
-	inline TVector4<Real> & operator+=( Real rhs );
-	inline TVector4<Real> & operator-=( Real rhs );
-	inline TVector4<Real> & operator*=( Real rhs );
-	inline TVector4<Real> & operator/=( Real rhs );
+	inline TVector4<Real> & operator+=( const Real & rhs );
+	inline TVector4<Real> & operator-=( const Real & rhs );
+	inline TVector4<Real> & operator*=( const Real & rhs );
+	inline TVector4<Real> & operator/=( const Real & rhs );
 
 	// Vector operations
 	inline TVector4<Real> operator+( const TVector4<Real> & rhs ) const;
@@ -92,7 +90,7 @@ public:
 	inline TVector4<Real> & operator+=( const TVector4<Real> & rhs );
 	inline TVector4<Real> & operator-=( const TVector4<Real> & rhs );
 
-	inline Real operator*( const TVector4<Real> & rhs ) const; // DOT Product
+	inline Real operator*( const TVector4<Real> & rhs ) const;			 // DOT Product
 	inline TVector4<Real> operator^( const TVector4<Real> & rhs ) const; // CROSS Product
 
 	// Methods

@@ -17,16 +17,16 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // TVector4 implementation
-template<typename Real> const TVector4<Real> TVector4<Real>::Null = TVector4<Real>( (Real)0, (Real)0, (Real)0, (Real)0 );
-template<typename Real> const TVector4<Real> TVector4<Real>::eI   = TVector4<Real>( (Real)1, (Real)0, (Real)0, (Real)0 );
-template<typename Real> const TVector4<Real> TVector4<Real>::eJ   = TVector4<Real>( (Real)0, (Real)1, (Real)0, (Real)0 );
-template<typename Real> const TVector4<Real> TVector4<Real>::eK   = TVector4<Real>( (Real)0, (Real)0, (Real)1, (Real)0 );
+template<typename Real> const TVector4<Real> TVector4<Real>::Null = TVector4<Real>( MathFunction<Real>::Zero, MathFunction<Real>::Zero, MathFunction<Real>::Zero, MathFunction<Real>::Zero );
+template<typename Real> const TVector4<Real> TVector4<Real>::eI   = TVector4<Real>( MathFunction<Real>::One, MathFunction<Real>::Zero, MathFunction<Real>::Zero, MathFunction<Real>::Zero );
+template<typename Real> const TVector4<Real> TVector4<Real>::eJ   = TVector4<Real>( MathFunction<Real>::Zero, MathFunction<Real>::One, MathFunction<Real>::Zero, MathFunction<Real>::Zero );
+template<typename Real> const TVector4<Real> TVector4<Real>::eK   = TVector4<Real>( MathFunction<Real>::Zero, MathFunction<Real>::Zero, MathFunction<Real>::One, MathFunction<Real>::Zero );
 
 template<typename Real> TVector4<Real>::TVector4()                                                                 {}
 template<typename Real> TVector4<Real>::TVector4( const Real & x, const Real & y, const Real & z, const Real & w ) { X = x; Y = y; Z = z; W = w; }
 template<typename Real> TVector4<Real>::TVector4( const Real vArr[4] )                                             { X = vArr[0]; Y = vArr[1]; Z = vArr[2]; W = vArr[3]; }
-template<typename Real> TVector4<Real>::TVector4( const TVector2<Real> & rhs )                                     { X = rhs.X; Y = rhs.Y; Z = (Real)0; W = (Real)0; }
-template<typename Real> TVector4<Real>::TVector4( const TVector3<Real> & rhs )                                     { X = rhs.X; Y = rhs.Y; Z = rhs.Z; W = (Real)0; }
+template<typename Real> TVector4<Real>::TVector4( const TVector2<Real> & rhs )                                     { X = rhs.X; Y = rhs.Y; Z = MathFunction<Real>::Zero; W = MathFunction<Real>::Zero; }
+template<typename Real> TVector4<Real>::TVector4( const TVector3<Real> & rhs )                                     { X = rhs.X; Y = rhs.Y; Z = rhs.Z; W = MathFunction<Real>::Zero; }
 template<typename Real> TVector4<Real>::TVector4( const TVector4<Real> & rhs )                                     { X = rhs.X; Y = rhs.Y; Z = rhs.Z; W = rhs.W; }
 template<typename Real> TVector4<Real>::~TVector4()                                                                {}
 

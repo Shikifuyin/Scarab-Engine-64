@@ -164,6 +164,9 @@
     <ClInclude Include="Lib\Math\Types\Vector\Vector2.h" />
     <ClInclude Include="Lib\Math\Types\Vector\Vector3.h" />
     <ClInclude Include="Lib\Math\Types\Vector\Vector4.h" />
+    <ClInclude Include="Lib\Math\Types\Vertex\Vertex2.h" />
+    <ClInclude Include="Lib\Math\Types\Vertex\Vertex3.h" />
+    <ClInclude Include="Lib\Math\Types\Vertex\Vertex4.h" />
     <ClInclude Include="Lib\Memory\Allocators\HeapAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\MemoryAllocator.h" />
     <ClInclude Include="Lib\Memory\Allocators\PoolAllocator.h" />
@@ -215,6 +218,9 @@
     <None Include="Lib\Math\Types\Vector\Vector2.inl" />
     <None Include="Lib\Math\Types\Vector\Vector3.inl" />
     <None Include="Lib\Math\Types\Vector\Vector4.inl" />
+    <None Include="Lib\Math\Types\Vertex\Vertex2.inl" />
+    <None Include="Lib\Math\Types\Vertex\Vertex3.inl" />
+    <None Include="Lib\Math\Types\Vertex\Vertex4.inl" />
     <None Include="Lib\Memory\Allocators\HeapAllocator.inl" />
     <None Include="Lib\Memory\Allocators\MemoryAllocator.inl" />
     <None Include="Lib\Memory\Allocators\PoolAllocator.inl" />
@@ -266,6 +272,9 @@
     <ClCompile Include="Lib\Math\Types\Vector\Vector2.cpp" />
     <ClCompile Include="Lib\Math\Types\Vector\Vector3.cpp" />
     <ClCompile Include="Lib\Math\Types\Vector\Vector4.cpp" />
+    <ClCompile Include="Lib\Math\Types\Vertex\Vertex2.cpp" />
+    <ClCompile Include="Lib\Math\Types\Vertex\Vertex3.cpp" />
+    <ClCompile Include="Lib\Math\Types\Vertex\Vertex4.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\HeapAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\MemoryAllocator.cpp" />
     <ClCompile Include="Lib\Memory\Allocators\PoolAllocator.cpp" />

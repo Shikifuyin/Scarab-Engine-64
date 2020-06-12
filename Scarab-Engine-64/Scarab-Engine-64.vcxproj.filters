@@ -127,6 +127,12 @@
     <Filter Include="Source Files\Lib\Math\Types\Vector">
       <UniqueIdentifier>{f6d25cf8-7e7e-41e7-ba7a-6e6fb916f313}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Lib\Math\Types\Vertex">
+      <UniqueIdentifier>{5d794d87-87fc-4552-8509-6859a776ef58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Math\Types\Vertex">
+      <UniqueIdentifier>{2252941b-efae-49ca-8102-25ed29a33ddb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -275,6 +281,15 @@
     </ClInclude>
     <ClInclude Include="Lib\Math\Types\Vector\Vector2.h">
       <Filter>Header Files\Lib\Math\Types\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Types\Vertex\Vertex4.h">
+      <Filter>Header Files\Lib\Math\Types\Vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Types\Vertex\Vertex3.h">
+      <Filter>Header Files\Lib\Math\Types\Vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Types\Vertex\Vertex2.h">
+      <Filter>Header Files\Lib\Math\Types\Vertex</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -425,6 +440,15 @@
     <None Include="Lib\Math\Types\Vector\Vector2.inl">
       <Filter>Source Files\Lib\Math\Types\Vector</Filter>
     </None>
+    <None Include="Lib\Math\Types\Vertex\Vertex4.inl">
+      <Filter>Source Files\Lib\Math\Types\Vertex</Filter>
+    </None>
+    <None Include="Lib\Math\Types\Vertex\Vertex3.inl">
+      <Filter>Source Files\Lib\Math\Types\Vertex</Filter>
+    </None>
+    <None Include="Lib\Math\Types\Vertex\Vertex2.inl">
+      <Filter>Source Files\Lib\Math\Types\Vertex</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -573,6 +597,15 @@
     </ClCompile>
     <ClCompile Include="Lib\Math\Types\Vector\Vector2.cpp">
       <Filter>Source Files\Lib\Math\Types\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Types\Vertex\Vertex4.cpp">
+      <Filter>Source Files\Lib\Math\Types\Vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Types\Vertex\Vertex3.cpp">
+      <Filter>Source Files\Lib\Math\Types\Vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Types\Vertex\Vertex2.cpp">
+      <Filter>Source Files\Lib\Math\Types\Vertex</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

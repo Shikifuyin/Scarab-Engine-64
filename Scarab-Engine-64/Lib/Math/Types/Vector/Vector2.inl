@@ -17,9 +17,9 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // TVector2 implementation
-template<typename Real> const TVector2<Real> TVector2<Real>::Null = TVector2<Real>( (Real)0, (Real)0 );
-template<typename Real> const TVector2<Real> TVector2<Real>::eI   = TVector2<Real>( (Real)1, (Real)0 );
-template<typename Real> const TVector2<Real> TVector2<Real>::eJ   = TVector2<Real>( (Real)0, (Real)1 );
+template<typename Real> const TVector2<Real> TVector2<Real>::Null = TVector2<Real>( MathFunction<Real>::Zero, MathFunction<Real>::Zero );
+template<typename Real> const TVector2<Real> TVector2<Real>::eI   = TVector2<Real>( MathFunction<Real>::One, MathFunction<Real>::Zero );
+template<typename Real> const TVector2<Real> TVector2<Real>::eJ   = TVector2<Real>( MathFunction<Real>::Zero, MathFunction<Real>::One );
 
 template<typename Real> TVector2<Real>::TVector2()                                 {}
 template<typename Real> TVector2<Real>::TVector2( const Real & x, const Real & y ) { X = x; Y = y; }

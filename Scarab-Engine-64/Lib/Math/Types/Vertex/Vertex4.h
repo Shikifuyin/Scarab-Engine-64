@@ -100,7 +100,7 @@ public:
 	inline Void NormalizeW();
 
 	// Data
-	Real X,Y,Z,W;
+	Real X, Y, Z, W;
 };
 
 // Explicit instanciation

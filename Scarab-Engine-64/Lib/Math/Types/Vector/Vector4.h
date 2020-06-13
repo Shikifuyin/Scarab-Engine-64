@@ -107,7 +107,7 @@ public:
     static Void MakeComplementBasis( TVector4<Real> & vI, TVector4<Real> & vJ, const TVector4<Real> & vK ); // vK must be normalized
 
 	// Data
-	Real X,Y,Z,W;
+	Real X, Y, Z, W;
 };
 
 // Explicit instanciation

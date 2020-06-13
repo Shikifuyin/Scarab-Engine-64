@@ -104,7 +104,7 @@ public:
     inline Void ToPolar( TVertex2<Real> & outPolar ) const;
 
 	// Data
-	Real X,Y;
+	Real X, Y;
 };
 
 // Explicit instanciation

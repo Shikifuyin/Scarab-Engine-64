@@ -133,6 +133,24 @@
     <Filter Include="Source Files\Lib\Math\Types\Vertex">
       <UniqueIdentifier>{2252941b-efae-49ca-8102-25ed29a33ddb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Lib\Math\Types\Complex">
+      <UniqueIdentifier>{c799e32d-bcca-4621-925d-580c58f3938b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Math\Types\Complex">
+      <UniqueIdentifier>{bea8ea28-f8fc-4a4f-878f-627e56122455}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lib\Math\Types\Matrix">
+      <UniqueIdentifier>{be5b37b9-3514-44dc-b176-c6c2b927cfc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Math\Types\Matrix">
+      <UniqueIdentifier>{68a9f44d-00ae-4c24-87b4-0519d83364cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ThirdParty\System\Hardware\SIMD">
+      <UniqueIdentifier>{b2cb35e7-9001-4a8f-8b81-a27fef051191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\System\Hardware\SIMD">
+      <UniqueIdentifier>{ddb169f4-6698-465d-86e7-ae331a1291f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -290,6 +308,27 @@
     </ClInclude>
     <ClInclude Include="Lib\Math\Types\Vertex\Vertex2.h">
       <Filter>Header Files\Lib\Math\Types\Vertex</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Types\Complex\Complex.h">
+      <Filter>Header Files\Lib\Math\Types\Complex</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Types\Matrix\Matrix4.h">
+      <Filter>Header Files\Lib\Math\Types\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_Control.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportValues.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportValues.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportMemory.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportMemory.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -449,6 +488,27 @@
     <None Include="Lib\Math\Types\Vertex\Vertex2.inl">
       <Filter>Source Files\Lib\Math\Types\Vertex</Filter>
     </None>
+    <None Include="Lib\Math\Types\Complex\Complex.inl">
+      <Filter>Source Files\Lib\Math\Types\Complex</Filter>
+    </None>
+    <None Include="Lib\Math\Types\Matrix\Matrix4.inl">
+      <Filter>Source Files\Lib\Math\Types\Matrix</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_Control.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportValues.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportValues.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportMemory.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportMemory.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -606,6 +666,27 @@
     </ClCompile>
     <ClCompile Include="Lib\Math\Types\Vertex\Vertex2.cpp">
       <Filter>Source Files\Lib\Math\Types\Vertex</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Types\Complex\Complex.cpp">
+      <Filter>Source Files\Lib\Math\Types\Complex</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Types\Matrix\Matrix4.cpp">
+      <Filter>Source Files\Lib\Math\Types\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_Control.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportValues.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportValues.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportMemory.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportMemory.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

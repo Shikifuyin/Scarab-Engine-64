@@ -109,7 +109,7 @@ public:
     inline Void ToSpherical( TVertex3<Real> & outSpherical ) const;
 
 	// Data
-	Real X,Y,Z;
+	Real X, Y, Z;
 };
 
 // Explicit instanciation

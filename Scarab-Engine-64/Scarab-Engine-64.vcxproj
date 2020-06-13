@@ -161,6 +161,8 @@
     <ClInclude Include="Lib\Math\Hash\MD5.h" />
     <ClInclude Include="Lib\Math\Hash\SHA1.h" />
     <ClInclude Include="Lib\Math\Random\Random.h" />
+    <ClInclude Include="Lib\Math\Types\Complex\Complex.h" />
+    <ClInclude Include="Lib\Math\Types\Matrix\Matrix4.h" />
     <ClInclude Include="Lib\Math\Types\Vector\Vector2.h" />
     <ClInclude Include="Lib\Math\Types\Vector\Vector3.h" />
     <ClInclude Include="Lib\Math\Types\Vector\Vector4.h" />
@@ -198,6 +200,11 @@
     <ClInclude Include="ThirdParty\System\Hardware\CPUID.h" />
     <ClInclude Include="ThirdParty\System\Hardware\FPU.h" />
     <ClInclude Include="ThirdParty\System\Hardware\SIMD.h" />
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_Control.h" />
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportMemory.h" />
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportValues.h" />
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportMemory.h" />
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportValues.h" />
     <ClInclude Include="ThirdParty\System\Networking.h" />
     <ClInclude Include="ThirdParty\System\Platform.h" />
     <ClInclude Include="ThirdParty\System\String.h" />
@@ -215,6 +222,8 @@
     <None Include="Lib\Math\Hash\MD5.inl" />
     <None Include="Lib\Math\Hash\SHA1.inl" />
     <None Include="Lib\Math\Random\Random.inl" />
+    <None Include="Lib\Math\Types\Complex\Complex.inl" />
+    <None Include="Lib\Math\Types\Matrix\Matrix4.inl" />
     <None Include="Lib\Math\Types\Vector\Vector2.inl" />
     <None Include="Lib\Math\Types\Vector\Vector3.inl" />
     <None Include="Lib\Math\Types\Vector\Vector4.inl" />
@@ -252,6 +261,11 @@
     <None Include="ThirdParty\System\Hardware\CPUID.inl" />
     <None Include="ThirdParty\System\Hardware\FPU.inl" />
     <None Include="ThirdParty\System\Hardware\SIMD.inl" />
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_Control.inl" />
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportMemory.inl" />
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportValues.inl" />
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportMemory.inl" />
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportValues.inl" />
     <None Include="ThirdParty\System\Networking.inl" />
     <None Include="ThirdParty\System\Platform.inl" />
     <None Include="ThirdParty\System\String.inl" />
@@ -269,6 +283,8 @@
     <ClCompile Include="Lib\Math\Hash\MD5.cpp" />
     <ClCompile Include="Lib\Math\Hash\SHA1.cpp" />
     <ClCompile Include="Lib\Math\Random\Random.cpp" />
+    <ClCompile Include="Lib\Math\Types\Complex\Complex.cpp" />
+    <ClCompile Include="Lib\Math\Types\Matrix\Matrix4.cpp" />
     <ClCompile Include="Lib\Math\Types\Vector\Vector2.cpp" />
     <ClCompile Include="Lib\Math\Types\Vector\Vector3.cpp" />
     <ClCompile Include="Lib\Math\Types\Vector\Vector4.cpp" />
@@ -306,6 +322,11 @@
     <ClCompile Include="ThirdParty\System\Hardware\CPUID.cpp" />
     <ClCompile Include="ThirdParty\System\Hardware\FPU.cpp" />
     <ClCompile Include="ThirdParty\System\Hardware\SIMD.cpp" />
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_Control.cpp" />
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportMemory.cpp" />
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportValues.cpp" />
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportMemory.cpp" />
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_ImportValues.cpp" />
     <ClCompile Include="ThirdParty\System\Networking.cpp" />
     <ClCompile Include="ThirdParty\System\Platform.cpp" />
     <ClCompile Include="ThirdParty\System\String.cpp" />

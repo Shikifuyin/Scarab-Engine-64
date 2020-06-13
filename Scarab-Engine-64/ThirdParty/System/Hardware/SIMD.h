@@ -17,6 +17,9 @@
 //              Also compiler will require direct usage of intrinsic types.
 //
 // You should prefer AVX/AVX2 instructions when available !
+//
+// Also ... STUPID FCKIN IMMEDIATE PARAMETERS !!!
+// Please implement a way to declare a function parameter as immediate !!!
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -142,229 +145,10 @@
 /////////////////////////////////////////////////////////////////////////////////
 // The SIMD namespace
 namespace SIMD
-{
-    ////////////////////////////////////////////////////////////// Control instructions
-        // Control & Status Register
-    inline UInt32 GetCSR();              // SSE
-    inline Void SetCSR( UInt32 iValue ); // SSE
+{        
 
-        // Clear and flush cache-line containing given address from all cache hierarchy levels
-    inline Void ClearAndFlushCacheLine( Void * pAddress ); // SSE2
-
-        // Spin-Wait Loop Hint for the Processor
-    inline Void Pause(); // SSE2
-
-    ////////////////////////////////////////////////////////////// Serializing instructions (makes sure everything is flushed)
-    inline Void SerializeMemoryStore(); // SSE
-    inline Void SerializeMemoryLoad();  // SSE2
-    inline Void SerializeMemory();      // SSE2
-
-    ////////////////////////////////////////////////////////////// Register Initialization
-    inline __m128 Zero128F(); // SSE
-    inline __m256 Zero256F(); // AVX
-
-    inline __m128d Zero128D(); // SSE2
-    inline __m256d Zero256D(); // AVX
-
-    inline __m128i Zero128I(); // SSE2
-    inline __m256i Zero256I(); // AVX
-
-        // Init all XMM/YMM registers
-    inline Void ZeroUpper128(); // AVX
-    inline Void Zero256();      // AVX
-
-    ////////////////////////////////////////////////////////////// Values -> Registers
-    inline __m128 SetLower( Float f0 );   // SSE
-    inline __m128d SetLower( Double f0 ); // SSE2
-
-    inline __m128i SetLower( Int32 i0 ); // SSE2
-    inline __m128i SetLower( Int64 i0 ); // SSE2
-
-    inline __m128 Set128( Float f0, Float f1, Float f2, Float f3 );                                         // SSE
-    inline __m256 Set256( Float f0, Float f1, Float f2, Float f3, Float f4, Float f5, Float f6, Float f7 ); // AVX
-
-    inline __m128d Set128( Double f0, Double f1 );                       // SSE2
-    inline __m256d Set256( Double f0, Double f1, Double f2, Double f3 ); // AVX
-
-    inline __m128i Set128( Int8 i0, Int8 i1, Int8 i2, Int8 i3, Int8 i4, Int8 i5, Int8 i6, Int8 i7,
-                           Int8 i8, Int8 i9, Int8 i10, Int8 i11, Int8 i12, Int8 i13, Int8 i14, Int8 i15 );   // SSE2
-    inline __m256i Set256( Int8 i0, Int8 i1, Int8 i2, Int8 i3, Int8 i4, Int8 i5, Int8 i6, Int8 i7,
-                           Int8 i8, Int8 i9, Int8 i10, Int8 i11, Int8 i12, Int8 i13, Int8 i14, Int8 i15,
-                           Int8 i16, Int8 i17, Int8 i18, Int8 i19, Int8 i20, Int8 i21, Int8 i22, Int8 i23,
-                           Int8 i24, Int8 i25, Int8 i26, Int8 i27, Int8 i28, Int8 i29, Int8 i30, Int8 i31 ); // AVX
-
-    inline __m128i Set128( Int16 i0, Int16 i1, Int16 i2, Int16 i3, Int16 i4, Int16 i5, Int16 i6, Int16 i7 );       // SSE2
-    inline __m256i Set256( Int16 i0, Int16 i1, Int16 i2, Int16 i3, Int16 i4, Int16 i5, Int16 i6, Int16 i7,
-                           Int16 i8, Int16 i9, Int16 i10, Int16 i11, Int16 i12, Int16 i13, Int16 i14, Int16 i15 ); // AVX
-
-    inline __m128i Set128( Int32 i0, Int32 i1, Int32 i2, Int32 i3 );                                         // SSE2
-    inline __m256i Set256( Int32 i0, Int32 i1, Int32 i2, Int32 i3, Int32 i4, Int32 i5, Int32 i6, Int32 i7 ); // AVX
-
-    inline __m128i Set128( Int64 i0, Int64 i1 );                     // SSE2
-    inline __m256i Set256( Int64 i0, Int64 i1, Int64 i2, Int64 i3 ); // AVX
-
-    //inline __m128 SetFloat( __m128 mDst, Float fSrc, Int32 iIndex ); // SSE41
-    //inline __m256 SetFloat( __m256 mDst, Float fSrc, Int32 iIndex ); // AVX
-
-    //inline __m128d SetDouble( __m128d mDst, Double fSrc, Int32 iIndex ); // SSE41
-    //inline __m256d SetDouble( __m256d mDst, Double fSrc, Int32 iIndex ); // AVX
-
-    //inline __m128i SetInt8( __m128i mDst, Int8 iSrc, Int32 iIndex ); // SSE41
-    //inline __m256i SetInt8( __m256i mDst, Int8 iSrc, Int32 iIndex ); // AVX
-
-    //inline __m128i SetInt16( __m128i mDst, Int16 iSrc, Int32 iIndex ); // SSE2
-    //inline __m256i SetInt16( __m256i mDst, Int16 iSrc, Int32 iIndex ); // AVX
-
-    //inline __m128i SetInt32( __m128i mDst, Int32 iSrc, Int32 iIndex ); // SSE41
-    //inline __m256i SetInt32( __m256i mDst, Int32 iSrc, Int32 iIndex ); // AVX
-
-    //inline __m128i SetInt64( __m128i mDst, Int64 iSrc, Int32 iIndex ); // SSE41
-    //inline __m256i SetInt64( __m256i mDst, Int64 iSrc, Int32 iIndex ); // AVX
-
-    inline __m128 Spread128( Float fValue ); // SSE
-    inline __m256 Spread256( Float fValue ); // AVX
-
-    inline __m128d Spread128( Double fValue ); // SSE2
-    inline __m256d Spread256( Double fValue ); // AVX
     
-    inline __m128i Spread128( Int8 iValue ); // SSE2
-    inline __m256i Spread256( Int8 iValue ); // AVX
 
-    inline __m128i Spread128( Int16 iValue ); // SSE2
-    inline __m256i Spread256( Int16 iValue ); // AVX
-
-    inline __m128i Spread128( Int32 iValue ); // SSE2
-    inline __m256i Spread256( Int32 iValue ); // AVX
-
-    inline __m128i Spread128( Int64 iValue ); // SSE2
-    inline __m256i Spread256( Int64 iValue ); // AVX
-
-    ////////////////////////////////////////////////////////////// Registers -> Values
-    inline Float GetLower( __m128 mSrc ); // SSE
-    inline Float GetLower( __m256 mSrc ); // AVX
-
-    inline Double GetLower( __m128d mSrc ); // SSE2
-    inline Double GetLower( __m256d mSrc ); // AVX
-
-    inline Int32 GetLower32( __m128i mSrc ); // SSE2
-    inline Int32 GetLower32( __m256i mSrc ); // AVX
-
-    inline Int64 GetLower64( __m128i mSrc ); // SSE2
-    inline Int64 GetLower64( __m256i mSrc ); // AVX
-
-    //inline Float GetFloat( __m128 mSrc, Int32 iIndex ); // SSE41
-    //inline Float GetFloat( __m256 mSrc, Int32 iIndex ); // AVX
-
-    //inline Double GetDouble( __m128d mSrc, Int32 iIndex ); // SSE41
-    //inline Double GetDouble( __m256d mSrc, Int32 iIndex ); // AVX
-
-    //inline Int32 GetInt8( __m128i mSrc, Int32 iIndex ); // SSE41
-    //inline Int32 GetInt8( __m256i mSrc, Int32 iIndex ); // AVX2
-
-    //inline Int32 GetInt16( __m128i mSrc, Int32 iIndex ); // SSE2
-    //inline Int32 GetInt16( __m256i mSrc, Int32 iIndex ); // AVX2
-
-    //inline Int32 GetInt32( __m128i mSrc, Int32 iIndex ); // SSE41
-    //inline Int32 GetInt32( __m256i mSrc, Int32 iIndex ); // AVX
-
-    //inline Int64 GetInt64( __m128i mSrc, Int32 iIndex ); // SSE41
-    //inline Int64 GetInt64( __m256i mSrc, Int32 iIndex ); // AVX
-
-    ////////////////////////////////////////////////////////////// Memory -> Registers
-        // Contiguous memory
-    inline __m128 LoadLower( const Float * pSrc );   // SSE
-    inline __m128d LoadLower( const Double * pSrc ); // SSE2
-
-    inline __m128 Load128Aligned( const Float * pSrc ); // SSE
-    inline __m256 Load256Aligned( const Float * pSrc ); // AVX
-
-    inline __m128d Load128Aligned( const Double * pSrc ); // SSE2
-    inline __m256d Load256Aligned( const Double * pSrc ); // AVX
-
-    inline __m128i Load128Aligned( const __m128i * pSrc ); // SSE2
-    inline __m256i Load256Aligned( const __m256i * pSrc ); // AVX
-
-    inline __m128 Load128( const Float * pSrc );                 // SSE
-    inline __m128 Load128( const Float * pSrc, __m128i mSigns ); // AVX
-    inline __m256 Load256( const Float * pSrc );                 // AVX
-    inline __m256 Load256( const Float * pSrc, __m256i mSigns ); // AVX
-
-    inline __m128d Load128( const Double * pSrc );                 // SSE2
-    inline __m128d Load128( const Double * pSrc, __m128i mSigns ); // AVX
-    inline __m256d Load256( const Double * pSrc );                 // AVX
-    inline __m256d Load256( const Double * pSrc, __m256i mSigns ); // AVX
-
-    inline __m128i Load128( const Int32 * pSrc, __m128i mSigns ); // AVX2
-    inline __m256i Load256( const Int32 * pSrc, __m256i mSigns ); // AVX2
-
-    inline __m128i Load128( const Int64 * pSrc, __m128i mSigns ); // AVX2
-    inline __m256i Load256( const Int64 * pSrc, __m256i mSigns ); // AVX2
-
-    inline __m128i Load128( const __m128i * pSrc ); // SSE3
-    inline __m256i Load256( const __m256i * pSrc ); // AVX
-
-    inline __m128 Load128AlignedR( const Float * pSrc );   // SSE
-    inline __m128d Load128AlignedR( const Double * pSrc ); // SSE2
-
-    inline __m128d LoadOneDoubleL( __m128d mDst, const Double * pSrc ); // SSE2
-    inline __m128d LoadOneDoubleH( __m128d mDst, const Double * pSrc ); // SSE2
-
-    inline __m128i LoadOneInt64L( const __m128i * pSrc ); // SSE2
-
-    inline __m128 Spread128( const Float * pSrc ); // SSE or AVX
-    inline __m256 Spread256( const Float * pSrc ); // AVX
-
-    inline __m128d Spread128( const Double * pSrc ); // SSE3
-    inline __m256d Spread256( const Double * pSrc ); // AVX
-
-    inline __m256 Spread256( const __m128 * pSrc );   // AVX
-    inline __m256d Spread256( const __m128d * pSrc ); // AVX
-
-        // Non-Temporal variants (stream_load instructions)
-    inline __m128i LoadNT128Aligned( const __m128i * pSrc ); // SSE41
-    inline __m256i LoadNT256Aligned( const __m256i * pSrc ); // AVX2
-
-        // Sparse memory, 32-bit indices
-    //inline __m128 Load32FourFloat( const Float * pSrc, __m128i mIndices, Int32 iStride );                              // AVX2
-    //inline __m128 Load32FourFloat( __m128 mDst, const Float * pSrc, __m128i mIndices, Int32 iStride, __m128 mSigns );  // AVX2
-    //inline __m256 Load32EightFloat( const Float * pSrc, __m256i mIndices, Int32 iStride );                             // AVX2
-    //inline __m256 Load32EightFloat( __m256 mDst, const Float * pSrc, __m256i mIndices, Int32 iStride, __m256 mSigns ); // AVX2
-
-    //inline __m128d Load32TwoDouble( const Double * pSrc, __m128i mIndices, Int32 iStride );                                // AVX2
-    //inline __m128d Load32TwoDouble( __m128d mDst, const Double * pSrc, __m128i mIndices, Int32 iStride, __m128d mSigns );  // AVX2
-    //inline __m256d Load32FourDouble( const Double * pSrc, __m128i mIndices, Int32 iStride );                               // AVX2
-    //inline __m256d Load32FourDouble( __m256d mDst, const Double * pSrc, __m128i mIndices, Int32 iStride, __m256d mSigns ); // AVX2
-
-    //inline __m128i Load32FourInt32( const Int32 * pSrc, __m128i mIndices, Int32 iStride );                                // AVX2
-    //inline __m128i Load32FourInt32( __m128i mDst, const Int32 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns );  // AVX2
-    //inline __m256i Load32EightInt32( const Int32 * pSrc, __m256i mIndices, Int32 iStride );                               // AVX2
-    //inline __m256i Load32EightInt32( __m256i mDst, const Int32 * pSrc, __m256i mIndices, Int32 iStride, __m256i mSigns ); // AVX2
-
-    //inline __m128i Load32TwoInt64( const Int64 * pSrc, __m128i mIndices, Int32 iStride );                                // AVX2
-    //inline __m128i Load32TwoInt64( __m128i mDst, const Int64 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns );  // AVX2
-    //inline __m256i Load32FourInt64( const Int64 * pSrc, __m128i mIndices, Int32 iStride );                               // AVX2
-    //inline __m256i Load32FourInt64( __m256i mDst, const Int64 * pSrc, __m128i mIndices, Int32 iStride, __m256i mSigns ); // AVX2
-
-        // Sparse memory, 64-bit indices
-    //inline __m128 Load64TwoFloat( const Float * pSrc, __m128i mIndices, Int32 iStride );                              // AVX2
-    //inline __m128 Load64TwoFloat( __m128 mDst, const Float * pSrc, __m128i mIndices, Int32 iStride, __m128 mSigns );  // AVX2
-    //inline __m128 Load64FourFloat( const Float * pSrc, __m256i mIndices, Int32 iStride );                             // AVX2
-    //inline __m128 Load64FourFloat( __m128 mDst, const Float * pSrc, __m256i mIndices, Int32 iStride, __m128 mSigns ); // AVX2
-
-    //inline __m128d Load64TwoDouble( const Double * pSrc, __m128i mIndices, Int32 iStride );                                // AVX2
-    //inline __m128d Load64TwoDouble( __m128d mDst, const Double * pSrc, __m128i mIndices, Int32 iStride, __m128d mSigns );  // AVX2
-    //inline __m256d Load64FourDouble( const Double * pSrc, __m256i mIndices, Int32 iStride );                               // AVX2
-    //inline __m256d Load64FourDouble( __m256d mDst, const Double * pSrc, __m256i mIndices, Int32 iStride, __m256d mSigns ); // AVX2
-
-    //inline __m128i Load64TwoInt32( const Int32 * pSrc, __m128i mIndices, Int32 iStride );                                // AVX2
-    //inline __m128i Load64TwoInt32( __m128i mDst, const Int32 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns );  // AVX2
-    //inline __m128i Load64FourInt32( const Int32 * pSrc, __m256i mIndices, Int32 iStride );                               // AVX2
-    //inline __m128i Load64FourInt32( __m128i mDst, const Int32 * pSrc, __m256i mIndices, Int32 iStride, __m128i mSigns ); // AVX2
-
-    //inline __m128i Load64TwoInt64( const Int64 * pSrc, __m128i mIndices, Int32 iStride );                                // AVX2
-    //inline __m128i Load64TwoInt64( __m128i mDst, const Int64 * pSrc, __m128i mIndices, Int32 iStride, __m128i mSigns );  // AVX2
-    //inline __m256i Load64FourInt64( const Int64 * pSrc, __m256i mIndices, Int32 iStride );                               // AVX2
-    //inline __m256i Load64FourInt64( __m256i mDst, const Int64 * pSrc, __m256i mIndices, Int32 iStride, __m256i mSigns ); // AVX2
 
     ////////////////////////////////////////////////////////////// Registers -> Memory
     inline Void StoreLower( Float * outDst, __m128 mSrc );   // SSE
@@ -426,12 +210,31 @@ namespace SIMD
         // Move
             // Dst argument : Unaffected elements are copied
     inline __m128 MoveOneFloatLL( __m128 mDst, __m128 mSrc ); // SSE
+
     inline __m128 MoveTwoFloatHL( __m128 mDst, __m128 mSrc ); // SSE
     inline __m128 MoveTwoFloatLH( __m128 mDst, __m128 mSrc ); // SSE
 
+    inline __m256 MoveFourFloatL( __m256 mDst, __m128 mSrc ); // AVX
+    inline __m256 MoveFourFloatH( __m256 mDst, __m128 mSrc ); // AVX
+
     inline __m128d MoveOneDoubleLL( __m128d mDst, __m128d mSrc ); // SSE2
 
+    inline __m256d MoveTwoDoubleL( __m256d mDst, __m128d mSrc ); // AVX
+    inline __m256d MoveTwoDoubleH( __m256d mDst, __m128d mSrc ); // AVX
+
+    inline __m256i MoveFourIntL( __m256i mDst, __m128i mSrc ); // AVX2
+    inline __m256i MoveFourIntH( __m256i mDst, __m128i mSrc ); // AVX2
+
             // No Dst argument : Unaffected elements are zeroed
+    inline __m128 MoveFourFloatL( __m256 mSrc ); // AVX
+    inline __m128 MoveFourFloatH( __m256 mSrc ); // AVX
+
+    inline __m128d MoveTwoDoubleL( __m256d mSrc ); // AVX
+    inline __m128d MoveTwoDoubleH( __m256d mSrc ); // AVX
+
+    inline __m128i MoveFourIntL( __m256i mSrc ); // AVX2
+    inline __m128i MoveFourIntH( __m256i mSrc ); // AVX2
+
     inline __m128i MoveOneInt64LL( __m128i mSrc ); // SSE2
 
         // Spread
@@ -462,16 +265,6 @@ namespace SIMD
     inline __m256i Spread256Int64( __m128i mSrc ); // AVX2
 
     inline __m256i Spread256Int128( __m128i mSrc ); // AVX2
-
-        // Extract
-    //inline __m128 Extract128F( __m256 mSrc, Int32 iIndex );   // AVX
-    //inline __m128d Extract128D( __m256d mSrc, Int32 iIndex ); // AVX
-    inline __m128i Extract128I( __m256i mSrc, Int32 iIndex ); // AVX2
-
-        // Insert
-    //inline __m256 Insert128F( __m256 mDst, __m128 mSrc, Int32 iIndex );    // AVX
-    //inline __m256d Insert128D( __m256d mDst, __m128d mSrc, Int32 iIndex ); // AVX
-    inline __m256i Insert128I( __m256i mDst, __m128i mSrc, Int32 iIndex ); // AVX2
 
     ////////////////////////////////////////////////////////////// Pack / Unpack
     inline __m128i PackSigned16To8( __m128i mSrcLow, __m128i mSrcHigh ); // SSE2
@@ -524,46 +317,63 @@ namespace SIMD
 
     ////////////////////////////////////////////////////////////// Shuffle
     //inline __m128 Shuffle128Float( __m128 mSrcLow, __m128 mSrcHigh, Int iMask4x4 ); // SSE
+#define SIMD_128_Shuffle128Float2( mSrcLow, mSrcHigh, iMask4x4 ) _mm_shuffle_ps( mSrcLow, mSrcHigh, (unsigned)iMask4x4 )
     //inline __m128 Shuffle128Float( __m128 mSrc, Int iMask4x4 );                     // AVX
+#define SIMD_128_Shuffle128Float( mSrc, iMask4x4 )               _mm_permute_ps( mSrc, iMask4x4 )
     inline __m128 Shuffle128Float( __m128 mSrc, __m128i mMask1x4 );                 // AVX
 
     //inline __m256 Shuffle128Float( __m256 mSrcLow, __m256 mSrcHigh, Int iMask4x4 ); // AVX
+#define SIMD_256_Shuffle128Float2( mSrcLow, mSrcHigh, iMask4x4 ) _mm256_shuffle_ps( mSrcLow, mSrcHigh, iMask4x4 )
     //inline __m256 Shuffle128Float( __m256 mSrc, Int iMask4x4 );                     // AVX
+#define SIMD_256_Shuffle128Float( mSrc, iMask4x4 )               _mm256_permute_ps( mSrc, iMask4x4 )
     inline __m256 Shuffle128Float( __m256 mSrc, __m256i mMask1x4 );                 // AVX
 
     inline __m256 Shuffle256Float( __m256 mSrc, __m256i mMask1x8 ); // AVX2
 
     //inline __m256 Shuffle512FourFloat( __m256 mSrc1, __m256 mSrc2, Int iMask2x4_Z ); // AVX
+#define SIMD_256_Shuffle512FourFloat( mSrc1, mSrc2, iMask2x4_Z ) _mm256_permute2f128_ps( mSrc1, mSrc2, iMask2x4_Z )
 
     //inline __m128d Shuffle128Double( __m128d mSrcLow, __m128d mSrcHigh, Int iMask2x2 ); // SSE2
+#define SIMD_128_Shuffle128Double( mSrcLow, mSrcHigh, iMask2x2 ) _mm_shuffle_pd( mSrcLow, mSrcHigh, iMask2x2 )
     inline __m128d Shuffle128Double( __m128d mSrc, Int iMask2x2 );                      // AVX
     inline __m128d Shuffle128Double( __m128d mSrc, __m128i mMask1x2 );                  // AVX
 
     //inline __m256d Shuffle128Double( __m256d mSrcLow, __m256d mSrcHigh, Int iMask4x2 ); // AVX
+#define SIMD_256_Shuffle128Double2( mSrcLow, mSrcHigh, iMask4x2 ) _mm256_shuffle_pd( mSrcLow, mSrcHigh, iMask4x2 )
     //inline __m256d Shuffle128Double( __m256d mSrc, Int iMask4x2 );                      // AVX
+#define SIMD_256_Shuffle128Double( mSrc, iMask4x2 )               _mm256_permute_pd( mSrc, iMask4x2 )
     inline __m256d Shuffle128Double( __m256d mSrc, __m256i mMask1x2 );                  // AVX
 
     //inline __m256d Shuffle256Double( __m256d mSrc, Int iMask4x4 ); // AVX2
-
+#define SIMD_256_Shuffle256Double( mSrc, iMask4x4 )              _mm256_permute4x64_pd( mSrc, iMask4x4 )
     //inline __m256d Shuffle512TwoDouble( __m256d mSrc1, __m256d mSrc2, Int iMask2x4_Z ); // AVX
+#define SIMD_256_Shuffle512TwoDouble( mSrc1, mSrc2, iMask2x4_Z ) _mm256_permute2f128_pd( mSrc1, mSrc2, iMask2x4_Z )
 
     inline __m128i Shuffle128Int8( __m128i mSrc, __m128i mMask1x16_Z ); // SSSE3
     inline __m256i Shuffle128Int8( __m256i mSrc, __m256i mMask1x16_Z ); // AVX2
 
     //inline __m128i Shuffle64Int16L( __m128i mSrc, Int iMask4x4 ); // SSE2
+#define SIMD_128_Shuffle64Int16L( mSrc, iMask4x4 ) _mm_shufflelo_epi16( mSrc, iMask4x4 )
     //inline __m256i Shuffle64Int16L( __m256i mSrc, Int iMask4x4 ); // AVX2
+#define SIMD_256_Shuffle64Int16L( mSrc, iMask4x4 ) _mm256_shufflelo_epi16( mSrc, iMask4x4 )
 
     //inline __m128i Shuffle64Int16H( __m128i mSrc, Int iMask4x4 ); // SSE2
+#define SIMD_128_Shuffle64Int16H( mSrc, iMask4x4 ) _mm_shufflehi_epi16( mSrc, iMask4x4 )
     //inline __m256i Shuffle64Int16H( __m256i mSrc, Int iMask4x4 ); // AVX2
+#define SIMD_256_Shuffle64Int16H( mSrc, iMask4x4 ) _mm256_shufflehi_epi16( mSrc, iMask4x4 )
 
     //inline __m128i Shuffle128Int32( __m128i mSrc, Int iMask4x4 ); // SSE2
+#define SIMD_128_Shuffle128Int32( mSrc, iMask4x4 ) _mm_shuffle_epi32( mSrc, iMask4x4 )
     //inline __m256i Shuffle128Int32( __m256i mSrc, Int iMask4x4 ); // AVX2
+#define SIMD_256_Shuffle128Int32( mSrc, iMask4x4 ) _mm256_shuffle_epi32( mSrc, iMask4x4 )
 
     inline __m256i Shuffle256Int32( __m256i mSrc, __m256i mMask1x8 ); // AVX2
 
     //inline __m256i Shuffle512FourInt32( __m256i mSrc1, __m256i mSrc2, Int iMask2x4_Z ); // AVX2
+#define SIMD_256_Shuffle512FourInt32( mSrc1, mSrc2, iMask2x4_Z ) _mm256_permute2x128_si256( mSrc1, mSrc2, iMask2x4_Z )
 
     //inline __m256i Shuffle256Int64( __m256i mSrc, Int iMask4x4 ); // AVX2
+#define SIMD_256_Shuffle256Int64( mSrc, iMask4x4 ) _mm256_permute4x64_epi64( mSrc, iMask4x4 )
 
     ////////////////////////////////////////////////////////////// Blend
     //inline __m128 BlendFloat( __m128 mDst, __m128 mSrc, Int iMask4 );    // SSE41

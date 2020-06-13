@@ -1,10 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////////
-// File : ThirdParty/System/Hardware/SIMD/SIMD_Control.h
+// File : ThirdParty/System/Hardware/SIMD/SIMD_Cast.h
 /////////////////////////////////////////////////////////////////////////////////
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : SIMD, Control operations
+// Description : SIMD, Cast operations
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -12,13 +12,13 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-// Known Bugs : None
+// Known Bugs : Compiler Hints only, No instruction generated, Free !
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 // Header prelude
-#ifndef SCARAB_THIRDPARTY_SYSTEM_HARDWARE_SIMD_SIMDCONTROL_H
-#define SCARAB_THIRDPARTY_SYSTEM_HARDWARE_SIMD_SIMDCONTROL_H
+#ifndef SCARAB_THIRDPARTY_SYSTEM_HARDWARE_SIMD_SIMDCAST_H
+#define SCARAB_THIRDPARTY_SYSTEM_HARDWARE_SIMD_SIMDCAST_H
 
 /////////////////////////////////////////////////////////////////////////////////
 // Third-Party Includes
@@ -31,38 +31,40 @@
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
-// TODO : Add some CSR flags helpers ...
-
 /////////////////////////////////////////////////////////////////////////////////
-// The SIMD::Control namespace
-namespace SIMD { namespace Control {
+// The SIMD::Cast namespace
+namespace SIMD { namespace Cast {
 
-	// Control & Status Register
-    inline UInt32 GetCSR();              // SSE
-    inline Void SetCSR( UInt32 iValue ); // SSE
+	inline __m128 ToFloat( __m128d mDouble );  // SSE2
+    inline __m128 ToFloat( __m128i mInteger ); // SSE2
+    inline __m256 ToFloat( __m256d mDouble );  // AVX
+    inline __m256 ToFloat( __m256i mInteger ); // AVX
 
-    // Clear and flush cache-line containing given address from all cache hierarchy levels
-    inline Void ClearAndFlushCacheLine( Void * pAddress ); // SSE2
+    inline __m128d ToDouble( __m128 mFloat );    // SSE2
+    inline __m128d ToDouble( __m128i mInteger ); // SSE2
+    inline __m256d ToDouble( __m256 mFloat );    // AVX
+    inline __m256d ToDouble( __m256i mInteger ); // AVX
 
-    // Spin-Wait Loop Hint for the Processor
-    inline Void Pause(); // SSE2
+    inline __m128i ToInteger( __m128 mFloat );   // SSE2
+    inline __m128i ToInteger( __m128d mDouble ); // SSE2
+    inline __m256i ToInteger( __m256 mFloat );   // AVX
+    inline __m256i ToInteger( __m256d mDouble ); // AVX
 
-    // Serializing instructions (makes sure everything is flushed)
-    inline Void SerializeMemoryStore(); // SSE
-    inline Void SerializeMemoryLoad();  // SSE2
-    inline Void SerializeMemory();      // SSE2
+    inline __m128 Down( __m256 mFloat );     // AVX
+    inline __m128d Down( __m256d mDouble );  // AVX
+    inline __m128i Down( __m256i mInteger ); // AVX
 
-    // General Initialization
-	inline Void ZeroUpper128(); // AVX
-	inline Void Zero256();      // AVX
+    inline __m256 Up( __m128 mFloat );     // AVX
+    inline __m256d Up( __m128d mDouble );  // AVX
+    inline __m256i Up( __m128i mInteger ); // AVX
 
 }; };
 
 /////////////////////////////////////////////////////////////////////////////////
 // Backward Includes (Inlines & Templates)
-#include "SIMD_Control.inl"
+#include "SIMD_Cast.inl"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Header end
-#endif // SCARAB_THIRDPARTY_SYSTEM_HARDWARE_SIMD_SIMDCONTROL_H
+#endif // SCARAB_THIRDPARTY_SYSTEM_HARDWARE_SIMD_SIMDCAST_H
 

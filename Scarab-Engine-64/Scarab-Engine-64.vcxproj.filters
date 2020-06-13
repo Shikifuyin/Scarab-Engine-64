@@ -330,6 +330,27 @@
     <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportMemory.h">
       <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_Cast.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_Convert.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_Compare.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_Function.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_Bit.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_Math.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\System\Hardware\SIMD\SIMD_Register.h">
+      <Filter>Header Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\System\Platform.inl">
@@ -509,6 +530,27 @@
     <None Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportMemory.inl">
       <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
     </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_Cast.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_Convert.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_Compare.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_Function.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_Bit.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_Math.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
+    <None Include="ThirdParty\System\Hardware\SIMD\SIMD_Register.inl">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -686,6 +728,27 @@
       <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_ExportMemory.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_Cast.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_Convert.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_Compare.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_Function.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_Bit.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_Math.cpp">
+      <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\System\Hardware\SIMD\SIMD_Register.cpp">
       <Filter>Source Files\ThirdParty\System\Hardware\SIMD</Filter>
     </ClCompile>
   </ItemGroup>

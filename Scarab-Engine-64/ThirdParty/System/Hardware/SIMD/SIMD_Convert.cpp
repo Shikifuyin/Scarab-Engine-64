@@ -1,10 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////////
-// File : ThirdParty/System/Hardware/SIMD/SIMD_Control.h
+// File : ThirdParty/System/Hardware/SIMD/SIMD_Convert.cpp
 /////////////////////////////////////////////////////////////////////////////////
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : SIMD, Control operations
+// Description : SIMD, Convert operations
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -16,53 +16,23 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-// Header prelude
-#ifndef SCARAB_THIRDPARTY_SYSTEM_HARDWARE_SIMD_SIMDCONTROL_H
-#define SCARAB_THIRDPARTY_SYSTEM_HARDWARE_SIMD_SIMDCONTROL_H
-
-/////////////////////////////////////////////////////////////////////////////////
-// Third-Party Includes
-#include <intrin.h>
-
-/////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "../CPUID.h"
+#include "SIMD_Convert.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-// Constants definitions
-
-// TODO : Add some CSR flags helpers ...
+// SIMD::Convert implementation
 
 /////////////////////////////////////////////////////////////////////////////////
-// The SIMD::Control namespace
-namespace SIMD { namespace Control {
-
-	// Control & Status Register
-    inline UInt32 GetCSR();              // SSE
-    inline Void SetCSR( UInt32 iValue ); // SSE
-
-    // Clear and flush cache-line containing given address from all cache hierarchy levels
-    inline Void ClearAndFlushCacheLine( Void * pAddress ); // SSE2
-
-    // Spin-Wait Loop Hint for the Processor
-    inline Void Pause(); // SSE2
-
-    // Serializing instructions (makes sure everything is flushed)
-    inline Void SerializeMemoryStore(); // SSE
-    inline Void SerializeMemoryLoad();  // SSE2
-    inline Void SerializeMemory();      // SSE2
-
-    // General Initialization
-	inline Void ZeroUpper128(); // AVX
-	inline Void Zero256();      // AVX
-
-}; };
+// SIMD::Truncate implementation
 
 /////////////////////////////////////////////////////////////////////////////////
-// Backward Includes (Inlines & Templates)
-#include "SIMD_Control.inl"
+// SIMD::SignExtend128 implementation
 
 /////////////////////////////////////////////////////////////////////////////////
-// Header end
-#endif // SCARAB_THIRDPARTY_SYSTEM_HARDWARE_SIMD_SIMDCONTROL_H
+// SIMD::SignExtend256 implementation
 
+/////////////////////////////////////////////////////////////////////////////////
+// SIMD::ZeroExtend128 implementation
+
+/////////////////////////////////////////////////////////////////////////////////
+// SIMD::ZeroExtend256 implementation

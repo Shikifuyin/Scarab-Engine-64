@@ -50,6 +50,11 @@ namespace SIMD { namespace Import { namespace Memory {
 
     inline __m128d Load128( const Double * pSrc ); // SSE2
 
+    inline __m128i Load128( const Int8 * pSrc );  // SSE3
+    inline __m128i Load128( const Int16 * pSrc ); // SSE3
+    inline __m128i Load128( const Int32 * pSrc ); // SSE3
+    inline __m128i Load128( const Int64 * pSrc ); // SSE3
+
     inline __m128i Load128( const UInt8 * pSrc );  // SSE3
     inline __m128i Load128( const UInt16 * pSrc ); // SSE3
     inline __m128i Load128( const UInt32 * pSrc ); // SSE3
@@ -58,6 +63,11 @@ namespace SIMD { namespace Import { namespace Memory {
     inline __m256 Load256( const Float * pSrc ); // AVX
 
     inline __m256d Load256( const Double * pSrc ); // AVX
+
+    inline __m256i Load256( const Int8 * pSrc );  // AVX
+    inline __m256i Load256( const Int16 * pSrc ); // AVX
+    inline __m256i Load256( const Int32 * pSrc ); // AVX
+    inline __m256i Load256( const Int64 * pSrc ); // AVX
 
     inline __m256i Load256( const UInt8 * pSrc );  // AVX
     inline __m256i Load256( const UInt16 * pSrc ); // AVX
@@ -97,6 +107,11 @@ namespace SIMD { namespace Import { namespace Memory {
 
 		inline __m128d Load128( const Double * pSrc ); // SSE2
 
+        inline __m128i Load128( const Int8 * pSrc );  // SSE2
+		inline __m128i Load128( const Int16 * pSrc ); // SSE2
+		inline __m128i Load128( const Int32 * pSrc ); // SSE2
+		inline __m128i Load128( const Int64 * pSrc ); // SSE2
+
 		inline __m128i Load128( const UInt8 * pSrc );  // SSE2
 		inline __m128i Load128( const UInt16 * pSrc ); // SSE2
 		inline __m128i Load128( const UInt32 * pSrc ); // SSE2
@@ -105,6 +120,11 @@ namespace SIMD { namespace Import { namespace Memory {
 		inline __m256 Load256( const Float * pSrc ); // AVX
 
 		inline __m256d Load256( const Double * pSrc ); // AVX
+
+        inline __m256i Load256( const Int8 * pSrc );  // AVX
+		inline __m256i Load256( const Int16 * pSrc ); // AVX
+		inline __m256i Load256( const Int32 * pSrc ); // AVX
+		inline __m256i Load256( const Int64 * pSrc ); // AVX
 
 		inline __m256i Load256( const UInt8 * pSrc );  // AVX
 		inline __m256i Load256( const UInt16 * pSrc ); // AVX
@@ -120,6 +140,11 @@ namespace SIMD { namespace Import { namespace Memory {
 
 		inline __m128d Load128NT( const Double * pSrc ); // SSE41
 
+        inline __m128i Load128NT( const Int8 * pSrc );  // SSE41
+		inline __m128i Load128NT( const Int16 * pSrc ); // SSE41
+		inline __m128i Load128NT( const Int32 * pSrc ); // SSE41
+		inline __m128i Load128NT( const Int64 * pSrc ); // SSE41
+
 		inline __m128i Load128NT( const UInt8 * pSrc );  // SSE41
 		inline __m128i Load128NT( const UInt16 * pSrc ); // SSE41
 		inline __m128i Load128NT( const UInt32 * pSrc ); // SSE41
@@ -128,6 +153,11 @@ namespace SIMD { namespace Import { namespace Memory {
 		inline __m256 Load256NT( const Float * pSrc ); // AVX2
 
 		inline __m256d Load256NT( const Double * pSrc ); // AVX2
+
+        inline __m256i Load256NT( const Int8 * pSrc );  // AVX2
+		inline __m256i Load256NT( const Int16 * pSrc ); // AVX2
+		inline __m256i Load256NT( const Int32 * pSrc ); // AVX2
+		inline __m256i Load256NT( const Int64 * pSrc ); // AVX2
 
 		inline __m256i Load256NT( const UInt8 * pSrc );  // AVX2
 		inline __m256i Load256NT( const UInt16 * pSrc ); // AVX2

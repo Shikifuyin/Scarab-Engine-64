@@ -174,7 +174,7 @@ typedef struct _cpu_descriptor_intel
         Bool bHasBMI2;              // Bit Manipulation instruction set 2
         Bool bHasEREP;              // Enhanced REP MOVSB / STOSB instructions
         Bool bHasINVPCID;           // INVPCID instruction for Process-Context identifiers
-        Bool bHasRTM;               // ???
+        Bool bHasRTM;               // Restricted Transactional Memory
         Bool bHasRDTM;              // Resource Director Technology Monitoring
         Bool bIsFPUCSDSDeprecated;  // FPU CS and DS values are deprecated
         Bool bHasMPX;               // Memory Protection Extensions

@@ -50,6 +50,23 @@ inline __m128d SIMD::Import::Memory::Load128( const Double * pSrc ) {
     return _mm_loadu_pd( pSrc );
 }
 
+inline __m128i SIMD::Import::Memory::Load128( const Int8 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE3() );
+    return _mm_lddqu_si128( (const __m128i *)pSrc );
+}
+inline __m128i SIMD::Import::Memory::Load128( const Int16 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE3() );
+    return _mm_lddqu_si128( (const __m128i *)pSrc );
+}
+inline __m128i SIMD::Import::Memory::Load128( const Int32 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE3() );
+    return _mm_lddqu_si128( (const __m128i *)pSrc );
+}
+inline __m128i SIMD::Import::Memory::Load128( const Int64 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE3() );
+    return _mm_lddqu_si128( (const __m128i *)pSrc );
+}
+
 inline __m128i SIMD::Import::Memory::Load128( const UInt8 * pSrc ) {
     DebugAssert( CPUIDFn->HasSSE3() );
     return _mm_lddqu_si128( (const __m128i *)pSrc );
@@ -75,6 +92,23 @@ inline __m256 SIMD::Import::Memory::Load256( const Float * pSrc ) {
 inline __m256d SIMD::Import::Memory::Load256( const Double * pSrc ) {
     DebugAssert( CPUIDFn->HasAVX() );
     return _mm256_loadu_pd( pSrc );
+}
+
+inline __m256i SIMD::Import::Memory::Load256( const Int8 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_lddqu_si256( (const __m256i *)pSrc );
+}
+inline __m256i SIMD::Import::Memory::Load256( const Int16 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_lddqu_si256( (const __m256i *)pSrc );
+}
+inline __m256i SIMD::Import::Memory::Load256( const Int32 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_lddqu_si256( (const __m256i *)pSrc );
+}
+inline __m256i SIMD::Import::Memory::Load256( const Int64 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_lddqu_si256( (const __m256i *)pSrc );
 }
 
 inline __m256i SIMD::Import::Memory::Load256( const UInt8 * pSrc ) {
@@ -176,6 +210,23 @@ inline __m128d SIMD::Import::Memory::Aligned::Load128( const Double * pSrc ) {
     return _mm_load_pd( pSrc );
 }
 
+inline __m128i SIMD::Import::Memory::Aligned::Load128( const Int8 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_load_si128( (const __m128i *)pSrc );
+}
+inline __m128i SIMD::Import::Memory::Aligned::Load128( const Int16 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_load_si128( (const __m128i *)pSrc );
+}
+inline __m128i SIMD::Import::Memory::Aligned::Load128( const Int32 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_load_si128( (const __m128i *)pSrc );
+}
+inline __m128i SIMD::Import::Memory::Aligned::Load128( const Int64 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE2() );
+    return _mm_load_si128( (const __m128i *)pSrc );
+}
+
 inline __m128i SIMD::Import::Memory::Aligned::Load128( const UInt8 * pSrc ) {
     DebugAssert( CPUIDFn->HasSSE2() );
     return _mm_load_si128( (const __m128i *)pSrc );
@@ -201,6 +252,23 @@ inline __m256 SIMD::Import::Memory::Aligned::Load256( const Float * pSrc ) {
 inline __m256d SIMD::Import::Memory::Aligned::Load256( const Double * pSrc ) {
     DebugAssert( CPUIDFn->HasAVX() );
     return _mm256_load_pd( pSrc );
+}
+
+inline __m256i SIMD::Import::Memory::Aligned::Load256( const Int8 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_load_si256( (const __m256i *)pSrc );
+}
+inline __m256i SIMD::Import::Memory::Aligned::Load256( const Int16 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_load_si256( (const __m256i *)pSrc );
+}
+inline __m256i SIMD::Import::Memory::Aligned::Load256( const Int32 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_load_si256( (const __m256i *)pSrc );
+}
+inline __m256i SIMD::Import::Memory::Aligned::Load256( const Int64 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_load_si256( (const __m256i *)pSrc );
 }
 
 inline __m256i SIMD::Import::Memory::Aligned::Load256( const UInt8 * pSrc ) {
@@ -239,6 +307,23 @@ inline __m128d SIMD::Import::Memory::Aligned::Load128NT( const Double * pSrc ) {
     return _mm_castsi128_pd( _mm_stream_load_si128( (const __m128i *)pSrc ) );
 }
 
+inline __m128i SIMD::Import::Memory::Aligned::Load128NT( const Int8 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_stream_load_si128( (const __m128i *)pSrc );
+}
+inline __m128i SIMD::Import::Memory::Aligned::Load128NT( const Int16 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_stream_load_si128( (const __m128i *)pSrc );
+}
+inline __m128i SIMD::Import::Memory::Aligned::Load128NT( const Int32 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_stream_load_si128( (const __m128i *)pSrc );
+}
+inline __m128i SIMD::Import::Memory::Aligned::Load128NT( const Int64 * pSrc ) {
+    DebugAssert( CPUIDFn->HasSSE41() );
+    return _mm_stream_load_si128( (const __m128i *)pSrc );
+}
+
 inline __m128i SIMD::Import::Memory::Aligned::Load128NT( const UInt8 * pSrc ) {
     DebugAssert( CPUIDFn->HasSSE41() );
     return _mm_stream_load_si128( (const __m128i *)pSrc );
@@ -264,6 +349,23 @@ inline __m256 SIMD::Import::Memory::Aligned::Load256NT( const Float * pSrc ) {
 inline __m256d SIMD::Import::Memory::Aligned::Load256NT( const Double * pSrc ) {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm256_castsi256_pd( _mm256_stream_load_si256( (const __m256i *)pSrc ) );
+}
+
+inline __m256i SIMD::Import::Memory::Aligned::Load256NT( const Int8 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_stream_load_si256( (const __m256i *)pSrc );
+}
+inline __m256i SIMD::Import::Memory::Aligned::Load256NT( const Int16 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_stream_load_si256( (const __m256i *)pSrc );
+}
+inline __m256i SIMD::Import::Memory::Aligned::Load256NT( const Int32 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_stream_load_si256( (const __m256i *)pSrc );
+}
+inline __m256i SIMD::Import::Memory::Aligned::Load256NT( const Int64 * pSrc ) {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm256_stream_load_si256( (const __m256i *)pSrc );
 }
 
 inline __m256i SIMD::Import::Memory::Aligned::Load256NT( const UInt8 * pSrc ) {

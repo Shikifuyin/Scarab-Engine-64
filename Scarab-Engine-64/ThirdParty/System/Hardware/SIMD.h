@@ -4,7 +4,7 @@
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : SIMD low level abstraction layer
+// Description : SIMD low level abstraction layer, Master Header
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -17,9 +17,6 @@
 //              Also compiler will require direct usage of intrinsic types.
 //
 // You should prefer AVX/AVX2 instructions when available !
-//
-// Also ... STUPID FCKIN IMMEDIATE PARAMETERS !!!
-// Please implement a way to declare a function parameter as immediate !!!
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -28,12 +25,26 @@
 #define SCARAB_THIRDPARTY_SYSTEM_HARDWARE_SIMD_H
 
 /////////////////////////////////////////////////////////////////////////////////
-// Third-Party Includes
-#include <intrin.h>
-
-/////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "CPUID.h"
+#include "SIMD/SIMD_Control.h"      // General SIMD Control functions
+
+#include "SIMD/SIMD_ImportValues.h" // Values -> Registers
+#include "SIMD/SIMD_ImportMemory.h" // Memory -> Registers
+
+#include "SIMD/SIMD_ExportValues.h" // Registers -> Values
+#include "SIMD/SIMD_ExportMemory.h" // Registers -> Memory
+
+#include "SIMD/SIMD_Register.h"     // Registers <-> Registers
+
+#include "SIMD/SIMD_Cast.h"         // TypeCasting (No generated instruction)
+#include "SIMD/SIMD_Convert.h"      // Type Conversion
+
+#include "SIMD/SIMD_Compare.h"      // Comparisons
+
+#include "SIMD/SIMD_Bit.h"          // Bit Manipulation
+
+#include "SIMD/SIMD_Math.h"         // Basic Arithmetics
+#include "SIMD/SIMD_Function.h"     // Math Functions
 
 // General define for SIMD use in a lot of math code, comment accordingly
 #define SIMD_ENABLE // Assumes AVX2 and SSE42
@@ -41,166 +52,14 @@
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
-// Shuffle Control Mask
-// Naming Convention : SIMD_SHUFFLE_MASK_NxP(_Z)
-// N = Number of elements being picked.
-// P = Number of elements to choose from.
-// _Z = Has a Set to Zero flag.
-#define SIMD_SHUFFLE_MASK_1x2( _element_0 ) \
-    ( ((_element_0) & 0x01) << 1 )
-
-#define SIMD_SHUFFLE_MASK_1x4( _element_0 ) \
-    ( (_element_0) & 0x03 )
-
-#define SIMD_SHUFFLE_MASK_1x8( _element_0 ) \
-    ( (_element_0) & 0x07 )
-
-#define SIMD_SHUFFLE_MASK_1x16_Z( _element_0, _zeroflag_0 ) \
-    ( ((_element_0) & 0x0f) | (((_zeroflag_0) & 0x01) << 7) )
-
-#define SIMD_SHUFFLE_MASK_2x2( _element_0, _element_1 ) \
-    ( ((_element_0) & 0x01) | (((_element_1) & 0x01) << 1) )
-
-#define SIMD_SHUFFLE_MASK_2x4_Z( _element_0, _zeroflag_0, _element_1, _zeroflag_1 ) \
-    ( ((_element_0) & 0x03) | (((_zeroflag_0) & 0x01) << 3) | (((_element_1) & 0x03) << 4) | (((_zeroflag_1) & 0x01) << 7) )
-
-#define SIMD_SHUFFLE_MASK_4x2( _element_0, _element_1, _element_2, _element_3 ) \
-    ( ((_element_0) & 0x01) | (((_element_1) & 0x01) << 2) | (((_element_2) & 0x01) << 4) | (((_element_3) & 0x01) << 6) )
-
-#define SIMD_SHUFFLE_MASK_4x4( _element_0, _element_1, _element_2, _element_3 ) \
-    ( ((_element_0) & 0x03) | (((_element_1) & 0x03) << 2) | (((_element_2) & 0x03) << 4) | (((_element_3) & 0x03) << 6) )
-
-// Blend Control Mask
-#define SIMD_BLEND_MASK_2( _element_0, _element_1 ) \
-    ( ((_element_0) & 0x01) | (((_element_1) & 0x01) << 1) )
-
-#define SIMD_BLEND_MASK_4( _element_0, _element_1, _element_2, _element_3 ) \
-    ( ((_element_0) & 0x01) | (((_element_1) & 0x01) << 1) | (((_element_2) & 0x01) << 2) | (((_element_3) & 0x01) << 3) )
-
-#define SIMD_BLEND_MASK_8( _element_0, _element_1, _element_2, _element_3, _element_4, _element_5, _element_6, _element_7 ) \
-    (        ((_element_0) & 0x01) | (((_element_1) & 0x01) << 1) | (((_element_2) & 0x01) << 2) | (((_element_3) & 0x01) << 3) | \
-      (((_element_4) & 0x01) << 4) | (((_element_5) & 0x01) << 5) | (((_element_6) & 0x01) << 6) | (((_element_7) & 0x01) << 7) )
-
-
-
-
-
 /////////////////////////////////////////////////////////////////////////////////
 // The SIMD namespace
 namespace SIMD
 {        
 
 
-    ////////////////////////////////////////////////////////////// Registers <-> Registers
-        // Move
-            // Dst argument : Unaffected elements are copied
-    inline __m128 MoveOneFloatLL( __m128 mDst, __m128 mSrc ); // SSE
-
-    inline __m128 MoveTwoFloatHL( __m128 mDst, __m128 mSrc ); // SSE
-    inline __m128 MoveTwoFloatLH( __m128 mDst, __m128 mSrc ); // SSE
-
-    inline __m256 MoveFourFloatL( __m256 mDst, __m128 mSrc ); // AVX
-    inline __m256 MoveFourFloatH( __m256 mDst, __m128 mSrc ); // AVX
-
-    inline __m128d MoveOneDoubleLL( __m128d mDst, __m128d mSrc ); // SSE2
-
-    inline __m256d MoveTwoDoubleL( __m256d mDst, __m128d mSrc ); // AVX
-    inline __m256d MoveTwoDoubleH( __m256d mDst, __m128d mSrc ); // AVX
-
-    inline __m256i MoveFourIntL( __m256i mDst, __m128i mSrc ); // AVX2
-    inline __m256i MoveFourIntH( __m256i mDst, __m128i mSrc ); // AVX2
-
-            // No Dst argument : Unaffected elements are zeroed
-    inline __m128 MoveFourFloatL( __m256 mSrc ); // AVX
-    inline __m128 MoveFourFloatH( __m256 mSrc ); // AVX
-
-    inline __m128d MoveTwoDoubleL( __m256d mSrc ); // AVX
-    inline __m128d MoveTwoDoubleH( __m256d mSrc ); // AVX
-
-    inline __m128i MoveFourIntL( __m256i mSrc ); // AVX2
-    inline __m128i MoveFourIntH( __m256i mSrc ); // AVX2
-
-    inline __m128i MoveOneInt64LL( __m128i mSrc ); // SSE2
-
-        // Spread
-    inline __m128 SpreadTwoFloatEven( __m128 mSrc ); // SSE3
-    inline __m128 SpreadTwoFloatOdd( __m128 mSrc );  // SSE3
-    inline __m128d SpreadOneDoubleL( __m128d mSrc ); // SSE3
-
-    inline __m256 SpreadFourFloatEven( __m256 mSrc );   // AVX
-    inline __m256 SpreadFourFloatOdd( __m256 mSrc );    // AVX
-    inline __m256d SpreadTwoDoubleEven( __m256d mSrc ); // AVX
-
-    inline __m128 Spread128Float( __m128 mSrc ); // AVX2
-    inline __m256 Spread256Float( __m128 mSrc ); // AVX2
-
-    inline __m128d Spread128Double( __m128d mSrc ); // AVX2
-    inline __m256d Spread256Double( __m128d mSrc ); // AVX2
-
-    inline __m128i Spread128Int8( __m128i mSrc ); // AVX2
-    inline __m256i Spread256Int8( __m128i mSrc ); // AVX2
-
-    inline __m128i Spread128Int16( __m128i mSrc ); // AVX2
-    inline __m256i Spread256Int16( __m128i mSrc ); // AVX2
-
-    inline __m128i Spread128Int32( __m128i mSrc ); // AVX2
-    inline __m256i Spread256Int32( __m128i mSrc ); // AVX2
-
-    inline __m128i Spread128Int64( __m128i mSrc ); // AVX2
-    inline __m256i Spread256Int64( __m128i mSrc ); // AVX2
-
-    inline __m256i Spread256Int128( __m128i mSrc ); // AVX2
-
-    ////////////////////////////////////////////////////////////// Pack / Unpack
-    inline __m128i PackSigned16To8( __m128i mSrcLow, __m128i mSrcHigh ); // SSE2
-    inline __m256i PackSigned16To8( __m256i mSrcLow, __m256i mSrcHigh ); // AVX2
-
-    inline __m128i PackSigned32To16( __m128i mSrcLow, __m128i mSrcHigh ); // SSE2
-    inline __m256i PackSigned32To16( __m256i mSrcLow, __m256i mSrcHigh ); // AVX2
-
-    inline __m128i PackUnsigned16To8( __m128i mSrcLow, __m128i mSrcHigh ); // SSE2
-    inline __m256i PackUnsigned16To8( __m256i mSrcLow, __m256i mSrcHigh ); // AVX2
-
-    inline __m128i PackUnsigned32To16( __m128i mSrcLow, __m128i mSrcHigh ); // SSE41
-    inline __m256i PackUnsigned32To16( __m256i mSrcLow, __m256i mSrcHigh ); // AVX2
-
-    inline __m128 UnpackFloatL( __m128 mSrcEven, __m128 mSrcOdd ); // SSE
-    inline __m256 UnpackFloatL( __m256 mSrcEven, __m256 mSrcOdd ); // AVX
-
-    inline __m128 UnpackFloatH( __m128 mSrcEven, __m128 mSrcOdd ); // SSE
-    inline __m256 UnpackFloatH( __m256 mSrcEven, __m256 mSrcOdd ); // AVX
-
-    inline __m128d UnpackDoubleL( __m128d mSrcEven, __m128d mSrcOdd ); // SSE2
-    inline __m256d UnpackDoubleL( __m256d mSrcEven, __m256d mSrcOdd ); // AVX
-
-    inline __m128d UnpackDoubleH( __m128d mSrcEven, __m128d mSrcOdd ); // SSE2
-    inline __m256d UnpackDoubleH( __m256d mSrcEven, __m256d mSrcOdd ); // AVX
-
-    inline __m128i UnpackInt8L( __m128i mSrcEven, __m128i mSrcOdd ); // SSE2
-    inline __m256i UnpackInt8L( __m256i mSrcEven, __m256i mSrcOdd ); // AVX2
-
-    inline __m128i UnpackInt8H( __m128i mSrcEven, __m128i mSrcOdd ); // SSE2
-    inline __m256i UnpackInt8H( __m256i mSrcEven, __m256i mSrcOdd ); // AVX2
-
-    inline __m128i UnpackInt16L( __m128i mSrcEven, __m128i mSrcOdd ); // SSE2
-    inline __m256i UnpackInt16L( __m256i mSrcEven, __m256i mSrcOdd ); // AVX2
-
-    inline __m128i UnpackInt16H( __m128i mSrcEven, __m128i mSrcOdd ); // SSE2
-    inline __m256i UnpackInt16H( __m256i mSrcEven, __m256i mSrcOdd ); // AVX2
-
-    inline __m128i UnpackInt32L( __m128i mSrcEven, __m128i mSrcOdd ); // SSE2
-    inline __m256i UnpackInt32L( __m256i mSrcEven, __m256i mSrcOdd ); // AVX2
-
-    inline __m128i UnpackInt32H( __m128i mSrcEven, __m128i mSrcOdd ); // SSE2
-    inline __m256i UnpackInt32H( __m256i mSrcEven, __m256i mSrcOdd ); // AVX2
-
-    inline __m128i UnpackInt64L( __m128i mSrcEven, __m128i mSrcOdd ); // SSE2
-    inline __m256i UnpackInt64L( __m256i mSrcEven, __m256i mSrcOdd ); // AVX2
-
-    inline __m128i UnpackInt64H( __m128i mSrcEven, __m128i mSrcOdd ); // SSE2
-    inline __m256i UnpackInt64H( __m256i mSrcEven, __m256i mSrcOdd ); // AVX2
-
     ////////////////////////////////////////////////////////////// Shuffle
+
     //inline __m128 Shuffle128Float( __m128 mSrcLow, __m128 mSrcHigh, Int iMask4x4 ); // SSE
 #define SIMD_128_Shuffle128Float2( mSrcLow, mSrcHigh, iMask4x4 ) _mm_shuffle_ps( mSrcLow, mSrcHigh, (unsigned)iMask4x4 )
     //inline __m128 Shuffle128Float( __m128 mSrc, Int iMask4x4 );                     // AVX
@@ -260,7 +119,15 @@ namespace SIMD
     //inline __m256i Shuffle256Int64( __m256i mSrc, Int iMask4x4 ); // AVX2
 #define SIMD_256_Shuffle256Int64( mSrc, iMask4x4 ) _mm256_permute4x64_epi64( mSrc, iMask4x4 )
 
+
+
+
+
+
+
     ////////////////////////////////////////////////////////////// Blend
+
+
     //inline __m128 BlendFloat( __m128 mDst, __m128 mSrc, Int iMask4 );    // SSE41
     inline __m128 BlendFloat( __m128 mDst, __m128 mSrc, __m128 mSigns ); // SSE41
     //inline __m256 BlendFloat( __m256 mDst, __m256 mSrc, Int iMask8 );    // AVX
@@ -385,3 +252,89 @@ namespace SIMD
 // int _mm256_testnzc_ps(__m256, __m256)        - AVX
 // int _mm256_testnzc_si256(__m256i, __m256i)   - AVX
 
+/////////////////////////////////////////////////////////////////////////////////
+// Macro Expansions for Immediate Parameters (not an optimal solution ...)
+//#define _SIMD_ARGS( ... ) __VA_ARGS__
+//
+//#define _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _args, _argnames, _i ) \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##0( _args ) { return _funcname( _argnames, 0x##_i##0 ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##1( _args ) { return _funcname( _argnames, 0x##_i##1 ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##2( _args ) { return _funcname( _argnames, 0x##_i##2 ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##3( _args ) { return _funcname( _argnames, 0x##_i##3 ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##4( _args ) { return _funcname( _argnames, 0x##_i##4 ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##5( _args ) { return _funcname( _argnames, 0x##_i##5 ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##6( _args ) { return _funcname( _argnames, 0x##_i##6 ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##7( _args ) { return _funcname( _argnames, 0x##_i##7 ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##8( _args ) { return _funcname( _argnames, 0x##_i##8 ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##9( _args ) { return _funcname( _argnames, 0x##_i##9 ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##a( _args ) { return _funcname( _argnames, 0x##_i##a ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##b( _args ) { return _funcname( _argnames, 0x##_i##b ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##c( _args ) { return _funcname( _argnames, 0x##_i##c ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##d( _args ) { return _funcname( _argnames, 0x##_i##d ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##e( _args ) { return _funcname( _argnames, 0x##_i##e ); } \
+//    inline _rettype __fastcall _funcname##_imm##_0x##_i##f( _args ) { return _funcname( _argnames, 0x##_i##f ); }
+//
+//#define _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, _i ) \
+//    _funcname##_imm##_0x##_i##0, \
+//    _funcname##_imm##_0x##_i##1, \
+//    _funcname##_imm##_0x##_i##2, \
+//    _funcname##_imm##_0x##_i##3, \
+//    _funcname##_imm##_0x##_i##4, \
+//    _funcname##_imm##_0x##_i##5, \
+//    _funcname##_imm##_0x##_i##6, \
+//    _funcname##_imm##_0x##_i##7, \
+//    _funcname##_imm##_0x##_i##8, \
+//    _funcname##_imm##_0x##_i##9, \
+//    _funcname##_imm##_0x##_i##a, \
+//    _funcname##_imm##_0x##_i##b, \
+//    _funcname##_imm##_0x##_i##c, \
+//    _funcname##_imm##_0x##_i##d, \
+//    _funcname##_imm##_0x##_i##e, \
+//    _funcname##_imm##_0x##_i##f
+//
+//#define _SIMD_DECLARE_IMMEDIATE( _rettype, _funcname, _args, _argnames ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), 0 ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), 1 ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), 2 ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), 3 ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), 4 ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), 5 ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), 6 ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), 7 ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), 8 ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), 9 ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), a ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), b ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), c ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), d ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), e ) \
+//    _SIMD_DECLARE_IMMEDIATE_EXPAND( _rettype, _funcname, _SIMD_ARGS(_args), _SIMD_ARGS(_argnames), f ) \
+//    typedef _rettype (__fastcall * _functor_##_funcname)( _args ); \
+//    static _functor_##_funcname s_arrFuncTable##_##_funcname[256] = { \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, 0 ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, 1 ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, 2 ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, 3 ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, 4 ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, 5 ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, 6 ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, 7 ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, 8 ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, 9 ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, a ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, b ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, c ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, d ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, e ), \
+//        _SIMD_POPULATE_IMMEDIATE_EXPAND( _funcname, f ), \
+//    };
+//
+//#define _SIMD_CALL_IMMEDIATE( _funcname, _args, _immValue ) \
+//     s_arrFuncTable##_##_funcname[_immValue]( _args )
+//
+//Example usage :
+//
+//_SIMD_DECLARE_IMMEDIATE( __m128i, _mm_insert_epi8, _SIMD_ARGS(__m128i mDst, Int8 iSrc), _SIMD_ARGS(mDst, iSrc) )
+//
+//_SIMD_CALL_IMMEDIATE( _mm_insert_epi8, _SIMD_ARGS(mDst, iSrc), iIndex );
+//

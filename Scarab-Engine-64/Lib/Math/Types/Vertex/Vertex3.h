@@ -33,7 +33,7 @@ template<typename Real> class TVertex4;
 /////////////////////////////////////////////////////////////////////////////////
 // The TVertex3 class
 template<typename Real>
-class TVertex3
+class alignas(32) TVertex3
 {
 public:
     // Constant values

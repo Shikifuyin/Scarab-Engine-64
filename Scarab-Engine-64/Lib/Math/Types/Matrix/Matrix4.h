@@ -33,6 +33,8 @@
 // Includes
 #include "../../../../ThirdParty/System/Hardware/SIMD.h"
 
+#include "../../../Error/ErrorManager.h"
+
 #include "../Vector/Vector3.h"
 #include "../Vector/Vector4.h"
 #include "../Vertex/Vertex3.h"
@@ -74,7 +76,7 @@ template<typename Real> class TMatrix3;
 /////////////////////////////////////////////////////////////////////////////////
 // The TMatrix4 class
 template<typename Real>
-class TMatrix4
+ class alignas(32) TMatrix4
 {
 public:
     // Constant values
@@ -210,11 +212,11 @@ public:
 
     inline Real QuadraticForm( const TVector4<Real> & v0, const TVector4<Real> & v1 ) const; // Transpose(v0) * M * v1
 
-	// Data
-	Real m00, m01, m02, m03; // Row 0
-	Real m10, m11, m12, m13; // Row 1
-	Real m20, m21, m22, m23; // Row 2
-	Real m30, m31, m32, m33; // Row 3
+	// Data, stored column-wise for optimisation
+	Real m00, m10, m20, m30; // Column 0
+	Real m01, m11, m21, m31; // Column 1
+	Real m02, m12, m22, m32; // Column 2
+	Real m03, m13, m23, m33; // Column 3
 };
 
 // Explicit instanciation

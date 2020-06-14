@@ -265,6 +265,23 @@ __forceinline __m256i SIMD::Register::Spread2::AA( __m256i mSrc ) {
 
 /////////////////////////////////////////////////////////////////////////////////
 // SIMD::Register::Spread4 implementation
+__forceinline __m128 SIMD::Register::Spread4::AAAA( __m128 mSrc ) {
+    DebugAssert( CPUIDFn->HasAVX2() );
+    return _mm_broadcastss_ps( mSrc );
+}
+__forceinline __m128 SIMD::Register::Spread4::BBBB( __m128 mSrc ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm_permute_ps( mSrc, 0x55 );
+}
+__forceinline __m128 SIMD::Register::Spread4::CCCC( __m128 mSrc ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm_permute_ps( mSrc, 0xaa );
+}
+__forceinline __m128 SIMD::Register::Spread4::DDDD( __m128 mSrc ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm_permute_ps( mSrc, 0xff );
+}
+
 __forceinline __m128 SIMD::Register::Spread4::AACC( __m128 mSrc ) {
     DebugAssert( CPUIDFn->HasSSE3() );
     return _mm_moveldup_ps( mSrc );
@@ -272,10 +289,6 @@ __forceinline __m128 SIMD::Register::Spread4::AACC( __m128 mSrc ) {
 __forceinline __m128 SIMD::Register::Spread4::BBDD( __m128 mSrc ) {
     DebugAssert( CPUIDFn->HasSSE3() );
     return _mm_movehdup_ps( mSrc );
-}
-__forceinline __m128 SIMD::Register::Spread4::AAAA( __m128 mSrc ) {
-    DebugAssert( CPUIDFn->HasAVX2() );
-    return _mm_broadcastss_ps( mSrc );
 }
 
 __forceinline __m256d SIMD::Register::Spread4::AACC( __m256d mSrc ) {
@@ -368,6 +381,39 @@ __forceinline __m256d SIMD::Register::Shuffle2::BA( __m256d mSrc ) {
 __forceinline __m256i SIMD::Register::Shuffle2::BA( __m256i mSrc ) {
     DebugAssert( CPUIDFn->HasAVX2() );
     return _mm256_permute2x128_si256( mSrc, mSrc, 0x01 );
+}
+
+__forceinline __m256 SIMD::Register::Shuffle2::AC( __m256 mSrcAB, __m256 mSrcCD ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute2f128_ps( mSrcAB, mSrcCD, 0x20 );
+}
+__forceinline __m256 SIMD::Register::Shuffle2::AD( __m256 mSrcAB, __m256 mSrcCD ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute2f128_ps( mSrcAB, mSrcCD, 0x30 );
+}
+__forceinline __m256 SIMD::Register::Shuffle2::BC( __m256 mSrcAB, __m256 mSrcCD ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute2f128_ps( mSrcAB, mSrcCD, 0x21 );
+}
+__forceinline __m256 SIMD::Register::Shuffle2::BD( __m256 mSrcAB, __m256 mSrcCD ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute2f128_ps( mSrcAB, mSrcCD, 0x31 );
+}
+__forceinline __m256 SIMD::Register::Shuffle2::CA( __m256 mSrcAB, __m256 mSrcCD ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute2f128_ps( mSrcAB, mSrcCD, 0x02 );
+}
+__forceinline __m256 SIMD::Register::Shuffle2::CB( __m256 mSrcAB, __m256 mSrcCD ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute2f128_ps( mSrcAB, mSrcCD, 0x12 );
+}
+__forceinline __m256 SIMD::Register::Shuffle2::DA( __m256 mSrcAB, __m256 mSrcCD ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute2f128_ps( mSrcAB, mSrcCD, 0x03 );
+}
+__forceinline __m256 SIMD::Register::Shuffle2::DB( __m256 mSrcAB, __m256 mSrcCD ) {
+    DebugAssert( CPUIDFn->HasAVX() );
+    return _mm256_permute2f128_ps( mSrcAB, mSrcCD, 0x13 );
 }
 
 /////////////////////////////////////////////////////////////////////////////////

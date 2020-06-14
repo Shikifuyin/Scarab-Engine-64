@@ -32,13 +32,13 @@ TMatrix4<Float> TMatrix4<Float>::operator*( const Float & rhs ) const
 
     __m256 mRHS = SIMD::Import::Values::Spread256( rhs );
 
-    __m256 mTwoRows = SIMD::Import::Memory::Load256( &m00 );
-    mTwoRows = SIMD::Math::Mul( mTwoRows, mRHS );
-    SIMD::Export::Memory::Save256( &(matRes.m00), mTwoRows );
+    __m256 mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m00 );
+    mTwoCols = SIMD::Math::Mul( mTwoCols, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m00), mTwoCols );
 
-    mTwoRows = SIMD::Import::Memory::Load256( &m20 );
-    mTwoRows = SIMD::Math::Mul( mTwoRows, mRHS );
-    SIMD::Export::Memory::Save256( &(matRes.m20), mTwoRows );
+    mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m02 );
+    mTwoCols = SIMD::Math::Mul( mTwoCols, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m02), mTwoCols );
 
     return matRes;
 }
@@ -47,23 +47,23 @@ TMatrix4<Double> TMatrix4<Double>::operator*( const Double & rhs ) const
 {
     TMatrix4<Double> matRes;
 
-    __m256d mRHS = SIMD::Spread256( rhs );
+    __m256d mRHS = SIMD::Import::Values::Spread256( rhs );
     
-    __m256d mRow = SIMD::Load256( &m00 );
-    mRow = SIMD::Mul( mRow, mRHS );
-    SIMD::Store256( &(matRes.m00), mRow );
+    __m256d mCol = SIMD::Import::Memory::Aligned::Load256( &m00 );
+    mCol = SIMD::Math::Mul( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m00), mCol );
 
-    mRow = SIMD::Load256( &m10 );
-    mRow = SIMD::Mul( mRow, mRHS );
-    SIMD::Store256( &(matRes.m10), mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m01 );
+    mCol = SIMD::Math::Mul( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m01), mCol );
 
-    mRow = SIMD::Load256( &m20 );
-    mRow = SIMD::Mul( mRow, mRHS );
-    SIMD::Store256( &(matRes.m20), mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m02 );
+    mCol = SIMD::Math::Mul( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m02), mCol );
 
-    mRow = SIMD::Load256( &m30 );
-    mRow = SIMD::Mul( mRow, mRHS );
-    SIMD::Store256( &(matRes.m30), mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m03 );
+    mCol = SIMD::Math::Mul( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m03), mCol );
 
     return matRes;
 }
@@ -73,15 +73,15 @@ TMatrix4<Float> TMatrix4<Float>::operator/( const Float & rhs ) const
 {
     TMatrix4<Float> matRes;
 
-    __m256 mRHS = SIMD::Spread256( rhs );
+    __m256 mRHS = SIMD::Import::Values::Spread256( rhs );
 
-    __m256 mTwoRows = SIMD::Load256( &m00 );
-    mTwoRows = SIMD::Div( mTwoRows, mRHS );
-    SIMD::Store256( &(matRes.m00), mTwoRows );
+    __m256 mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m00 );
+    mTwoCols = SIMD::Math::Div( mTwoCols, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m00), mTwoCols );
 
-    mTwoRows = SIMD::Load256( &m20 );
-    mTwoRows = SIMD::Div( mTwoRows, mRHS );
-    SIMD::Store256( &(matRes.m20), mTwoRows );
+    mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m02 );
+    mTwoCols = SIMD::Math::Div( mTwoCols, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m02), mTwoCols );
 
     return matRes;
 }
@@ -90,23 +90,23 @@ TMatrix4<Double> TMatrix4<Double>::operator/( const Double & rhs ) const
 {
     TMatrix4<Double> matRes;
 
-    __m256d mRHS = SIMD::Spread256( rhs );
+    __m256d mRHS = SIMD::Import::Values::Spread256( rhs );
     
-    __m256d mRow = SIMD::Load256( &m00 );
-    mRow = SIMD::Div( mRow, mRHS );
-    SIMD::Store256( &(matRes.m00), mRow );
+    __m256d mCol = SIMD::Import::Memory::Aligned::Load256( &m00 );
+    mCol = SIMD::Math::Div( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m00), mCol );
 
-    mRow = SIMD::Load256( &m10 );
-    mRow = SIMD::Div( mRow, mRHS );
-    SIMD::Store256( &(matRes.m10), mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m01 );
+    mCol = SIMD::Math::Div( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m01), mCol );
 
-    mRow = SIMD::Load256( &m20 );
-    mRow = SIMD::Div( mRow, mRHS );
-    SIMD::Store256( &(matRes.m20), mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m02 );
+    mCol = SIMD::Math::Div( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m02), mCol );
 
-    mRow = SIMD::Load256( &m30 );
-    mRow = SIMD::Div( mRow, mRHS );
-    SIMD::Store256( &(matRes.m30), mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m03 );
+    mCol = SIMD::Math::Div( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &(matRes.m03), mCol );
 
     return matRes;
 }
@@ -114,38 +114,38 @@ TMatrix4<Double> TMatrix4<Double>::operator/( const Double & rhs ) const
 template<>
 TMatrix4<Float> & TMatrix4<Float>::operator*=( const Float & rhs )
 {
-    __m256 mRHS = SIMD::Spread256( rhs );
+    __m256 mRHS = SIMD::Import::Values::Spread256( rhs );
 
-    __m256 mTwoRows = SIMD::Load256( &m00 );
-    mTwoRows = SIMD::Mul( mTwoRows, mRHS );
-    SIMD::Store256( &m00, mTwoRows );
+    __m256 mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m00 );
+    mTwoCols = SIMD::Math::Mul( mTwoCols, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m00, mTwoCols );
 
-    mTwoRows = SIMD::Load256( &m20 );
-    mTwoRows = SIMD::Mul( mTwoRows, mRHS );
-    SIMD::Store256( &m20, mTwoRows );
+    mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m02 );
+    mTwoCols = SIMD::Math::Mul( mTwoCols, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m02, mTwoCols );
 
     return (*this);
 }
 template<>
 TMatrix4<Double> & TMatrix4<Double>::operator*=( const Double & rhs )
 {
-    __m256d mRHS = SIMD::Spread256( rhs );
+    __m256d mRHS = SIMD::Import::Values::Spread256( rhs );
     
-    __m256d mRow = SIMD::Load256( &m00 );
-    mRow = SIMD::Mul( mRow, mRHS );
-    SIMD::Store256( &m00, mRow );
+    __m256d mCol = SIMD::Import::Memory::Aligned::Load256( &m00 );
+    mCol = SIMD::Math::Mul( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m00, mCol );
 
-    mRow = SIMD::Load256( &m10 );
-    mRow = SIMD::Mul( mRow, mRHS );
-    SIMD::Store256( &m10, mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m01 );
+    mCol = SIMD::Math::Mul( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m01, mCol );
 
-    mRow = SIMD::Load256( &m20 );
-    mRow = SIMD::Mul( mRow, mRHS );
-    SIMD::Store256( &m20, mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m02 );
+    mCol = SIMD::Math::Mul( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m02, mCol );
 
-    mRow = SIMD::Load256( &m30 );
-    mRow = SIMD::Mul( mRow, mRHS );
-    SIMD::Store256( &m30, mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m03 );
+    mCol = SIMD::Math::Mul( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m03, mCol );
 
     return (*this);
 }
@@ -153,38 +153,38 @@ TMatrix4<Double> & TMatrix4<Double>::operator*=( const Double & rhs )
 template<>
 TMatrix4<Float> & TMatrix4<Float>::operator/=( const Float & rhs )
 {
-    __m256 mRHS = SIMD::Spread256( rhs );
+    __m256 mRHS = SIMD::Import::Values::Spread256( rhs );
 
-    __m256 mTwoRows = SIMD::Load256( &m00 );
-    mTwoRows = SIMD::Div( mTwoRows, mRHS );
-    SIMD::Store256( &m00, mTwoRows );
+    __m256 mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m00 );
+    mTwoCols = SIMD::Math::Div( mTwoCols, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m00, mTwoCols );
 
-    mTwoRows = SIMD::Load256( &m20 );
-    mTwoRows = SIMD::Div( mTwoRows, mRHS );
-    SIMD::Store256( &m20, mTwoRows );
+    mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m02 );
+    mTwoCols = SIMD::Math::Div( mTwoCols, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m02, mTwoCols );
 
     return (*this);
 }
 template<>
 TMatrix4<Double> & TMatrix4<Double>::operator/=( const Double & rhs )
 {
-    __m256d mRHS = SIMD::Spread256( rhs );
+    __m256d mRHS = SIMD::Import::Values::Spread256( rhs );
     
-    __m256d mRow = SIMD::Load256( &m00 );
-    mRow = SIMD::Div( mRow, mRHS );
-    SIMD::Store256( &m00, mRow );
+    __m256d mCol = SIMD::Import::Memory::Aligned::Load256( &m00 );
+    mCol = SIMD::Math::Div( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m00, mCol );
 
-    mRow = SIMD::Load256( &m10 );
-    mRow = SIMD::Div( mRow, mRHS );
-    SIMD::Store256( &m10, mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m01 );
+    mCol = SIMD::Math::Div( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m01, mCol );
 
-    mRow = SIMD::Load256( &m20 );
-    mRow = SIMD::Div( mRow, mRHS );
-    SIMD::Store256( &m20, mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m02 );
+    mCol = SIMD::Math::Div( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m02, mCol );
 
-    mRow = SIMD::Load256( &m30 );
-    mRow = SIMD::Div( mRow, mRHS );
-    SIMD::Store256( &m30, mRow );
+    mCol = SIMD::Import::Memory::Aligned::Load256( &m03 );
+    mCol = SIMD::Math::Div( mCol, mRHS );
+    SIMD::Export::Memory::Aligned::Save256( &m03, mCol );
 
     return (*this);
 }
@@ -192,30 +192,43 @@ TMatrix4<Double> & TMatrix4<Double>::operator/=( const Double & rhs )
 template<>
 TVertex4<Float> TMatrix4<Float>::operator*( const TVertex4<Float> & rhs ) const
 {
+    // This is one of the most important ones ! Very careful optimisation here !
     TVertex4<Float> vRes;
 
-    __m128 mTmp = SIMD::Load128( &(rhs.X) );
-    __m256 mRHS = SIMD::Zero256F();
-    mRHS = SIMD::MoveFourFloatL( mRHS, mTmp );
-    mRHS = SIMD::MoveFourFloatH( mRHS, mTmp );
+    // Load data
+    __m128 m128Tmp0 = SIMD::Import::Memory::Aligned::Load128( &(rhs.X) ); // m128Tmp0 = ( v0, v1, v2, v3 )
+    __m256 m256Tmp0 = SIMD::Import::Memory::Aligned::Load256( &m00 );     // m256Tmp0 = ( m00, m10, m20, m30, m01, m11, m21, m31 )
+    __m256 m256Tmp1 = SIMD::Import::Memory::Aligned::Load256( &m02 );     // m256Tmp1 = ( m02, m12, m22, m32, m03, m13, m23, m33 )
 
-    __m256 mTwoDots = SIMD::Load256( &m00 );
-    mTwoDots = SIMD::Dot4( mTwoDots, mRHS );
+    // Build RHS vectors
+    __m256 mRHS02 = SIMD::Cast::Up( SIMD::Register::Spread4::AAAA(m128Tmp0) ); // mRHS02 = ( v0, v0, v0, v0, ?, ?, ?, ? )
+    __m256 mRHS13 = SIMD::Cast::Up( SIMD::Register::Spread4::BBBB(m128Tmp0) ); // mRHS13 = ( v1, v1, v1, v1, ?, ?, ?, ? )
 
-    mTmp = SIMD::MoveFourFloatL( mTwoDots );
-    SIMD::StoreLower( &(vRes.X), mTmp );
+    __m128 m128Tmp1 = SIMD::Register::Spread4::CCCC( m128Tmp0 );   // m128Tmp1 = ( v2, v2, v2, v2 )
+    mRHS02 = SIMD::Register::Move::FourFloatH( mRHS02, m128Tmp1 ); // mRHS02 = ( v0, v0, v0, v0, v2, v2, v2, v2 )
 
-    mTmp = SIMD::MoveFourFloatH( mTwoDots );
-    SIMD::StoreLower( &(vRes.Y), mTmp );
+    m128Tmp1 = SIMD::Register::Spread4::DDDD( m128Tmp0 );          // m128Tmp1 = ( v3, v3, v3, v3 )
+    mRHS13 = SIMD::Register::Move::FourFloatH( mRHS13, m128Tmp1 ); // mRHS13 = ( v1, v1, v1, v1, v3, v3, v3, v3 )
 
-    mTwoDots = SIMD::Load256( &m20 );
-    mTwoDots = SIMD::Dot4( mTwoDots, mRHS );
+    // Build Matrix Columns
+    __m256 mCols02 = SIMD::Register::Shuffle2::AC( m256Tmp0, m256Tmp1 ); // mCols02 = ( m00, m10, m20, m30, m02, m12, m22, m32 )
+    __m256 mCols13 = SIMD::Register::Shuffle2::BD( m256Tmp0, m256Tmp1 ); // mCols13 = ( m01, m11, m21, m31, m03, m13, m23, m33 )
 
-    mTmp = SIMD::MoveFourFloatL( mTwoDots );
-    SIMD::StoreLower( &(vRes.Z), mTmp );
+    // Perform Product
+    m256Tmp0 = SIMD::Math::Mul( mCols02, mRHS02 ); // m256Tmp0 = ( m00 * v0, m10 * v0, m20 * v0, m30 * v0, m02 * v2, m12 * v2, m22 * v2, m32 * v2 )
+    m256Tmp1 = SIMD::Math::Mul( mCols13, mRHS13 ); // m256Tmp1 = ( m01 * v1, m11 * v1, m21 * v1, m31 * v1, m03 * v3, m13 * v3, m23 * v3, m33 * v3 )
 
-    mTmp = SIMD::MoveFourFloatH( mTwoDots );
-    SIMD::StoreLower( &(vRes.W), mTmp );
+    m256Tmp0 = SIMD::Math::Add( m256Tmp0, m256Tmp1 ); // m256Tmp0 = ( m00*v0 + m01*v1, m10*v0 + m11*v1, m20*v0 + m21*v1, m30*v0 + m31*v1,
+                                                      //              m02*v2 + m03*v3, m12*v2 + m13*v3, m22*v2 + m23*v3, m32*v2 + m33*v3 )
+
+    m128Tmp0 = SIMD::Register::Move::FourFloatL( m256Tmp0 ); // m128Tmp0 = ( m00*v0 + m01*v1, m10*v0 + m11*v1, m20*v0 + m21*v1, m30*v0 + m31*v1 )
+    m128Tmp1 = SIMD::Register::Move::FourFloatH( m256Tmp0 ); // m128Tmp1 = ( m02*v2 + m03*v3, m12*v2 + m13*v3, m22*v2 + m23*v3, m32*v2 + m33*v3 )
+
+    m128Tmp0 = SIMD::Math::Add( m128Tmp0, m128Tmp1 ); // m128Tmp0 = ( m00*v0 + m01*v1 + m02*v2 + m03*v3, m10*v0 + m11*v1 + m12*v2 + m13*v3,
+                                                      //              m20*v0 + m21*v1 + m22*v2 + m23*v3, m30*v0 + m31*v1 + m32*v2 + m33*v3 )
+
+    // Save data
+    SIMD::Export::Memory::Aligned::Save128( &(vRes.X), m128Tmp0 );
 
     return vRes;
 }

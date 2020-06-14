@@ -149,10 +149,10 @@ template<typename Real> inline const Real & TMatrix4<Real>::operator[]( Int i ) 
 template<typename Real> inline Real & TMatrix4<Real>::operator[]( UInt i )             { return *( ((Real*)this) + i ); }
 template<typename Real> inline const Real & TMatrix4<Real>::operator[]( UInt i ) const { return *( ((const Real*)this) + i ); }
 
-template<typename Real> inline Real & TMatrix4<Real>::operator()( Int iRow, Int iColumn )               { return *( ((Real*)this) + ((iRow<<2) + iColumn) ); }
-template<typename Real> inline const Real & TMatrix4<Real>::operator()( Int iRow, Int iColumn ) const   { return *( ((const Real*)this) + ((iRow<<2) + iColumn) ); }
-template<typename Real> inline Real & TMatrix4<Real>::operator()( UInt iRow, UInt iColumn )             { return *( ((Real*)this) + ((iRow<<2) + iColumn) ); }
-template<typename Real> inline const Real & TMatrix4<Real>::operator()( UInt iRow, UInt iColumn ) const { return *( ((const Real*)this) + ((iRow<<2) + iColumn) ); }
+template<typename Real> inline Real & TMatrix4<Real>::operator()( Int iRow, Int iColumn )               { return *( ((Real*)this) + ((iColumn<<2) + iRow) ); }
+template<typename Real> inline const Real & TMatrix4<Real>::operator()( Int iRow, Int iColumn ) const   { return *( ((const Real*)this) + ((iColumn<<2) + iRow) ); }
+template<typename Real> inline Real & TMatrix4<Real>::operator()( UInt iRow, UInt iColumn )             { return *( ((Real*)this) + ((iColumn<<2) + iRow) ); }
+template<typename Real> inline const Real & TMatrix4<Real>::operator()( UInt iRow, UInt iColumn ) const { return *( ((const Real*)this) + ((iColumn<<2) + iRow) ); }
 
 template<typename Real>
 inline TMatrix4<Real> TMatrix4<Real>::operator+() const {
@@ -333,68 +333,76 @@ TMatrix4<Real> & TMatrix4<Real>::operator*=( const TMatrix4<Real> & rhs )
 
 template<typename Real>
 inline Void TMatrix4<Real>::GetRow( TVector4<Real> & outRow, UInt iRow ) const {
-    const Real * Values = ( ((const Real*)this) + (iRow << 2) );
+    Assert( iRow < 4 );
+    const Real * Values = ( ((const Real*)this) + iRow );
     outRow.X = Values[0];
-    outRow.Y = Values[1];
-    outRow.Z = Values[2];
-    outRow.W = Values[3];
+    outRow.Y = Values[4];
+    outRow.Z = Values[8];
+    outRow.W = Values[12];
 }
 template<typename Real>
 inline Void TMatrix4<Real>::SetRow( UInt iRow, const Real & fRow0, const Real & fRow1, const Real & fRow2, const Real & fRow3 ) {
-    Real * Values = ( ((Real*)this) + (iRow << 2) );
-    Values[0] = fRow0;
-    Values[1] = fRow1;
-    Values[2] = fRow2;
-    Values[3] = fRow3;
+    Assert( iRow < 4 );
+    Real * Values = ( ((Real*)this) + iRow );
+    Values[0]  = fRow0;
+    Values[4]  = fRow1;
+    Values[8]  = fRow2;
+    Values[12] = fRow3;
 }
 template<typename Real>
 inline Void TMatrix4<Real>::SetRow( UInt iRow, const Real vRow[4] ) {
-    Real * Values = ( ((Real*)this) + (iRow << 2) );
-    Values[0] = vRow[0];
-    Values[1] = vRow[1];
-    Values[2] = vRow[2];
-    Values[3] = vRow[3];
+    Assert( iRow < 4 );
+    Real * Values = ( ((Real*)this) + iRow );
+    Values[0]  = vRow[0];
+    Values[4]  = vRow[1];
+    Values[8]  = vRow[2];
+    Values[12] = vRow[3];
 }
 template<typename Real>
 inline Void TMatrix4<Real>::SetRow( UInt iRow, const TVector4<Real> & vRow ) {
-    Real * Values = ( ((Real*)this) + (iRow << 2) );
-    Values[0] = vRow.X;
-    Values[1] = vRow.Y;
-    Values[2] = vRow.Z;
-    Values[3] = vRow.W;
+    Assert( iRow < 4 );
+    Real * Values = ( ((Real*)this) + iRow );
+    Values[0]  = vRow.X;
+    Values[4]  = vRow.Y;
+    Values[8]  = vRow.Z;
+    Values[12] = vRow.W;
 }
 
 template<typename Real>
 inline Void TMatrix4<Real>::GetColumn( TVector4<Real> & outColumn, UInt iColumn ) const {
-    const Real * Values = ( ((const Real*)this) + iColumn );
+    Assert( iColumn < 4 );
+    const Real * Values = ( ((const Real*)this) + (iColumn << 2) );
     outColumn.X = Values[0];
-    outColumn.Y = Values[4];
-    outColumn.Z = Values[8];
-    outColumn.W = Values[12];
+    outColumn.Y = Values[1];
+    outColumn.Z = Values[2];
+    outColumn.W = Values[3];
 }
 template<typename Real>
 inline Void TMatrix4<Real>::SetColumn( UInt iColumn, const Real & fCol0, const Real & fCol1, const Real & fCol2, const Real & fCol3 ) {
-    Real * Values = ( ((Real*)this) + iColumn );
+    Assert( iColumn < 4 );
+    Real * Values = ( ((Real*)this) + (iColumn << 2) );
     Values[0] = fCol0;
-    Values[4] = fCol1;
-    Values[8] = fCol2;
-    Values[12] = fCol3;
+    Values[1] = fCol1;
+    Values[2] = fCol2;
+    Values[3] = fCol3;
 }
 template<typename Real>
 inline Void TMatrix4<Real>::SetColumn( UInt iColumn, const Real vCol[4] ) {
-    Real * Values = ( ((Real*)this) + iColumn );
+    Assert( iColumn < 4 );
+    Real * Values = ( ((Real*)this) + (iColumn << 2) );
     Values[0] = vCol[0];
-    Values[4] = vCol[1];
-    Values[8] = vCol[2];
-    Values[12] = vCol[3];
+    Values[1] = vCol[1];
+    Values[2] = vCol[2];
+    Values[3] = vCol[3];
 }
 template<typename Real>
 inline Void TMatrix4<Real>::SetColumn( UInt iColumn, const TVector4<Real> & vCol ) {
-    Real * Values = ( ((Real*)this) + iColumn );
+    Assert( iColumn < 4 );
+    Real * Values = ( ((Real*)this) + (iColumn << 2) );
     Values[0] = vCol.X;
-    Values[4] = vCol.Y;
-    Values[8] = vCol.Z;
-    Values[12] = vCol.W;
+    Values[1] = vCol.Y;
+    Values[2] = vCol.Z;
+    Values[3] = vCol.W;
 }
 
 template<typename Real>

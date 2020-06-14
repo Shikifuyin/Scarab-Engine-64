@@ -33,7 +33,7 @@ template<typename Real> class TVector3;
 /////////////////////////////////////////////////////////////////////////////////
 // The TVector4 class
 template<typename Real>
-class TVector4
+class alignas(32) TVector4
 {
 public:
     // Constant values

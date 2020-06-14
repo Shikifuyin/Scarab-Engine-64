@@ -211,9 +211,13 @@ namespace SIMD { namespace Register {
     namespace Spread4 {
 
         // Float manipulation
+        __forceinline __m128 AAAA( __m128 mSrc ); // AVX2
+        __forceinline __m128 BBBB( __m128 mSrc ); // AVX
+        __forceinline __m128 CCCC( __m128 mSrc ); // AVX
+        __forceinline __m128 DDDD( __m128 mSrc ); // AVX
+
         __forceinline __m128 AACC( __m128 mSrc ); // SSE3
         __forceinline __m128 BBDD( __m128 mSrc ); // SSE3
-        __forceinline __m128 AAAA( __m128 mSrc ); // AVX2
 
         // Double manipulation
         __forceinline __m256d AACC( __m256d mSrc ); // AVX
@@ -279,6 +283,16 @@ namespace SIMD { namespace Register {
         __forceinline __m256 BA( __m256 mSrc );   // AVX
         __forceinline __m256d BA( __m256d mSrc ); // AVX
         __forceinline __m256i BA( __m256i mSrc ); // AVX2
+
+            // Merge
+        __forceinline __m256 AC( __m256 mSrcAB, __m256 mSrcCD ); // AVX
+        __forceinline __m256 AD( __m256 mSrcAB, __m256 mSrcCD ); // AVX
+        __forceinline __m256 BC( __m256 mSrcAB, __m256 mSrcCD ); // AVX
+        __forceinline __m256 BD( __m256 mSrcAB, __m256 mSrcCD ); // AVX
+        __forceinline __m256 CA( __m256 mSrcAB, __m256 mSrcCD ); // AVX
+        __forceinline __m256 CB( __m256 mSrcAB, __m256 mSrcCD ); // AVX
+        __forceinline __m256 DA( __m256 mSrcAB, __m256 mSrcCD ); // AVX
+        __forceinline __m256 DB( __m256 mSrcAB, __m256 mSrcCD ); // AVX
 
     };
 

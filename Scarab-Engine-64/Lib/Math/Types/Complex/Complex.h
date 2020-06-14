@@ -32,7 +32,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 // The TComplex class
 template<typename Real>
-class TComplex
+class alignas(16) TComplex
 {
 public:
     // Constant values

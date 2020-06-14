@@ -166,11 +166,9 @@ inline __m256i SIMD::Import::Memory::Load256( const Int64 * pSrc, __m256i mSigns
     return _mm256_maskload_epi64( pSrc, mSigns );
 }
 
-//inline __m128 SIMD::Import::Memory::Spread128( const Float * pSrc ) {
-//    DebugAssert( CPUIDFn->HasSSE() );
-//    return _mm_load1_ps( pSrc );
-//}
 inline __m128 SIMD::Import::Memory::Spread128( const Float * pSrc ) {
+    //DebugAssert( CPUIDFn->HasSSE() );
+    //return _mm_load1_ps( pSrc );
     DebugAssert( CPUIDFn->HasAVX() );
     return _mm_broadcast_ss( pSrc );
 }

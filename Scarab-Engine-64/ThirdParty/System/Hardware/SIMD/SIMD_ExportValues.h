@@ -36,38 +36,38 @@
 namespace SIMD { namespace Export { namespace Values {
 
     // Lower Element
-	inline Float GetOne( __m128 mSrc ); // SSE
+	__forceinline Float GetOne( __m128 mSrc ); // SSE
 
-    inline Double GetOne( __m128d mSrc ); // SSE2
+    __forceinline Double GetOne( __m128d mSrc ); // SSE2
 
-    inline Int32 GetOne32( __m128i mSrc ); // SSE2
-    inline Int64 GetOne64( __m128i mSrc ); // SSE2
+    __forceinline Int32 GetOne32( __m128i mSrc ); // SSE2
+    __forceinline Int64 GetOne64( __m128i mSrc ); // SSE2
 
-    inline Float GetOne( __m256 mSrc ); // AVX
+    __forceinline Float GetOne( __m256 mSrc ); // AVX
 
-    inline Double GetOne( __m256d mSrc ); // AVX
+    __forceinline Double GetOne( __m256d mSrc ); // AVX
 
-    inline Int32 GetOne32( __m256i mSrc ); // AVX
-    inline Int64 GetOne64( __m256i mSrc ); // AVX
+    __forceinline Int32 GetOne32( __m256i mSrc ); // AVX
+    __forceinline Int64 GetOne64( __m256i mSrc ); // AVX
 
     // Indexed Access
-    //inline Float Get( __m128 mSrc, Int32 iIndex ); // SSE41
+    //__forceinline Float Get( __m128 mSrc, Int32 iIndex ); // SSE41
 
-    //inline Double Get( __m128d mSrc, Int32 iIndex ); // SSE41
+    //__forceinline Double Get( __m128d mSrc, Int32 iIndex ); // SSE41
 
-    //inline Int32 Get8( __m128i mSrc, Int32 iIndex );  // SSE41
-    //inline Int32 Get16( __m128i mSrc, Int32 iIndex ); // SSE2
-    //inline Int32 Get32( __m128i mSrc, Int32 iIndex ); // SSE41
-    //inline Int64 Get64( __m128i mSrc, Int32 iIndex ); // SSE41
+    //__forceinline Int32 Get8( __m128i mSrc, Int32 iIndex );  // SSE41
+    //__forceinline Int32 Get16( __m128i mSrc, Int32 iIndex ); // SSE2
+    //__forceinline Int32 Get32( __m128i mSrc, Int32 iIndex ); // SSE41
+    //__forceinline Int64 Get64( __m128i mSrc, Int32 iIndex ); // SSE41
 
-    //inline Float Get( __m256 mSrc, Int32 iIndex ); // AVX
+    //__forceinline Float Get( __m256 mSrc, Int32 iIndex ); // AVX
 
-    //inline Double Get( __m256d mSrc, Int32 iIndex ); // AVX
+    //__forceinline Double Get( __m256d mSrc, Int32 iIndex ); // AVX
 
-    //inline Int32 Get8( __m256i mSrc, Int32 iIndex );  // AVX2
-    //inline Int32 Get16( __m256i mSrc, Int32 iIndex ); // AVX2
-    //inline Int32 Get32( __m256i mSrc, Int32 iIndex ); // AVX
-    //inline Int64 Get64( __m256i mSrc, Int32 iIndex ); // AVX
+    //__forceinline Int32 Get8( __m256i mSrc, Int32 iIndex );  // AVX2
+    //__forceinline Int32 Get16( __m256i mSrc, Int32 iIndex ); // AVX2
+    //__forceinline Int32 Get32( __m256i mSrc, Int32 iIndex ); // AVX
+    //__forceinline Int64 Get64( __m256i mSrc, Int32 iIndex ); // AVX
 
 }; }; };
 

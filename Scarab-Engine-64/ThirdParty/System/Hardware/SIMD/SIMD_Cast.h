@@ -35,28 +35,28 @@
 // The SIMD::Cast namespace
 namespace SIMD { namespace Cast {
 
-	inline __m128 ToFloat( __m128d mDouble );  // SSE2
-    inline __m128 ToFloat( __m128i mInteger ); // SSE2
-    inline __m256 ToFloat( __m256d mDouble );  // AVX
-    inline __m256 ToFloat( __m256i mInteger ); // AVX
+	__forceinline __m128 ToFloat( __m128d mDouble );  // SSE2
+    __forceinline __m128 ToFloat( __m128i mInteger ); // SSE2
+    __forceinline __m256 ToFloat( __m256d mDouble );  // AVX
+    __forceinline __m256 ToFloat( __m256i mInteger ); // AVX
 
-    inline __m128d ToDouble( __m128 mFloat );    // SSE2
-    inline __m128d ToDouble( __m128i mInteger ); // SSE2
-    inline __m256d ToDouble( __m256 mFloat );    // AVX
-    inline __m256d ToDouble( __m256i mInteger ); // AVX
+    __forceinline __m128d ToDouble( __m128 mFloat );    // SSE2
+    __forceinline __m128d ToDouble( __m128i mInteger ); // SSE2
+    __forceinline __m256d ToDouble( __m256 mFloat );    // AVX
+    __forceinline __m256d ToDouble( __m256i mInteger ); // AVX
 
-    inline __m128i ToInteger( __m128 mFloat );   // SSE2
-    inline __m128i ToInteger( __m128d mDouble ); // SSE2
-    inline __m256i ToInteger( __m256 mFloat );   // AVX
-    inline __m256i ToInteger( __m256d mDouble ); // AVX
+    __forceinline __m128i ToInteger( __m128 mFloat );   // SSE2
+    __forceinline __m128i ToInteger( __m128d mDouble ); // SSE2
+    __forceinline __m256i ToInteger( __m256 mFloat );   // AVX
+    __forceinline __m256i ToInteger( __m256d mDouble ); // AVX
 
-    inline __m128 Down( __m256 mFloat );     // AVX
-    inline __m128d Down( __m256d mDouble );  // AVX
-    inline __m128i Down( __m256i mInteger ); // AVX
+    __forceinline __m128 Down( __m256 mFloat );     // AVX
+    __forceinline __m128d Down( __m256d mDouble );  // AVX
+    __forceinline __m128i Down( __m256i mInteger ); // AVX
 
-    inline __m256 Up( __m128 mFloat );     // AVX
-    inline __m256d Up( __m128d mDouble );  // AVX
-    inline __m256i Up( __m128i mInteger ); // AVX
+    __forceinline __m256 Up( __m128 mFloat );     // AVX
+    __forceinline __m256d Up( __m128d mDouble );  // AVX
+    __forceinline __m256i Up( __m128i mInteger ); // AVX
 
 }; };
 

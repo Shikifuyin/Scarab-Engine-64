@@ -83,214 +83,214 @@
 namespace SIMD { namespace Compare {
 
     // Equal
-    inline __m128 Equal( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 Equal( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d Equal( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d Equal( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m128i Equal8( __m128i mDst, __m128i mSrc );  // SSE2
-    inline __m128i Equal16( __m128i mDst, __m128i mSrc ); // SSE2
-    inline __m128i Equal32( __m128i mDst, __m128i mSrc ); // SSE2
-    inline __m128i Equal64( __m128i mDst, __m128i mSrc ); // SSE41
+    __forceinline __m128i Equal8( __m128i mDst, __m128i mSrc );  // SSE2
+    __forceinline __m128i Equal16( __m128i mDst, __m128i mSrc ); // SSE2
+    __forceinline __m128i Equal32( __m128i mDst, __m128i mSrc ); // SSE2
+    __forceinline __m128i Equal64( __m128i mDst, __m128i mSrc ); // SSE41
 
-    inline __m256 Equal( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 Equal( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d Equal( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d Equal( __m256d mDst, __m256d mSrc ); // AVX
 
-    inline __m256i Equal8( __m256i mDst, __m256i mSrc );  // AVX2
-    inline __m256i Equal16( __m256i mDst, __m256i mSrc ); // AVX2
-    inline __m256i Equal32( __m256i mDst, __m256i mSrc ); // AVX2
-    inline __m256i Equal64( __m256i mDst, __m256i mSrc ); // AVX2
+    __forceinline __m256i Equal8( __m256i mDst, __m256i mSrc );  // AVX2
+    __forceinline __m256i Equal16( __m256i mDst, __m256i mSrc ); // AVX2
+    __forceinline __m256i Equal32( __m256i mDst, __m256i mSrc ); // AVX2
+    __forceinline __m256i Equal64( __m256i mDst, __m256i mSrc ); // AVX2
 
     // Not Equal
-    inline __m128 NotEqual( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 NotEqual( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d NotEqual( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d NotEqual( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m256 NotEqual( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 NotEqual( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d NotEqual( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d NotEqual( __m256d mDst, __m256d mSrc ); // AVX
 
     // Lesser
-    inline __m128 Lesser( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 Lesser( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d Lesser( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d Lesser( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m128i Lesser8( __m128i mDst, __m128i mSrc );  // SSE2
-    inline __m128i Lesser16( __m128i mDst, __m128i mSrc ); // SSE2
-    inline __m128i Lesser32( __m128i mDst, __m128i mSrc ); // SSE2
+    __forceinline __m128i Lesser8( __m128i mDst, __m128i mSrc );  // SSE2
+    __forceinline __m128i Lesser16( __m128i mDst, __m128i mSrc ); // SSE2
+    __forceinline __m128i Lesser32( __m128i mDst, __m128i mSrc ); // SSE2
 
-    inline __m256 Lesser( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 Lesser( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d Lesser( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d Lesser( __m256d mDst, __m256d mSrc ); // AVX
 
     // Not Lesser
-    inline __m128 NotLesser( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 NotLesser( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d NotLesser( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d NotLesser( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m256 NotLesser( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 NotLesser( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d NotLesser( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d NotLesser( __m256d mDst, __m256d mSrc ); // AVX
 
     // Lesser Equal
-    inline __m128 LesserEqual( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 LesserEqual( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d LesserEqual( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d LesserEqual( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m256 LesserEqual( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 LesserEqual( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d LesserEqual( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d LesserEqual( __m256d mDst, __m256d mSrc ); // AVX
 
     // Not Lesser Equal
-    inline __m128 NotLesserEqual( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 NotLesserEqual( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d NotLesserEqual( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d NotLesserEqual( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m256 NotLesserEqual( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 NotLesserEqual( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d NotLesserEqual( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d NotLesserEqual( __m256d mDst, __m256d mSrc ); // AVX
 
     // Greater
-    inline __m128 Greater( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 Greater( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d Greater( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d Greater( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m128i Greater8( __m128i mDst, __m128i mSrc );  // SSE2
-    inline __m128i Greater16( __m128i mDst, __m128i mSrc ); // SSE2
-    inline __m128i Greater32( __m128i mDst, __m128i mSrc ); // SSE2
-    inline __m128i Greater64( __m128i mDst, __m128i mSrc ); // SSE42
+    __forceinline __m128i Greater8( __m128i mDst, __m128i mSrc );  // SSE2
+    __forceinline __m128i Greater16( __m128i mDst, __m128i mSrc ); // SSE2
+    __forceinline __m128i Greater32( __m128i mDst, __m128i mSrc ); // SSE2
+    __forceinline __m128i Greater64( __m128i mDst, __m128i mSrc ); // SSE42
 
-    inline __m256 Greater( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 Greater( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d Greater( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d Greater( __m256d mDst, __m256d mSrc ); // AVX
 
-    inline __m256i Greater8( __m256i mDst, __m256i mSrc );  // AVX2
-    inline __m256i Greater16( __m256i mDst, __m256i mSrc ); // AVX2
-    inline __m256i Greater32( __m256i mDst, __m256i mSrc ); // AVX2
-    inline __m256i Greater64( __m256i mDst, __m256i mSrc ); // AVX2
+    __forceinline __m256i Greater8( __m256i mDst, __m256i mSrc );  // AVX2
+    __forceinline __m256i Greater16( __m256i mDst, __m256i mSrc ); // AVX2
+    __forceinline __m256i Greater32( __m256i mDst, __m256i mSrc ); // AVX2
+    __forceinline __m256i Greater64( __m256i mDst, __m256i mSrc ); // AVX2
 
     // Not Greater
-    inline __m128 NotGreater( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 NotGreater( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d NotGreater( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d NotGreater( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m256 NotGreater( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 NotGreater( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d NotGreater( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d NotGreater( __m256d mDst, __m256d mSrc ); // AVX
 
     // Greater Equal
-    inline __m128 GreaterEqual( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 GreaterEqual( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d GreaterEqual( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d GreaterEqual( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m256 GreaterEqual( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 GreaterEqual( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d GreaterEqual( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d GreaterEqual( __m256d mDst, __m256d mSrc ); // AVX
 
     // Not Greater Equal
-    inline __m128 NotGreaterEqual( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 NotGreaterEqual( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d NotGreaterEqual( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d NotGreaterEqual( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m256 NotGreaterEqual( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 NotGreaterEqual( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d NotGreaterEqual( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d NotGreaterEqual( __m256d mDst, __m256d mSrc ); // AVX
 
     // Ordered
-    inline __m128 Ordered( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 Ordered( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d Ordered( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d Ordered( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m256 Ordered( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 Ordered( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d Ordered( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d Ordered( __m256d mDst, __m256d mSrc ); // AVX
 
     // Unordered
-    inline __m128 Unordered( __m128 mDst, __m128 mSrc ); // SSE
+    __forceinline __m128 Unordered( __m128 mDst, __m128 mSrc ); // SSE
 
-    inline __m128d Unordered( __m128d mDst, __m128d mSrc ); // SSE2
+    __forceinline __m128d Unordered( __m128d mDst, __m128d mSrc ); // SSE2
 
-    inline __m256 Unordered( __m256 mDst, __m256 mSrc ); // AVX
+    __forceinline __m256 Unordered( __m256 mDst, __m256 mSrc ); // AVX
 
-    inline __m256d Unordered( __m256d mDst, __m256d mSrc ); // AVX
+    __forceinline __m256d Unordered( __m256d mDst, __m256d mSrc ); // AVX
 
     // Lower Element
     namespace One {
 
         // Copy Signaling versions
-        inline __m128 Equal( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d Equal( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 Equal( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d Equal( __m128d mDst, __m128d mSrc ); // SSE2
 
-        inline __m128 NotEqual( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d NotEqual( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 NotEqual( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d NotEqual( __m128d mDst, __m128d mSrc ); // SSE2
 
-        inline __m128 Lesser( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d Lesser( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 Lesser( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d Lesser( __m128d mDst, __m128d mSrc ); // SSE2
 
-        inline __m128 NotLesser( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d NotLesser( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 NotLesser( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d NotLesser( __m128d mDst, __m128d mSrc ); // SSE2
 
-        inline __m128 LesserEqual( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d LesserEqual( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 LesserEqual( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d LesserEqual( __m128d mDst, __m128d mSrc ); // SSE2
 
-        inline __m128 NotLesserEqual( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d NotLesserEqual( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 NotLesserEqual( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d NotLesserEqual( __m128d mDst, __m128d mSrc ); // SSE2
 
-        inline __m128 Greater( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d Greater( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 Greater( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d Greater( __m128d mDst, __m128d mSrc ); // SSE2
 
-        inline __m128 NotGreater( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d NotGreater( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 NotGreater( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d NotGreater( __m128d mDst, __m128d mSrc ); // SSE2
 
-        inline __m128 GreaterEqual( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d GreaterEqual( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 GreaterEqual( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d GreaterEqual( __m128d mDst, __m128d mSrc ); // SSE2
 
-        inline __m128 NotGreaterEqual( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d NotGreaterEqual( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 NotGreaterEqual( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d NotGreaterEqual( __m128d mDst, __m128d mSrc ); // SSE2
 
-        inline __m128 Ordered( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d Ordered( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 Ordered( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d Ordered( __m128d mDst, __m128d mSrc ); // SSE2
 
-        inline __m128 Unordered( __m128 mDst, __m128 mSrc );    // SSE
-        inline __m128d Unordered( __m128d mDst, __m128d mSrc ); // SSE2
+        __forceinline __m128 Unordered( __m128 mDst, __m128 mSrc );    // SSE
+        __forceinline __m128d Unordered( __m128d mDst, __m128d mSrc ); // SSE2
 
         // Bool Signaling versions
-        inline Int IsEqual( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsEqual( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsEqual( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsEqual( __m128d mLHS, __m128d mRHS ); // SSE2
 
-        inline Int IsNotEqual( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsNotEqual( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsNotEqual( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsNotEqual( __m128d mLHS, __m128d mRHS ); // SSE2
 
-        inline Int IsLesser( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsLesser( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsLesser( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsLesser( __m128d mLHS, __m128d mRHS ); // SSE2
 
-        inline Int IsLesserEqual( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsLesserEqual( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsLesserEqual( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsLesserEqual( __m128d mLHS, __m128d mRHS ); // SSE2
 
-        inline Int IsGreater( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsGreater( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsGreater( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsGreater( __m128d mLHS, __m128d mRHS ); // SSE2
 
-        inline Int IsGreaterEqual( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsGreaterEqual( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsGreaterEqual( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsGreaterEqual( __m128d mLHS, __m128d mRHS ); // SSE2
 
         // Bool Quiet (Non-Signaling) versions
-        inline Int IsEqualQ( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsEqualQ( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsEqualQ( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsEqualQ( __m128d mLHS, __m128d mRHS ); // SSE2
 
-        inline Int IsNotEqualQ( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsNotEqualQ( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsNotEqualQ( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsNotEqualQ( __m128d mLHS, __m128d mRHS ); // SSE2
 
-        inline Int IsLesserQ( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsLesserQ( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsLesserQ( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsLesserQ( __m128d mLHS, __m128d mRHS ); // SSE2
 
-        inline Int IsLesserEqualQ( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsLesserEqualQ( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsLesserEqualQ( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsLesserEqualQ( __m128d mLHS, __m128d mRHS ); // SSE2
 
-        inline Int IsGreaterQ( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsGreaterQ( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsGreaterQ( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsGreaterQ( __m128d mLHS, __m128d mRHS ); // SSE2
 
-        inline Int IsGreaterEqualQ( __m128 mLHS, __m128 mRHS );   // SSE
-        inline Int IsGreaterEqualQ( __m128d mLHS, __m128d mRHS ); // SSE2
+        __forceinline Int IsGreaterEqualQ( __m128 mLHS, __m128 mRHS );   // SSE
+        __forceinline Int IsGreaterEqualQ( __m128d mLHS, __m128d mRHS ); // SSE2
 
     };
 

@@ -30,15 +30,15 @@ TMatrix4<Float> TMatrix4<Float>::operator*( const Float & rhs ) const
 {
     TMatrix4<Float> matRes;
 
-    __m256 mRHS = SIMD::Spread256( rhs );
+    __m256 mRHS = SIMD::Import::Values::Spread256( rhs );
 
-    __m256 mTwoRows = SIMD::Load256( &m00 );
-    mTwoRows = SIMD::Mul( mTwoRows, mRHS );
-    SIMD::Store256( &(matRes.m00), mTwoRows );
+    __m256 mTwoRows = SIMD::Import::Memory::Load256( &m00 );
+    mTwoRows = SIMD::Math::Mul( mTwoRows, mRHS );
+    SIMD::Export::Memory::Save256( &(matRes.m00), mTwoRows );
 
-    mTwoRows = SIMD::Load256( &m20 );
-    mTwoRows = SIMD::Mul( mTwoRows, mRHS );
-    SIMD::Store256( &(matRes.m20), mTwoRows );
+    mTwoRows = SIMD::Import::Memory::Load256( &m20 );
+    mTwoRows = SIMD::Math::Mul( mTwoRows, mRHS );
+    SIMD::Export::Memory::Save256( &(matRes.m20), mTwoRows );
 
     return matRes;
 }

@@ -38,23 +38,23 @@
 namespace SIMD { namespace Control {
 
 	// Control & Status Register
-    inline UInt32 GetCSR();              // SSE
-    inline Void SetCSR( UInt32 iValue ); // SSE
+    __forceinline UInt32 GetCSR();              // SSE
+    __forceinline Void SetCSR( UInt32 iValue ); // SSE
 
     // Clear and flush cache-line containing given address from all cache hierarchy levels
-    inline Void ClearAndFlushCacheLine( Void * pAddress ); // SSE2
+    __forceinline Void ClearAndFlushCacheLine( Void * pAddress ); // SSE2
 
     // Spin-Wait Loop Hint for the Processor
-    inline Void Pause(); // SSE2
+    __forceinline Void Pause(); // SSE2
 
     // Serializing instructions (makes sure everything is flushed)
-    inline Void SerializeMemoryStore(); // SSE
-    inline Void SerializeMemoryLoad();  // SSE2
-    inline Void SerializeMemory();      // SSE2
+    __forceinline Void SerializeMemoryStore(); // SSE
+    __forceinline Void SerializeMemoryLoad();  // SSE2
+    __forceinline Void SerializeMemory();      // SSE2
 
     // General Initialization
-	inline Void ZeroUpper128(); // AVX
-	inline Void Zero256();      // AVX
+	__forceinline Void ZeroUpper128(); // AVX
+	__forceinline Void Zero256();      // AVX
 
 }; };
 

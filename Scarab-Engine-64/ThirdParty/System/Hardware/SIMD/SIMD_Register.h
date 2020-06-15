@@ -229,7 +229,11 @@ namespace SIMD { namespace Register {
         __forceinline __m256d DDDD( __m256d mSrc ); // AVX2
 
         __forceinline __m256d AACC( __m256d mSrc ); // AVX
-        __forceinline __m256d BBDD( __m256d mSrc ); // AVX2
+        __forceinline __m256d BBDD( __m256d mSrc ); // AVX
+
+        __forceinline __m256d AAAC( __m256d mSrc ); // AVX2
+        __forceinline __m256d AABB( __m256d mSrc ); // AVX2
+        __forceinline __m256d BCDD( __m256d mSrc ); // AVX2
 
         // Int32 manipulation
         __forceinline __m128i AAAA( __m128i mSrc ); // AVX2
@@ -253,8 +257,8 @@ namespace SIMD { namespace Register {
         __forceinline __m256 CCCCGGGG( __m256 mSrc ); // AVX
         __forceinline __m256 DDDDHHHH( __m256 mSrc ); // AVX
 
-        __forceinline __m256 BBCCFFGG( __m256 mSrc ); // AVX
-        __forceinline __m256 CDDDGHHH( __m256 mSrc ); // AVX
+        __forceinline __m256 CBBBGFFF( __m256 mSrc ); // AVX
+        __forceinline __m256 DDCCHHGG( __m256 mSrc ); // AVX
 
         // Int16 manipulation
         __forceinline __m128i AAAAAAAA( __m128i mSrc ); // AVX2
@@ -310,6 +314,24 @@ namespace SIMD { namespace Register {
         __forceinline __m256 DA( __m256 mSrcAB, __m256 mSrcCD ); // AVX
         __forceinline __m256 DB( __m256 mSrcAB, __m256 mSrcCD ); // AVX
 
+        __forceinline __m256d AC( __m256d mSrcAB, __m256d mSrcCD ); // AVX
+        __forceinline __m256d AD( __m256d mSrcAB, __m256d mSrcCD ); // AVX
+        __forceinline __m256d BC( __m256d mSrcAB, __m256d mSrcCD ); // AVX
+        __forceinline __m256d BD( __m256d mSrcAB, __m256d mSrcCD ); // AVX
+        __forceinline __m256d CA( __m256d mSrcAB, __m256d mSrcCD ); // AVX
+        __forceinline __m256d CB( __m256d mSrcAB, __m256d mSrcCD ); // AVX
+        __forceinline __m256d DA( __m256d mSrcAB, __m256d mSrcCD ); // AVX
+        __forceinline __m256d DB( __m256d mSrcAB, __m256d mSrcCD ); // AVX
+
+        __forceinline __m256i AC( __m256i mSrcAB, __m256i mSrcCD ); // AVX2
+        __forceinline __m256i AD( __m256i mSrcAB, __m256i mSrcCD ); // AVX2
+        __forceinline __m256i BC( __m256i mSrcAB, __m256i mSrcCD ); // AVX2
+        __forceinline __m256i BD( __m256i mSrcAB, __m256i mSrcCD ); // AVX2
+        __forceinline __m256i CA( __m256i mSrcAB, __m256i mSrcCD ); // AVX2
+        __forceinline __m256i CB( __m256i mSrcAB, __m256i mSrcCD ); // AVX2
+        __forceinline __m256i DA( __m256i mSrcAB, __m256i mSrcCD ); // AVX2
+        __forceinline __m256i DB( __m256i mSrcAB, __m256i mSrcCD ); // AVX2
+
     };
 
     // Shuffle over 4 Elements (ABCD)
@@ -350,6 +372,14 @@ namespace SIMD { namespace Register {
         __forceinline __m256d CBAD( __m256d mSrc ); // AVX2
         __forceinline __m256d BADC( __m256d mSrc ); // AVX
         __forceinline __m256d ADCB( __m256d mSrc ); // AVX2
+
+            // Other
+        __forceinline __m256d DCAB( __m256d mSrc ); // AVX2
+
+            // Merge
+        __forceinline __m256d AECH( __m256d mSrcABCD, __m256d mSrcEFGH ); // AVX
+        __forceinline __m256d BFDH( __m256d mSrcABCD, __m256d mSrcEFGH ); // AVX
+
 
         // Int32 manipulation
             // 1-Swap

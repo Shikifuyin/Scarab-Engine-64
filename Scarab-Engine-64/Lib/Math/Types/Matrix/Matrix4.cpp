@@ -887,20 +887,19 @@ Float TMatrix4<Float>::Determinant() const
     mPart1 = SIMD::Math::Sub( mPart1, mCombine ); // mPart1 = ( A1, B1, C1, X, D1, E1, F1, X )
 
     // Part 2
-    mTmp0 = SIMD::Register::Spread8::BBCCFFGG( mCol02 ); // mTmp0 = ( m10, m10, m20, X, m12, m12, m22, X )
-    mTmp1 = SIMD::Register::Spread8::CDDDGHHH( mCol13 ); // mTmp1 = ( m21, m31, m31, X, m23, m33, m33, X )
-    mPart2 = SIMD::Math::Mul( mTmp0, mTmp1 );            // mPart2 = ( m10*m21, m10*m31, m20*m31, X, m12*m23, m12*m33, m22*m33, X )
+    mTmp0 = SIMD::Register::Spread8::CBBBGFFF( mCol02 ); // mTmp0 = ( m20, m10, m10, X, m22, m12, m12, X )
+    mTmp1 = SIMD::Register::Spread8::DDCCHHGG( mCol13 ); // mTmp1 = ( m31, m31, m21, X, m33, m33, m23, X )
+    mPart2 = SIMD::Math::Mul( mTmp0, mTmp1 );            // mPart2 = ( m20*m31, m10*m31, m10*m21, X, m22*m33, m12*m33, m12*m23, X )
 
-    mTmp0 = SIMD::Register::Spread8::BBCCFFGG( mCol13 ); // mTmp0 = ( m11, m11, m21, X, m13, m13, m23, X )
-    mTmp1 = SIMD::Register::Spread8::CDDDGHHH( mCol02 ); // mTmp1 = ( m20, m30, m30, X, m22, m32, m32, X )
-    mCombine = SIMD::Math::Mul( mTmp0, mTmp1 );          // mCombine = ( m11*m20, m11*m30, m21*m30, X, m13*m22, m13*m32, m23*m32, X )
+    mTmp0 = SIMD::Register::Spread8::CBBBGFFF( mCol13 ); // mTmp0 = ( m21, m11, m11, X, m23, m13, m13, X )
+    mTmp1 = SIMD::Register::Spread8::DDCCHHGG( mCol02 ); // mTmp1 = ( m30, m30, m20, X, m32, m32, m22, X )
+    mCombine = SIMD::Math::Mul( mTmp0, mTmp1 );          // mCombine = ( m21*m30, m11*m30, m11*m20, X, m23*m32, m13*m32, m13*m22, X )
 
-    mPart2 = SIMD::Math::Sub( mPart2, mCombine ); // mPart2 = ( A2, B2, C2, X, D2, E2, F2, X )
+    mPart2 = SIMD::Math::Sub( mPart2, mCombine ); // mPart2 = ( C2, B2, A2, X, F2, E2, D2, X )
 
     // Combine Parts
-    mPart2 = SIMD::Register::Shuffle2::BA( mPart2 );       // mPart2 = ( D2, E2, F2, X, A2, B2, C2, X )
-    mPart2 = SIMD::Register::Shuffle8::CBADGFEH( mPart2 ); // mPart2 = ( F2, E2, D2, X, C2, B2, A2, X )
-    mCombine = SIMD::Math::Mul( mPart1, mPart2 );          // mCombine = ( A1*F2, B1*E2, C1*D2, X, D1*C2, E1*B2, F1*A2, X )
+    mPart2 = SIMD::Register::Shuffle2::BA( mPart2 ); // mPart2 = ( F2, E2, D2, X, C2, B2, A2, X )
+    mCombine = SIMD::Math::Mul( mPart1, mPart2 );    // mCombine = ( A1*F2, B1*E2, C1*D2, X, D1*C2, E1*B2, F1*A2, X )
 
     __m128 mResult = SIMD::Register::Move::FourFloatH( mCombine );      // mResult = ( D1*C2, E1*B2, F1*A2, X )
     mResult = SIMD::Math::Add( mResult, SIMD::Cast::Down( mCombine ) ); // mResult = ( A1*F2 + D1*C2, B1*E2 + E1*B2, C1*D2 + F1*A2, X )
@@ -923,16 +922,60 @@ Double TMatrix4<Double>::Determinant() const
     __m256d mCol2 = SIMD::Import::Memory::Aligned::Load256( &m02 ); // mCol2 = ( m02, m12, m22, m32 )
     __m256d mCol3 = SIMD::Import::Memory::Aligned::Load256( &m03 ); // mCol3 = ( m03, m13, m23, m33 )
 
-    __m256d mResult;
+    __m256d mCombine, mPart1, mPart2, mPart3;
+    __m256d mTmp0, mTmp1;
 
     // Part 1
+    mTmp0 = SIMD::Register::Spread4::AAAC( mCol0 ); // mTmp0 = ( m00, m00, m00, m20 )
+    mTmp1 = SIMD::Register::Spread4::BCDD( mCol1 ); // mTmp1 = ( m11, m21, m31, m31 )
+    mPart1 = SIMD::Math::Mul( mTmp0, mTmp1 );       // mPart1 = ( m00*m11, m00*m21, m00*m31, m20*m31 )
+
+    mTmp0 = SIMD::Register::Spread4::AAAC( mCol1 ); // mTmp0 = ( m01, m01, m01, m21 )
+    mTmp1 = SIMD::Register::Spread4::BCDD( mCol0 ); // mTmp1 = ( m10, m20, m30, m30 )
+    mCombine = SIMD::Math::Mul( mTmp0, mTmp1 );     // mCombine = ( m01*m10, m01*m20, m01*m30, m21*m30 )
+
+    mPart1 = SIMD::Math::Sub( mPart1, mCombine ); // mPart1 = ( A1, B1, C1, C2 )
 
     // Part 2
+    mTmp0 = SIMD::Register::Spread4::AAAC( mCol2 ); // mTmp0 = ( m02, m02, m02, m22 )
+    mTmp1 = SIMD::Register::Spread4::BCDD( mCol3 ); // mTmp1 = ( m13, m23, m33, m33 )
+    mPart2 = SIMD::Math::Mul( mTmp0, mTmp1 );       // mPart2 = ( m02*m13, m02*m23, m02*m33, m22*m33 )
+
+    mTmp0 = SIMD::Register::Spread4::AAAC( mCol3 ); // mTmp0 = ( m03, m03, m03, m23 )
+    mTmp1 = SIMD::Register::Spread4::BCDD( mCol2 ); // mTmp1 = ( m12, m22, m32, m32 )
+    mCombine = SIMD::Math::Mul( mTmp0, mTmp1 );     // mCombine = ( m03*m12, m03*m22, m03*m32, m23*m32 )
+
+    mPart2 = SIMD::Math::Sub( mPart2, mCombine ); // mPart2 = ( D1, E1, F1, F2 )
 
     // Part 3
+    mTmp0 = SIMD::Register::Shuffle2::AC( mCol0, mCol2 ); // mTmp0 = ( m00, m10, m02, m12 )
+    mTmp0 = SIMD::Register::Spread4::BBDD( mTmp0 );       // mTmp0 = ( m10, m10, m12, m12 )
+    mTmp1 = SIMD::Register::Shuffle2::BD( mCol1, mCol3 ); // mTmp1 = ( m21, m31, m23, m33 )
+    mPart3 = SIMD::Math::Mul( mTmp0, mTmp1 );             // mPart3 = ( m10*m21, m10*m31, m12*m23, m12*m33 )
+
+    mTmp0 = SIMD::Register::Shuffle2::AC( mCol1, mCol3 ); // mTmp0 = ( m01, m11, m03, m13 )
+    mTmp0 = SIMD::Register::Spread4::BBDD( mTmp0 );       // mTmp0 = ( m11, m11, m13, m13 )
+    mTmp1 = SIMD::Register::Shuffle2::BD( mCol0, mCol2 ); // mTmp1 = ( m20, m30, m22, m32 )
+    mCombine = SIMD::Math::Mul( mTmp0, mTmp1 );           // mCombine = ( m11*m20, m11*m30, m13*m22, m13*m32 )
+
+    mPart3 = SIMD::Math::Sub( mPart3, mCombine ); // mPart3 = ( A2, B2, D2, E2 )
+
+    // Combine Parts
+    mPart3 = SIMD::Register::Shuffle4::ACBD( mPart3 ); // mPart3 = ( A2, D2, B2, E2 )
+
+    mTmp0 = SIMD::Register::Shuffle4::AECH( mPart3, mPart1 ); // mTmp0 = ( A2, X, B2, C2 )
+    mTmp1 = SIMD::Register::Shuffle4::BFDH( mPart3, mPart2 ); // mTmp1 = ( D2, X, E2, F2 )
+
+    mTmp0 = SIMD::Register::Shuffle4::DCAB( mTmp0 ); // mTmp0 = ( C2, B2, A2, X )
+    mTmp1 = SIMD::Register::Shuffle4::DCAB( mTmp1 ); // mTmp1 = ( F2, E2, D2, X )
+
+    mPart1 = SIMD::Math::Mul( mPart1, mTmp1 ); // mPart1 = ( A1*F2, B1*E2, C1*D2, X )
+    mPart2 = SIMD::Math::Mul( mPart2, mTmp0 ); // mPart2 = ( D1*C2, E1*B2, F1*A2, X )
+
+    mCombine = SIMD::Math::Add( mPart1, mPart2 ); // mCombine = ( A1*F2 + D1*C2, B1*E2 + E1*B2, C1*D2 + F1*A2, X )
 
     // Save data
-    SIMD::Export::Memory::Aligned::Save256( arrTmp, mResult );
+    SIMD::Export::Memory::Aligned::Save256( arrTmp, mCombine );
 
     // Done
     return ( arrTmp[0] - arrTmp[1] + arrTmp[2] );

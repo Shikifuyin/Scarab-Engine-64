@@ -174,6 +174,7 @@ public:
 	inline Void MakeDiagonal( const TVector4<Real> & vDiag );
 
 	inline Void MakeTranslate( const TVector3<Real> & vTranslate );
+	inline Void SetTranslate( const TVector3<Real> & vTranslate );
 
 	inline Void MakeScale( const TVector3<Real> & vScale );
 

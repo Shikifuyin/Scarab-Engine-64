@@ -493,6 +493,12 @@ inline Void TMatrix4<Real>::MakeTranslate( const TVector3<Real> & vTranslate ) {
     m20 = MathFunction<Real>::Zero; m21 = MathFunction<Real>::Zero; m22 = MathFunction<Real>::One;  m23 = vTranslate.Z;
     m30 = MathFunction<Real>::Zero; m31 = MathFunction<Real>::Zero; m32 = MathFunction<Real>::Zero; m33 = MathFunction<Real>::One;
 }
+template<typename Real>
+inline Void TMatrix4<Real>::SetTranslate( const TVector3<Real> & vTranslate ) {
+    m03 = vTranslate.X;
+    m13 = vTranslate.Y;
+    m23 = vTranslate.Z;
+}
 
 template<typename Real>
 inline Void TMatrix4<Real>::MakeScale( const TVector3<Real> & vScale ) {

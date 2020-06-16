@@ -173,6 +173,8 @@
     <ClInclude Include="Lib\Math\Types\Matrix\Matrix2.h" />
     <ClInclude Include="Lib\Math\Types\Matrix\Matrix3.h" />
     <ClInclude Include="Lib\Math\Types\Matrix\Matrix4.h" />
+    <ClInclude Include="Lib\Math\Types\Transform\Transform2.h" />
+    <ClInclude Include="Lib\Math\Types\Transform\Transform3.h" />
     <ClInclude Include="Lib\Math\Types\Vector\Vector2.h" />
     <ClInclude Include="Lib\Math\Types\Vector\Vector3.h" />
     <ClInclude Include="Lib\Math\Types\Vector\Vector4.h" />
@@ -243,6 +245,8 @@
     <None Include="Lib\Math\Types\Matrix\Matrix2.inl" />
     <None Include="Lib\Math\Types\Matrix\Matrix3.inl" />
     <None Include="Lib\Math\Types\Matrix\Matrix4.inl" />
+    <None Include="Lib\Math\Types\Transform\Transform2.inl" />
+    <None Include="Lib\Math\Types\Transform\Transform3.inl" />
     <None Include="Lib\Math\Types\Vector\Vector2.inl" />
     <None Include="Lib\Math\Types\Vector\Vector3.inl" />
     <None Include="Lib\Math\Types\Vector\Vector4.inl" />
@@ -313,6 +317,8 @@
     <ClCompile Include="Lib\Math\Types\Matrix\Matrix2.cpp" />
     <ClCompile Include="Lib\Math\Types\Matrix\Matrix3.cpp" />
     <ClCompile Include="Lib\Math\Types\Matrix\Matrix4.cpp" />
+    <ClCompile Include="Lib\Math\Types\Transform\Transform2.cpp" />
+    <ClCompile Include="Lib\Math\Types\Transform\Transform3.cpp" />
     <ClCompile Include="Lib\Math\Types\Vector\Vector2.cpp" />
     <ClCompile Include="Lib\Math\Types\Vector\Vector3.cpp" />
     <ClCompile Include="Lib\Math\Types\Vector\Vector4.cpp" />

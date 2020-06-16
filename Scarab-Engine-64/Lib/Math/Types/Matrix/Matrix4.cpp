@@ -30,7 +30,7 @@ TMatrix4<Float> TMatrix4<Float>::operator*( const Float & rhs ) const
 {
     TMatrix4<Float> matRes;
 
-    __m256 mRHS = SIMD::Import::Values::Spread256( rhs );
+    __m256 mRHS = SIMD::Import::Memory::Spread256( &rhs );
 
     __m256 mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m00 );
     mTwoCols = SIMD::Math::Mul( mTwoCols, mRHS );
@@ -47,7 +47,7 @@ TMatrix4<Double> TMatrix4<Double>::operator*( const Double & rhs ) const
 {
     TMatrix4<Double> matRes;
 
-    __m256d mRHS = SIMD::Import::Values::Spread256( rhs );
+    __m256d mRHS = SIMD::Import::Memory::Spread256( &rhs );
     
     __m256d mCol = SIMD::Import::Memory::Aligned::Load256( &m00 );
     mCol = SIMD::Math::Mul( mCol, mRHS );
@@ -73,7 +73,7 @@ TMatrix4<Float> TMatrix4<Float>::operator/( const Float & rhs ) const
 {
     TMatrix4<Float> matRes;
 
-    __m256 mRHS = SIMD::Import::Values::Spread256( rhs );
+    __m256 mRHS = SIMD::Import::Memory::Spread256( &rhs );
 
     __m256 mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m00 );
     mTwoCols = SIMD::Math::Div( mTwoCols, mRHS );
@@ -90,7 +90,7 @@ TMatrix4<Double> TMatrix4<Double>::operator/( const Double & rhs ) const
 {
     TMatrix4<Double> matRes;
 
-    __m256d mRHS = SIMD::Import::Values::Spread256( rhs );
+    __m256d mRHS = SIMD::Import::Memory::Spread256( &rhs );
     
     __m256d mCol = SIMD::Import::Memory::Aligned::Load256( &m00 );
     mCol = SIMD::Math::Div( mCol, mRHS );
@@ -114,7 +114,7 @@ TMatrix4<Double> TMatrix4<Double>::operator/( const Double & rhs ) const
 template<>
 TMatrix4<Float> & TMatrix4<Float>::operator*=( const Float & rhs )
 {
-    __m256 mRHS = SIMD::Import::Values::Spread256( rhs );
+    __m256 mRHS = SIMD::Import::Memory::Spread256( &rhs );
 
     __m256 mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m00 );
     mTwoCols = SIMD::Math::Mul( mTwoCols, mRHS );
@@ -129,7 +129,7 @@ TMatrix4<Float> & TMatrix4<Float>::operator*=( const Float & rhs )
 template<>
 TMatrix4<Double> & TMatrix4<Double>::operator*=( const Double & rhs )
 {
-    __m256d mRHS = SIMD::Import::Values::Spread256( rhs );
+    __m256d mRHS = SIMD::Import::Memory::Spread256( &rhs );
     
     __m256d mCol = SIMD::Import::Memory::Aligned::Load256( &m00 );
     mCol = SIMD::Math::Mul( mCol, mRHS );
@@ -153,7 +153,7 @@ TMatrix4<Double> & TMatrix4<Double>::operator*=( const Double & rhs )
 template<>
 TMatrix4<Float> & TMatrix4<Float>::operator/=( const Float & rhs )
 {
-    __m256 mRHS = SIMD::Import::Values::Spread256( rhs );
+    __m256 mRHS = SIMD::Import::Memory::Spread256( &rhs );
 
     __m256 mTwoCols = SIMD::Import::Memory::Aligned::Load256( &m00 );
     mTwoCols = SIMD::Math::Div( mTwoCols, mRHS );
@@ -168,7 +168,7 @@ TMatrix4<Float> & TMatrix4<Float>::operator/=( const Float & rhs )
 template<>
 TMatrix4<Double> & TMatrix4<Double>::operator/=( const Double & rhs )
 {
-    __m256d mRHS = SIMD::Import::Values::Spread256( rhs );
+    __m256d mRHS = SIMD::Import::Memory::Spread256( &rhs );
     
     __m256d mCol = SIMD::Import::Memory::Aligned::Load256( &m00 );
     mCol = SIMD::Math::Div( mCol, mRHS );
@@ -195,10 +195,14 @@ TVertex4<Float> TMatrix4<Float>::operator*( const TVertex4<Float> & rhs ) const
     // This is one of the most important ones ! Very careful optimisation here !
     TVertex4<Float> vRes;
 
-    // Load data
-    __m128 m128Tmp0 = SIMD::Import::Memory::Aligned::Load128( &(rhs.X) ); // m128Tmp0 = ( v0, v1, v2, v3 )
+    // Load Data
     __m256 m256Tmp0 = SIMD::Import::Memory::Aligned::Load256( &m00 );     // m256Tmp0 = ( m00, m10, m20, m30, m01, m11, m21, m31 )
     __m256 m256Tmp1 = SIMD::Import::Memory::Aligned::Load256( &m02 );     // m256Tmp1 = ( m02, m12, m22, m32, m03, m13, m23, m33 )
+    __m128 m128Tmp0 = SIMD::Import::Memory::Aligned::Load128( &(rhs.X) ); // m128Tmp0 = ( v0, v1, v2, v3 )
+
+    // Build Matrix columns
+    __m256 mCols02 = SIMD::Register::Shuffle2::AC( m256Tmp0, m256Tmp1 ); // mCols02 = ( m00, m10, m20, m30, m02, m12, m22, m32 )
+    __m256 mCols13 = SIMD::Register::Shuffle2::BD( m256Tmp0, m256Tmp1 ); // mCols13 = ( m01, m11, m21, m31, m03, m13, m23, m33 )
 
     // Build RHS vectors
     __m256 mRHS02 = SIMD::Cast::Up( SIMD::Register::Spread4::AAAA(m128Tmp0) ); // mRHS02 = ( v0, v0, v0, v0, ?, ?, ?, ? )
@@ -208,11 +212,7 @@ TVertex4<Float> TMatrix4<Float>::operator*( const TVertex4<Float> & rhs ) const
     mRHS02 = SIMD::Register::Move::FourFloatH( mRHS02, m128Tmp1 ); // mRHS02 = ( v0, v0, v0, v0, v2, v2, v2, v2 )
 
     m128Tmp1 = SIMD::Register::Spread4::DDDD( m128Tmp0 );          // m128Tmp1 = ( v3, v3, v3, v3 )
-    mRHS13 = SIMD::Register::Move::FourFloatH( mRHS13, m128Tmp1 ); // mRHS13 = ( v1, v1, v1, v1, v3, v3, v3, v3 )
-
-    // Build Matrix Columns
-    __m256 mCols02 = SIMD::Register::Shuffle2::AC( m256Tmp0, m256Tmp1 ); // mCols02 = ( m00, m10, m20, m30, m02, m12, m22, m32 )
-    __m256 mCols13 = SIMD::Register::Shuffle2::BD( m256Tmp0, m256Tmp1 ); // mCols13 = ( m01, m11, m21, m31, m03, m13, m23, m33 )
+    mRHS13 = SIMD::Register::Move::FourFloatH( mRHS13, m128Tmp1 ); // mRHS13 = ( v1, v1, v1, v1, v3, v3, v3, v3 )    
 
     // Perform Product
     m256Tmp0 = SIMD::Math::Mul( mCols02, mRHS02 ); // m256Tmp0 = ( m00 * v0, m10 * v0, m20 * v0, m30 * v0, m02 * v2, m12 * v2, m22 * v2, m32 * v2 )
@@ -227,7 +227,7 @@ TVertex4<Float> TMatrix4<Float>::operator*( const TVertex4<Float> & rhs ) const
     m128Tmp0 = SIMD::Math::Add( m128Tmp0, m128Tmp1 ); // m128Tmp0 = ( m00*v0 + m01*v1 + m02*v2 + m03*v3, m10*v0 + m11*v1 + m12*v2 + m13*v3,
                                                       //              m20*v0 + m21*v1 + m22*v2 + m23*v3, m30*v0 + m31*v1 + m32*v2 + m33*v3 )
 
-    // Save data
+    // Save Data
     SIMD::Export::Memory::Aligned::Save128( &(vRes.X), m128Tmp0 );
 
     // Done
@@ -239,7 +239,7 @@ TVertex4<Double> TMatrix4<Double>::operator*( const TVertex4<Double> & rhs ) con
     // This is one of the most important ones ! Very careful optimisation here !
     TVertex4<Double> vRes;
 
-    // Load data
+    // Load Data
     __m256d mTmp0 = SIMD::Import::Memory::Aligned::Load256( &(rhs.X) ); // mTmp0 = ( v0, v1, v2, v3 )
     __m256d mCol0 = SIMD::Import::Memory::Aligned::Load256( &m00 );     // mCol0 = ( m00, m10, m20, m30 )
     __m256d mCol1 = SIMD::Import::Memory::Aligned::Load256( &m01 );     // mCol1 = ( m01, m11, m21, m31 )
@@ -268,7 +268,7 @@ TVertex4<Double> TMatrix4<Double>::operator*( const TVertex4<Double> & rhs ) con
     mTmp0 = SIMD::Math::Add( mTmp0, mTmp1 ); // mTmp0 = ( m00*v0 + m01*v1 + m02*v2 + m03*v3, m10*v0 + m11*v1 + m12*v2 + m13*v3,
                                              //           m20*v0 + m21*v1 + m22*v2 + m23*v3, m30*v0 + m31*v1 + m32*v2 + m33*v3 )
 
-    // Save data
+    // Save Data
     SIMD::Export::Memory::Aligned::Save256( &(vRes.X), mTmp0 );
 
     // Done
@@ -281,10 +281,14 @@ TVector4<Float> TMatrix4<Float>::operator*( const TVector4<Float> & rhs ) const
     // This is one of the most important ones ! Very careful optimisation here !
     TVector4<Float> vRes;
 
-    // Load data
-    __m128 m128Tmp0 = SIMD::Import::Memory::Aligned::Load128( &(rhs.X) ); // m128Tmp0 = ( v0, v1, v2, v3 )
+    // Load Data
     __m256 m256Tmp0 = SIMD::Import::Memory::Aligned::Load256( &m00 );     // m256Tmp0 = ( m00, m10, m20, m30, m01, m11, m21, m31 )
     __m256 m256Tmp1 = SIMD::Import::Memory::Aligned::Load256( &m02 );     // m256Tmp1 = ( m02, m12, m22, m32, m03, m13, m23, m33 )
+    __m128 m128Tmp0 = SIMD::Import::Memory::Aligned::Load128( &(rhs.X) ); // m128Tmp0 = ( v0, v1, v2, v3 )
+
+    // Build Matrix Columns
+    __m256 mCols02 = SIMD::Register::Shuffle2::AC( m256Tmp0, m256Tmp1 ); // mCols02 = ( m00, m10, m20, m30, m02, m12, m22, m32 )
+    __m256 mCols13 = SIMD::Register::Shuffle2::BD( m256Tmp0, m256Tmp1 ); // mCols13 = ( m01, m11, m21, m31, m03, m13, m23, m33 )
 
     // Build RHS vectors
     __m256 mRHS02 = SIMD::Cast::Up( SIMD::Register::Spread4::AAAA(m128Tmp0) ); // mRHS02 = ( v0, v0, v0, v0, ?, ?, ?, ? )
@@ -295,10 +299,6 @@ TVector4<Float> TMatrix4<Float>::operator*( const TVector4<Float> & rhs ) const
 
     m128Tmp1 = SIMD::Register::Spread4::DDDD( m128Tmp0 );          // m128Tmp1 = ( v3, v3, v3, v3 )
     mRHS13 = SIMD::Register::Move::FourFloatH( mRHS13, m128Tmp1 ); // mRHS13 = ( v1, v1, v1, v1, v3, v3, v3, v3 )
-
-    // Build Matrix Columns
-    __m256 mCols02 = SIMD::Register::Shuffle2::AC( m256Tmp0, m256Tmp1 ); // mCols02 = ( m00, m10, m20, m30, m02, m12, m22, m32 )
-    __m256 mCols13 = SIMD::Register::Shuffle2::BD( m256Tmp0, m256Tmp1 ); // mCols13 = ( m01, m11, m21, m31, m03, m13, m23, m33 )
 
     // Perform Product
     m256Tmp0 = SIMD::Math::Mul( mCols02, mRHS02 ); // m256Tmp0 = ( m00 * v0, m10 * v0, m20 * v0, m30 * v0, m02 * v2, m12 * v2, m22 * v2, m32 * v2 )
@@ -313,7 +313,7 @@ TVector4<Float> TMatrix4<Float>::operator*( const TVector4<Float> & rhs ) const
     m128Tmp0 = SIMD::Math::Add( m128Tmp0, m128Tmp1 ); // m128Tmp0 = ( m00*v0 + m01*v1 + m02*v2 + m03*v3, m10*v0 + m11*v1 + m12*v2 + m13*v3,
                                                       //              m20*v0 + m21*v1 + m22*v2 + m23*v3, m30*v0 + m31*v1 + m32*v2 + m33*v3 )
 
-    // Save data
+    // Save Data
     SIMD::Export::Memory::Aligned::Save128( &(vRes.X), m128Tmp0 );
 
     // Done
@@ -325,7 +325,7 @@ TVector4<Double> TMatrix4<Double>::operator*( const TVector4<Double> & rhs ) con
     // This is one of the most important ones ! Very careful optimisation here !
     TVector4<Double> vRes;
 
-    // Load data
+    // Load Data
     __m256d mTmp0 = SIMD::Import::Memory::Aligned::Load256( &(rhs.X) ); // mTmp0 = ( v0, v1, v2, v3 )
     __m256d mCol0 = SIMD::Import::Memory::Aligned::Load256( &m00 );     // mCol0 = ( m00, m10, m20, m30 )
     __m256d mCol1 = SIMD::Import::Memory::Aligned::Load256( &m01 );     // mCol1 = ( m01, m11, m21, m31 )
@@ -354,7 +354,7 @@ TVector4<Double> TMatrix4<Double>::operator*( const TVector4<Double> & rhs ) con
     mTmp0 = SIMD::Math::Add( mTmp0, mTmp1 ); // mTmp0 = ( m00*v0 + m01*v1 + m02*v2 + m03*v3, m10*v0 + m11*v1 + m12*v2 + m13*v3,
                                              //           m20*v0 + m21*v1 + m22*v2 + m23*v3, m30*v0 + m31*v1 + m32*v2 + m33*v3 )
 
-    // Save data
+    // Save Data
     SIMD::Export::Memory::Aligned::Save256( &(vRes.X), mTmp0 );
 
     // Done
@@ -457,7 +457,7 @@ TMatrix4<Float> TMatrix4<Float>::operator*( const TMatrix4<Float> & rhs ) const
     // This is one of the most important ones ! Very careful optimisation here !
     TMatrix4<Float> matRes;
 
-    // Load data
+    // Load Data
     __m256 mLHSCol01 = SIMD::Import::Memory::Aligned::Load256( &m00 ); // mLHSCol01 = ( l00, l10, l20, l30, l01, l11, l21, l31 )
     __m256 mLHSCol23 = SIMD::Import::Memory::Aligned::Load256( &m02 ); // mLHSCol23 = ( l02, l12, l22, l32, l03, l13, l23, l33 )
 
@@ -510,7 +510,7 @@ TMatrix4<Float> TMatrix4<Float>::operator*( const TMatrix4<Float> & rhs ) const
     mTmp1 = SIMD::Math::Mul( mTmp1, mTmp0 );                // mTmp1 = ( LCol3*r32, LCol3*r33 )
     mResCol23 = SIMD::Math::Add( mResCol23, mTmp1 );        // mResCol23 = ( LCol0*r02 + LCol1*r12 + LCol2*r22 + LCol3*r32, LCol0*r03 + LCol1*r13 + LCol2*r23 + LCol3*r33 )
 
-    // Save data
+    // Save Data
     SIMD::Export::Memory::Aligned::Save256( &(matRes.m00), mResCol01 );
     SIMD::Export::Memory::Aligned::Save256( &(matRes.m02), mResCol23 );
 
@@ -523,7 +523,7 @@ TMatrix4<Double> TMatrix4<Double>::operator*( const TMatrix4<Double> & rhs ) con
     // This is one of the most important ones ! Very careful optimisation here !
     TMatrix4<Double> matRes;
 
-    // Load data
+    // Load Data
     __m256d mLHSCol0 = SIMD::Import::Memory::Aligned::Load256( &m00 ); // mLHSCol0 = ( l00, l10, l20, l30 )
     __m256d mLHSCol1 = SIMD::Import::Memory::Aligned::Load256( &m01 ); // mLHSCol1 = ( l01, l11, l21, l31 )
     __m256d mLHSCol2 = SIMD::Import::Memory::Aligned::Load256( &m02 ); // mLHSCol2 = ( l02, l12, l22, l32 )
@@ -704,7 +704,7 @@ TMatrix4<Float> & TMatrix4<Float>::operator*=( const TMatrix4<Float> & rhs )
 {
     // This is one of the most important ones ! Very careful optimisation here !
     
-    // Load data
+    // Load Data
     __m256 mLHSCol01 = SIMD::Import::Memory::Aligned::Load256( &m00 ); // mLHSCol01 = ( l00, l10, l20, l30, l01, l11, l21, l31 )
     __m256 mLHSCol23 = SIMD::Import::Memory::Aligned::Load256( &m02 ); // mLHSCol23 = ( l02, l12, l22, l32, l03, l13, l23, l33 )
 
@@ -757,7 +757,7 @@ TMatrix4<Float> & TMatrix4<Float>::operator*=( const TMatrix4<Float> & rhs )
     mTmp1 = SIMD::Math::Mul( mTmp1, mTmp0 );                // mTmp1 = ( LCol3*r32, LCol3*r33 )
     mResCol23 = SIMD::Math::Add( mResCol23, mTmp1 );        // mResCol23 = ( LCol0*r02 + LCol1*r12 + LCol2*r22 + LCol3*r32, LCol0*r03 + LCol1*r13 + LCol2*r23 + LCol3*r33 )
 
-    // Save data
+    // Save Data
     SIMD::Export::Memory::Aligned::Save256( &m00, mResCol01 );
     SIMD::Export::Memory::Aligned::Save256( &m02, mResCol23 );
 
@@ -768,7 +768,7 @@ TMatrix4<Double> & TMatrix4<Double>::operator*=( const TMatrix4<Double> & rhs )
 {
     // This is one of the most important ones ! Very careful optimisation here !
     
-    // Load data
+    // Load Data
     __m256d mLHSCol0 = SIMD::Import::Memory::Aligned::Load256( &m00 ); // mLHSCol0 = ( l00, l10, l20, l30 )
     __m256d mLHSCol1 = SIMD::Import::Memory::Aligned::Load256( &m01 ); // mLHSCol1 = ( l01, l11, l21, l31 )
     __m256d mLHSCol2 = SIMD::Import::Memory::Aligned::Load256( &m02 ); // mLHSCol2 = ( l02, l12, l22, l32 )
@@ -904,7 +904,7 @@ Float TMatrix4<Float>::Determinant() const
     __m128 mResult = SIMD::Register::Move::FourFloatH( mCombine );      // mResult = ( D1*C2, E1*B2, F1*A2, X )
     mResult = SIMD::Math::Add( mResult, SIMD::Cast::Down( mCombine ) ); // mResult = ( A1*F2 + D1*C2, B1*E2 + E1*B2, C1*D2 + F1*A2, X )
 
-    // Save data
+    // Save Data
     SIMD::Export::Memory::Aligned::Save128( arrTmp, mResult );
 
     // Done
@@ -974,569 +974,38 @@ Double TMatrix4<Double>::Determinant() const
 
     mCombine = SIMD::Math::Add( mPart1, mPart2 ); // mCombine = ( A1*F2 + D1*C2, B1*E2 + E1*B2, C1*D2 + F1*A2, X )
 
-    // Save data
+    // Save Data
     SIMD::Export::Memory::Aligned::Save256( arrTmp, mCombine );
 
     // Done
     return ( arrTmp[0] - arrTmp[1] + arrTmp[2] );
 }
 
-template<>
-Void TMatrix4<Float>::Adjoint( TMatrix4<Float> & outAdjointMatrix ) const
-{
-    Float fA0, fA1, fA2, fA3, fA4, fA5;
-    Float fB0, fB1, fB2, fB3, fB4, fB5;
-
-    MathSSEFn->Push( m00, m00, m00, m01 );
-    MathSSEFn->Push( m11, m12, m13, m12 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( m01, m02, m03, m02 );
-    MathSSEFn->Push( m10, m10, m10, m11 );
-    MathSSEFn->MulPF();
-    MathSSEFn->SubPF();
-    MathSSEFn->Pop( fA0, fA1, fA2, fA3 );
-
-    MathSSEFn->Push( m01, m02, m20, m20 );
-    MathSSEFn->Push( m13, m13, m31, m32 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( m03, m03, m21, m22 );
-    MathSSEFn->Push( m11, m12, m30, m30 );
-    MathSSEFn->MulPF();
-    MathSSEFn->SubPF();
-    MathSSEFn->Pop( fA4, fA5, fB0, fB1 );
-
-    MathSSEFn->Push( m20, m21, m21, m22 );
-    MathSSEFn->Push( m33, m32, m33, m33 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( m23, m22, m23, m23 );
-    MathSSEFn->Push( m30, m31, m31, m32 );
-    MathSSEFn->MulPF();
-    MathSSEFn->SubPF();
-    MathSSEFn->Pop( fB2, fB3, fB4, fB5 );
-
-    MathSSEFn->Push( +m11, -m01, +m31, -m21 );
-    MathSSEFn->Push( fB5, fB5, fA5, fA5 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( -m12, +m02, -m32, +m22 );
-    MathSSEFn->Push( fB4, fB4, fA4, fA4 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Push( +m13, -m03, +m33, -m23 );
-    MathSSEFn->Push( fB3, fB3, fA3, fA3 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Pop( outAdjointMatrix.m00, outAdjointMatrix.m01, outAdjointMatrix.m02, outAdjointMatrix.m03 );
-
-    MathSSEFn->Push( -m10, +m00, -m30, +m20 );
-    MathSSEFn->Push( fB5, fB5, fA5, fA5 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( +m12, -m02, +m32, -m22 );
-    MathSSEFn->Push( fB2, fB2, fA2, fA2 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Push( -m13, +m03, -m33, +m23 );
-    MathSSEFn->Push( fB1, fB1, fA1, fA1 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Pop( outAdjointMatrix.m10, outAdjointMatrix.m11, outAdjointMatrix.m12, outAdjointMatrix.m13 );
-
-    MathSSEFn->Push( +m10, -m00, +m30, -m20 );
-    MathSSEFn->Push( fB4, fB4, fA4, fA4 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( -m11, +m01, -m31, +m21 );
-    MathSSEFn->Push( fB2, fB2, fA2, fA2 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Push( +m13, -m03, +m33, -m23 );
-    MathSSEFn->Push( fB0, fB0, fA0, fA0 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Pop( outAdjointMatrix.m20, outAdjointMatrix.m21, outAdjointMatrix.m22, outAdjointMatrix.m23 );
-
-    MathSSEFn->Push( -m10, +m00, -m30, +m20 );
-    MathSSEFn->Push( fB3, fB3, fA3, fA3 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( +m11, -m01, +m31, -m21 );
-    MathSSEFn->Push( fB1, fB1, fA1, fA1 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Push( -m12, +m02, -m32, +m22 );
-    MathSSEFn->Push( fB0, fB0, fA0, fA0 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Pop( outAdjointMatrix.m30, outAdjointMatrix.m31, outAdjointMatrix.m32, outAdjointMatrix.m33 );
-}
-template<>
-Void TMatrix4<Double>::Adjoint( TMatrix4<Double> & outAdjointMatrix ) const
-{
-    Double fA0, fA1, fA2, fA3, fA4, fA5;
-    Double fB0, fB1, fB2, fB3, fB4, fB5;
-
-    MathSSEFn->Push( m00, m00 );
-    MathSSEFn->Push( m11, m12 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m01, m02 );
-    MathSSEFn->Push( m10, m10 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fA0, fA1 );
-
-    MathSSEFn->Push( m00, m01 );
-    MathSSEFn->Push( m13, m12 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m03, m02 );
-    MathSSEFn->Push( m10, m11 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fA2, fA3 );
-
-    MathSSEFn->Push( m01, m02 );
-    MathSSEFn->Push( m13, m13 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m03, m03 );
-    MathSSEFn->Push( m11, m12 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fA4, fA5 );
-
-    MathSSEFn->Push( m20, m20 );
-    MathSSEFn->Push( m31, m32 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m21, m22 );
-    MathSSEFn->Push( m30, m30 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fB0, fB1 );
-
-    MathSSEFn->Push( m20, m21 );
-    MathSSEFn->Push( m33, m32 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m23, m22 );
-    MathSSEFn->Push( m30, m31 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fB2, fB3 );
-
-    MathSSEFn->Push( m21, m22 );
-    MathSSEFn->Push( m33, m33 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m23, m23 );
-    MathSSEFn->Push( m31, m32 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fB4, fB5 );
-
-    MathSSEFn->Push( +m11, -m01 );
-    MathSSEFn->Push( fB5, fB5 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( -m12, +m02 );
-    MathSSEFn->Push( fB4, fB4 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( +m13, -m03 );
-    MathSSEFn->Push( fB3, fB3 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Pop( outAdjointMatrix.m00, outAdjointMatrix.m01 );
-
-    MathSSEFn->Push( +m31, -m21 );
-    MathSSEFn->Push( fA5, fA5 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( -m32, +m22 );
-    MathSSEFn->Push( fA4, fA4 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( +m33, -m23 );
-    MathSSEFn->Push( fA3, fA3 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Pop( outAdjointMatrix.m02, outAdjointMatrix.m03 );
-
-    MathSSEFn->Push( -m10, +m00 );
-    MathSSEFn->Push( fB5, fB5 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( +m12, -m02 );
-    MathSSEFn->Push( fB2, fB2 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( -m13, +m03 );
-    MathSSEFn->Push( fB1, fB1 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Pop( outAdjointMatrix.m10, outAdjointMatrix.m11 );
-
-    MathSSEFn->Push( -m30, +m20 );
-    MathSSEFn->Push( fA5, fA5 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( +m32, -m22 );
-    MathSSEFn->Push( fA2, fA2 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( -m33, +m23 );
-    MathSSEFn->Push( fA1, fA1 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Pop( outAdjointMatrix.m12, outAdjointMatrix.m13 );
-
-    MathSSEFn->Push( +m10, -m00 );
-    MathSSEFn->Push( fB4, fB4 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( -m11, +m01 );
-    MathSSEFn->Push( fB2, fB2 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( +m13, -m03 );
-    MathSSEFn->Push( fB0, fB0 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Pop( outAdjointMatrix.m20, outAdjointMatrix.m21 );
-
-    MathSSEFn->Push( +m30, -m20 );
-    MathSSEFn->Push( fA4, fA4 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( -m31, +m21 );
-    MathSSEFn->Push( fA2, fA2 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( +m33, -m23 );
-    MathSSEFn->Push( fA0, fA0 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Pop( outAdjointMatrix.m22, outAdjointMatrix.m23 );
-
-    MathSSEFn->Push( -m10, +m00 );
-    MathSSEFn->Push( fB3, fB3 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( +m11, -m01 );
-    MathSSEFn->Push( fB1, fB1 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( -m12, +m02 );
-    MathSSEFn->Push( fB0, fB0 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Pop( outAdjointMatrix.m30, outAdjointMatrix.m31 );
-
-    MathSSEFn->Push( -m30, +m20 );
-    MathSSEFn->Push( fA3, fA3 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( +m31, -m21 );
-    MathSSEFn->Push( fA1, fA1 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( -m32, +m22 );
-    MathSSEFn->Push( fA0, fA0 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Pop( outAdjointMatrix.m32, outAdjointMatrix.m33 );
-}
-
-template<>
-Bool TMatrix4<Float>::Invert( TMatrix4<Float> & outInvMatrix, Float fZeroTolerance ) const
-{
-    Float fA0, fA1, fA2, fA3, fA4, fA5;
-    Float fB0, fB1, fB2, fB3, fB4, fB5, fInvDet;
-
-    MathSSEFn->Push( m00, m00, m00, m01 );
-    MathSSEFn->Push( m11, m12, m13, m12 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( m01, m02, m03, m02 );
-    MathSSEFn->Push( m10, m10, m10, m11 );
-    MathSSEFn->MulPF();
-    MathSSEFn->SubPF();
-    MathSSEFn->Pop( fA0, fA1, fA2, fA3 );
-
-    MathSSEFn->Push( m01, m02, m20, m20 );
-    MathSSEFn->Push( m13, m13, m31, m32 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( m03, m03, m21, m22 );
-    MathSSEFn->Push( m11, m12, m30, m30 );
-    MathSSEFn->MulPF();
-    MathSSEFn->SubPF();
-    MathSSEFn->Pop( fA4, fA5, fB0, fB1 );
-
-    MathSSEFn->Push( m20, m21, m21, m22 );
-    MathSSEFn->Push( m33, m32, m33, m33 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( m23, m22, m23, m23 );
-    MathSSEFn->Push( m30, m31, m31, m32 );
-    MathSSEFn->MulPF();
-    MathSSEFn->SubPF();
-    MathSSEFn->Pop( fB2, fB3, fB4, fB5 );
-
-    MathSSEFn->Push( fA0, -fA1, fA2, 0.0f );
-    MathSSEFn->Push( fB5, fB4, fB3, 0.0f );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( fA3, -fA4, fA5, 0.0f );
-    MathSSEFn->Push( fB2, fB1, fB0, 0.0f );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->HAddF(0);
-    MathSSEFn->HAddF(0);
-    MathSSEFn->Pop(fInvDet);
-
-    if ( MathFFn->Abs(fInvDet) < fZeroTolerance )
-        return false;
-    fInvDet = MathFFn->Invert(fInvDet);
-
-    MathSSEFn->Push( fInvDet, fInvDet, fInvDet, fInvDet );
-
-    MathSSEFn->Push( +m11, -m01, +m31, -m21 );
-    MathSSEFn->Push( fB5, fB5, fA5, fA5 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( -m12, +m02, -m32, +m22 );
-    MathSSEFn->Push( fB4, fB4, fA4, fA4 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Push( +m13, -m03, +m33, -m23 );
-    MathSSEFn->Push( fB3, fB3, fA3, fA3 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->MulF(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m00, outInvMatrix.m01, outInvMatrix.m02, outInvMatrix.m03 );
-
-    MathSSEFn->Push( -m10, +m00, -m30, +m20 );
-    MathSSEFn->Push( fB5, fB5, fA5, fA5 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( +m12, -m02, +m32, -m22 );
-    MathSSEFn->Push( fB2, fB2, fA2, fA2 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Push( -m13, +m03, -m33, +m23 );
-    MathSSEFn->Push( fB1, fB1, fA1, fA1 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->MulF(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m10, outInvMatrix.m11, outInvMatrix.m12, outInvMatrix.m13 );
-
-    MathSSEFn->Push( +m10, -m00, +m30, -m20 );
-    MathSSEFn->Push( fB4, fB4, fA4, fA4 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( -m11, +m01, -m31, +m21 );
-    MathSSEFn->Push( fB2, fB2, fA2, fA2 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Push( +m13, -m03, +m33, -m23 );
-    MathSSEFn->Push( fB0, fB0, fA0, fA0 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->MulF(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m20, outInvMatrix.m21, outInvMatrix.m22, outInvMatrix.m23 );
-
-    MathSSEFn->Push( -m10, +m00, -m30, +m20 );
-    MathSSEFn->Push( fB3, fB3, fA3, fA3 );
-    MathSSEFn->MulPF();
-    MathSSEFn->Push( +m11, -m01, +m31, -m21 );
-    MathSSEFn->Push( fB1, fB1, fA1, fA1 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->Push( -m12, +m02, -m32, +m22 );
-    MathSSEFn->Push( fB0, fB0, fA0, fA0 );
-    MathSSEFn->MulPF();
-    MathSSEFn->AddPF();
-    MathSSEFn->MulF(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m30, outInvMatrix.m31, outInvMatrix.m32, outInvMatrix.m33 );
-
-    MathSSEFn->Pop( fInvDet, fInvDet, fInvDet, fInvDet );
-
-    return true;
-}
-template<>
-Bool TMatrix4<Double>::Invert( TMatrix4<Double> & outInvMatrix, Double fZeroTolerance ) const
-{
-    Double fA0, fA1, fA2, fA3, fA4, fA5;
-    Double fB0, fB1, fB2, fB3, fB4, fB5, fInvDet;
-
-    MathSSEFn->Push( m00, m00 );
-    MathSSEFn->Push( m11, m12 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m01, m02 );
-    MathSSEFn->Push( m10, m10 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fA0, fA1 );
-
-    MathSSEFn->Push( m00, m01 );
-    MathSSEFn->Push( m13, m12 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m03, m02 );
-    MathSSEFn->Push( m10, m11 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fA2, fA3 );
-
-    MathSSEFn->Push( m01, m02 );
-    MathSSEFn->Push( m13, m13 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m03, m03 );
-    MathSSEFn->Push( m11, m12 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fA4, fA5 );
-
-    MathSSEFn->Push( m20, m20 );
-    MathSSEFn->Push( m31, m32 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m21, m22 );
-    MathSSEFn->Push( m30, m30 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fB0, fB1 );
-
-    MathSSEFn->Push( m20, m21 );
-    MathSSEFn->Push( m33, m32 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m23, m22 );
-    MathSSEFn->Push( m30, m31 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fB2, fB3 );
-
-    MathSSEFn->Push( m21, m22 );
-    MathSSEFn->Push( m33, m33 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( m23, m23 );
-    MathSSEFn->Push( m31, m32 );
-    MathSSEFn->MulPD();
-    MathSSEFn->SubPD();
-    MathSSEFn->Pop( fB4, fB5 );
-
-    MathSSEFn->Push( fA0, -fA1 );
-    MathSSEFn->Push( fB5, fB4 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( fA2, fA3 );
-    MathSSEFn->Push( fB3, fB2 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( -fA4, fA5 );
-    MathSSEFn->Push( fB1, fB0 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->HAddD(0);
-    MathSSEFn->Pop(fInvDet);
-
-    if ( MathDFn->Abs(fInvDet) < fZeroTolerance )
-        return false;
-    fInvDet = MathDFn->Invert(fInvDet);
-
-    MathSSEFn->Push( fInvDet, fInvDet );
-
-    MathSSEFn->Push( +m11, -m01 );
-    MathSSEFn->Push( fB5, fB5 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( -m12, +m02 );
-    MathSSEFn->Push( fB4, fB4 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( +m13, -m03 );
-    MathSSEFn->Push( fB3, fB3 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->MulD(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m00, outInvMatrix.m01 );
-
-    MathSSEFn->Push( +m31, -m21 );
-    MathSSEFn->Push( fA5, fA5 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( -m32, +m22 );
-    MathSSEFn->Push( fA4, fA4 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( +m33, -m23 );
-    MathSSEFn->Push( fA3, fA3 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->MulD(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m02, outInvMatrix.m03 );
-
-    MathSSEFn->Push( -m10, +m00 );
-    MathSSEFn->Push( fB5, fB5 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( +m12, -m02 );
-    MathSSEFn->Push( fB2, fB2 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( -m13, +m03 );
-    MathSSEFn->Push( fB1, fB1 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->MulD(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m10, outInvMatrix.m11 );
-
-    MathSSEFn->Push( -m30, +m20 );
-    MathSSEFn->Push( fA5, fA5 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( +m32, -m22 );
-    MathSSEFn->Push( fA2, fA2 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( -m33, +m23 );
-    MathSSEFn->Push( fA1, fA1 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->MulD(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m12, outInvMatrix.m13 );
-
-    MathSSEFn->Push( +m10, -m00 );
-    MathSSEFn->Push( fB4, fB4 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( -m11, +m01 );
-    MathSSEFn->Push( fB2, fB2 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( +m13, -m03 );
-    MathSSEFn->Push( fB0, fB0 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->MulD(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m20, outInvMatrix.m21 );
-
-    MathSSEFn->Push( +m30, -m20 );
-    MathSSEFn->Push( fA4, fA4 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( -m31, +m21 );
-    MathSSEFn->Push( fA2, fA2 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( +m33, -m23 );
-    MathSSEFn->Push( fA0, fA0 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->MulD(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m22, outInvMatrix.m23 );
-
-    MathSSEFn->Push( -m10, +m00 );
-    MathSSEFn->Push( fB3, fB3 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( +m11, -m01 );
-    MathSSEFn->Push( fB1, fB1 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( -m12, +m02 );
-    MathSSEFn->Push( fB0, fB0 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->MulD(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m30, outInvMatrix.m31 );
-
-    MathSSEFn->Push( -m30, +m20 );
-    MathSSEFn->Push( fA3, fA3 );
-    MathSSEFn->MulPD();
-    MathSSEFn->Push( +m31, -m21 );
-    MathSSEFn->Push( fA1, fA1 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->Push( -m32, +m22 );
-    MathSSEFn->Push( fA0, fA0 );
-    MathSSEFn->MulPD();
-    MathSSEFn->AddPD();
-    MathSSEFn->MulD(0, 1);
-    MathSSEFn->Pop( outInvMatrix.m32, outInvMatrix.m33 );
-
-    MathSSEFn->Pop( fInvDet, fInvDet );
-
-    return true;
-}
+//template<>
+//Void TMatrix4<Float>::Adjoint( TMatrix4<Float> & outAdjointMatrix ) const
+//{
+//    
+//}
+//template<>
+//Void TMatrix4<Double>::Adjoint( TMatrix4<Double> & outAdjointMatrix ) const
+//{
+//    
+//}
+//
+//template<>
+//Bool TMatrix4<Float>::Invert( TMatrix4<Float> & outInvMatrix, Float fZeroTolerance ) const
+//{
+//    
+//
+//    return true;
+//}
+//template<>
+//Bool TMatrix4<Double>::Invert( TMatrix4<Double> & outInvMatrix, Double fZeroTolerance ) const
+//{
+//    
+//
+//    return true;
+//}
 
 #endif // SIMD_ENABLE
 

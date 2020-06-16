@@ -94,6 +94,8 @@
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -110,6 +112,8 @@
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,6 +130,8 @@
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,6 +148,8 @@
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,6 +170,8 @@
     <ClInclude Include="Lib\Math\Hash\SHA1.h" />
     <ClInclude Include="Lib\Math\Random\Random.h" />
     <ClInclude Include="Lib\Math\Types\Complex\Complex.h" />
+    <ClInclude Include="Lib\Math\Types\Matrix\Matrix2.h" />
+    <ClInclude Include="Lib\Math\Types\Matrix\Matrix3.h" />
     <ClInclude Include="Lib\Math\Types\Matrix\Matrix4.h" />
     <ClInclude Include="Lib\Math\Types\Vector\Vector2.h" />
     <ClInclude Include="Lib\Math\Types\Vector\Vector3.h" />
@@ -230,6 +240,8 @@
     <None Include="Lib\Math\Hash\SHA1.inl" />
     <None Include="Lib\Math\Random\Random.inl" />
     <None Include="Lib\Math\Types\Complex\Complex.inl" />
+    <None Include="Lib\Math\Types\Matrix\Matrix2.inl" />
+    <None Include="Lib\Math\Types\Matrix\Matrix3.inl" />
     <None Include="Lib\Math\Types\Matrix\Matrix4.inl" />
     <None Include="Lib\Math\Types\Vector\Vector2.inl" />
     <None Include="Lib\Math\Types\Vector\Vector3.inl" />
@@ -298,6 +310,8 @@
     <ClCompile Include="Lib\Math\Hash\SHA1.cpp" />
     <ClCompile Include="Lib\Math\Random\Random.cpp" />
     <ClCompile Include="Lib\Math\Types\Complex\Complex.cpp" />
+    <ClCompile Include="Lib\Math\Types\Matrix\Matrix2.cpp" />
+    <ClCompile Include="Lib\Math\Types\Matrix\Matrix3.cpp" />
     <ClCompile Include="Lib\Math\Types\Matrix\Matrix4.cpp" />
     <ClCompile Include="Lib\Math\Types\Vector\Vector2.cpp" />
     <ClCompile Include="Lib\Math\Types\Vector\Vector3.cpp" />

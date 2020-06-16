@@ -212,10 +212,10 @@ inline Double FPU::Power2d( Int iExponent ) {
 	return pow( 2.0, (Double)iExponent );
 }
 
-inline Float FPU::Power10f( Int iExponent ) {
+Float FPU::Power10f( Int iExponent ) {
 	return pow( 10.0f, (Float)iExponent );
 }
-inline Double FPU::Power10d( Int iExponent ) {
+Double FPU::Power10d( Int iExponent ) {
 	return pow( 10.0, (Double)iExponent );
 }
 

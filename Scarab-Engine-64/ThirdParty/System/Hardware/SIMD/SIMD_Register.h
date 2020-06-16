@@ -206,6 +206,9 @@ namespace SIMD { namespace Register {
         __forceinline __m256 AA( __m256 mSrc ); // AVX
         __forceinline __m256 BB( __m256 mSrc ); // AVX
 
+        __forceinline __m256d AA( __m256d mSrc ); // AVX
+        __forceinline __m256d BB( __m256d mSrc ); // AVX
+
         __forceinline __m256i AA( __m256i mSrc ); // AVX2
 
     };
@@ -221,6 +224,9 @@ namespace SIMD { namespace Register {
 
         __forceinline __m128 AACC( __m128 mSrc ); // SSE3
         __forceinline __m128 BBDD( __m128 mSrc ); // SSE3
+
+        __forceinline __m128 ABAB( __m128 mSrc ); // AVX
+        __forceinline __m128 CDCD( __m128 mSrc ); // AVX
 
         // Double manipulation
         __forceinline __m256d AAAA( __m256d mSrc ); // AVX2

@@ -700,7 +700,7 @@ inline Real MathFunction<Real>::BesselJ( Real f, UInt iOrder ) const {
 }
 template<>
 inline Float MathFunction<Float>::BesselJ( Float f, UInt iOrder ) const {
-    return FPU::BesselJ(f, iOrder);
+    return (Float)( FPU::BesselJ( (Double)f, iOrder ) );
 }
 template<>
 inline Double MathFunction<Double>::BesselJ( Double f, UInt iOrder ) const {
@@ -713,7 +713,7 @@ inline Real MathFunction<Real>::BesselY( Real f, UInt iOrder ) const {
 }
 template<>
 inline Float MathFunction<Float>::BesselY( Float f, UInt iOrder ) const {
-    return FPU::BesselY(f, iOrder);
+    return (Float)( FPU::BesselY( (Double)f, iOrder ) );
 }
 template<>
 inline Double MathFunction<Double>::BesselY( Double f, UInt iOrder ) const {

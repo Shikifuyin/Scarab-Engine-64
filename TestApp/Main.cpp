@@ -17,13 +17,27 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "ThirdParty/System/Hardware/SIMD.h"
+#include "LIB/Math/Types/Matrix/Matrix4.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Entry Point
 int main()
 {
+	Matrix4 matL(
+		1, 2, 3, 4,
+		5, 6, 7, 8,
+		9, 10, 11, 12,
+		13, 14, 15, 16
+	);
 
+	Matrix4 matR(
+		1, 1, 1, 1,
+		10, 10, 10, 10,
+		100, 100, 100, 100,
+		1000, 1000, 1000, 1000
+	);
+
+	Matrix4 matProduct = matL * matR;
 
 	return 0;
 }

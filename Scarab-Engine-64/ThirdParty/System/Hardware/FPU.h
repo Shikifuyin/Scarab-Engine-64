@@ -111,8 +111,8 @@ namespace FPU
     inline Float Power2f( Int iExponent );
     inline Double Power2d( Int iExponent );
 
-    inline Float Power10f( Int iExponent );
-    inline Double Power10d( Int iExponent );
+    Float Power10f( Int iExponent );
+    Double Power10d( Int iExponent );
 
     inline Float PowerN( Float fBase, Int iExponent );
     inline Double PowerN( Double fBase, Int iExponent );

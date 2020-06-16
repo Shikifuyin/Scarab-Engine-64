@@ -133,7 +133,7 @@ TMatrix4<Real>::~TMatrix4()
 }
 
 template<typename Real>
-inline TMatrix4<Real> & TMatrix4<Real>::operator=(const TMatrix4<Real> & rhs) {
+inline TMatrix4<Real> & TMatrix4<Real>::operator=( const TMatrix4<Real> & rhs ) {
     m00 = rhs.m00; m01 = rhs.m01; m02 = rhs.m02; m03 = rhs.m03;
     m10 = rhs.m10; m11 = rhs.m11; m12 = rhs.m12; m13 = rhs.m13;
     m20 = rhs.m20; m21 = rhs.m21; m22 = rhs.m22; m23 = rhs.m23;
@@ -232,6 +232,7 @@ TVertex4<Real> TMatrix4<Real>::operator*( const TVertex4<Real> & rhs ) const
                            (m20 * rhs.X + m21 * rhs.Y + m22 * rhs.Z + m23 * rhs.W),
                            (m30 * rhs.X + m31 * rhs.Y + m32 * rhs.Z + m33 * rhs.W) );
 }
+
 template<typename Real>
 TVector4<Real> TMatrix4<Real>::operator*( const TVector4<Real> & rhs ) const
 {
@@ -464,13 +465,6 @@ inline Void TMatrix4<Real>::MakeDiagonal( const Real & fDiag0, const Real & fDia
     m30 = MathFunction<Real>::Zero; m31 = MathFunction<Real>::Zero; m32 = MathFunction<Real>::Zero; m33 = fDiag3;
 }
 template<typename Real>
-inline Void TMatrix4<Real>::MakeDiagonal( const Real vDiag[3] ) {
-    m00 = vDiag[0];                 m01 = MathFunction<Real>::Zero; m02 = MathFunction<Real>::Zero; m03 = MathFunction<Real>::Zero;
-    m10 = MathFunction<Real>::Zero; m11 = vDiag[1];                 m12 = MathFunction<Real>::Zero; m13 = MathFunction<Real>::Zero;
-    m20 = MathFunction<Real>::Zero; m21 = MathFunction<Real>::Zero; m22 = vDiag[2];                 m23 = MathFunction<Real>::Zero;
-    m30 = MathFunction<Real>::Zero; m31 = MathFunction<Real>::Zero; m32 = MathFunction<Real>::Zero; m33 = MathFunction<Real>::One;
-}
-template<typename Real>
 inline Void TMatrix4<Real>::MakeDiagonal( const Real vDiag[4] ) {
     m00 = vDiag[0];                 m01 = MathFunction<Real>::Zero; m02 = MathFunction<Real>::Zero; m03 = MathFunction<Real>::Zero;
     m10 = MathFunction<Real>::Zero; m11 = vDiag[1];                 m12 = MathFunction<Real>::Zero; m13 = MathFunction<Real>::Zero;
@@ -665,12 +659,13 @@ Real TMatrix4<Real>::Determinant() const
 template<typename Real>
 inline Void TMatrix4<Real>::Minor( TMatrix3<Real> & outMinor, UInt iRow, UInt iColumn ) const {
     // Ok here we need to use branching, 3rd order polynoms won't make it
-	UInt Row0 = ( (iRow == 0)  ? 1 : 0 ) << 2;
-    UInt Row1 = ( (iRow < 2)   ? 2 : 1 ) << 2;
-    UInt Row2 = ( (iRow == 3)  ? 2 : 3 ) << 2;
-	UInt Col0 = ( iColumn == 0 ) ? 1 : 0;
-	UInt Col1 = ( iColumn < 2 )  ? 2 : 1;
-	UInt Col2 = ( iColumn == 3 ) ? 2 : 3;
+	UInt Col0 = ( (iColumn == 0)  ? 1 : 0 ) << 2;
+    UInt Col1 = ( (iColumn < 2)   ? 2 : 1 ) << 2;
+    UInt Col2 = ( (iColumn == 3)  ? 2 : 3 ) << 2;
+	UInt Row0 = ( iRow == 0 ) ? 1 : 0;
+	UInt Row1 = ( iRow < 2 )  ? 2 : 1;
+	UInt Row2 = ( iRow == 3 ) ? 2 : 3;
+
     const Real * Values = ( (const Real*)this );
     outMinor.m00 = Values[Row0 + Col0]; outMinor.m01 = Values[Row0 + Col1]; outMinor.m02 = Values[Row0 + Col2];
     outMinor.m10 = Values[Row1 + Col0]; outMinor.m11 = Values[Row1 + Col1]; outMinor.m12 = Values[Row1 + Col2];

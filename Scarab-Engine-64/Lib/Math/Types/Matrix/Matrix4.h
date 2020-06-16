@@ -17,11 +17,11 @@
 //              products such that u' = M*u.
 //              Let M be a n*n matrix (n = 2,3,4), and Mij be the value at
 //              row i, column j.
-//              Representation as array[16] puts Mij at index (i*n + j).
 //              Representation as individual values sets mIJ = Mij.
-//              As an example, m12 is value at row 1, column 2, index (1*4+2 = 6),
-//              in a 4*4 matrix.
+//              As an example, m12 is value at row 1, column 2, in a 4*4 matrix.
 //              In 4D, translations are stored in last column (m03,m13,m23,m33).
+//
+// STORED COLUMN-WISE IN MEMORY FOR PERFORMANCE !
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ public:
     inline operator const Real*() const;
 
 	// Index operations
-		// flat index 0-15 (Row-wise !)
+		// flat index 0-15 (Column-wise !)
 	inline Real & operator[]( Int i );
     inline const Real & operator[]( Int i ) const;
 	inline Real & operator[]( UInt i );
@@ -169,7 +169,6 @@ public:
 
 	inline Void MakeDiagonal( const Real & fDiag0, const Real & fDiag1, const Real & fDiag2 );
 	inline Void MakeDiagonal( const Real & fDiag0, const Real & fDiag1, const Real & fDiag2, const Real & fDiag3 );
-	inline Void MakeDiagonal( const Real vDiag[3] );
 	inline Void MakeDiagonal( const Real vDiag[4] );
 	inline Void MakeDiagonal( const TVector3<Real> & vDiag );
 	inline Void MakeDiagonal( const TVector4<Real> & vDiag );
@@ -231,6 +230,7 @@ template<>
 TMatrix4<Float> TMatrix4<Float>::operator*( const Float & rhs ) const;
 template<>
 TMatrix4<Double> TMatrix4<Double>::operator*( const Double & rhs ) const;
+
 template<>
 TMatrix4<Float> TMatrix4<Float>::operator/( const Float & rhs ) const;
 template<>
@@ -240,6 +240,7 @@ template<>
 TMatrix4<Float> & TMatrix4<Float>::operator*=( const Float & rhs );
 template<>
 TMatrix4<Double> & TMatrix4<Double>::operator*=( const Double & rhs );
+
 template<>
 TMatrix4<Float> & TMatrix4<Float>::operator/=( const Float & rhs );
 template<>
@@ -281,30 +282,25 @@ TMatrix4<Float> & TMatrix4<Float>::operator*=( const TMatrix4<Float> & rhs );
 template<>
 TMatrix4<Double> & TMatrix4<Double>::operator*=( const TMatrix4<Double> & rhs );
 
-template<>
-Void TMatrix4<Float>::MakeRotate( const TVector3<Float> & vAxis, const Float & fAngle );
-template<>
-Void TMatrix4<Double>::MakeRotate( const TVector3<Double> & vAxis, const Double & fAngle );
+//template<>
+//Void TMatrix4<Float>::MakeRotate( const TVector3<Float> & vAxis, const Float & fAngle );
+//template<>
+//Void TMatrix4<Double>::MakeRotate( const TVector3<Double> & vAxis, const Double & fAngle );
 
 template<>
 Float TMatrix4<Float>::Determinant() const;
 template<>
 Double TMatrix4<Double>::Determinant() const;
 
-template<>
-Void TMatrix4<Float>::Adjoint( TMatrix4<Float> & outAdjointMatrix ) const;
-template<>
-Void TMatrix4<Double>::Adjoint( TMatrix4<Double> & outAdjointMatrix ) const;
-
-template<>
-Bool TMatrix4<Float>::Invert( TMatrix4<Float> & outInvertMatrix, Float fZeroTolerance ) const;
-template<>
-Bool TMatrix4<Double>::Invert( TMatrix4<Double> & outInvertMatrix, Double fZeroTolerance ) const;
-
-template<>
-Void TMatrix4<Float>::OrthoNormalize();
-template<>
-Void TMatrix4<Double>::OrthoNormalize();
+//template<>
+//Void TMatrix4<Float>::Adjoint( TMatrix4<Float> & outAdjointMatrix ) const;
+//template<>
+//Void TMatrix4<Double>::Adjoint( TMatrix4<Double> & outAdjointMatrix ) const;
+//
+//template<>
+//Bool TMatrix4<Float>::Invert( TMatrix4<Float> & outInvertMatrix, Float fZeroTolerance ) const;
+//template<>
+//Bool TMatrix4<Double>::Invert( TMatrix4<Double> & outInvertMatrix, Double fZeroTolerance ) const;
 
 #endif // SIMD_ENABLE
 

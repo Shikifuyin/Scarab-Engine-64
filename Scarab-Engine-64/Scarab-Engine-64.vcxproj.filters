@@ -175,6 +175,24 @@
     <Filter Include="Source Files\Lib\Datastruct\Array">
       <UniqueIdentifier>{66b6fdef-6c7d-46ac-8e8a-6dac88cb9ce0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Lib\Datastruct\Tree">
+      <UniqueIdentifier>{35b20849-aa8e-49fe-b7b5-8218974cf356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Datastruct\Tree">
+      <UniqueIdentifier>{b3d2789b-6080-468a-8c28-787032d5e85d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lib\Datastruct\List">
+      <UniqueIdentifier>{d537bc9f-a7f3-42a5-a0ae-761673ffb24b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Datastruct\List">
+      <UniqueIdentifier>{4172b8df-2427-491f-a198-612e3be694da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lib\Datastruct\Map">
+      <UniqueIdentifier>{e0baacd7-2c70-4795-aeb0-67689d5e9f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\Datastruct\Map">
+      <UniqueIdentifier>{e0554b12-8080-42ee-a43d-9dc28cdd54fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -395,6 +413,24 @@
     </ClInclude>
     <ClInclude Include="Lib\Datastruct\Array\Array.h">
       <Filter>Header Files\Lib\Datastruct\Array</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Datastruct\Tree\Heap.h">
+      <Filter>Header Files\Lib\Datastruct\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Datastruct\Tree\AVLTree.h">
+      <Filter>Header Files\Lib\Datastruct\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Datastruct\Tree\RedBlackTree.h">
+      <Filter>Header Files\Lib\Datastruct\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Datastruct\List\List.h">
+      <Filter>Header Files\Lib\Datastruct\List</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Datastruct\Map\HashMap.h">
+      <Filter>Header Files\Lib\Datastruct\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Datastruct\Map\TreeMap.h">
+      <Filter>Header Files\Lib\Datastruct\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -617,6 +653,24 @@
     <None Include="Lib\Datastruct\Array\Array.inl">
       <Filter>Source Files\Lib\Datastruct\Array</Filter>
     </None>
+    <None Include="Lib\Datastruct\Tree\Heap.inl">
+      <Filter>Source Files\Lib\Datastruct\Tree</Filter>
+    </None>
+    <None Include="Lib\Datastruct\Tree\AVLTree.inl">
+      <Filter>Source Files\Lib\Datastruct\Tree</Filter>
+    </None>
+    <None Include="Lib\Datastruct\Tree\RedBlackTree.inl">
+      <Filter>Source Files\Lib\Datastruct\Tree</Filter>
+    </None>
+    <None Include="Lib\Datastruct\List\List.inl">
+      <Filter>Source Files\Lib\Datastruct\List</Filter>
+    </None>
+    <None Include="Lib\Datastruct\Map\HashMap.inl">
+      <Filter>Source Files\Lib\Datastruct\Map</Filter>
+    </None>
+    <None Include="Lib\Datastruct\Map\TreeMap.inl">
+      <Filter>Source Files\Lib\Datastruct\Map</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -837,6 +891,24 @@
     </ClCompile>
     <ClCompile Include="Lib\Datastruct\Array\Array.cpp">
       <Filter>Source Files\Lib\Datastruct\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Datastruct\Tree\Heap.cpp">
+      <Filter>Source Files\Lib\Datastruct\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Datastruct\Tree\AVLTree.cpp">
+      <Filter>Source Files\Lib\Datastruct\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Datastruct\Tree\RedBlackTree.cpp">
+      <Filter>Source Files\Lib\Datastruct\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Datastruct\List\List.cpp">
+      <Filter>Source Files\Lib\Datastruct\List</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Datastruct\Map\HashMap.cpp">
+      <Filter>Source Files\Lib\Datastruct\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Datastruct\Map\TreeMap.cpp">
+      <Filter>Source Files\Lib\Datastruct\Map</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -193,6 +193,18 @@
     <Filter Include="Source Files\Lib\Datastruct\Map">
       <UniqueIdentifier>{e0554b12-8080-42ee-a43d-9dc28cdd54fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Lib\File">
+      <UniqueIdentifier>{ba752f93-fb48-4e40-b7c0-972985910a0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\File">
+      <UniqueIdentifier>{13dbcb01-34c8-478f-8d52-e6207aab77de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lib\File\XML">
+      <UniqueIdentifier>{9cc2cea3-9bb1-4187-8224-ad3042c57655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib\File\XML">
+      <UniqueIdentifier>{0bb3a255-90cf-43c0-9417-ac8e9c09bde5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -431,6 +443,24 @@
     </ClInclude>
     <ClInclude Include="Lib\Datastruct\Map\TreeMap.h">
       <Filter>Header Files\Lib\Datastruct\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\File\XML\XML.h">
+      <Filter>Header Files\Lib\File\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\File\XML\XMLNode.h">
+      <Filter>Header Files\Lib\File\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\File\XML\XMLAttribute.h">
+      <Filter>Header Files\Lib\File\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\File\XML\XMLComment.h">
+      <Filter>Header Files\Lib\File\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\File\XML\XMLText.h">
+      <Filter>Header Files\Lib\File\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\File\XML\XMLDocument.h">
+      <Filter>Header Files\Lib\File\XML</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -671,6 +701,24 @@
     <None Include="Lib\Datastruct\Map\TreeMap.inl">
       <Filter>Source Files\Lib\Datastruct\Map</Filter>
     </None>
+    <None Include="Lib\File\XML\XML.inl">
+      <Filter>Source Files\Lib\File\XML</Filter>
+    </None>
+    <None Include="Lib\File\XML\XMLNode.inl">
+      <Filter>Source Files\Lib\File\XML</Filter>
+    </None>
+    <None Include="Lib\File\XML\XMLAttribute.inl">
+      <Filter>Source Files\Lib\File\XML</Filter>
+    </None>
+    <None Include="Lib\File\XML\XMLComment.inl">
+      <Filter>Source Files\Lib\File\XML</Filter>
+    </None>
+    <None Include="Lib\File\XML\XMLText.inl">
+      <Filter>Source Files\Lib\File\XML</Filter>
+    </None>
+    <None Include="Lib\File\XML\XMLDocument.inl">
+      <Filter>Source Files\Lib\File\XML</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -909,6 +957,24 @@
     </ClCompile>
     <ClCompile Include="Lib\Datastruct\Map\TreeMap.cpp">
       <Filter>Source Files\Lib\Datastruct\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\File\XML\XML.cpp">
+      <Filter>Source Files\Lib\File\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\File\XML\XMLNode.cpp">
+      <Filter>Source Files\Lib\File\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\File\XML\XMLAttribute.cpp">
+      <Filter>Source Files\Lib\File\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\File\XML\XMLComment.cpp">
+      <Filter>Source Files\Lib\File\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\File\XML\XMLText.cpp">
+      <Filter>Source Files\Lib\File\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\File\XML\XMLDocument.cpp">
+      <Filter>Source Files\Lib\File\XML</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

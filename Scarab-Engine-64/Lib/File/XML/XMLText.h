@@ -1,0 +1,76 @@
+/////////////////////////////////////////////////////////////////////////////////
+// File : Lib/File/XML/XMLText.h
+/////////////////////////////////////////////////////////////////////////////////
+// Version : 0.1
+// Status : Alpha
+/////////////////////////////////////////////////////////////////////////////////
+// Description : XML Text Entity
+/////////////////////////////////////////////////////////////////////////////////
+// Part of Scarab-Engine, licensed under the
+// Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
+//   http://creativecommons.org/licenses/by-nc-nd/3.0/
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+// Known Bugs : None.
+/////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////
+// Header prelude
+#ifndef SCARAB_LIB_FILE_XML_XMLTEXT_H
+#define SCARAB_LIB_FILE_XML_XMLTEXT_H
+
+/////////////////////////////////////////////////////////////////////////////////
+// Includes
+#include "XMLNode.h"
+
+/////////////////////////////////////////////////////////////////////////////////
+// Constants definitions
+
+// Prototypes
+class XMLManager;
+
+/////////////////////////////////////////////////////////////////////////////////
+// The XMLText class
+class XMLText : public XMLNode
+{
+protected:
+    friend class XMLNode;
+    friend class XMLManager;
+    XMLText( const GChar * strText = NULL );
+public:
+    virtual ~XMLText();
+
+    // Text access
+    inline const GChar * GetText( UInt * outLength = NULL ) const;
+    inline Array<GChar> * EditText();
+    Void SetText( const GChar * strText );
+
+    Void AppendText( const GChar * strText );
+    Void InsertText( const GChar * strText, UInt iIndex );
+    Void ReplaceText( const GChar * strText, UInt iIndex, UInt iLength );
+    Void DeleteText( UInt iIndex, UInt iLength );
+
+protected:
+    // Cloning
+	virtual XMLNode * _Clone( Bool bRecursive ) const;
+
+    // Rendering
+    virtual Bool _Render( _XMLWriteCallback pfCallback, Void * pUserData ) const;
+
+    // Parsing
+    virtual Bool _Parse( XMLToken * pOverflowToken, GChar * pOverflowChar, _XMLReadCallback pfCallback, Void * pUserData );
+
+    // Text
+    Array<GChar> m_strText;
+};
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// Backward Includes (Inlines & Templates)
+#include "XMLText.inl"
+
+/////////////////////////////////////////////////////////////////////////////////
+// Header end
+#endif // SCARAB_LIB_FILE_XML_XMLTEXT_H
+

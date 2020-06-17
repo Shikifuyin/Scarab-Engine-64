@@ -94,6 +94,10 @@ inline MemoryAllocator * MemoryManager::GetAllocator( MemoryAllocatorID iAllocat
     return _MemoryAllocator_Get( iContextID, iAllocatorID );
 }
 
+inline MemoryAllocatorID MemoryManager::GetSharedScratchAllocator() const {
+    return m_iSharedScratchID;
+}
+
 inline Void MemoryManager::GenerateReport( AllocatorReport * outReport, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ) {
     MemoryAllocator * pAllocator = _MemoryAllocator_Get( iContextID, iAllocatorID );
     pAllocator->GenerateReport( outReport );

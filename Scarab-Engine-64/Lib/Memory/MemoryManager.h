@@ -117,6 +117,8 @@ public:
     inline const GChar * GetAllocatorName( MemoryAllocatorID iAllocatorID, MemoryContextID iContextID = MEMORY_CONTEXT_SHARED );
     inline MemoryAllocator * GetAllocator( MemoryAllocatorID iAllocatorID, MemoryContextID iContextID = MEMORY_CONTEXT_SHARED );
 
+    inline MemoryAllocatorID GetSharedScratchAllocator() const;
+
     // Main Allocation Routines
     Void * Allocate( SizeT iSize, Bool bIsArray, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID = MEMORY_CONTEXT_SHARED );
     Void Free( Void * pMemory, Bool bIsArray, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID = MEMORY_CONTEXT_SHARED );

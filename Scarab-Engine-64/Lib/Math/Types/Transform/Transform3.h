@@ -105,9 +105,9 @@ private:
 
     // Inverse support
     mutable Bool m_bUpdateInverse;
-    mutable TVector3<Real> m_vInvScale;       // InvS = 1 / S
-    mutable TVector3<Real> m_vInvTranslate;   // InvT = -( InvS * (InvM * T) )
-    mutable TMatrix4<Real> m_matInvTransform; // InvM (or InvR)
+    mutable TVector3<Real> m_vInvScale;
+    mutable TVector3<Real> m_vInvTranslate;
+    mutable TMatrix4<Real> m_matInvTransform;
 };
 
 // Explicit instanciation

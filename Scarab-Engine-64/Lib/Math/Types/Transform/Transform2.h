@@ -41,9 +41,10 @@ public:
 
     // Constructors
     TTransform2();
-    TTransform2( const TMatrix2<Real> & matRotate, const TVector2<Real> & vScale, const TVector2<Real> & vTranslate );
-    TTransform2( const TMatrix2<Real> & matRotate, Real fUniformScale, const TVector2<Real> & vTranslate );
-    TTransform2( const TMatrix2<Real> & matTransform, const TVector2<Real> & vTranslate );
+    TTransform2( const TMatrix2<Real> & matRotate );
+    TTransform2( const TMatrix2<Real> & matRotate, const TVector2<Real> & vTranslate );
+    TTransform2( const TMatrix2<Real> & matRotate, const TVector2<Real> & vTranslate, const Real & fUniformScale );
+    TTransform2( const TMatrix2<Real> & matRotate, const TVector2<Real> & vTranslate, const TVector2<Real> & vScale );
     TTransform2( const TTransform2<Real> & rhs );
     ~TTransform2();
 
@@ -62,68 +63,56 @@ public:
 	TTransform2<Real> operator*( const TTransform2<Real> & rhs ) const;
 
     // Construction
-    Void SetTransform( const TMatrix2<Real> & matTransform );
     Void SetRotate( const TMatrix2<Real> & matRotate );
-    Void SetScale( const TVector2<Real> & vScale );
-    Void SetUniformScale( Real fScale );
     Void SetTranslate( const TVector2<Real> & vTranslate );
+    Void SetUniformScale( const Real & fUniformScale );
+    Void SetScale( const TVector2<Real> & vScale );
 
     // Getters
     inline Bool IsIdentity() const;
-    inline Bool IsRotScale() const;
+    inline Bool HasScale() const;
     inline Bool IsUniformScale() const;
 
-    inline const TMatrix2<Real> & GetTransform() const;
-    inline const TMatrix2<Real> & GetRotate() const;
-    inline const TVector2<Real> & GetScale() const;
-    inline Real GetUniformScale() const;
+    const TMatrix2<Real> & GetRotate() const;
     inline const TVector2<Real> & GetTranslate() const;
+    inline const Real & GetUniformScale() const;
+    inline const TVector2<Real> & GetScale() const;
 
-    inline const TMatrix3<Real> & GetHMatrix() const;
+    inline const TMatrix3<Real> & GetMatrix() const;
 
     // Methods
     Void MakeIdentity();
     Void MakeUnitScale();
 
-    Real GetMaxScale() const;
+    Real GetMaxScale() const; // ie. Spectral Norm
 
-    Bool Invert( TTransform2<Real> & outInvTransform ) const;
+    Void Invert( TTransform2<Real> & outInvTransform ) const;
+    Void Invert();
 
 private:
-    Void _UpdateHMatrix();
-    Bool _UpdateInverse() const;
+    Void _UpdateInverse() const;
 
     // Flags
     Bool m_bIsIdentity;
-    Bool m_bIsRotScale;
+    Bool m_bHasScale;
     Bool m_bIsUniformScale;
-    mutable Bool m_bUpdateInverse;
 
     // Components
-    TMatrix2<Real> m_matTransform; // M (or R)
-    TVector2<Real> m_vScale;       // S
-    TVector2<Real> m_vTranslate;   // T
-
-    // Homogeneous matrix H = ( M*S T )
-    //                        (   0 1 )
-    TMatrix3<Real> m_matHMatrix;
+    TVector2<Real> m_vScale;
+    TVector2<Real> m_vTranslate;
+    TMatrix3<Real> m_matTransform;
     
     // Invert support
-    mutable TMatrix2<Real> m_matInvTransform; // InvM (or InvR)
-    mutable TVector2<Real> m_vInvScale;       // InvS = 1 / S
-    mutable TVector2<Real> m_vInvTranslate;   // InvT = -( (InvM * T) * InvS )
+    mutable Bool m_bUpdateInverse;
+    mutable TVector2<Real> m_vInvScale;
+    mutable TVector2<Real> m_vInvTranslate;
+    mutable TMatrix3<Real> m_matInvTransform;
 };
 
 // Explicit instanciation
 typedef TTransform2<Float> Transform2f;
 typedef TTransform2<Double> Transform2d;
 typedef TTransform2<Scalar> Transform2;
-
-// Specializations
-template<>
-Void TTransform2<Float>::_UpdateHMatrix();
-template<>
-Void TTransform2<Double>::_UpdateHMatrix();
 
 /////////////////////////////////////////////////////////////////////////////////
 // Backward Includes (Inlines & Templates)

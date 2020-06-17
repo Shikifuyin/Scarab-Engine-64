@@ -170,6 +170,10 @@ public:
 	inline Void MakeDiagonal( const Real vDiag[3] );
 	inline Void MakeDiagonal( const TVector3<Real> & vDiag );
 
+	inline Void MakeTranslate( const TVector2<Real> & vTranslate );
+	inline Void SetTranslate( const TVector2<Real> & vTranslate );
+
+	inline Void MakeScale( const TVector2<Real> & vScale );
 	inline Void MakeScale( const TVector3<Real> & vScale );
 
     inline Void MakeBasis( const TVertex2<Real> & vOrigin, const TVector2<Real> & vI, const TVector2<Real> & vJ );

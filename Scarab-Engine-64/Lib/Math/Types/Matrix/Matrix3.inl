@@ -403,6 +403,24 @@ inline Void TMatrix3<Real>::MakeDiagonal( const TVector3<Real> & vDiagonal ) {
 }
 
 template<typename Real>
+inline Void TMatrix3<Real>::MakeTranslate( const TVector2<Real> & vTranslate ) {
+    m00 = MathFunction<Real>::One;  m01 = MathFunction<Real>::Zero; m02 = vTranslate.X;
+    m10 = MathFunction<Real>::Zero; m11 = MathFunction<Real>::One;  m12 = vTranslate.Y;
+    m20 = MathFunction<Real>::Zero; m21 = MathFunction<Real>::Zero; m22 = MathFunction<Real>::One;
+}
+template<typename Real>
+inline Void TMatrix3<Real>::SetTranslate( const TVector2<Real> & vTranslate ) {
+    m02 = vTranslate.X;
+    m12 = vTranslate.Y;
+}
+
+template<typename Real>
+inline Void TMatrix3<Real>::MakeScale( const TVector2<Real> & vScale ) {
+    m00 = vScale.X;                 m01 = MathFunction<Real>::Zero; m02 = MathFunction<Real>::Zero;
+    m10 = MathFunction<Real>::Zero; m11 = vScale.Y;                 m12 = MathFunction<Real>::Zero;
+    m20 = MathFunction<Real>::Zero; m21 = MathFunction<Real>::Zero; m22 = MathFunction<Real>::One;
+}
+template<typename Real>
 inline Void TMatrix3<Real>::MakeScale( const TVector3<Real> & vScale ) {
     m00 = vScale.X;                 m01 = MathFunction<Real>::Zero; m02 = MathFunction<Real>::Zero;
     m10 = MathFunction<Real>::Zero; m11 = vScale.Y;                 m12 = MathFunction<Real>::Zero;

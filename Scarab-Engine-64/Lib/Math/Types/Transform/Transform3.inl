@@ -26,7 +26,7 @@ TTransform3<Real>::TTransform3():
     m_matTransform( TMatrix4<Real>::Identity ),
     m_vInvScale( MathFunction<Real>::One, MathFunction<Real>::One, MathFunction<Real>::One ),
     m_vInvTranslate( TVector3<Real>::Null ),
-    m_matInvTransform( TMatrix3<Real>::Identity )
+    m_matInvTransform( TMatrix4<Real>::Identity )
 {
     m_bIsIdentity = true;
     m_bHasScale = false;
@@ -41,7 +41,7 @@ TTransform3<Real>::TTransform3( const TMatrix3<Real> & matRotate ):
     m_matTransform( TMatrix4<Real>::Identity ),
     m_vInvScale( MathFunction<Real>::One, MathFunction<Real>::One, MathFunction<Real>::One ),
     m_vInvTranslate( TVector3<Real>::Null ),
-    m_matInvTransform( TMatrix3<Real>::Identity )
+    m_matInvTransform( TMatrix4<Real>::Identity )
 {
     m_bIsIdentity = false;
     m_bHasScale = false;
@@ -60,7 +60,7 @@ TTransform3<Real>::TTransform3( const TMatrix3<Real> & matRotate, const TVector3
     m_matTransform( TMatrix4<Real>::Identity ),
     m_vInvScale( MathFunction<Real>::One, MathFunction<Real>::One, MathFunction<Real>::One ),
     m_vInvTranslate( TVector3<Real>::Null ),
-    m_matInvTransform( TMatrix3<Real>::Identity )
+    m_matInvTransform( TMatrix4<Real>::Identity )
 {
     m_bIsIdentity = false;
     m_bHasScale = false;
@@ -82,7 +82,7 @@ TTransform3<Real>::TTransform3( const TMatrix3<Real> & matRotate, const TVector3
     m_matTransform( TMatrix4<Real>::Identity ),
     m_vInvScale( MathFunction<Real>::One, MathFunction<Real>::One, MathFunction<Real>::One ),
     m_vInvTranslate( TVector3<Real>::Null ),
-    m_matInvTransform( TMatrix3<Real>::Identity )
+    m_matInvTransform( TMatrix4<Real>::Identity )
 {
     m_bIsIdentity = false;
     m_bHasScale = true;
@@ -106,7 +106,7 @@ TTransform3<Real>::TTransform3( const TMatrix3<Real> & matRotate, const TVector3
     m_matTransform( TMatrix4<Real>::Identity ),
     m_vInvScale( MathFunction<Real>::One, MathFunction<Real>::One, MathFunction<Real>::One ),
     m_vInvTranslate( TVector3<Real>::Null ),
-    m_matInvTransform( TMatrix3<Real>::Identity )
+    m_matInvTransform( TMatrix4<Real>::Identity )
 {
     m_bIsIdentity = false;
     m_bHasScale = true;
@@ -348,7 +348,7 @@ Void TTransform3<Real>::MakeIdentity()
 
     m_vScale = TVector3<Real>( MathFunction<Real>::One, MathFunction<Real>::One, MathFunction<Real>::One );
     m_vTranslate = TVector3<Real>::Null;
-    m_matTransform = TMatrix3<Real>::Identity;
+    m_matTransform = TMatrix4<Real>::Identity;
 
     // Update Inverse
     m_bUpdateInverse = true;
@@ -439,7 +439,7 @@ Void TTransform3<Real>::_UpdateInverse() const
     if ( m_bIsIdentity ) {
         m_vInvScale = TVector3<Real>( MathFunction<Real>::One, MathFunction<Real>::One, MathFunction<Real>::One );
         m_vInvTranslate = TVector3<Real>::Null;
-        m_matInvTransform = TMatrix3<Real>::Identity;
+        m_matInvTransform = TMatrix4<Real>::Identity;
 
         m_bUpdateInverse = false;
         return;
@@ -492,12 +492,13 @@ Void TTransform3<Real>::_UpdateInverse() const
 
     matRotScale *= matInvScale;
 
-    TMatrix3<Real> matInvRotate;
-    matRotScale.Transpose( matInvRotate );
+    TMatrix3<Real> matInvRotScale;
+    matRotScale.Transpose( matInvRotScale );
+    matInvRotScale *= matInvScale;
 
-    m_matInvTransform = ( TMatrix4<Real>(matInvRotate) * TMatrix4<Real>(matInvScale) );
+    m_vInvTranslate = -( matInvRotScale * m_vTranslate );
 
-    m_vInvTranslate = -( m_matInvTransform * m_vTranslate );
+    m_matInvTransform = TMatrix4<Real>( matInvRotScale );
     m_matInvTransform.SetTranslate( m_vInvTranslate );
 
     m_bUpdateInverse = false;

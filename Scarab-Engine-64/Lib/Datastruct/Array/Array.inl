@@ -421,7 +421,7 @@ UInt Array<T>::Search( const T & rItem, UInt iAt, UInt iCount ) const
     T * pEnd = ( pItem + iCount );
     while( pItem < pEnd ) {
         if ( *pItem == rItem )
-            return ( pItem - m_arrBuffer );
+            return (UInt)( pItem - m_arrBuffer );
         ++pItem;
     }
 	return INVALID_OFFSET;

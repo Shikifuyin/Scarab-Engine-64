@@ -58,7 +58,7 @@ private:
 
 public:
     // Document creation
-    XMLDocument * CreateDocument( const GChar * strTagName, const GChar * strVersion = XML_VERSION, const GChar * strEncoding = XML_ENCODING_DEFAULT );
+    XMLDocument * CreateDocument( const GChar * strTagName, const GChar * strVersion, const GChar * strEncoding = XML_ENCODING_DEFAULT );
     XMLDocument * CreateDocument( const GChar * strFile );
     XMLDocument * CreateDocumentXML( const GChar * strXML );
 

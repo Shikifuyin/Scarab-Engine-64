@@ -48,13 +48,17 @@ class RedBlackTree : public Datastruct
 {
 private:
     // nested node
+    typedef struct _red_black_sentinel_node
+    {
+        RBTreeColor iColor;
+    } RedBlackSentinelNode;
     typedef struct _red_black_node
     {
+        RBTreeColor iColor;
         struct _red_black_node * pParent;
         struct _red_black_node * pChild[2];
         struct _red_black_node * pPrev;
         struct _red_black_node * pNext;
-        RBTreeColor iColor;
         T Item;
     } RedBlackNode;
 
@@ -191,7 +195,7 @@ private:
 
     RedBlackNode *m_pHead, *m_pEnd;
 
-    static RedBlackNode sm_SentinelNode;
+    static RedBlackSentinelNode sm_SentinelNode;
     static RedBlackNode * RBTREE_LEAF;
 };
 

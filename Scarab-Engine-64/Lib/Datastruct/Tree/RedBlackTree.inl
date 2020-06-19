@@ -21,9 +21,9 @@ template<typename T>
 typename const RedBlackTree<T>::Iterator RedBlackTree<T>::Iterator::Null = Iterator();
 
 template<typename T>
-typename RedBlackTree<T>::RedBlackNode RedBlackTree<T>::sm_SentinelNode = { NULL, { NULL, NULL }, NULL, NULL, RBTREE_COLOR_BLACK, T() };
+typename RedBlackTree<T>::RedBlackSentinelNode RedBlackTree<T>::sm_SentinelNode = { RBTREE_COLOR_BLACK };
 template<typename T>
-typename RedBlackTree<T>::RedBlackNode * RedBlackTree<T>::RBTREE_LEAF = &sm_SentinelNode;
+typename RedBlackTree<T>::RedBlackNode * RedBlackTree<T>::RBTREE_LEAF = (RedBlackTree<T>::RedBlackNode*)( &sm_SentinelNode );
 
 template<typename T>
 RedBlackTree<T>::RedBlackTree()

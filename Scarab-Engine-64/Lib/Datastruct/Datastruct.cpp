@@ -25,7 +25,7 @@ Datastruct::Datastruct()
 {
     // Default to shared scratch
     m_iMemoryContextID = MEMORY_CONTEXT_SHARED;
-    m_iAllocatorID = MemoryFn->GetSharedScratchAllocator();
+    m_iAllocatorID = 0; // MemoryFn->GetSharedScratchAllocator();
 }
 Datastruct::~Datastruct()
 {

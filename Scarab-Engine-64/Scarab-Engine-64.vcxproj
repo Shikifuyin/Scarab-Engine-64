@@ -244,6 +244,14 @@
     <ClInclude Include="ThirdParty\System\String.h" />
     <ClInclude Include="ThirdParty\System\System.h" />
     <ClInclude Include="ThirdParty\System\Threading.h" />
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIButton.h" />
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.h" />
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.h" />
+    <ClInclude Include="ThirdParty\WinGUI\Events\WinGUIEvent.h" />
+    <ClInclude Include="ThirdParty\WinGUI\Events\WinGUIEventProcessor.h" />
+    <ClInclude Include="ThirdParty\WinGUI\WinGUIContainer.h" />
+    <ClInclude Include="ThirdParty\WinGUI\WinGUIControl.h" />
+    <ClInclude Include="ThirdParty\WinGUI\WinGUIElement.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Lib\Datastruct\Array\Array.inl" />
@@ -331,6 +339,14 @@
     <None Include="ThirdParty\System\String.inl" />
     <None Include="ThirdParty\System\System.inl" />
     <None Include="ThirdParty\System\Threading.inl" />
+    <None Include="ThirdParty\WinGUI\Controls\WinGUIButton.inl" />
+    <None Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.inl" />
+    <None Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.inl" />
+    <None Include="ThirdParty\WinGUI\Events\WinGUIEvent.inl" />
+    <None Include="ThirdParty\WinGUI\Events\WinGUIEventProcessor.inl" />
+    <None Include="ThirdParty\WinGUI\WinGUIContainer.inl" />
+    <None Include="ThirdParty\WinGUI\WinGUIControl.inl" />
+    <None Include="ThirdParty\WinGUI\WinGUIElement.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Lib\Datastruct\Array\Array.cpp" />
@@ -418,6 +434,14 @@
     <ClCompile Include="ThirdParty\System\String.cpp" />
     <ClCompile Include="ThirdParty\System\System.cpp" />
     <ClCompile Include="ThirdParty\System\Threading.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIButton.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\Events\WinGUIEvent.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\Events\WinGUIEventProcessor.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\WinGUIContainer.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\WinGUIControl.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\WinGUIElement.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -196,7 +196,7 @@ Void WinGUITextEdit::_Create()
 
 	m_hHandle = CreateWindowEx (
 		0, WC_EDIT, pModel->GetInitialText(),
-		WS_VISIBLE | WS_CHILD | WS_TABSTOP | dwStyle,
+		WS_VISIBLE | WS_CHILD | WS_TABSTOP | WS_BORDER | dwStyle,
 		pModel->GetPositionX(),	pModel->GetPositionY(),
 		pModel->GetWidth(), pModel->GetHeight(),
 		hParentWnd, (HMENU)m_iResourceID,

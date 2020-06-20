@@ -4,7 +4,7 @@
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Windows GUI Controls Base Interface
+// Description : Windows GUI Element : Controls
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -30,6 +30,7 @@
 WinGUIControlModel::WinGUIControlModel( Int iResourceID ):
 	WinGUIElementModel(iResourceID)
 {
+	// nothing to do
 }
 WinGUIControlModel::~WinGUIControlModel()
 {
@@ -38,10 +39,10 @@ WinGUIControlModel::~WinGUIControlModel()
 
 /////////////////////////////////////////////////////////////////////////////////
 // WinGUIControl implementation
-WinGUIControl::WinGUIControl( WinGUIControlModel * pModel ):
-	WinGUIElement(pModel)
+WinGUIControl::WinGUIControl( WinGUIElement * pParent, WinGUIControlModel * pModel ):
+	WinGUIElement(pParent, pModel)
 {
-	m_pParent = NULL;
+	// nothing to do
 }
 WinGUIControl::~WinGUIControl()
 {

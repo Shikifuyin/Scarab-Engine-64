@@ -16,6 +16,11 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
+// Third-Party Includes
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+/////////////////////////////////////////////////////////////////////////////////
 // Includes
 #include "WinGUIElement.h"
 
@@ -34,20 +39,40 @@ WinGUIElementModel::~WinGUIElementModel()
 
 /////////////////////////////////////////////////////////////////////////////////
 // WinGUIElement implementation
-WinGUIElement::WinGUIElement( WinGUIElementModel * pModel )
+WinGUIElement::WinGUIElement( WinGUIElement * pParent, WinGUIElementModel * pModel )
 {
 	// Link with Model
 	m_pModel = pModel;
 	pModel->m_pView = this;
 
+	// Parent Link
+	m_pParent = pParent;
+
 	// Start uninitialized
 	m_hHandle = NULL;
 
 	// Pick Resource Identifier
-	m_iResourceID = m_pModel->_GetResourceID();
+	m_iResourceID = m_pModel->m_iResourceID;
 }
 WinGUIElement::~WinGUIElement()
 {
-	// nothing to do
+	DebugAssert( m_hHandle == NULL );
+
+	// Unnlink with Model
+	m_pModel->m_pView = NULL;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+Void WinGUIElement::_SaveElementToHandle() const
+{
+	DebugAssert( m_hHandle != NULL );
+	SetWindowLongPtr( (HWND)m_hHandle, GWLP_USERDATA, (LONG_PTR)this );
+}
+WinGUIElement * WinGUIElement::_GetElementFromHandle( Void * hHandle )
+{
+	WinGUIElement * pElement = (WinGUIElement*)( GetWindowLongPtr((HWND)hHandle, GWLP_USERDATA) );
+	DebugAssert( pElement->m_hHandle == hHandle );
+	return pElement;
 }
 

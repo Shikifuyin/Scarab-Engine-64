@@ -4,7 +4,7 @@
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Windows GUI Container Base Interface
+// Description : Windows GUI Element : Containers
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -32,7 +32,7 @@
 class WinGUIContainerModel;
 class WinGUIContainer;
 
-class WinGUIControl;
+class WinGUI;
 
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUIContainerModel class
@@ -54,39 +54,35 @@ protected:
 class WinGUIContainer : public WinGUIElement
 {
 public:
-	WinGUIContainer( WinGUIContainerModel * pModel );
+	WinGUIContainer( WinGUIElement * pParent, WinGUIContainerModel * pModel );
 	virtual ~WinGUIContainer();
 
 	// Type
 	inline virtual WinGUIElementType GetElementType() const;
 
-	// Parent access
-	inline WinGUIContainer * GetParent() const;
-
 	// Children access
-	inline UInt GetChildlCount() const;
+	inline UInt GetChildCount() const;
 	inline WinGUIElement * GetChild( UInt iIndex ) const;
 
 	WinGUIElement * GetChildByID( Int iResourceID ) const;
 
-protected: 
-	// Parent Container
-	WinGUIContainer * m_pParent;
-
-	// Child Elements
-	UInt m_iChildCount;
-	WinGUIElement * m_arrChildren[WINGUI_CONTAINER_MAX_CHILDREN];
-
 private:
+	friend class WinGUI;
+
 	// Create/Destroy Interface
 	virtual Void _Create();
 	virtual Void _Destroy();
 
 	// Event Handling
-	WinGUIControl * _SearchControl( Int iResourceID ) const;
-
 	static UIntPtr __stdcall _MessageCallback_Static( Void * hHandle, UInt iMessage, UIntPtr wParam, UIntPtr lParam );
     UIntPtr __stdcall _MessageCallback_Virtual( Void * hHandle, UInt iMessage, UIntPtr wParam, UIntPtr lParam );
+
+	// Child Elements
+	Void _AppendChild( WinGUIElement * pElement );
+	Void _RemoveChild( WinGUIElement * pElement );
+
+	UInt m_iChildCount;
+	WinGUIElement * m_arrChildren[WINGUI_CONTAINER_MAX_CHILDREN];
 };
 
 /////////////////////////////////////////////////////////////////////////////////

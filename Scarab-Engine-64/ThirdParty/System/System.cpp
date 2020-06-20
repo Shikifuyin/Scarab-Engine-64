@@ -43,6 +43,21 @@
 #include "System.h"
 
 /////////////////////////////////////////////////////////////////////////////////
+// Memory Allocation
+Void * operator new( SizeT iSize, Void * pAddress )
+{
+    return pAddress;
+}
+Void operator delete( Void * pAddress, Void * )
+{
+    SystemFn->MemFree( pAddress );
+}
+Void operator delete[]( Void * pAddress, Void * )
+{
+    SystemFn->MemFree( pAddress );
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // Internal Helpers
 Void _ConvertTimeDate( TimeDate * outTimeDate, const SYSTEMTIME * pSystemTime )
 {

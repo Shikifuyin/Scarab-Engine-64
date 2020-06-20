@@ -4,7 +4,7 @@
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Windows GUI Controls Base Interface
+// Description : Windows GUI Element : Controls
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -24,7 +24,5 @@ inline WinGUIElementType WinGUIControl::GetElementType() const {
 	return WINGUI_ELEMENT_CONTROL;
 }
 
-inline WinGUIContainer * WinGUIControl::GetParent() const {
-	return m_pParent;
-}
+
 

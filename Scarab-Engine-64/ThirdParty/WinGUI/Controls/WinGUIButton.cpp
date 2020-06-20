@@ -26,6 +26,8 @@
 // Includes
 #include "WinGUIButton.h"
 
+#pragma warning(disable:4312) // Int to HMENU cast
+
 /////////////////////////////////////////////////////////////////////////////////
 // WinGUIButtonModel implementation
 WinGUIButtonModel::WinGUIButtonModel( Int iResourceID ):
@@ -40,8 +42,8 @@ WinGUIButtonModel::~WinGUIButtonModel()
 
 /////////////////////////////////////////////////////////////////////////////////
 // WinGUIButton implementation
-WinGUIButton::WinGUIButton( WinGUIButtonModel * pModel ):
-	WinGUIControl(pModel)
+WinGUIButton::WinGUIButton( WinGUIElement * pParent, WinGUIButtonModel * pModel ):
+	WinGUIControl(pParent, pModel)
 {
 	// nothing to do
 }
@@ -81,8 +83,10 @@ Void WinGUIButton::SetText( const GChar * strText )
 
 Void WinGUIButton::_Create()
 {
+	DebugAssert( m_hHandle == NULL );
+
 	WinGUIButtonModel * pModel = (WinGUIButtonModel*)m_pModel;
-	HWND hParentWnd = (HWND)( m_pParent->m_hHandle );
+	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
 	m_hHandle = CreateWindowEx (
 		0, L"BUTTON", pModel->GetText(),
@@ -94,9 +98,14 @@ Void WinGUIButton::_Create()
 		this
 	);
 	DebugAssert( m_hHandle != NULL );
+
+	// Done
+	_SaveElementToHandle();
 }
 Void WinGUIButton::_Destroy()
 {
+	DebugAssert( m_hHandle != NULL );
+
 	DestroyWindow( (HWND)m_hHandle );
 	m_hHandle = NULL;
 }

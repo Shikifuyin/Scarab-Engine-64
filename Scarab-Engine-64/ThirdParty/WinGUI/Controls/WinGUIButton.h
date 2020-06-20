@@ -56,7 +56,7 @@ protected:
 class WinGUIButton : public WinGUIControl
 {
 public:
-	WinGUIButton( WinGUIButtonModel * pModel );
+	WinGUIButton( WinGUIElement * pParent, WinGUIButtonModel * pModel );
 	virtual ~WinGUIButton();
 
 	// Enable / Disable
@@ -69,6 +69,7 @@ public:
 	Void SetText( const GChar * strText );
 
 private:
+	// Create/Destroy Interface
 	virtual Void _Create();
 	virtual Void _Destroy();
 

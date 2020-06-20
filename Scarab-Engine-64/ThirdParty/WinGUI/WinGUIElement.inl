@@ -22,16 +22,22 @@ inline WinGUIElement * WinGUIElementModel::GetView() const {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-
-inline Int WinGUIElementModel::_GetResourceID() const {
-	return m_iResourceID;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
 // WinGUIElement implementation
 inline WinGUIElementModel * WinGUIElement::GetModel() const {
 	return m_pModel;
 }
 
+inline WinGUIElement * WinGUIElement::GetParent() const {
+	return m_pParent;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+inline Void * WinGUIElement::_GetHandle( const WinGUIElement * pElement ) {
+	return pElement->m_hHandle;
+}
+inline Int WinGUIElement::_GetResourceID( const WinGUIElement * pElement ) {
+	return pElement->m_iResourceID;
+}
 
 

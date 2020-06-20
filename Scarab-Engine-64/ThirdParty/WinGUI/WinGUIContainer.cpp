@@ -4,7 +4,7 @@
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Windows GUI Container Base Interface
+// Description : Windows GUI Element : Containers
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -31,6 +31,7 @@
 WinGUIContainerModel::WinGUIContainerModel( Int iResourceID ):
 	WinGUIElementModel(iResourceID)
 {
+	// nothing to do
 }
 WinGUIContainerModel::~WinGUIContainerModel()
 {
@@ -39,11 +40,10 @@ WinGUIContainerModel::~WinGUIContainerModel()
 
 /////////////////////////////////////////////////////////////////////////////////
 // WinGUIContainer implementation
-WinGUIContainer::WinGUIContainer( WinGUIContainerModel * pModel ):
-	WinGUIElement(pModel)
+WinGUIContainer::WinGUIContainer( WinGUIElement * pParent, WinGUIContainerModel * pModel ):
+	WinGUIElement(pParent, pModel)
 {
-	m_pParent = NULL;
-
+    // Children Links
 	m_iChildCount = 0;
 	for( UInt i = 0; i < WINGUI_CONTAINER_MAX_CHILDREN; ++i )
 		m_arrChildren[i] = NULL;
@@ -57,7 +57,7 @@ WinGUIElement * WinGUIContainer::GetChildByID( Int iResourceID ) const
 {
 	for ( UInt i = 0; i < m_iChildCount; ++i ) {
 		WinGUIElement * pChild = m_arrChildren[i];
-		if ( pChild->m_iResourceID == iResourceID )
+		if ( _GetResourceID(pChild) == iResourceID )
 			return pChild;
 	}
 	return NULL;
@@ -67,35 +67,21 @@ WinGUIElement * WinGUIContainer::GetChildByID( Int iResourceID ) const
 
 Void WinGUIContainer::_Create()
 {
+    DebugAssert( m_hHandle == NULL );
+
+    //////////
+
+    // Done
+    _SaveElementToHandle();
 }
 Void WinGUIContainer::_Destroy()
 {
-}
+    DebugAssert( m_hHandle != NULL );
 
-WinGUIControl * WinGUIContainer::_SearchControl( Int iResourceID ) const
-{
-    // Lookup Children
-    for ( UInt i = 0; i < m_iChildCount; ++i ) {
-        WinGUIElement * pChild = m_arrChildren[i];
+    //DestroyWindow( (HWND)m_hHandle );
+    m_hHandle = NULL;
 
-        // Check for Control case
-        if ( pChild->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
-            WinGUIControl * pControl = (WinGUIControl*)pChild;
-            if ( pControl->m_iResourceID == iResourceID )
-                return pControl;
-        }
-
-        // Recurse on Containers
-        if ( pChild->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
-            WinGUIContainer * pContainer = (WinGUIContainer*)pChild;
-            WinGUIControl * pControl = pContainer->_SearchControl( iResourceID );
-            if ( pControl != NULL )
-                return pControl;
-        }
-    }
-
-    // Not Found
-    return NULL;
+    //UnregisterClass(  );
 }
 
 UIntPtr __stdcall WinGUIContainer::_MessageCallback_Static( Void * hHandle, UInt iMessage, UIntPtr wParam, UIntPtr lParam )
@@ -250,34 +236,38 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UIn
 
         // Command messages
         case WM_COMMAND: {
-                // Triggered by Child Control, find which one
                 HWND hCallerHandle = (HWND)lParam;
                 Int iCallerResourceID = (Int)( LOWORD(wParam) );
                 Int iNotificationCode = (Int)( HIWORD(wParam) );
 
-                // Search the Caller
-                WinGUIControl * pControl = _SearchControl( iCallerResourceID );
+                // Retrieve Caller Element
+                WinGUIElement * pCallerElement = _GetElementFromHandle( hCallerHandle );
+                DebugAssert( _GetResourceID(pCallerElement) == iCallerResourceID );
 
                 // Dispatch message to the Control
-                Bool bDone = pControl->_DispatchEvent( iNotificationCode );
-                if ( bDone )
-                    return 0;
+                if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
+                    WinGUIControl * pCallerControl = (WinGUIControl*)pCallerElement;
+                    if ( pCallerControl->_DispatchEvent( iNotificationCode ) )
+                        return 0;
+                }
             } break;
 
         // Notify messages
         case WM_NOTIFY: {
-                // Triggered by Child Control
                 HWND hCallerHandle = (HWND)lParam;
                 Int iCallerResourceID = (Int)( LOWORD(wParam) );
                 Int iNotificationCode = (Int)( HIWORD(wParam) );
-                
-                // Search the Caller
-                WinGUIControl * pControl = _SearchControl( iCallerResourceID );
+
+                // Retrieve Caller Element
+                WinGUIElement * pCallerElement = _GetElementFromHandle( hCallerHandle );
+                DebugAssert( _GetResourceID(pCallerElement) == iCallerResourceID );
 
                 // Dispatch message to the Control
-                Bool bDone = pControl->_DispatchEvent( iNotificationCode );
-                if ( bDone )
-                    return 0;
+                if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
+                    WinGUIControl * pCallerControl = (WinGUIControl*)pCallerElement;
+                    if ( pCallerControl->_DispatchEvent( iNotificationCode ) )
+                        return 0;
+                }
             } break;
 
         // Menu messages
@@ -296,13 +286,31 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UIn
         case WM_DESTROY: {
                 //PostQuitMessage(0);
             } break;
-        case WM_QUIT: {
-                // Message loop exit-case, never goes here
-            } break;
         default: break;
     }
 
     // Message wasn't handled by application
     return DefWindowProc( (HWND)hHandle, iMessage, wParam, lParam );
+}
+
+Void WinGUIContainer::_AppendChild( WinGUIElement * pElement )
+{
+    DebugAssert( m_iChildCount < WINGUI_CONTAINER_MAX_CHILDREN );
+
+    m_arrChildren[m_iChildCount] = pElement;
+    ++m_iChildCount;
+}
+Void WinGUIContainer::_RemoveChild( WinGUIElement * pElement )
+{
+    UInt iIndex;
+    for( iIndex = 0; iIndex < m_iChildCount; ++iIndex ) {
+        if ( m_arrChildren[iIndex] == pElement )
+            break;
+    }
+    DebugAssert( iIndex < m_iChildCount );
+
+    m_arrChildren[iIndex] = m_arrChildren[m_iChildCount - 1];
+    m_arrChildren[m_iChildCount - 1] = NULL;
+    --m_iChildCount;
 }
 

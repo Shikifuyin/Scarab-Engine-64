@@ -4,7 +4,7 @@
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Windows GUI Controls Base Interface
+// Description : Windows GUI Element : Controls
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -35,6 +35,7 @@ enum WinGUIControlType {
 class WinGUIControlModel;
 class WinGUIControl;
 
+class WinGUIWindow;
 class WinGUIContainer;
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -55,22 +56,17 @@ protected:
 class WinGUIControl : public WinGUIElement
 {
 public:
-	WinGUIControl( WinGUIControlModel * pModel );
+	WinGUIControl( WinGUIElement * pParent, WinGUIControlModel * pModel );
 	virtual ~WinGUIControl();
 
 	// Type
 	inline virtual WinGUIElementType GetElementType() const;
 
-	// Parent access
-	inline WinGUIContainer * GetParent() const;
-
 protected:
 	// Event Dispatch
+	friend class WinGUIWindow;
 	friend class WinGUIContainer;
 	virtual Bool _DispatchEvent( Int iNotificationCode ) = 0;
-
-	// Parent Container
-	WinGUIContainer * m_pParent;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

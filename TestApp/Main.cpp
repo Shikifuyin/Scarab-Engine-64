@@ -16,14 +16,30 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
+// Third-Party Includes
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+/////////////////////////////////////////////////////////////////////////////////
 // Includes
+#include "Main.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Entry Point
-int main()
+int APIENTRY wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow )
 {
+    UNREFERENCED_PARAMETER(hPrevInstance);
+    UNREFERENCED_PARAMETER(lpCmdLine);
 
+    MyWindowModel hAppWindowModel;
+    WinGUIFn->CreateAppWindow( &hAppWindowModel );
+    WinGUIWindow * pAppWindow = WinGUIFn->GetAppWindow();
 
-	return 0;
+    MyButtonModel hButtonModel;
+    WinGUIFn->CreateButton( pAppWindow, &hButtonModel );
+
+    pAppWindow->SetVisible( true );
+
+    return WinGUIFn->MessageLoop();
 }
 

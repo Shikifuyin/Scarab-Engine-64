@@ -29,13 +29,16 @@
 
 // Element Types
 enum WinGUIElementType {
-	WINGUI_ELEMENT_CONTAINER = 0,
+	WINGUI_ELEMENT_WINDOW = 0,
+	WINGUI_ELEMENT_CONTAINER,
 	WINGUI_ELEMENT_CONTROL
 };
 
 // Prototypes
 class WinGUIElementModel;
 class WinGUIElement;
+
+class WinGUI;
 
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUIContainerModel class
@@ -48,11 +51,9 @@ public:
 	inline WinGUIElement * GetView() const;
 
 protected:
-	// Internal Access
-	inline Int _GetResourceID() const;
+	friend class WinGUIElement;
 
 	// Model <-> View linkage
-	friend class WinGUIElement;
 	WinGUIElement * m_pView;
 
 private:
@@ -64,7 +65,7 @@ private:
 class WinGUIElement
 {
 public:
-	WinGUIElement( WinGUIElementModel * pModel );
+	WinGUIElement( WinGUIElement * pParent, WinGUIElementModel * pModel );
 	virtual ~WinGUIElement();
 
 	// Type
@@ -73,15 +74,28 @@ public:
 	// Model access
 	inline WinGUIElementModel * GetModel() const;
 
+	// Parent access
+	inline WinGUIElement * GetParent() const;
+
 protected:
 	// Create/Destroy Interface
+	friend class WinGUI;
 	virtual Void _Create() = 0;
 	virtual Void _Destroy() = 0;
 
 	// Model <-> View linkage
 	WinGUIElementModel * m_pModel;
 
+	// Parent Element
+	WinGUIElement * m_pParent;
+
 	// Windows GUI Handles
+	Void _SaveElementToHandle() const; // _Create must always call this !
+	static WinGUIElement * _GetElementFromHandle( Void * hHandle );
+
+	inline static Void * _GetHandle( const WinGUIElement * pElement );
+	inline static Int _GetResourceID( const WinGUIElement * pElement );
+
 	Void * m_hHandle; // HWND
 	Int m_iResourceID;
 };

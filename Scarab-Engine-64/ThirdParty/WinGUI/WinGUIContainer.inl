@@ -4,7 +4,7 @@
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Windows GUI Container Base Interface
+// Description : Windows GUI Element : Containers
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -24,11 +24,7 @@ inline WinGUIElementType WinGUIContainer::GetElementType() const {
 	return WINGUI_ELEMENT_CONTAINER;
 }
 
-inline WinGUIContainer * WinGUIContainer::GetParent() const {
-	return m_pParent;
-}
-
-inline UInt WinGUIContainer::GetChildlCount() const {
+inline UInt WinGUIContainer::GetChildCount() const {
 	return m_iChildCount;
 }
 inline WinGUIElement * WinGUIContainer::GetChild( UInt iIndex ) const {

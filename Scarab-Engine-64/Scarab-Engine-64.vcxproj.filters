@@ -211,12 +211,6 @@
     <Filter Include="Source Files\ThirdParty\WinGUI">
       <UniqueIdentifier>{1831c4bb-c4b1-4a58-ad68-f8f6da185dca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ThirdParty\WinGUI\Events">
-      <UniqueIdentifier>{a154a24e-6b3d-4174-9665-88e471de46e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ThirdParty\WinGUI\Events">
-      <UniqueIdentifier>{bb9d85d0-cdd6-4090-a3de-71e54474a0b4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\ThirdParty\WinGUI\Controls">
       <UniqueIdentifier>{72ec2f75-136f-4d1c-8ce5-a81094c44412}</UniqueIdentifier>
     </Filter>
@@ -480,28 +474,22 @@
     <ClInclude Include="Lib\File\XML\XMLDocument.h">
       <Filter>Header Files\Lib\File\XML</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\WinGUI\Events\WinGUIEvent.h">
-      <Filter>Header Files\ThirdParty\WinGUI\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\WinGUI\Events\WinGUIEventProcessor.h">
-      <Filter>Header Files\ThirdParty\WinGUI\Events</Filter>
-    </ClInclude>
     <ClInclude Include="ThirdParty\WinGUI\WinGUIControl.h">
       <Filter>Header Files\ThirdParty\WinGUI</Filter>
     </ClInclude>
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIButton.h">
       <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.h">
-      <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.h">
-      <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="ThirdParty\WinGUI\WinGUIContainer.h">
       <Filter>Header Files\ThirdParty\WinGUI</Filter>
     </ClInclude>
     <ClInclude Include="ThirdParty\WinGUI\WinGUIElement.h">
+      <Filter>Header Files\ThirdParty\WinGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\WinGUI\WinGUIWindow.h">
+      <Filter>Header Files\ThirdParty\WinGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\WinGUI\WinGUI.h">
       <Filter>Header Files\ThirdParty\WinGUI</Filter>
     </ClInclude>
   </ItemGroup>
@@ -761,28 +749,22 @@
     <None Include="Lib\File\XML\XMLDocument.inl">
       <Filter>Source Files\Lib\File\XML</Filter>
     </None>
-    <None Include="ThirdParty\WinGUI\Events\WinGUIEvent.inl">
-      <Filter>Source Files\ThirdParty\WinGUI\Events</Filter>
-    </None>
-    <None Include="ThirdParty\WinGUI\Events\WinGUIEventProcessor.inl">
-      <Filter>Source Files\ThirdParty\WinGUI\Events</Filter>
-    </None>
     <None Include="ThirdParty\WinGUI\WinGUIControl.inl">
       <Filter>Source Files\ThirdParty\WinGUI</Filter>
     </None>
     <None Include="ThirdParty\WinGUI\Controls\WinGUIButton.inl">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </None>
-    <None Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.inl">
-      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
-    </None>
-    <None Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.inl">
-      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
-    </None>
     <None Include="ThirdParty\WinGUI\WinGUIContainer.inl">
       <Filter>Source Files\ThirdParty\WinGUI</Filter>
     </None>
     <None Include="ThirdParty\WinGUI\WinGUIElement.inl">
+      <Filter>Source Files\ThirdParty\WinGUI</Filter>
+    </None>
+    <None Include="ThirdParty\WinGUI\WinGUIWindow.inl">
+      <Filter>Source Files\ThirdParty\WinGUI</Filter>
+    </None>
+    <None Include="ThirdParty\WinGUI\WinGUI.inl">
       <Filter>Source Files\ThirdParty\WinGUI</Filter>
     </None>
   </ItemGroup>
@@ -1042,28 +1024,22 @@
     <ClCompile Include="Lib\File\XML\XMLDocument.cpp">
       <Filter>Source Files\Lib\File\XML</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\WinGUI\Events\WinGUIEvent.cpp">
-      <Filter>Source Files\ThirdParty\WinGUI\Events</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\WinGUI\Events\WinGUIEventProcessor.cpp">
-      <Filter>Source Files\ThirdParty\WinGUI\Events</Filter>
-    </ClCompile>
     <ClCompile Include="ThirdParty\WinGUI\WinGUIControl.cpp">
       <Filter>Source Files\ThirdParty\WinGUI</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIButton.cpp">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.cpp">
-      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.cpp">
-      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
-    </ClCompile>
     <ClCompile Include="ThirdParty\WinGUI\WinGUIContainer.cpp">
       <Filter>Source Files\ThirdParty\WinGUI</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\WinGUI\WinGUIElement.cpp">
+      <Filter>Source Files\ThirdParty\WinGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\WinGUI\WinGUIWindow.cpp">
+      <Filter>Source Files\ThirdParty\WinGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\WinGUI\WinGUI.cpp">
       <Filter>Source Files\ThirdParty\WinGUI</Filter>
     </ClCompile>
   </ItemGroup>

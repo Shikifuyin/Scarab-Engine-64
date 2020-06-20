@@ -242,13 +242,15 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UIn
 
                 // Retrieve Caller Element
                 WinGUIElement * pCallerElement = _GetElementFromHandle( hCallerHandle );
-                DebugAssert( _GetResourceID(pCallerElement) == iCallerResourceID );
+                if ( pCallerElement != NULL ) {
+                    DebugAssert( _GetResourceID( pCallerElement ) == iCallerResourceID );
 
-                // Dispatch message to the Control
-                if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
-                    WinGUIControl * pCallerControl = (WinGUIControl*)pCallerElement;
-                    if ( pCallerControl->_DispatchEvent( iNotificationCode ) )
-                        return 0;
+                    // Dispatch message to the Control
+                    if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
+                        WinGUIControl * pCallerControl = (WinGUIControl *)pCallerElement;
+                        if ( pCallerControl->_DispatchEvent( iNotificationCode ) )
+                            return 0;
+                    }
                 }
             } break;
 
@@ -261,13 +263,15 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UIn
 
                 // Retrieve Caller Element
                 WinGUIElement * pCallerElement = _GetElementFromHandle( hCallerHandle );
-                DebugAssert( _GetResourceID(pCallerElement) == iCallerResourceID );
+                if ( pCallerElement != NULL ) {
+                    DebugAssert( _GetResourceID( pCallerElement ) == iCallerResourceID );
 
-                // Dispatch message to the Control
-                if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
-                    WinGUIControl * pCallerControl = (WinGUIControl*)pCallerElement;
-                    if ( pCallerControl->_DispatchEvent( iNotificationCode ) )
-                        return 0;
+                    // Dispatch message to the Control
+                    if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
+                        WinGUIControl * pCallerControl = (WinGUIControl *)pCallerElement;
+                        if ( pCallerControl->_DispatchEvent( iNotificationCode ) )
+                            return 0;
+                    }
                 }
             } break;
 

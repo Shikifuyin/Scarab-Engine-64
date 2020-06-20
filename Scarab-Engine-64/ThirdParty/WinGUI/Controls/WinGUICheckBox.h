@@ -63,7 +63,7 @@ public:
 	Void Enable();
 	Void Disable();
 
-	// Button Text
+	// Label Text
 	UInt GetTextLength() const;
 	Void GetText( GChar * outText, UInt iMaxLength ) const;
 	Void SetText( const GChar * strText );

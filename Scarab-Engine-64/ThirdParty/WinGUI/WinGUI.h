@@ -28,9 +28,13 @@
 #include "WinGUIContainer.h"
 #include "WinGUIControl.h"
 
+#include "Controls/WinGUIGroupBox.h"
+
 #include "Controls/WinGUIButton.h"
 #include "Controls/WinGUICheckBox.h"
 #include "Controls/WinGUIRadioButton.h"
+
+#include "Controls/WinGUITextEdit.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
@@ -94,9 +98,13 @@ public:
     WinGUIContainer * CreateContainer( WinGUIElement * pParent, WinGUIContainerModel * pModel ) const;
 
     // Controls
+    WinGUIGroupBox * CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const;
+
     WinGUIButton * CreateButton( WinGUIElement * pParent, WinGUIButtonModel * pModel ) const;
     WinGUICheckBox * CreateCheckBox( WinGUIElement * pParent, WinGUICheckBoxModel * pModel ) const;
     WinGUIRadioButton * CreateRadioButton( WinGUIElement * pParent, WinGUIRadioButtonModel * pModel ) const;
+
+    WinGUITextEdit * CreateTextEdit( WinGUIElement * pParent, WinGUITextEditModel * pModel ) const;
 
     // Element Removal
     Void DestroyElement( WinGUIElement * pElement ) const;

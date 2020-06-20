@@ -1,10 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////////
-// File : ThirdParty/WinGUI/Controls/WinGUIRadioButton.h
+// File : ThirdParty/WinGUI/Controls/WinGUIGroupBox.h
 /////////////////////////////////////////////////////////////////////////////////
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Windows GUI Control : Radio Button
+// Description : Windows GUI Control : GroupBox
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -17,8 +17,8 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Header prelude
-#ifndef SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUIRADIOBUTTON_H
-#define SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUIRADIOBUTTON_H
+#ifndef SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUIGROUPBOX_H
+#define SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUIGROUPBOX_H
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
@@ -26,24 +26,14 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
-#define WINGUI_RADIO_BUTTON_MAX_GROUP_SIZE 8 // If you need more, use a combo box !
-
-// Prototypes
-class WinGUIRadioButtonModel;
-class WinGUIRadioButton;
-class WinGUIRadioButtonGroup;
 
 /////////////////////////////////////////////////////////////////////////////////
-// The WinGUIRadioButtonModel class
-class WinGUIRadioButtonModel : public WinGUIControlModel
+// The WinGUIGroupBoxModel class
+class WinGUIGroupBoxModel : public WinGUIControlModel
 {
 public:
-	WinGUIRadioButtonModel( Int iResourceID );
-	virtual ~WinGUIRadioButtonModel();
-
-	// Events
-	virtual Bool OnClick() = 0;
-	virtual Bool OnDblClick() = 0;
+	WinGUIGroupBoxModel( Int iResourceID );
+	virtual ~WinGUIGroupBoxModel();
 
 	// View
 	virtual const GChar * GetText() const = 0;
@@ -58,66 +48,35 @@ protected:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-// The WinGUIRadioButton class
-class WinGUIRadioButton : public WinGUIControl
+// The WinGUIGroupBox class
+class WinGUIGroupBox : public WinGUIControl
 {
 public:
-	WinGUIRadioButton( WinGUIElement * pParent, WinGUIRadioButtonModel * pModel );
-	virtual ~WinGUIRadioButton();
-
-	// Radio Button Group Access
-	inline WinGUIRadioButtonGroup * GetGroup() const;
-	inline Void SetGroup( WinGUIRadioButtonGroup * pGroup );
-
-	// Enable / Disable
-	Void Enable();
-	Void Disable();
+	WinGUIGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel );
+	virtual ~WinGUIGroupBox();
 
 	// Label Text
 	UInt GetTextLength() const;
 	Void GetText( GChar * outText, UInt iMaxLength ) const;
 	Void SetText( const GChar * strText );
 
-	// State
-	Bool IsChecked() const;
-	Void Check(); // Auto-Uncheck other Buttons in the Group
+	// Client Area
+	Void GetClientArea( UInt * outLeft, UInt * outTop, UInt * outRight, UInt * outBottom, Int iPadding ) const;
 
 private:
-    // Create/Destroy Interface
+	// Create/Destroy Interface
 	virtual Void _Create();
 	virtual Void _Destroy();
 
 	// Event Dispatch
 	virtual Bool _DispatchEvent( Int iNotificationCode );
-
-	// Radio Button Group
-	friend class WinGUIRadioButtonGroup;
-	WinGUIRadioButtonGroup * m_pRadioButtonGroup;
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-// The WinGUIRadioButtonGroup class
-class WinGUIRadioButtonGroup
-{
-public:
-	WinGUIRadioButtonGroup();
-	~WinGUIRadioButtonGroup();
-
-	inline UInt GetButtonCount() const;
-	inline WinGUIRadioButton * GetButton( UInt iIndex ) const;
-
-	Void AddButton( WinGUIRadioButton * pButton );
-
-private:
-	UInt m_iButtonCount;
-	WinGUIRadioButton * m_arrRadioButtons[WINGUI_RADIO_BUTTON_MAX_GROUP_SIZE];
 };
 
 /////////////////////////////////////////////////////////////////////////////////
 // Backward Includes (Inlines & Templates)
-#include "WinGUIRadioButton.inl"
+#include "WinGUIGroupBox.inl"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Header end
-#endif // SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUIRADIOBUTTON_H
+#endif // SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUIGROUPBOX_H
 

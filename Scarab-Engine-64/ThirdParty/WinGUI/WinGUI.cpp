@@ -163,6 +163,29 @@ WinGUIContainer * WinGUI::CreateContainer( WinGUIElement * pParent, WinGUIContai
     return NULL;
 }
 
+WinGUIGroupBox * WinGUI::CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIGroupBox) );
+    WinGUIGroupBox * pGroupBox = new(pMemory) WinGUIGroupBox( pParent, pModel );
+
+    ((WinGUIElement*)pGroupBox)->_Create();
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pGroupBox );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pGroupBox );
+    }
+
+    // Done
+    return pGroupBox;
+}
+
 WinGUIButton * WinGUI::CreateButton( WinGUIElement * pParent, WinGUIButtonModel * pModel ) const
 {
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
@@ -228,6 +251,29 @@ WinGUIRadioButton * WinGUI::CreateRadioButton( WinGUIElement * pParent, WinGUIRa
 
     // Done
     return pRadioButton;
+}
+
+WinGUITextEdit * WinGUI::CreateTextEdit( WinGUIElement * pParent, WinGUITextEditModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUITextEdit) );
+    WinGUITextEdit * pTextEdit = new(pMemory) WinGUITextEdit( pParent, pModel );
+
+    ((WinGUIElement*)pTextEdit)->_Create();
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pTextEdit );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pTextEdit );
+    }
+
+    // Done
+    return pTextEdit;
 }
 
 Void WinGUI::DestroyElement( WinGUIElement * pElement ) const

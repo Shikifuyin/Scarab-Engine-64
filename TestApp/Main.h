@@ -27,13 +27,14 @@
 
 #define RESID_CHECKBOX_TEST 102
 
-#define RESID_RADIOBUTTON_A_TEST 103
-#define RESID_RADIOBUTTON_B_TEST 104
+#define RESID_GROUPBOX_TEST 103
+
+#define RESID_RADIOBUTTON_A_TEST 104
+#define RESID_RADIOBUTTON_B_TEST 105
+
+#define RESID_TEXTEDIT_TEST 106
 
 // Prototypes
-class MyButtonModel;
-class MyCheckBoxModel;
-class MyWindowModel;
 class MyApplication;
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -101,16 +102,36 @@ public:
 	~MyCheckBoxModel();
 
 	// Events
-	virtual Bool OnClick() { return false; }
+	virtual Bool OnClick();
 	virtual Bool OnDblClick() { return false; }
 
 	// View
-	virtual const GChar * GetText() const { return TEXT("Above Button does something."); }
+	virtual const GChar * GetText() const { return TEXT("Enable TextEdit"); }
 
 	virtual UInt GetPositionX() const { return 10; }
 	virtual UInt GetPositionY() const { return 50; }
 	virtual UInt GetWidth() const { return 100; }
 	virtual UInt GetHeight() const { return 30; }
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The MyGroupBoxModel class
+class MyGroupBoxModel : public WinGUIGroupBoxModel
+{
+public:
+	MyGroupBoxModel( MyApplication * pApplication );
+	~MyGroupBoxModel();
+
+	// View
+	virtual const GChar * GetText() const { return TEXT("Choose One :"); }
+
+	virtual UInt GetPositionX() const { return 10; }
+	virtual UInt GetPositionY() const { return 80; }
+	virtual UInt GetWidth() const { return 100; }
+	virtual UInt GetHeight() const { return 100; }
 
 private:
 	MyApplication * m_pApplication;
@@ -131,10 +152,10 @@ public:
 	// View
 	virtual const GChar * GetText() const { return TEXT("Option A"); }
 
-	virtual UInt GetPositionX() const { return 10; }
-	virtual UInt GetPositionY() const { return 80; }
-	virtual UInt GetWidth() const { return 100; }
-	virtual UInt GetHeight() const { return 30; }
+	virtual UInt GetPositionX() const;
+	virtual UInt GetPositionY() const;
+	virtual UInt GetWidth() const;
+	virtual UInt GetHeight() const;
 
 private:
 	MyApplication * m_pApplication;
@@ -155,10 +176,41 @@ public:
 	// View
 	virtual const GChar * GetText() const { return TEXT("Option B"); }
 
+	virtual UInt GetPositionX() const;
+	virtual UInt GetPositionY() const;
+	virtual UInt GetWidth() const;
+	virtual UInt GetHeight() const;
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The MyTextEditModel class
+class MyTextEditModel : public WinGUITextEditModel
+{
+public:
+	MyTextEditModel( MyApplication * pApplication );
+	~MyTextEditModel();
+
+	// Events
+	virtual Bool OnTextChange() { return false; }
+
+	// View
+	virtual const GChar * GetInitialText() const { return TEXT(""); }
+
 	virtual UInt GetPositionX() const { return 10; }
-	virtual UInt GetPositionY() const { return 110; }
-	virtual UInt GetWidth() const { return 100; }
+	virtual UInt GetPositionY() const { return 180; }
+	virtual UInt GetWidth() const { return 200; }
 	virtual UInt GetHeight() const { return 30; }
+
+	virtual Bool DontHideSelection() const { return false; }
+	virtual Bool AllowHorizScroll() const { return true; }
+	virtual Bool IsReadOnly() const { return false; }
+
+	virtual WinGUITextEditAlign GetTextAlign() const { return WINGUI_TEXTEDIT_ALIGN_LEFT; }
+	virtual WinGUITextEditCase GetTextCase() const { return WINGUI_TEXTEDIT_CASE_BOTH; }
+	virtual WinGUITextEditMode GetTextMode() const { return WINGUI_TEXTEDIT_MODE_TEXT; }
 
 private:
 	MyApplication * m_pApplication;
@@ -178,7 +230,10 @@ public:
 
     MyCheckBoxModel m_hCheckBoxModel;
 
+	MyGroupBoxModel m_hGroupBoxModel;
 	WinGUIRadioButtonGroup m_hRadioButtonGroup;
     MyRadioButtonModelA m_hRadioButtonModelA;
     MyRadioButtonModelB m_hRadioButtonModelB;
+
+    MyTextEditModel m_hTextEditModel;
 };

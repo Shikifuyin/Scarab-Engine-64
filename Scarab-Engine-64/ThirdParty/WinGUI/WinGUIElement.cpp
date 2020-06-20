@@ -72,6 +72,8 @@ Void WinGUIElement::_SaveElementToHandle() const
 WinGUIElement * WinGUIElement::_GetElementFromHandle( Void * hHandle )
 {
 	WinGUIElement * pElement = (WinGUIElement*)( GetWindowLongPtr((HWND)hHandle, GWLP_USERDATA) );
+	if ( pElement == NULL )
+		return NULL;
 	DebugAssert( pElement->m_hHandle == hHandle );
 	return pElement;
 }

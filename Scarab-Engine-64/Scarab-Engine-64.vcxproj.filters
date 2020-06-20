@@ -492,6 +492,12 @@
     <ClInclude Include="ThirdParty\WinGUI\WinGUI.h">
       <Filter>Header Files\ThirdParty\WinGUI</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.h">
+      <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.h">
+      <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\System\Platform.inl">
@@ -767,6 +773,12 @@
     <None Include="ThirdParty\WinGUI\WinGUI.inl">
       <Filter>Source Files\ThirdParty\WinGUI</Filter>
     </None>
+    <None Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.inl">
+      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
+    </None>
+    <None Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.inl">
+      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -1041,6 +1053,12 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\WinGUI\WinGUI.cpp">
       <Filter>Source Files\ThirdParty\WinGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.cpp">
+      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.cpp">
+      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

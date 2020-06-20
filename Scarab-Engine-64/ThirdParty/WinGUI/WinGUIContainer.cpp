@@ -254,9 +254,10 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UIn
 
         // Notify messages
         case WM_NOTIFY: {
-                HWND hCallerHandle = (HWND)lParam;
-                Int iCallerResourceID = (Int)( LOWORD(wParam) );
-                Int iNotificationCode = (Int)( HIWORD(wParam) );
+                NMHDR * pHeader = (NMHDR*)lParam;
+                HWND hCallerHandle = pHeader->hwndFrom;
+                Int iCallerResourceID = pHeader->idFrom;
+                Int iNotificationCode = pHeader->code;
 
                 // Retrieve Caller Element
                 WinGUIElement * pCallerElement = _GetElementFromHandle( hCallerHandle );

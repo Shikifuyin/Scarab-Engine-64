@@ -32,9 +32,20 @@
 class WinGUICheckBoxModel : public WinGUIControlModel
 {
 public:
-	WinGUICheckBoxModel();
+	WinGUICheckBoxModel( Int iResourceID );
 	virtual ~WinGUICheckBoxModel();
 
+	// Events
+	virtual Bool OnClick() = 0;
+	virtual Bool OnDblClick() = 0;
+
+	// View
+	virtual const GChar * GetText() const = 0;
+
+	virtual UInt GetPositionX() const = 0;
+	virtual UInt GetPositionY() const = 0;
+	virtual UInt GetWidth() const = 0;
+	virtual UInt GetHeight() const = 0;
 
 protected:
 
@@ -45,7 +56,7 @@ protected:
 class WinGUICheckBox : public WinGUIControl
 {
 public:
-	WinGUICheckBox( WinGUICheckBoxModel * pModel );
+	WinGUICheckBox( WinGUIElement * pParent, WinGUICheckBoxModel * pModel );
 	virtual ~WinGUICheckBox();
 
 	// Enable / Disable
@@ -62,13 +73,13 @@ public:
 	Void Check();
 	Void Uncheck();
 
-protected:
-    // Event-Handling interface
-	virtual UIntPtr __stdcall _MessageCallback_Virtual( Void * hWnd, UInt message, UIntPtr wParam, UIntPtr lParam );
+private:
+    // Create/Destroy Interface
+	virtual Void _Create();
+	virtual Void _Destroy();
 
-	// Button Handles
-	Void * m_hButtonWnd; // HWND
-	Int m_iButtonID;
+	// Event Dispatch
+	virtual Bool _DispatchEvent( Int iNotificationCode );
 };
 
 /////////////////////////////////////////////////////////////////////////////////

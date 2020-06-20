@@ -245,6 +245,8 @@
     <ClInclude Include="ThirdParty\System\System.h" />
     <ClInclude Include="ThirdParty\System\Threading.h" />
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIButton.h" />
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.h" />
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.h" />
     <ClInclude Include="ThirdParty\WinGUI\WinGUI.h" />
     <ClInclude Include="ThirdParty\WinGUI\WinGUIContainer.h" />
     <ClInclude Include="ThirdParty\WinGUI\WinGUIControl.h" />
@@ -338,6 +340,8 @@
     <None Include="ThirdParty\System\System.inl" />
     <None Include="ThirdParty\System\Threading.inl" />
     <None Include="ThirdParty\WinGUI\Controls\WinGUIButton.inl" />
+    <None Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.inl" />
+    <None Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.inl" />
     <None Include="ThirdParty\WinGUI\WinGUI.inl" />
     <None Include="ThirdParty\WinGUI\WinGUIContainer.inl" />
     <None Include="ThirdParty\WinGUI\WinGUIControl.inl" />
@@ -431,6 +435,8 @@
     <ClCompile Include="ThirdParty\System\System.cpp" />
     <ClCompile Include="ThirdParty\System\Threading.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIButton.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\WinGUI.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\WinGUIContainer.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\WinGUIControl.cpp" />

@@ -23,54 +23,29 @@
 // Constants definitions
 
 // Some Resource IDs
-#define RESID_BUTTON_TEST 101
+#define RESID_BUTTON_TEST   101
 
-/////////////////////////////////////////////////////////////////////////////////
-// The MyButtonModel class
-class MyButtonModel : public WinGUIButtonModel
-{
-public:
-	MyButtonModel():WinGUIButtonModel(RESID_BUTTON_TEST) {}
-	~MyButtonModel() {}
+#define RESID_CHECKBOX_TEST 102
 
-	// Events
-	virtual Bool OnClick() {
-		WinGUIMessageBoxOptions hOptions;
-		hOptions.iType = WINGUI_MESSAGEBOX_OK;
-		hOptions.iIcon = WINGUI_MESSAGEBOX_ICON_INFO;
-		hOptions.iDefaultResponse = WINGUI_MESSAGEBOX_RESPONSE_OK;
-		hOptions.bMustAnswer = true;
+#define RESID_RADIOBUTTON_A_TEST 103
+#define RESID_RADIOBUTTON_B_TEST 104
 
-		WinGUIFn->SpawnMessageBox( TEXT("Sample Message"), TEXT("Hello !"), hOptions );
-
-		return true;
-	}
-	virtual Bool OnDblClick() { return false; }
-
-	// View
-	virtual const GChar * GetText() const { return TEXT("Press Me !"); }
-
-	virtual UInt GetPositionX() const { return 10; }
-	virtual UInt GetPositionY() const { return 10; }
-	virtual UInt GetWidth() const { return 100; }
-	virtual UInt GetHeight() const { return 30; }
-};
+// Prototypes
+class MyButtonModel;
+class MyCheckBoxModel;
+class MyWindowModel;
+class MyApplication;
 
 /////////////////////////////////////////////////////////////////////////////////
 // The MyWindowModel class
 class MyWindowModel : public WinGUIWindowModel
 {
 public:
-	MyWindowModel():WinGUIWindowModel(0) {
-		StringFn->NCopy( m_strClassName, TEXT("MainAppWindow"), 31 );
-	}
-	~MyWindowModel() {}
+	MyWindowModel( MyApplication * pApplication );
+	~MyWindowModel();
 
 	// Events
-	virtual Bool OnClose() {
-		WinGUIFn->DestroyAppWindow();
-		return true;
-	}
+	virtual Bool OnClose();
 
 	// View
 	virtual const GChar * GetClassNameID() const { return m_strClassName; }
@@ -89,5 +64,121 @@ public:
 	virtual Bool AllowResizing() const { return false; }
 
 private:
+	MyApplication * m_pApplication;
 	GChar m_strClassName[32];
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The MyButtonModel class
+class MyButtonModel : public WinGUIButtonModel
+{
+public:
+	MyButtonModel( MyApplication * pApplication );
+	~MyButtonModel();
+
+	// Events
+	virtual Bool OnClick();
+	virtual Bool OnDblClick() { return false; }
+
+	// View
+	virtual const GChar * GetText() const { return TEXT("Press Me !"); }
+
+	virtual UInt GetPositionX() const { return 10; }
+	virtual UInt GetPositionY() const { return 10; }
+	virtual UInt GetWidth() const { return 100; }
+	virtual UInt GetHeight() const { return 30; }
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The MyCheckBoxModel class
+class MyCheckBoxModel : public WinGUICheckBoxModel
+{
+public:
+	MyCheckBoxModel( MyApplication * pApplication );
+	~MyCheckBoxModel();
+
+	// Events
+	virtual Bool OnClick() { return false; }
+	virtual Bool OnDblClick() { return false; }
+
+	// View
+	virtual const GChar * GetText() const { return TEXT("Above Button does something."); }
+
+	virtual UInt GetPositionX() const { return 10; }
+	virtual UInt GetPositionY() const { return 50; }
+	virtual UInt GetWidth() const { return 100; }
+	virtual UInt GetHeight() const { return 30; }
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The MyRadioButtonModelA class
+class MyRadioButtonModelA : public WinGUIRadioButtonModel
+{
+public:
+	MyRadioButtonModelA( MyApplication * pApplication );
+	~MyRadioButtonModelA();
+
+	// Events
+	virtual Bool OnClick() { return false; }
+	virtual Bool OnDblClick() { return false; }
+
+	// View
+	virtual const GChar * GetText() const { return TEXT("Option A"); }
+
+	virtual UInt GetPositionX() const { return 10; }
+	virtual UInt GetPositionY() const { return 80; }
+	virtual UInt GetWidth() const { return 100; }
+	virtual UInt GetHeight() const { return 30; }
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The MyRadioButtonModelB class
+class MyRadioButtonModelB : public WinGUIRadioButtonModel
+{
+public:
+	MyRadioButtonModelB( MyApplication * pApplication );
+	~MyRadioButtonModelB();
+
+	// Events
+	virtual Bool OnClick() { return false; }
+	virtual Bool OnDblClick() { return false; }
+
+	// View
+	virtual const GChar * GetText() const { return TEXT("Option B"); }
+
+	virtual UInt GetPositionX() const { return 10; }
+	virtual UInt GetPositionY() const { return 110; }
+	virtual UInt GetWidth() const { return 100; }
+	virtual UInt GetHeight() const { return 30; }
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The MyApplication class
+class MyApplication
+{
+public:
+	MyApplication();
+	~MyApplication();
+
+    MyWindowModel m_hAppWindowModel;
+    
+	MyButtonModel m_hButtonModel;
+
+    MyCheckBoxModel m_hCheckBoxModel;
+
+	WinGUIRadioButtonGroup m_hRadioButtonGroup;
+    MyRadioButtonModelA m_hRadioButtonModelA;
+    MyRadioButtonModelB m_hRadioButtonModelB;
 };

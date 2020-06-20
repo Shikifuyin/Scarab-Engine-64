@@ -38,9 +38,20 @@ class WinGUIRadioButtonGroup;
 class WinGUIRadioButtonModel : public WinGUIControlModel
 {
 public:
-	WinGUIRadioButtonModel();
+	WinGUIRadioButtonModel( Int iResourceID );
 	virtual ~WinGUIRadioButtonModel();
 
+	// Events
+	virtual Bool OnClick() = 0;
+	virtual Bool OnDblClick() = 0;
+
+	// View
+	virtual const GChar * GetText() const = 0;
+
+	virtual UInt GetPositionX() const = 0;
+	virtual UInt GetPositionY() const = 0;
+	virtual UInt GetWidth() const = 0;
+	virtual UInt GetHeight() const = 0;
 
 protected:
 
@@ -51,11 +62,8 @@ protected:
 class WinGUIRadioButton : public WinGUIControl
 {
 public:
-	WinGUIRadioButton( WinGUIRadioButtonModel * pModel );
+	WinGUIRadioButton( WinGUIElement * pParent, WinGUIRadioButtonModel * pModel );
 	virtual ~WinGUIRadioButton();
-
-	// Initialization
-	virtual Void Initialize();
 
 	// Radio Button Group Access
 	inline WinGUIRadioButtonGroup * GetGroup() const;
@@ -74,13 +82,13 @@ public:
 	Bool IsChecked() const;
 	Void Check(); // Auto-Uncheck other Buttons in the Group
 
-protected:
-    // Event-Handling interface
-	virtual UIntPtr __stdcall _MessageCallback_Virtual( Void * hWnd, UInt message, UIntPtr wParam, UIntPtr lParam );
+private:
+    // Create/Destroy Interface
+	virtual Void _Create();
+	virtual Void _Destroy();
 
-	// Button Handles
-	Void * m_hButtonWnd; // HWND
-	Int m_iButtonID;
+	// Event Dispatch
+	virtual Bool _DispatchEvent( Int iNotificationCode );
 
 	// Radio Button Group
 	friend class WinGUIRadioButtonGroup;

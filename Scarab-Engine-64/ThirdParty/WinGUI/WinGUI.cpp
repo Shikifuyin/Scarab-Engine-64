@@ -21,6 +21,11 @@
 #include <windows.h>
 #include <commctrl.h>
 
+// Enable Visual Styles, Use Common Controls version 6.0 (No need for a manifest)
+#pragma comment( linker, \
+    "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+    processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"" )
+
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
 #include "WinGUI.h"
@@ -44,6 +49,12 @@ Void WinGUI::CreateAppWindow( WinGUIWindowModel * pModel )
     m_pAppWindow = new(pMemory) WinGUIWindow( pModel );
 
     m_pAppWindow->_Create();
+
+    // Init Common Controls Here
+    INITCOMMONCONTROLSEX hICCX;
+    hICCX.dwSize = sizeof(INITCOMMONCONTROLSEX);
+    hICCX.dwICC = ICC_STANDARD_CLASSES;
+    InitCommonControlsEx( &hICCX );
 }
 Void WinGUI::DestroyAppWindow()
 {
@@ -173,6 +184,50 @@ WinGUIButton * WinGUI::CreateButton( WinGUIElement * pParent, WinGUIButtonModel 
 
     // Done
     return pButton;
+}
+WinGUICheckBox * WinGUI::CreateCheckBox( WinGUIElement * pParent, WinGUICheckBoxModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUICheckBox) );
+    WinGUICheckBox * pCheckBox = new(pMemory) WinGUICheckBox( pParent, pModel );
+
+    ((WinGUIElement*)pCheckBox)->_Create();
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pCheckBox );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pCheckBox );
+    }
+
+    // Done
+    return pCheckBox;
+}
+WinGUIRadioButton * WinGUI::CreateRadioButton( WinGUIElement * pParent, WinGUIRadioButtonModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIRadioButton) );
+    WinGUIRadioButton * pRadioButton = new(pMemory) WinGUIRadioButton( pParent, pModel );
+
+    ((WinGUIElement*)pRadioButton)->_Create();
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pRadioButton );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pRadioButton );
+    }
+
+    // Done
+    return pRadioButton;
 }
 
 Void WinGUI::DestroyElement( WinGUIElement * pElement ) const

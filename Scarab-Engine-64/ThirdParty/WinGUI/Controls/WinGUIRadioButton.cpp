@@ -26,74 +26,57 @@
 // Includes
 #include "WinGUIRadioButton.h"
 
+#pragma warning(disable:4312) // Int to HMENU cast
+
 /////////////////////////////////////////////////////////////////////////////////
 // WinGUIRadioButtonModel implementation
-WinGUIRadioButtonModel::WinGUIRadioButtonModel():
-	WinGUIControlModel()
+WinGUIRadioButtonModel::WinGUIRadioButtonModel( Int iResourceID ):
+	WinGUIControlModel(iResourceID)
 {
+	// nothing to do
 }
 WinGUIRadioButtonModel::~WinGUIRadioButtonModel()
 {
+	// nothing to do
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 // WinGUIRadioButton implementation
-WinGUIRadioButton::WinGUIRadioButton( WinGUIRadioButtonModel * pModel ):
-	WinGUIControl(pModel)
+WinGUIRadioButton::WinGUIRadioButton( WinGUIElement * pParent, WinGUIRadioButtonModel * pModel ):
+	WinGUIControl(pParent, pModel)
 {
+	// nothing to do
 }
 WinGUIRadioButton::~WinGUIRadioButton()
 {
-}
-
-Void WinGUIRadioButton::Initialize()
-{
-	// Get Initialization values from Model
-	m_iButtonID = m_pModel->GetIdentifier();
-	const GChar * strText = m_pModel->GetText();
-	UInt iPositionX = m_pModel->GetPositionX();
-	UInt iPositionY = m_pModel->GetPositionY();
-	UInt iWidth = m_pModel->GetWidth();
-	UInt iHeight = m_pModel->GetHeight();
-
-	// Create the Control
-	m_hButtonWnd = CreateWindowEx(
-		0, TEXT("BUTTON"), strText,
-		WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_RADIOBUTTON, 
-		iPositionX, iPositionY, iWidth, iHeight,
-		m_hParentWnd, (HMENU)m_iButtonID, m_hAppInstance, this
-	);
-	DebugAssert( m_hButtonWnd != NULL );
-
-	if ( m_pModel->IsChecked() )
-		CheckDlgButton( (HWND)m_hButtonWnd, m_iButtonID, BST_CHECKED );
+	// nothing to do
 }
 
 Void WinGUIRadioButton::Enable()
 {
-	Button_Enable( (HWND)m_hButtonWnd, TRUE );
+	Button_Enable( (HWND)m_hHandle, TRUE );
 }
 Void WinGUIRadioButton::Disable()
 {
-	Button_Enable( (HWND)m_hButtonWnd, FALSE );
+	Button_Enable( (HWND)m_hHandle, FALSE );
 }
 
 UInt WinGUIRadioButton::GetTextLength() const
 {
-	return Button_GetTextLength( (HWND)m_hButtonWnd );
+	return Button_GetTextLength( (HWND)m_hHandle );
 }
 Void WinGUIRadioButton::GetText( GChar * outText, UInt iMaxLength ) const
 {
-	Button_GetText( (HWND)m_hButtonWnd, outText, iMaxLength );
+	Button_GetText( (HWND)m_hHandle, outText, iMaxLength );
 }
 Void WinGUIRadioButton::SetText( const GChar * strText )
 {
-	Button_SetText( (HWND)m_hButtonWnd, strText );
+	Button_SetText( (HWND)m_hHandle, strText );
 }
 
 Bool WinGUIRadioButton::IsChecked() const
 {
-	UInt iState = IsDlgButtonChecked( (HWND)m_hButtonWnd, m_iButtonID );
+	UInt iState = Button_GetCheck( (HWND)m_hHandle );
 	if ( iState == BST_CHECKED )
 		return true;
 	if ( iState == BST_UNCHECKED )
@@ -109,23 +92,60 @@ Void WinGUIRadioButton::Check()
 	for ( UInt i = 0; i < iCount; ++i ) {
 		WinGUIRadioButton * pButton = m_pRadioButtonGroup->GetButton(i);
 		if ( pButton == this )
-			CheckDlgButton( (HWND)m_hButtonWnd, m_iButtonID, BST_CHECKED );
+			Button_SetCheck( (HWND)(_GetHandle(pButton)), BST_CHECKED );
 		else
-			CheckDlgButton( (HWND)(pButton->m_hButtonWnd), pButton->m_iButtonID, BST_UNCHECKED );
+			Button_SetCheck( (HWND)(_GetHandle(pButton)), BST_UNCHECKED );
 	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 
-UIntPtr __stdcall WinGUIRadioButton::_MessageCallback_Virtual( Void * hWnd, UInt message, UIntPtr wParam, UIntPtr lParam )
+Void WinGUIRadioButton::_Create()
 {
-	// Translate Button Messages
-	switch( message ) {
-		case WM_COMMAND: {
+	DebugAssert( m_hHandle == NULL );
 
-		} break;
+	WinGUIRadioButtonModel * pModel = (WinGUIRadioButtonModel*)m_pModel;
+	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
+
+	m_hHandle = CreateWindowEx (
+		0, WC_BUTTON, pModel->GetText(),
+		WS_VISIBLE | WS_CHILD | WS_TABSTOP | BS_AUTORADIOBUTTON,
+		pModel->GetPositionX(),	pModel->GetPositionY(),
+		pModel->GetWidth(), pModel->GetHeight(),
+		hParentWnd, (HMENU)m_iResourceID,
+		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
+		NULL
+	);
+	DebugAssert( m_hHandle != NULL );
+
+	// Done
+	_SaveElementToHandle();
+}
+Void WinGUIRadioButton::_Destroy()
+{
+	DebugAssert( m_hHandle != NULL );
+
+	DestroyWindow( (HWND)m_hHandle );
+	m_hHandle = NULL;
+}
+
+Bool WinGUIRadioButton::_DispatchEvent( Int iNotificationCode )
+{
+	WinGUIRadioButtonModel * pModel = (WinGUIRadioButtonModel*)m_pModel;
+
+	// Dispatch Event to our Model
+	switch( iNotificationCode ) {
+		case BN_CLICKED:
+			return pModel->OnClick();
+			break;
+		case BN_DBLCLK:
+			return pModel->OnDblClick();
+			break;
 		default: break;
 	}
+
+	// Unhandled
+	return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////

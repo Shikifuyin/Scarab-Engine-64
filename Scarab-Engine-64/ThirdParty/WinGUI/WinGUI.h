@@ -29,6 +29,8 @@
 #include "WinGUIControl.h"
 
 #include "Controls/WinGUIButton.h"
+#include "Controls/WinGUICheckBox.h"
+#include "Controls/WinGUIRadioButton.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
@@ -93,6 +95,8 @@ public:
 
     // Controls
     WinGUIButton * CreateButton( WinGUIElement * pParent, WinGUIButtonModel * pModel ) const;
+    WinGUICheckBox * CreateCheckBox( WinGUIElement * pParent, WinGUICheckBoxModel * pModel ) const;
+    WinGUIRadioButton * CreateRadioButton( WinGUIElement * pParent, WinGUIRadioButtonModel * pModel ) const;
 
     // Element Removal
     Void DestroyElement( WinGUIElement * pElement ) const;

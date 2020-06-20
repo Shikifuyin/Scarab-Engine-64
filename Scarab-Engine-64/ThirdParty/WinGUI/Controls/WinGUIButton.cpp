@@ -89,13 +89,13 @@ Void WinGUIButton::_Create()
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
 	m_hHandle = CreateWindowEx (
-		0, L"BUTTON", pModel->GetText(),
-		WS_VISIBLE | WS_CHILD | WS_TABSTOP | BS_PUSHBUTTON,
+		0, WC_BUTTON, pModel->GetText(),
+		WS_VISIBLE | WS_CHILD | WS_TABSTOP | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER,
 		pModel->GetPositionX(),	pModel->GetPositionY(),
 		pModel->GetWidth(), pModel->GetHeight(),
 		hParentWnd, (HMENU)m_iResourceID,
 		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
-		this
+		NULL
 	);
 	DebugAssert( m_hHandle != NULL );
 

@@ -26,3 +26,7 @@ inline WinGUIWindow * WinGUI::GetAppWindow() const {
     return m_pAppWindow;
 }
 
+inline UInt WinGUI::GetFontHeight() const {
+    return m_iFontHeight;
+}
+

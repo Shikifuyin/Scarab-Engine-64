@@ -113,9 +113,17 @@ public:
     // Element Removal
     Void DestroyElement( WinGUIElement * pElement ) const;
 
+    // Font Infos
+    inline UInt GetFontHeight() const;
+
 private:
     // Application Window
     WinGUIWindow * m_pAppWindow;
+
+    // Default Font
+    UInt m_iFontWidth;
+    UInt m_iFontHeight;
+    Void * m_pDefaultFont; // HFONT
 };
 
 /////////////////////////////////////////////////////////////////////////////////

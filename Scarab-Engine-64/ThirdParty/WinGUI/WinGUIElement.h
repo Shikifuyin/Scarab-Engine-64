@@ -99,6 +99,8 @@ protected:
 	virtual Void _Create() = 0;
 	virtual Void _Destroy() = 0;
 
+	virtual Void _ApplyDefaultFont( Void * hFont );
+
 	// Model <-> View linkage
 	WinGUIElementModel * m_pModel;
 

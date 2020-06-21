@@ -31,10 +31,50 @@
 #include "WinGUI.h"
 
 /////////////////////////////////////////////////////////////////////////////////
+// Helpers
+
+// Font Enumeration Proc
+int CALLBACK _EnumFontExProc( const LOGFONT * lpelfe, const TEXTMETRIC * lpntme, DWORD FontType, LPARAM lParam )
+{
+    // Only accept TRUETYPE
+    if ( FontType != TRUETYPE_FONTTYPE )
+        return 1;
+
+    // Require Normal Weight
+    if ( lpelfe->lfWeight != FW_NORMAL )
+        return 1;
+
+    // Reject Italic/Underlined/StruckOut
+    if ( lpelfe->lfItalic || lpelfe->lfUnderline || lpelfe->lfStrikeOut )
+        return 1;
+
+    // Require Variable Pitch
+    if ( lpelfe->lfPitchAndFamily & 0x03 != VARIABLE_PITCH )
+        return 1;
+
+    // Ensure Charset is proper
+    if ( lpelfe->lfCharSet != ANSI_CHARSET )
+        return 1;
+
+    // Require at least Basic-Latin and Latin-1 UNICODE subset
+    const NEWTEXTMETRICEX * pNTM = (const NEWTEXTMETRICEX *)lpntme;
+    if ( (pNTM->ntmFontSig.fsUsb[0] & 0x03) != 0x03 )
+        return 1;
+
+    // We should have the proper font at this point
+    MemCopy( (LOGFONT*)lParam, lpelfe, sizeof(LOGFONT) );
+    return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // WinGUI implementation
 WinGUI::WinGUI()
 {
 	m_pAppWindow = NULL;
+
+    m_iFontWidth = 6;
+    m_iFontHeight = 16;
+    m_pDefaultFont = NULL;
 }
 WinGUI::~WinGUI()
 {
@@ -56,10 +96,29 @@ Void WinGUI::CreateAppWindow( WinGUIWindowModel * pModel )
     hICCX.dwICC = ICC_STANDARD_CLASSES // Button, Edit, Static, ListBox, ComboBox, ScrollBar
                 | ICC_TAB_CLASSES;     // Tabs, Tooltip
     InitCommonControlsEx( &hICCX );
+
+    // Create Default Font
+    LOGFONT hFont;
+    StringFn->NCopy( hFont.lfFaceName, TEXT("Segoe UI"), 31 );
+    hFont.lfCharSet = DEFAULT_CHARSET;
+    hFont.lfPitchAndFamily = 0;
+
+    HDC hDC = GetDC( (HWND)(m_pAppWindow->m_hHandle) );
+    EnumFontFamiliesEx( hDC, &hFont, _EnumFontExProc, (LPARAM)&hFont, 0 );
+    ReleaseDC( (HWND)(m_pAppWindow->m_hHandle), hDC );
+
+    m_pDefaultFont = CreateFont( m_iFontHeight, m_iFontWidth, hFont.lfEscapement, hFont.lfOrientation, hFont.lfWeight,
+                                 hFont.lfItalic, hFont.lfUnderline, hFont.lfStrikeOut, hFont.lfCharSet,
+                                 hFont.lfOutPrecision, hFont.lfClipPrecision, hFont.lfQuality,
+                                 hFont.lfPitchAndFamily, TEXT("Segoe UI") );
+    DebugAssert( m_pDefaultFont != NULL );
 }
 Void WinGUI::DestroyAppWindow()
 {
     DebugAssert( m_pAppWindow != NULL );
+
+    DeleteObject( m_pDefaultFont );
+    m_pDefaultFont = NULL;
 
     while( m_pAppWindow->GetChildCount() > 0 )
         DestroyElement( m_pAppWindow->GetChild(0) );
@@ -69,6 +128,8 @@ Void WinGUI::DestroyAppWindow()
     m_pAppWindow->~WinGUIWindow();
     SystemFn->MemFree( m_pAppWindow );
     m_pAppWindow = NULL;
+
+    // Destroy Default Font
 }
 
 Int WinGUI::MessageLoop() const
@@ -166,6 +227,7 @@ WinGUIContainer * WinGUI::CreateContainer( WinGUIElement * pParent, WinGUIContai
     WinGUIContainer * pContainer = new(pMemory) WinGUIContainer( pParent, pModel );
 
     ((WinGUIElement*)pContainer)->_Create();
+    ((WinGUIElement*)pContainer)->_ApplyDefaultFont( m_pDefaultFont );
 
     // Add Child Links to Parent
     if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
@@ -189,6 +251,7 @@ WinGUITabs * WinGUI::CreateTabs( WinGUIElement * pParent, WinGUITabsModel * pMod
     WinGUITabs * pTabs = new(pMemory) WinGUITabs( pParent, pModel );
 
     ((WinGUIElement*)pTabs)->_Create();
+    ((WinGUIElement*)pTabs)->_ApplyDefaultFont( m_pDefaultFont );
 
     // Add Child Links to Parent
     if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
@@ -212,6 +275,7 @@ WinGUIButton * WinGUI::CreateButton( WinGUIElement * pParent, WinGUIButtonModel 
     WinGUIButton * pButton = new(pMemory) WinGUIButton( pParent, pModel );
 
     ((WinGUIElement*)pButton)->_Create();
+    ((WinGUIElement*)pButton)->_ApplyDefaultFont( m_pDefaultFont );
 
     // Add Child Links to Parent
     if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
@@ -234,6 +298,7 @@ WinGUICheckBox * WinGUI::CreateCheckBox( WinGUIElement * pParent, WinGUICheckBox
     WinGUICheckBox * pCheckBox = new(pMemory) WinGUICheckBox( pParent, pModel );
 
     ((WinGUIElement*)pCheckBox)->_Create();
+    ((WinGUIElement*)pCheckBox)->_ApplyDefaultFont( m_pDefaultFont );
 
     // Add Child Links to Parent
     if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
@@ -256,6 +321,7 @@ WinGUIRadioButton * WinGUI::CreateRadioButton( WinGUIElement * pParent, WinGUIRa
     WinGUIRadioButton * pRadioButton = new(pMemory) WinGUIRadioButton( pParent, pModel );
 
     ((WinGUIElement*)pRadioButton)->_Create();
+    ((WinGUIElement*)pRadioButton)->_ApplyDefaultFont( m_pDefaultFont );
 
     // Add Child Links to Parent
     if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
@@ -278,6 +344,7 @@ WinGUIGroupBox * WinGUI::CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBox
     WinGUIGroupBox * pGroupBox = new(pMemory) WinGUIGroupBox( pParent, pModel );
 
     ((WinGUIElement*)pGroupBox)->_Create();
+    ((WinGUIElement*)pGroupBox)->_ApplyDefaultFont( m_pDefaultFont );
 
     // Add Child Links to Parent
     if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
@@ -301,6 +368,7 @@ WinGUIStatic * WinGUI::CreateStatic( WinGUIElement * pParent, WinGUIStaticModel 
     WinGUIStatic * pStatic = new(pMemory) WinGUIStatic( pParent, pModel );
 
     ((WinGUIElement*)pStatic)->_Create();
+    ((WinGUIElement*)pStatic)->_ApplyDefaultFont( m_pDefaultFont );
 
     // Add Child Links to Parent
     if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
@@ -323,6 +391,7 @@ WinGUITextEdit * WinGUI::CreateTextEdit( WinGUIElement * pParent, WinGUITextEdit
     WinGUITextEdit * pTextEdit = new(pMemory) WinGUITextEdit( pParent, pModel );
 
     ((WinGUIElement*)pTextEdit)->_Create();
+    ((WinGUIElement*)pTextEdit)->_ApplyDefaultFont( m_pDefaultFont );
 
     // Add Child Links to Parent
     if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
@@ -372,3 +441,4 @@ Void WinGUI::DestroyElement( WinGUIElement * pElement ) const
     pElement = NULL;
 }
 
+/////////////////////////////////////////////////////////////////////////////////

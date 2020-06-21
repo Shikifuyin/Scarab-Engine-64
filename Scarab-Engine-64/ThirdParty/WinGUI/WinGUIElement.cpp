@@ -103,6 +103,12 @@ Void WinGUIElement::GetClientRect( WinGUIRectangle * outRectangle ) const
 
 /////////////////////////////////////////////////////////////////////////////////
 
+Void WinGUIElement::_ApplyDefaultFont( Void * hFont )
+{
+	DebugAssert( hFont != NULL );
+	SendMessage( (HWND)m_hHandle, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE );
+}
+
 Void WinGUIElement::_SaveElementToHandle() const
 {
 	DebugAssert( m_hHandle != NULL );

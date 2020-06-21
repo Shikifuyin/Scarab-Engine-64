@@ -62,6 +62,45 @@ WinGUIElement::~WinGUIElement()
 	m_pModel->m_pView = NULL;
 }
 
+Bool WinGUIElement::IsVisible() const
+{
+    return ( IsWindowVisible((HWND)m_hHandle) != FALSE );
+}
+Void WinGUIElement::SetVisible( Bool bVisible )
+{
+    if ( bVisible ) {
+		ShowWindow( (HWND)m_hHandle, SW_SHOW );
+        UpdateWindow( (HWND)m_hHandle );
+	} else {
+		ShowWindow( (HWND)m_hHandle, SW_HIDE );
+	}
+}
+
+Void WinGUIElement::GetWindowRect( WinGUIRectangle * outRectangle ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	RECT hRect;
+	::GetWindowRect( hHandle, &hRect );
+
+	outRectangle->iLeft = hRect.left;
+	outRectangle->iTop = hRect.top;
+	outRectangle->iWidth = ( hRect.right - hRect.left );
+	outRectangle->iHeight = ( hRect.bottom - hRect.top );
+}
+Void WinGUIElement::GetClientRect( WinGUIRectangle * outRectangle ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	RECT hRect;
+	::GetClientRect( hHandle, &hRect );
+
+	outRectangle->iLeft = hRect.left;
+	outRectangle->iTop = hRect.top;
+	outRectangle->iWidth = ( hRect.right - hRect.left );
+	outRectangle->iHeight = ( hRect.bottom - hRect.top );
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 
 Void WinGUIElement::_SaveElementToHandle() const

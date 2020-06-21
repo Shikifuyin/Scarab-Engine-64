@@ -68,23 +68,23 @@ Void WinGUIGroupBox::SetText( const GChar * strText )
 	Button_SetText( hHandle, strText );
 }
 
-Void WinGUIGroupBox::GetClientArea( UInt * outLeft, UInt * outTop, UInt * outRight, UInt * outBottom, Int iPadding ) const
+Void WinGUIGroupBox::ComputeClientArea( WinGUIRectangle * outClientArea, Int iPadding ) const
 {
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 	HWND hGroupWnd = (HWND)m_hHandle;
 
 	RECT hRect;
-    GetWindowRect(hGroupWnd, &hRect);
+    ::GetWindowRect(hGroupWnd, &hRect);
     MapWindowPoints( NULL, hParentWnd, (POINT*)&hRect, 2 );
 
 	RECT hBorder = { 4, 8, 4, 4 };
 	OffsetRect( &hBorder, iPadding, iPadding );
 	MapDialogRect( hParentWnd, &hBorder );
 
-	*outLeft = ( hRect.left + hBorder.left );
-	*outTop = ( hRect.top + hBorder.top );
-	*outRight = ( hRect.right - hBorder.right );
-	*outBottom = ( hRect.bottom - hBorder.bottom );
+	outClientArea->iLeft = ( hRect.left + hBorder.left );
+	outClientArea->iTop = ( hRect.top + hBorder.top );
+	outClientArea->iWidth = ( hRect.right - hBorder.right ) - outClientArea->iLeft;
+	outClientArea->iHeight = ( hRect.bottom - hBorder.bottom ) - outClientArea->iTop;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -96,11 +96,13 @@ Void WinGUIGroupBox::_Create()
 	WinGUIGroupBoxModel * pModel = (WinGUIGroupBoxModel*)m_pModel;
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
+    const WinGUIRectangle * pRect = pModel->GetRectangle();
+
 	m_hHandle = CreateWindowEx (
 		0, WC_BUTTON, pModel->GetText(),
 		WS_VISIBLE | WS_CHILD | BS_GROUPBOX,
-		pModel->GetPositionX(),	pModel->GetPositionY(),
-		pModel->GetWidth(), pModel->GetHeight(),
+		pRect->iLeft, pRect->iTop,
+        pRect->iWidth, pRect->iHeight,
 		hParentWnd, (HMENU)m_iResourceID,
 		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
 		NULL

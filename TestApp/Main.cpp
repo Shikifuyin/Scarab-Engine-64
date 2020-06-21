@@ -44,6 +44,35 @@ Bool MyWindowModel::OnClose()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+// MyTabsModel implementation
+MyTabsModel::MyTabsModel( MyApplication * pApplication ):
+	WinGUITabsModel(RESID_TABS_TEST)
+{
+	m_pApplication = pApplication;
+}
+MyTabsModel::~MyTabsModel()
+{
+	// nothing to do
+}
+
+Bool MyTabsModel::OnTabSelect()
+{
+	WinGUITabs * pTabs = (WinGUITabs*)m_pView;
+	UInt iSelected = pTabs->GetSelectedTab();
+
+	WinGUIContainer * pTabPane = NULL;
+	switch( iSelected ) {
+		case 0: pTabPane = (WinGUIContainer*)( m_pApplication->m_hContainerModelLeft.GetView() ); break;
+		case 1: pTabPane = (WinGUIContainer*)( m_pApplication->m_hContainerModelRight.GetView() ); break;
+		default: DebugAssert(false); break;
+	}
+
+	pTabs->SwitchSelectedTabPane( pTabPane );
+
+	return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // MyContainerModelLeft implementation
 MyContainerModelLeft::MyContainerModelLeft( MyApplication * pApplication ):
 	WinGUIContainerModel(RESID_CONTAINER_LEFT_TEST)
@@ -54,6 +83,13 @@ MyContainerModelLeft::MyContainerModelLeft( MyApplication * pApplication ):
 MyContainerModelLeft::~MyContainerModelLeft()
 {
 	// nothing to do
+}
+
+const WinGUIRectangle * MyContainerModelLeft::GetRectangle() const
+{
+	static WinGUIRectangle hDisplayRect;
+	((WinGUITabs*)(m_pApplication->m_hTabsModel.GetView()))->GetDisplayArea( &hDisplayRect );
+	return &hDisplayRect;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -67,6 +103,13 @@ MyContainerModelRight::MyContainerModelRight( MyApplication * pApplication ):
 MyContainerModelRight::~MyContainerModelRight()
 {
 	// nothing to do
+}
+
+const WinGUIRectangle * MyContainerModelRight::GetRectangle() const
+{
+	static WinGUIRectangle hDisplayRect;
+	((WinGUITabs*)(m_pApplication->m_hTabsModel.GetView()))->GetDisplayArea( &hDisplayRect );
+	return &hDisplayRect;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -97,32 +140,20 @@ Bool MyButtonModel::OnClick()
 		return true;
 	}
 
-	pRadioButton = (WinGUIRadioButton*)(m_pApplication->m_hRadioButtonModelB.GetView());
-	if ( pRadioButton->IsChecked() ) {
-		WinGUIContainer * pContainer = (WinGUIContainer*)(m_pApplication->m_hContainerModelRight.GetView());
-
-		if ( pContainer->IsVisible() )
-			pContainer->SetVisible( false );
-		else
-			pContainer->SetVisible( true );
-
-		return true;
-	}
-
 	return false;
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-// MyGroupBoxModel implementation
-MyGroupBoxModel::MyGroupBoxModel( MyApplication * pApplication ):
-	WinGUIGroupBoxModel(RESID_GROUPBOX_TEST)
-{
-	m_pApplication = pApplication;
-}
-MyGroupBoxModel::~MyGroupBoxModel()
-{
-	// nothing to do
-}
+///////////////////////////////////////////////////////////////////////////////////
+//// MyGroupBoxModel implementation
+//MyGroupBoxModel::MyGroupBoxModel( MyApplication * pApplication ):
+//	WinGUIGroupBoxModel(RESID_GROUPBOX_TEST)
+//{
+//	m_pApplication = pApplication;
+//}
+//MyGroupBoxModel::~MyGroupBoxModel()
+//{
+//	// nothing to do
+//}
 
 /////////////////////////////////////////////////////////////////////////////////
 // MyRadioButtonModelA implementation
@@ -136,30 +167,12 @@ MyRadioButtonModelA::~MyRadioButtonModelA()
 	// nothing to do
 }
 
-UInt MyRadioButtonModelA::GetPositionX() const
-{
-	UInt iLeft, iTop, iRight, iBottom;
-	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->GetClientArea( &iLeft, &iTop, &iRight, &iBottom, 8 );
-	return iLeft;
-}
-UInt MyRadioButtonModelA::GetPositionY() const
-{
-	UInt iLeft, iTop, iRight, iBottom;
-	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->GetClientArea( &iLeft, &iTop, &iRight, &iBottom, 8 );
-	return iTop;
-}
-UInt MyRadioButtonModelA::GetWidth() const
-{
-	UInt iLeft, iTop, iRight, iBottom;
-	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->GetClientArea( &iLeft, &iTop, &iRight, &iBottom, 8 );
-	return iRight - iLeft;
-}
-UInt MyRadioButtonModelA::GetHeight() const
-{
-	UInt iLeft, iTop, iRight, iBottom;
-	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->GetClientArea( &iLeft, &iTop, &iRight, &iBottom, 8 );
-	return (iBottom - iTop) >> 1;
-}
+//const WinGUIRectangle * MyRadioButtonModelA::GetRectangle() const {
+//	static WinGUIRectangle hRect;
+//	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->ComputeClientArea( &hRect, 8 );
+//	hRect.iHeight >>= 1;
+//	return &hRect;
+//}
 
 /////////////////////////////////////////////////////////////////////////////////
 // MyRadioButtonModelB implementation
@@ -173,30 +186,13 @@ MyRadioButtonModelB::~MyRadioButtonModelB()
 	// nothing to do
 }
 
-UInt MyRadioButtonModelB::GetPositionX() const
-{
-	UInt iLeft, iTop, iRight, iBottom;
-	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->GetClientArea( &iLeft, &iTop, &iRight, &iBottom, 8 );
-	return iLeft;
-}
-UInt MyRadioButtonModelB::GetPositionY() const
-{
-	UInt iLeft, iTop, iRight, iBottom;
-	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->GetClientArea( &iLeft, &iTop, &iRight, &iBottom, 8 );
-	return iTop + ( (iBottom-iTop) >> 1 );
-}
-UInt MyRadioButtonModelB::GetWidth() const
-{
-	UInt iLeft, iTop, iRight, iBottom;
-	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->GetClientArea( &iLeft, &iTop, &iRight, &iBottom, 8 );
-	return iRight - iLeft;
-}
-UInt MyRadioButtonModelB::GetHeight() const
-{
-	UInt iLeft, iTop, iRight, iBottom;
-	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->GetClientArea( &iLeft, &iTop, &iRight, &iBottom, 8 );
-	return (iBottom - iTop) >> 1;
-}
+//const WinGUIRectangle * MyRadioButtonModelB::GetRectangle() const {
+//	static WinGUIRectangle hRect;
+//	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->ComputeClientArea( &hRect, 8 );
+//	hRect.iHeight >>= 1;
+//	hRect.iTop += hRect.iHeight;
+//	return &hRect;
+//}
 
 /////////////////////////////////////////////////////////////////////////////////
 // MyCheckBoxModel implementation
@@ -240,10 +236,12 @@ MyTextEditModel::~MyTextEditModel()
 MyApplication::MyApplication():
 	m_hAppWindowModel(this),
 
+	m_hTabsModel(this),
+
 	m_hContainerModelLeft(this),
 
 	m_hButtonModel(this),
-	m_hGroupBoxModel(this),
+	//m_hGroupBoxModel(this),
 	m_hRadioButtonModelA(this),
 	m_hRadioButtonModelB(this),
 	m_hRadioButtonGroup(),
@@ -257,6 +255,9 @@ MyApplication::MyApplication():
 	WinGUIFn->CreateAppWindow( &m_hAppWindowModel );
 	WinGUIWindow * pAppWindow = WinGUIFn->GetAppWindow();
 
+	// Tabs
+	WinGUITabs * pTabs = WinGUIFn->CreateTabs( pAppWindow, &m_hTabsModel );
+
 	// Left Container
 	WinGUIContainer * pContainerLeft = WinGUIFn->CreateContainer( pAppWindow, &m_hContainerModelLeft );
 
@@ -264,7 +265,7 @@ MyApplication::MyApplication():
 	WinGUIFn->CreateButton( pContainerLeft, &m_hButtonModel );
 
 	// A GroupBox
-	WinGUIFn->CreateGroupBox( pContainerLeft, &m_hGroupBoxModel );
+	//WinGUIFn->CreateGroupBox( pContainerLeft, &m_hGroupBoxModel );
 
 	// A couple Radio Buttons
 	WinGUIRadioButton * pRadioButtonA = WinGUIFn->CreateRadioButton( pContainerLeft, &m_hRadioButtonModelA );
@@ -288,6 +289,9 @@ MyApplication::MyApplication():
 	pTextEdit->SetTextLimit( 32 );
 
 	// Done
+	pTabs->SelectTab( 0 );
+	pTabs->SwitchSelectedTabPane( pContainerLeft );
+
 	pAppWindow->SetVisible( true );
 }
 MyApplication::~MyApplication()

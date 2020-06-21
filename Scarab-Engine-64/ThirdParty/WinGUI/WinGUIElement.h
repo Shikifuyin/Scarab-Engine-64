@@ -34,6 +34,14 @@ enum WinGUIElementType {
 	WINGUI_ELEMENT_CONTROL
 };
 
+// All-Purpose Rectangle structure
+typedef struct _wingui_rectangle {
+	UInt iLeft;
+	UInt iTop;
+	UInt iWidth;
+	UInt iHeight;
+} WinGUIRectangle;
+
 // Prototypes
 class WinGUIElementModel;
 class WinGUIElement;
@@ -76,6 +84,14 @@ public:
 
 	// Parent access
 	inline WinGUIElement * GetParent() const;
+
+	// Visibility
+	Bool IsVisible() const;
+	Void SetVisible( Bool bVisible );
+
+	// Area access
+	Void GetWindowRect( WinGUIRectangle * outRectangle ) const;
+	Void GetClientRect( WinGUIRectangle * outRectangle ) const;
 
 protected:
 	// Create/Destroy Interface

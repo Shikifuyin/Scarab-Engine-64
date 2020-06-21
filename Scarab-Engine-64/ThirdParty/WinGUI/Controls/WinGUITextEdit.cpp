@@ -168,6 +168,8 @@ Void WinGUITextEdit::_Create()
 	WinGUITextEditModel * pModel = (WinGUITextEditModel*)m_pModel;
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
+    const WinGUIRectangle * pRect = pModel->GetRectangle();
+
 	DWord dwStyle = 0;
 	if ( pModel->DontHideSelection() )
 		dwStyle |= ES_NOHIDESEL;
@@ -197,8 +199,8 @@ Void WinGUITextEdit::_Create()
 	m_hHandle = CreateWindowEx (
 		0, WC_EDIT, pModel->GetInitialText(),
 		WS_VISIBLE | WS_CHILD | WS_TABSTOP | WS_BORDER | dwStyle,
-		pModel->GetPositionX(),	pModel->GetPositionY(),
-		pModel->GetWidth(), pModel->GetHeight(),
+		pRect->iLeft, pRect->iTop,
+        pRect->iWidth, pRect->iHeight,
 		hParentWnd, (HMENU)m_iResourceID,
 		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
 		NULL

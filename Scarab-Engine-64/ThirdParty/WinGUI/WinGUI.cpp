@@ -53,7 +53,8 @@ Void WinGUI::CreateAppWindow( WinGUIWindowModel * pModel )
     // Init Common Controls Here
     INITCOMMONCONTROLSEX hICCX;
     hICCX.dwSize = sizeof(INITCOMMONCONTROLSEX);
-    hICCX.dwICC = ICC_STANDARD_CLASSES;
+    hICCX.dwICC = ICC_STANDARD_CLASSES // Button, Edit, Static, ListBox, ComboBox, ScrollBar
+                | ICC_TAB_CLASSES;     // Tabs, Tooltip
     InitCommonControlsEx( &hICCX );
 }
 Void WinGUI::DestroyAppWindow()
@@ -177,6 +178,29 @@ WinGUIContainer * WinGUI::CreateContainer( WinGUIElement * pParent, WinGUIContai
 
     // Done
     return pContainer;
+}
+
+WinGUITabs * WinGUI::CreateTabs( WinGUIElement * pParent, WinGUITabsModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUITabs) );
+    WinGUITabs * pTabs = new(pMemory) WinGUITabs( pParent, pModel );
+
+    ((WinGUIElement*)pTabs)->_Create();
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pTabs );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pTabs );
+    }
+
+    // Done
+    return pTabs;
 }
 
 WinGUIGroupBox * WinGUI::CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const

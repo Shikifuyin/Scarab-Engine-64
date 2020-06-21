@@ -107,11 +107,13 @@ Void WinGUIRadioButton::_Create()
 	WinGUIRadioButtonModel * pModel = (WinGUIRadioButtonModel*)m_pModel;
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
+    const WinGUIRectangle * pRect = pModel->GetRectangle();
+
 	m_hHandle = CreateWindowEx (
 		0, WC_BUTTON, pModel->GetText(),
 		WS_VISIBLE | WS_CHILD | WS_TABSTOP | BS_AUTORADIOBUTTON,
-		pModel->GetPositionX(),	pModel->GetPositionY(),
-		pModel->GetWidth(), pModel->GetHeight(),
+		pRect->iLeft, pRect->iTop,
+        pRect->iWidth, pRect->iHeight,
 		hParentWnd, (HMENU)m_iResourceID,
 		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
 		NULL

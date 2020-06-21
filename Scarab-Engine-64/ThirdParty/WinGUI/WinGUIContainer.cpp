@@ -65,19 +65,6 @@ WinGUIElement * WinGUIContainer::GetChildByID( Int iResourceID ) const
 	return NULL;
 }
 
-Bool WinGUIContainer::IsVisible() const
-{
-    return ( IsWindowVisible((HWND)m_hHandle) != FALSE );
-}
-Void WinGUIContainer::SetVisible( Bool bVisible )
-{
-    if ( bVisible ) {
-        ShowWindow( (HWND)m_hHandle, SW_SHOW );
-        UpdateWindow( (HWND)m_hHandle );
-    } else
-        ShowWindow( (HWND)m_hHandle, SW_HIDE );
-}
-
 /////////////////////////////////////////////////////////////////////////////////
 
 Void WinGUIContainer::_Create()
@@ -92,13 +79,16 @@ Void WinGUIContainer::_Create()
     if ( pModel->AllowResizing() )
         dwWindowStyle |= WS_SIZEBOX;
 
+    // Window region
+    const WinGUIRectangle * pRect = pModel->GetRectangle();
+
     // Window class
     WNDCLASSEX winClass;
     winClass.cbSize = sizeof(WNDCLASSEX);
     winClass.cbClsExtra = 0;
 	winClass.cbWndExtra = 0;
     winClass.hInstance = GetModuleHandle( NULL );
-	winClass.style = CS_DBLCLKS;
+	winClass.style = CS_DBLCLKS | CS_PARENTDC;
 	winClass.lpfnWndProc = (WNDPROC)( _MessageCallback_Static );
 	winClass.lpszClassName = pModel->GetClassNameID();
     winClass.lpszMenuName = NULL;
@@ -110,14 +100,14 @@ Void WinGUIContainer::_Create()
 
     // Window creation
     m_hHandle = CreateWindowEx (
-        0, pModel->GetClassNameID(), NULL, dwWindowStyle,
-        pModel->GetPositionX(), pModel->GetPositionY(),
-        pModel->GetWidth(), pModel->GetHeight(),
+        WS_EX_CONTROLPARENT, pModel->GetClassNameID(), NULL, dwWindowStyle,
+        pRect->iLeft, pRect->iTop,
+        pRect->iWidth, pRect->iHeight,
 		hParentWnd, (HMENU)m_iResourceID,
         GetModuleHandle(NULL),
         (Void*)this
 	);
-    DebugAssert( m_hHandle != NULL );
+    DebugAssert( m_hHandle != NULL );    
 
     // Done
     _SaveElementToHandle();
@@ -261,9 +251,9 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UIn
         // Paint message
         //case WM_PAINT: {
         //        PAINTSTRUCT ps;
-        //        HDC hdc = BeginPaint((HWND)hWnd, &ps);
-        //        m_pModel->OnDraw();
-        //        EndPaint((HWND)hWnd, &ps);
+        //        HDC hdc = BeginPaint((HWND)m_hHandle, &ps);
+        //        //m_pModel->OnDraw();
+        //        EndPaint((HWND)m_hHandle, &ps);
         //    } break;
 
         // Moving / Sizing messages

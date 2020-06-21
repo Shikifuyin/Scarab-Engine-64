@@ -66,10 +66,7 @@ public:
 	// View
 	virtual const GChar * GetInitialText() const = 0;
 
-	virtual UInt GetPositionX() const = 0;
-	virtual UInt GetPositionY() const = 0;
-	virtual UInt GetWidth() const = 0;
-	virtual UInt GetHeight() const = 0;
+	virtual const WinGUIRectangle * GetRectangle() const = 0;
 
 	virtual Bool DontHideSelection() const = 0;
 	virtual Bool AllowHorizScroll() const = 0;

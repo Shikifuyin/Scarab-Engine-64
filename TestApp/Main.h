@@ -23,14 +23,16 @@
 // Constants definitions
 
 // Some Resource IDs
-#define RESID_CONTAINER_LEFT_TEST   101
+#define RESID_TABS_TEST 100
 
-#define RESID_BUTTON_TEST   110
+#define RESID_CONTAINER_LEFT_TEST 101
+
+#define RESID_BUTTON_TEST 110
 #define RESID_GROUPBOX_TEST 111
 #define RESID_RADIOBUTTON_A_TEST 112
 #define RESID_RADIOBUTTON_B_TEST 113
 
-#define RESID_CONTAINER_RIGHT_TEST  102
+#define RESID_CONTAINER_RIGHT_TEST 102
 
 #define RESID_CHECKBOX_TEST 120
 #define RESID_TEXTEDIT_TEST 121
@@ -54,10 +56,10 @@ public:
 
 	virtual const GChar * GetTitle() const { return TEXT("Sample GUI Application"); }
 
-	virtual UInt GetPositionX() const { return 100; }
-	virtual UInt GetPositionY() const { return 100; }
-	virtual UInt GetWidth() const { return 800; }
-	virtual UInt GetHeight() const { return 600; }
+	virtual const WinGUIRectangle * GetRectangle() const {
+		static WinGUIRectangle hRect = { 100, 100, 800, 600 };
+		return &hRect;
+	}
 
 	virtual Bool HasSystemMenu() const { return true; }
 	virtual Bool HasMinimizeButton() const { return true; }
@@ -71,6 +73,33 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
+// The MyTabsModel class
+class MyTabsModel : public WinGUITabsModel
+{
+public:
+	MyTabsModel( MyApplication * pApplication );
+	~MyTabsModel();
+
+	// Events
+	virtual Bool OnTabSelect();
+
+	// View
+	virtual UInt GetTabCount() const { return 2; }
+	virtual GChar * GetTabLabel( UInt iTabIndex ) const {
+		static GChar strLabels[2][32] = {
+			TEXT("A Tab"),
+			TEXT("Another Tab")
+		};
+		DebugAssert( iTabIndex < 2 );
+		return strLabels[iTabIndex];
+	}
+	virtual Void * GetTabUserData( UInt iTabIndex ) const { return NULL; }
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
 // The MyContainerModelLeft class
 class MyContainerModelLeft : public WinGUIContainerModel
 {
@@ -81,10 +110,7 @@ public:
 	// View
 	virtual const GChar * GetClassNameID() const { return m_strClassName; }
 
-	virtual UInt GetPositionX() const { return 10; }
-	virtual UInt GetPositionY() const { return 10; }
-	virtual UInt GetWidth() const { return 385; }
-	virtual UInt GetHeight() const { return 580; }
+	virtual const WinGUIRectangle * GetRectangle() const;
 
 	virtual Bool AllowResizing() const { return false; }
 
@@ -104,10 +130,7 @@ public:
 	// View
 	virtual const GChar * GetClassNameID() const { return m_strClassName; }
 
-	virtual UInt GetPositionX() const { return 405; }
-	virtual UInt GetPositionY() const { return 10; }
-	virtual UInt GetWidth() const { return 385; }
-	virtual UInt GetHeight() const { return 580; }
+	virtual const WinGUIRectangle * GetRectangle() const;
 
 	virtual Bool AllowResizing() const { return false; }
 
@@ -131,34 +154,34 @@ public:
 	// View
 	virtual const GChar * GetText() const { return TEXT("Press Me !"); }
 
-	virtual UInt GetPositionX() const { return 10; }
-	virtual UInt GetPositionY() const { return 10; }
-	virtual UInt GetWidth() const { return 100; }
-	virtual UInt GetHeight() const { return 20; }
+	virtual const WinGUIRectangle * GetRectangle() const {
+		static WinGUIRectangle hRect = { 10, 10, 100, 20 };
+		return &hRect;
+	}
 
 private:
 	MyApplication * m_pApplication;
 };
 
-/////////////////////////////////////////////////////////////////////////////////
-// The MyGroupBoxModel class
-class MyGroupBoxModel : public WinGUIGroupBoxModel
-{
-public:
-	MyGroupBoxModel( MyApplication * pApplication );
-	~MyGroupBoxModel();
-
-	// View
-	virtual const GChar * GetText() const { return TEXT("Choose One :"); }
-
-	virtual UInt GetPositionX() const { return 10; }
-	virtual UInt GetPositionY() const { return 40; }
-	virtual UInt GetWidth() const { return 100; }
-	virtual UInt GetHeight() const { return 100; }
-
-private:
-	MyApplication * m_pApplication;
-};
+///////////////////////////////////////////////////////////////////////////////////
+//// The MyGroupBoxModel class
+//class MyGroupBoxModel : public WinGUIGroupBoxModel
+//{
+//public:
+//	MyGroupBoxModel( MyApplication * pApplication );
+//	~MyGroupBoxModel();
+//
+//	// View
+//	virtual const GChar * GetText() const { return TEXT("Choose One :"); }
+//
+//	virtual const WinGUIRectangle * GetRectangle() const {
+//		static WinGUIRectangle hRect = { 10, 40, 100, 100 };
+//		return &hRect;
+//	}
+//
+//private:
+//	MyApplication * m_pApplication;
+//};
 
 /////////////////////////////////////////////////////////////////////////////////
 // The MyRadioButtonModelA class
@@ -175,10 +198,10 @@ public:
 	// View
 	virtual const GChar * GetText() const { return TEXT("Option A"); }
 
-	virtual UInt GetPositionX() const;
-	virtual UInt GetPositionY() const;
-	virtual UInt GetWidth() const;
-	virtual UInt GetHeight() const;
+	virtual const WinGUIRectangle * GetRectangle() const {
+		static WinGUIRectangle hRect = { 10, 40, 100, 20 };
+		return &hRect;
+	}
 
 private:
 	MyApplication * m_pApplication;
@@ -199,10 +222,10 @@ public:
 	// View
 	virtual const GChar * GetText() const { return TEXT("Option B"); }
 
-	virtual UInt GetPositionX() const;
-	virtual UInt GetPositionY() const;
-	virtual UInt GetWidth() const;
-	virtual UInt GetHeight() const;
+	virtual const WinGUIRectangle * GetRectangle() const {
+		static WinGUIRectangle hRect = { 10, 60, 100, 20 };
+		return &hRect;
+	}
 
 private:
 	MyApplication * m_pApplication;
@@ -223,10 +246,10 @@ public:
 	// View
 	virtual const GChar * GetText() const { return TEXT("Enable TextEdit"); }
 
-	virtual UInt GetPositionX() const { return 10; }
-	virtual UInt GetPositionY() const { return 10; }
-	virtual UInt GetWidth() const { return 100; }
-	virtual UInt GetHeight() const { return 20; }
+	virtual const WinGUIRectangle * GetRectangle() const {
+		static WinGUIRectangle hRect = { 10, 10, 100, 20 };
+		return &hRect;
+	}
 
 private:
 	MyApplication * m_pApplication;
@@ -246,10 +269,10 @@ public:
 	// View
 	virtual const GChar * GetInitialText() const { return TEXT(""); }
 
-	virtual UInt GetPositionX() const { return 10; }
-	virtual UInt GetPositionY() const { return 40; }
-	virtual UInt GetWidth() const { return 100; }
-	virtual UInt GetHeight() const { return 20; }
+	virtual const WinGUIRectangle * GetRectangle() const {
+		static WinGUIRectangle hRect = { 10, 40, 100, 20 };
+		return &hRect;
+	}
 
 	virtual Bool DontHideSelection() const { return false; }
 	virtual Bool AllowHorizScroll() const { return true; }
@@ -272,11 +295,13 @@ public:
 	~MyApplication();
 
     MyWindowModel m_hAppWindowModel;
+
+	MyTabsModel m_hTabsModel;
     
 	MyContainerModelLeft m_hContainerModelLeft;
 
 	MyButtonModel m_hButtonModel;
-	MyGroupBoxModel m_hGroupBoxModel;
+	//MyGroupBoxModel m_hGroupBoxModel;
     MyRadioButtonModelA m_hRadioButtonModelA;
     MyRadioButtonModelB m_hRadioButtonModelB;
 	WinGUIRadioButtonGroup m_hRadioButtonGroup;

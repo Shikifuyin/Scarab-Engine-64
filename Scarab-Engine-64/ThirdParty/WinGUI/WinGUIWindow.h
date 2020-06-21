@@ -52,10 +52,7 @@ public:
 
 	virtual const GChar * GetTitle() const = 0;
 
-	virtual UInt GetPositionX() const = 0;
-	virtual UInt GetPositionY() const = 0;
-	virtual UInt GetWidth() const = 0;
-	virtual UInt GetHeight() const = 0;
+	virtual const WinGUIRectangle * GetRectangle() const = 0;
 
 	virtual Bool HasSystemMenu() const = 0;
 	virtual Bool HasMinimizeButton() const = 0;
@@ -83,10 +80,6 @@ public:
 	inline WinGUIElement * GetChild( UInt iIndex ) const;
 
 	WinGUIElement * GetChildByID( Int iResourceID ) const;
-
-	// Visibility
-	Bool IsVisible() const;
-	Void SetVisible( Bool bVisible );
 
 private:
 	friend class WinGUI;

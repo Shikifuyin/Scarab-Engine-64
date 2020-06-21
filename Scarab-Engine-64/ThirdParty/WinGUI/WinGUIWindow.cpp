@@ -63,19 +63,6 @@ WinGUIElement * WinGUIWindow::GetChildByID( Int iResourceID ) const
 	return NULL;
 }
 
-Bool WinGUIWindow::IsVisible() const
-{
-    return ( IsWindowVisible((HWND)m_hHandle) != FALSE );
-}
-Void WinGUIWindow::SetVisible( Bool bVisible )
-{
-    if ( bVisible ) {
-        ShowWindow( (HWND)m_hHandle, SW_SHOW );
-        UpdateWindow( (HWND)m_hHandle );
-    } else
-        ShowWindow( (HWND)m_hHandle, SW_HIDE );
-}
-
 /////////////////////////////////////////////////////////////////////////////////
 
 Void WinGUIWindow::_Create()
@@ -85,7 +72,7 @@ Void WinGUIWindow::_Create()
     WinGUIWindowModel * pModel = (WinGUIWindowModel*)m_pModel;
 
     // Build Style
-    DWord dwWindowStyle = ( WS_OVERLAPPED | WS_CAPTION | WS_CLIPCHILDREN | WS_CLIPSIBLINGS );
+    DWord dwWindowStyle = ( WS_OVERLAPPED | WS_CAPTION | WS_CLIPCHILDREN );
     if ( pModel->HasSystemMenu() ) {
         dwWindowStyle |= WS_SYSMENU;
         if ( pModel->HasMinimizeButton() )
@@ -97,10 +84,11 @@ Void WinGUIWindow::_Create()
         dwWindowStyle |= WS_SIZEBOX;
 
     // Window region
+    const WinGUIRectangle * pRect = pModel->GetRectangle();
     RECT rectWindow;
-    SetRect( &rectWindow, pModel->GetPositionX(), pModel->GetPositionY(),
-                          pModel->GetPositionX() + pModel->GetWidth(),
-                          pModel->GetPositionY() + pModel->GetHeight() );
+    SetRect( &rectWindow, pRect->iLeft, pRect->iTop,
+                          pRect->iLeft + pRect->iWidth,
+                          pRect->iTop + pRect->iHeight );
     AdjustWindowRect( &rectWindow, dwWindowStyle, FALSE );
 
     // Window class
@@ -121,8 +109,8 @@ Void WinGUIWindow::_Create()
 
     // Window creation
     m_hHandle = CreateWindowEx (
-        0, pModel->GetClassNameID(), pModel->GetTitle(), dwWindowStyle,
-        pModel->GetPositionX(), pModel->GetPositionY(),
+        WS_EX_CONTROLPARENT, pModel->GetClassNameID(), pModel->GetTitle(), dwWindowStyle,
+        pRect->iLeft, pRect->iTop,
         (rectWindow.right - rectWindow.left), (rectWindow.bottom - rectWindow.top),
 		NULL, NULL,
         GetModuleHandle(NULL),
@@ -273,9 +261,9 @@ UIntPtr __stdcall WinGUIWindow::_MessageCallback_Virtual( Void * hHandle, UInt i
         // Paint message
         //case WM_PAINT: {
         //        PAINTSTRUCT ps;
-        //        HDC hdc = BeginPaint((HWND)hWnd, &ps);
-        //        m_pModel->OnDraw();
-        //        EndPaint((HWND)hWnd, &ps);
+        //        HDC hdc = BeginPaint((HWND)m_hHandle, &ps);
+        //        //m_pModel->OnDraw();
+        //        EndPaint((HWND)m_hHandle, &ps);
         //    } break;
 
         // Moving / Sizing messages

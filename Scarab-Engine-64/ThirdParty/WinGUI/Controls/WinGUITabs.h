@@ -1,10 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////////
-// File : ThirdParty/WinGUI/Controls/WinGUIGroupBox.h
+// File : ThirdParty/WinGUI/Controls/WinGUITabs.h
 /////////////////////////////////////////////////////////////////////////////////
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Windows GUI Control : GroupBox
+// Description : Windows GUI Control : Tabs
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -17,48 +17,72 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Header prelude
-#ifndef SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUIGROUPBOX_H
-#define SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUIGROUPBOX_H
+#ifndef SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUITABS_H
+#define SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUITABS_H
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
 #include "../WinGUIControl.h"
+#include "../WinGUIContainer.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
 /////////////////////////////////////////////////////////////////////////////////
-// The WinGUIGroupBoxModel class
-class WinGUIGroupBoxModel : public WinGUIControlModel
+// The WinGUITabsModel class
+class WinGUITabsModel : public WinGUIControlModel
 {
 public:
-	WinGUIGroupBoxModel( Int iResourceID );
-	virtual ~WinGUIGroupBoxModel();
+	WinGUITabsModel( Int iResourceID );
+	virtual ~WinGUITabsModel();
+
+	// Events
+	virtual Bool OnTabSelect() = 0;
 
 	// View
-	virtual const GChar * GetText() const = 0;
-
-	virtual const WinGUIRectangle * GetRectangle() const = 0;
+	virtual UInt GetTabCount() const = 0;
+	virtual GChar * GetTabLabel( UInt iTabIndex ) const = 0;
+	virtual Void * GetTabUserData( UInt iTabIndex ) const = 0;
 
 protected:
 
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-// The WinGUIGroupBox class
-class WinGUIGroupBox : public WinGUIControl
+// The WinGUITabs class
+class WinGUITabs : public WinGUIControl
 {
 public:
-	WinGUIGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel );
-	virtual ~WinGUIGroupBox();
+	WinGUITabs( WinGUIElement * pParent, WinGUITabsModel * pModel );
+	virtual ~WinGUITabs();
 
-	// Label Text
-	UInt GetTextLength() const;
-	Void GetText( GChar * outText, UInt iMaxLength ) const;
-	Void SetText( const GChar * strText );
+	// Display Area access
+	Void GetDisplayArea( WinGUIRectangle * outDisplayArea ) const;
 
-	// Client Area
-	Void ComputeClientArea( WinGUIRectangle * outClientArea, Int iPadding ) const;
+	// TabPane access
+	inline WinGUIContainer * GetSelectedTabPane() const;
+	Void SwitchSelectedTabPane( WinGUIContainer * pSelectedTabPane );
+
+	// Tabs access
+	UInt GetTabsRowCount() const;
+
+	Void SetMinTabWidth( UInt iWidth = INVALID_OFFSET );
+	Void SetTabButtonPadding( UInt iHPadding, UInt iVPadding );
+
+	Void AddTab( UInt iIndex, GChar * strLabel, Void * pUserData );
+	Void RemoveTab( UInt iIndex );
+	Void RemoveAllTabs();
+
+	Void UpdateTab( UInt iIndex, GChar * strLabel, Void * pUserData );
+
+	// Selection access
+	UInt GetSelectedTab() const;
+	Void SelectTab( UInt iIndex );
+	Void UnselectAll( Bool bKeepCurrent );
+
+	// ToolTips access
+	//WinGUIToolTip * GetToolTip() const;
+	//Void SetToolTip( WinGUIToolTip * pToolTip );
 
 private:
 	// Create/Destroy Interface
@@ -67,13 +91,16 @@ private:
 
 	// Event Dispatch
 	virtual Bool _DispatchEvent( Int iNotificationCode );
+
+	// Currently Selected Tab Pane
+	WinGUIContainer * m_pSelectedTabPane;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
 // Backward Includes (Inlines & Templates)
-#include "WinGUIGroupBox.inl"
+#include "WinGUITabs.inl"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Header end
-#endif // SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUIGROUPBOX_H
+#endif // SCARAB_THIRDPARTY_WINGUI_CONTROLS_WINGUITABS_H
 

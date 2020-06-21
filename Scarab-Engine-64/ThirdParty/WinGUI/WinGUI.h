@@ -28,6 +28,8 @@
 #include "WinGUIContainer.h"
 #include "WinGUIControl.h"
 
+#include "Controls/WinGUITabs.h"
+
 #include "Controls/WinGUIGroupBox.h"
 
 #include "Controls/WinGUIButton.h"
@@ -98,6 +100,8 @@ public:
     WinGUIContainer * CreateContainer( WinGUIElement * pParent, WinGUIContainerModel * pModel ) const;
 
     // Controls
+    WinGUITabs * CreateTabs( WinGUIElement * pParent, WinGUITabsModel * pModel ) const;
+
     WinGUIGroupBox * CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const;
 
     WinGUIButton * CreateButton( WinGUIElement * pParent, WinGUIButtonModel * pModel ) const;

@@ -42,10 +42,7 @@ public:
 	// View
 	virtual const GChar * GetText() const = 0;
 
-	virtual UInt GetPositionX() const = 0;
-	virtual UInt GetPositionY() const = 0;
-	virtual UInt GetWidth() const = 0;
-	virtual UInt GetHeight() const = 0;
+	virtual const WinGUIRectangle * GetRectangle() const = 0;
 
 protected:
 

@@ -78,6 +78,10 @@ Void WinGUIContainer::_Create()
     DWord dwWindowStyle = ( WS_VISIBLE | WS_CHILD | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS );
     if ( pModel->AllowResizing() )
         dwWindowStyle |= WS_SIZEBOX;
+    if ( pModel->ClipChildren() )
+        dwWindowStyle |= WS_CLIPCHILDREN;
+    if ( pModel->ClipSibblings() )
+        dwWindowStyle |= WS_CLIPSIBLINGS;
 
     // Window region
     const WinGUIRectangle * pRect = pModel->GetRectangle();

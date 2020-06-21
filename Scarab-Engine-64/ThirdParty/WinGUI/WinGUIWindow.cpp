@@ -72,7 +72,7 @@ Void WinGUIWindow::_Create()
     WinGUIWindowModel * pModel = (WinGUIWindowModel*)m_pModel;
 
     // Build Style
-    DWord dwWindowStyle = ( WS_OVERLAPPED | WS_CAPTION | WS_CLIPCHILDREN );
+    DWord dwWindowStyle = ( WS_OVERLAPPED | WS_CAPTION );
     if ( pModel->HasSystemMenu() ) {
         dwWindowStyle |= WS_SYSMENU;
         if ( pModel->HasMinimizeButton() )
@@ -82,6 +82,10 @@ Void WinGUIWindow::_Create()
     }
     if ( pModel->AllowResizing() )
         dwWindowStyle |= WS_SIZEBOX;
+    if ( pModel->ClipChildren() )
+        dwWindowStyle |= WS_CLIPCHILDREN;
+    if ( pModel->ClipSibblings() )
+        dwWindowStyle |= WS_CLIPSIBLINGS;
 
     // Window region
     const WinGUIRectangle * pRect = pModel->GetRectangle();

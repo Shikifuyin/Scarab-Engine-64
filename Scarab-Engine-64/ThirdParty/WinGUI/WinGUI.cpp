@@ -203,29 +203,6 @@ WinGUITabs * WinGUI::CreateTabs( WinGUIElement * pParent, WinGUITabsModel * pMod
     return pTabs;
 }
 
-WinGUIGroupBox * WinGUI::CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const
-{
-    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
-
-    // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIGroupBox) );
-    WinGUIGroupBox * pGroupBox = new(pMemory) WinGUIGroupBox( pParent, pModel );
-
-    ((WinGUIElement*)pGroupBox)->_Create();
-
-    // Add Child Links to Parent
-    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
-        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
-        pWindow->_AppendChild( pGroupBox );
-    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
-        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
-        pContainer->_AppendChild( pGroupBox );
-    }
-
-    // Done
-    return pGroupBox;
-}
-
 WinGUIButton * WinGUI::CreateButton( WinGUIElement * pParent, WinGUIButtonModel * pModel ) const
 {
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
@@ -292,7 +269,51 @@ WinGUIRadioButton * WinGUI::CreateRadioButton( WinGUIElement * pParent, WinGUIRa
     // Done
     return pRadioButton;
 }
+WinGUIGroupBox * WinGUI::CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIGroupBox) );
+    WinGUIGroupBox * pGroupBox = new(pMemory) WinGUIGroupBox( pParent, pModel );
+
+    ((WinGUIElement*)pGroupBox)->_Create();
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pGroupBox );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pGroupBox );
+    }
+
+    // Done
+    return pGroupBox;
+}
+
+WinGUIStatic * WinGUI::CreateStatic( WinGUIElement * pParent, WinGUIStaticModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIStatic) );
+    WinGUIStatic * pStatic = new(pMemory) WinGUIStatic( pParent, pModel );
+
+    ((WinGUIElement*)pStatic)->_Create();
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pStatic );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pStatic );
+    }
+
+    // Done
+    return pStatic;
+}
 WinGUITextEdit * WinGUI::CreateTextEdit( WinGUIElement * pParent, WinGUITextEditModel * pModel ) const
 {
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );

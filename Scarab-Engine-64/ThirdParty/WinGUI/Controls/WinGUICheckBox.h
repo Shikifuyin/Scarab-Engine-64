@@ -40,9 +40,9 @@ public:
 	virtual Bool OnDblClick() = 0;
 
 	// View
-	virtual const GChar * GetText() const = 0;
-
 	virtual const WinGUIRectangle * GetRectangle() const = 0;
+
+	virtual const GChar * GetText() const = 0;
 
 protected:
 

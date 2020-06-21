@@ -143,17 +143,17 @@ Bool MyButtonModel::OnClick()
 	return false;
 }
 
-///////////////////////////////////////////////////////////////////////////////////
-//// MyGroupBoxModel implementation
-//MyGroupBoxModel::MyGroupBoxModel( MyApplication * pApplication ):
-//	WinGUIGroupBoxModel(RESID_GROUPBOX_TEST)
-//{
-//	m_pApplication = pApplication;
-//}
-//MyGroupBoxModel::~MyGroupBoxModel()
-//{
-//	// nothing to do
-//}
+/////////////////////////////////////////////////////////////////////////////////
+// MyGroupBoxModel implementation
+MyGroupBoxModel::MyGroupBoxModel( MyApplication * pApplication ):
+	WinGUIGroupBoxModel(RESID_GROUPBOX_TEST)
+{
+	m_pApplication = pApplication;
+}
+MyGroupBoxModel::~MyGroupBoxModel()
+{
+	// nothing to do
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 // MyRadioButtonModelA implementation
@@ -167,12 +167,12 @@ MyRadioButtonModelA::~MyRadioButtonModelA()
 	// nothing to do
 }
 
-//const WinGUIRectangle * MyRadioButtonModelA::GetRectangle() const {
-//	static WinGUIRectangle hRect;
-//	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->ComputeClientArea( &hRect, 8 );
-//	hRect.iHeight >>= 1;
-//	return &hRect;
-//}
+const WinGUIRectangle * MyRadioButtonModelA::GetRectangle() const {
+	static WinGUIRectangle hRect;
+	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->ComputeClientArea( &hRect, 8 );
+	hRect.iHeight >>= 1;
+	return &hRect;
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 // MyRadioButtonModelB implementation
@@ -186,13 +186,25 @@ MyRadioButtonModelB::~MyRadioButtonModelB()
 	// nothing to do
 }
 
-//const WinGUIRectangle * MyRadioButtonModelB::GetRectangle() const {
-//	static WinGUIRectangle hRect;
-//	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->ComputeClientArea( &hRect, 8 );
-//	hRect.iHeight >>= 1;
-//	hRect.iTop += hRect.iHeight;
-//	return &hRect;
-//}
+const WinGUIRectangle * MyRadioButtonModelB::GetRectangle() const {
+	static WinGUIRectangle hRect;
+	((WinGUIGroupBox *)(m_pApplication->m_hGroupBoxModel.GetView()))->ComputeClientArea( &hRect, 8 );
+	hRect.iHeight >>= 1;
+	hRect.iTop += hRect.iHeight;
+	return &hRect;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// MyStaticTextModel implementation
+MyStaticTextModel::MyStaticTextModel( MyApplication * pApplication ):
+	WinGUIStaticModel(RESID_STATIC_TEXT_TEST)
+{
+	m_pApplication = pApplication;
+}
+MyStaticTextModel::~MyStaticTextModel()
+{
+	// nothing to do
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 // MyCheckBoxModel implementation
@@ -232,6 +244,18 @@ MyTextEditModel::~MyTextEditModel()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+// MyStaticRectModel implementation
+MyStaticRectModel::MyStaticRectModel( MyApplication * pApplication ):
+	WinGUIStaticModel(RESID_STATIC_RECT_TEST)
+{
+	m_pApplication = pApplication;
+}
+MyStaticRectModel::~MyStaticRectModel()
+{
+	// nothing to do
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // MyApplication implementation
 MyApplication::MyApplication():
 	m_hAppWindowModel(this),
@@ -241,15 +265,17 @@ MyApplication::MyApplication():
 	m_hContainerModelLeft(this),
 
 	m_hButtonModel(this),
-	//m_hGroupBoxModel(this),
+	m_hGroupBoxModel(this),
 	m_hRadioButtonModelA(this),
 	m_hRadioButtonModelB(this),
 	m_hRadioButtonGroup(),
+	m_hStaticTextModel(this),
 
 	m_hContainerModelRight(this),
 
 	m_hCheckBoxModel(this),
-	m_hTextEditModel(this)
+	m_hTextEditModel(this),
+	m_hStaticRectModel(this)
 {
 	// App Window
 	WinGUIFn->CreateAppWindow( &m_hAppWindowModel );
@@ -265,7 +291,7 @@ MyApplication::MyApplication():
 	WinGUIFn->CreateButton( pContainerLeft, &m_hButtonModel );
 
 	// A GroupBox
-	//WinGUIFn->CreateGroupBox( pContainerLeft, &m_hGroupBoxModel );
+	WinGUIFn->CreateGroupBox( pContainerLeft, &m_hGroupBoxModel );
 
 	// A couple Radio Buttons
 	WinGUIRadioButton * pRadioButtonA = WinGUIFn->CreateRadioButton( pContainerLeft, &m_hRadioButtonModelA );
@@ -275,6 +301,9 @@ MyApplication::MyApplication():
 	pRadioButtonA->SetGroup( &m_hRadioButtonGroup );
 	pRadioButtonB->SetGroup( &m_hRadioButtonGroup );
 	pRadioButtonA->Check();
+
+	// A Static Text
+	WinGUIFn->CreateStatic( pContainerLeft, &m_hStaticTextModel );
 
 	// Right Container
 	WinGUIContainer * pContainerRight = WinGUIFn->CreateContainer( pAppWindow, &m_hContainerModelRight );
@@ -287,6 +316,9 @@ MyApplication::MyApplication():
 	WinGUITextEdit * pTextEdit = WinGUIFn->CreateTextEdit( pContainerRight, &m_hTextEditModel );
 	pTextEdit->SetCueText( TEXT("Type Stuff"), false );
 	pTextEdit->SetTextLimit( 32 );
+
+	// A Static Rect
+	WinGUIFn->CreateStatic( pContainerRight, &m_hStaticRectModel );
 
 	// Done
 	pTabs->SelectTab( 0 );

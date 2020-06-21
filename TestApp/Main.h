@@ -31,11 +31,13 @@
 #define RESID_GROUPBOX_TEST 111
 #define RESID_RADIOBUTTON_A_TEST 112
 #define RESID_RADIOBUTTON_B_TEST 113
+#define RESID_STATIC_TEXT_TEST 114
 
 #define RESID_CONTAINER_RIGHT_TEST 102
 
 #define RESID_CHECKBOX_TEST 120
 #define RESID_TEXTEDIT_TEST 121
+#define RESID_STATIC_RECT_TEST 122
 
 // Prototypes
 class MyApplication;
@@ -66,6 +68,9 @@ public:
 	virtual Bool HasMaximizeButton() const { return false; }
 
 	virtual Bool AllowResizing() const { return false; }
+
+	virtual Bool ClipChildren() const { return false; }
+	virtual Bool ClipSibblings() const { return true; }
 
 private:
 	MyApplication * m_pApplication;
@@ -114,6 +119,9 @@ public:
 
 	virtual Bool AllowResizing() const { return false; }
 
+	virtual Bool ClipChildren() const { return true; }
+	virtual Bool ClipSibblings() const { return true; }
+
 private:
 	MyApplication * m_pApplication;
 	GChar m_strClassName[32];
@@ -133,6 +141,9 @@ public:
 	virtual const WinGUIRectangle * GetRectangle() const;
 
 	virtual Bool AllowResizing() const { return false; }
+
+	virtual Bool ClipChildren() const { return true; }
+	virtual Bool ClipSibblings() const { return true; }
 
 private:
 	MyApplication * m_pApplication;
@@ -163,25 +174,25 @@ private:
 	MyApplication * m_pApplication;
 };
 
-///////////////////////////////////////////////////////////////////////////////////
-//// The MyGroupBoxModel class
-//class MyGroupBoxModel : public WinGUIGroupBoxModel
-//{
-//public:
-//	MyGroupBoxModel( MyApplication * pApplication );
-//	~MyGroupBoxModel();
-//
-//	// View
-//	virtual const GChar * GetText() const { return TEXT("Choose One :"); }
-//
-//	virtual const WinGUIRectangle * GetRectangle() const {
-//		static WinGUIRectangle hRect = { 10, 40, 100, 100 };
-//		return &hRect;
-//	}
-//
-//private:
-//	MyApplication * m_pApplication;
-//};
+/////////////////////////////////////////////////////////////////////////////////
+// The MyGroupBoxModel class
+class MyGroupBoxModel : public WinGUIGroupBoxModel
+{
+public:
+	MyGroupBoxModel( MyApplication * pApplication );
+	~MyGroupBoxModel();
+
+	// View
+	virtual const GChar * GetText() const { return TEXT("Choose One :"); }
+
+	virtual const WinGUIRectangle * GetRectangle() const {
+		static WinGUIRectangle hRect = { 10, 40, 100, 100 };
+		return &hRect;
+	}
+
+private:
+	MyApplication * m_pApplication;
+};
 
 /////////////////////////////////////////////////////////////////////////////////
 // The MyRadioButtonModelA class
@@ -198,10 +209,7 @@ public:
 	// View
 	virtual const GChar * GetText() const { return TEXT("Option A"); }
 
-	virtual const WinGUIRectangle * GetRectangle() const {
-		static WinGUIRectangle hRect = { 10, 40, 100, 20 };
-		return &hRect;
-	}
+	virtual const WinGUIRectangle * GetRectangle() const;
 
 private:
 	MyApplication * m_pApplication;
@@ -222,10 +230,39 @@ public:
 	// View
 	virtual const GChar * GetText() const { return TEXT("Option B"); }
 
+	virtual const WinGUIRectangle * GetRectangle() const;
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The MyStaticTextModel class
+class MyStaticTextModel : public WinGUIStaticModel
+{
+public:
+	MyStaticTextModel( MyApplication * pApplication );
+	~MyStaticTextModel();
+
+	// View
 	virtual const WinGUIRectangle * GetRectangle() const {
-		static WinGUIRectangle hRect = { 10, 60, 100, 20 };
+		static WinGUIRectangle hRect = { 10, 200, 100, 20 };
 		return &hRect;
 	}
+
+	virtual WinGUIStaticType GetType() const { return WINGUI_STATIC_TEXT; }
+	virtual const GChar * GetText() const { return TEXT("Not Dynamic !"); }
+
+	virtual Bool AddSunkenBorder() const { return true; }
+
+	virtual WinGUIStaticFrameType GetFrameType() const { return WINGUI_STATIC_FRAME_ETCHED; }
+
+	virtual WinGUIStaticRectType GetRectType() const { return WINGUI_STATIC_RECT_HOLLOW_BLACK; }
+
+	virtual WinGUIStaticTextAlign GetTextAlign() const { return WINGUI_STATIC_TEXT_ALIGN_LEFT; }
+	virtual WinGUIStaticTextEllipsis GetTextEllipsis() const { return WINGUI_STATIC_TEXT_ELLIPSIS_NONE; }
+
+	virtual WinGUIStaticImageInfo GetImageInfo() const { return WINGUI_STATIC_IMAGE_DEFAULT; }
 
 private:
 	MyApplication * m_pApplication;
@@ -287,6 +324,38 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
+// The MyStaticRectModel class
+class MyStaticRectModel : public WinGUIStaticModel
+{
+public:
+	MyStaticRectModel( MyApplication * pApplication );
+	~MyStaticRectModel();
+
+	// View
+	virtual const WinGUIRectangle * GetRectangle() const {
+		static WinGUIRectangle hRect = { 10, 200, 100, 20 };
+		return &hRect;
+	}
+
+	virtual WinGUIStaticType GetType() const { return WINGUI_STATIC_RECT; }
+	virtual const GChar * GetText() const { return TEXT(""); }
+
+	virtual Bool AddSunkenBorder() const { return false; }
+
+	virtual WinGUIStaticFrameType GetFrameType() const { return WINGUI_STATIC_FRAME_ETCHED; }
+
+	virtual WinGUIStaticRectType GetRectType() const { return WINGUI_STATIC_RECT_HOLLOW_BLACK; }
+
+	virtual WinGUIStaticTextAlign GetTextAlign() const { return WINGUI_STATIC_TEXT_ALIGN_LEFT; }
+	virtual WinGUIStaticTextEllipsis GetTextEllipsis() const { return WINGUI_STATIC_TEXT_ELLIPSIS_NONE; }
+
+	virtual WinGUIStaticImageInfo GetImageInfo() const { return WINGUI_STATIC_IMAGE_DEFAULT; }
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
 // The MyApplication class
 class MyApplication
 {
@@ -301,13 +370,15 @@ public:
 	MyContainerModelLeft m_hContainerModelLeft;
 
 	MyButtonModel m_hButtonModel;
-	//MyGroupBoxModel m_hGroupBoxModel;
+	MyGroupBoxModel m_hGroupBoxModel;
     MyRadioButtonModelA m_hRadioButtonModelA;
     MyRadioButtonModelB m_hRadioButtonModelB;
 	WinGUIRadioButtonGroup m_hRadioButtonGroup;
+	MyStaticTextModel m_hStaticTextModel;
 
 	MyContainerModelRight m_hContainerModelRight;
 
     MyCheckBoxModel m_hCheckBoxModel;
     MyTextEditModel m_hTextEditModel;
+	MyStaticRectModel m_hStaticRectModel;
 };

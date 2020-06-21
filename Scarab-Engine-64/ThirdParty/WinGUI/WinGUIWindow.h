@@ -60,6 +60,9 @@ public:
 
 	virtual Bool AllowResizing() const = 0;
 
+	virtual Bool ClipChildren() const = 0;
+	virtual Bool ClipSibblings() const = 0;
+
 private:
 
 };

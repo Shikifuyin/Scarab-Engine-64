@@ -72,9 +72,9 @@ Void WinGUITabs::SwitchSelectedTabPane( WinGUIContainer * pSelectedTabPane )
 {
 	// Previous Selection : Set Invisible and Throw Back
 	if ( m_pSelectedTabPane != NULL ) {
-		m_pSelectedTabPane->SetVisible( false );
 		HWND hHandle = (HWND)( _GetHandle(m_pSelectedTabPane) );
 		SetWindowPos( hHandle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE );
+		m_pSelectedTabPane->SetVisible( false );
 	}
 
 	// New Selection : Set Visible and Bring Front
@@ -188,7 +188,7 @@ Void WinGUITabs::_Create()
 
 	m_hHandle = CreateWindowEx (
 		0, WC_TABCONTROL, TEXT(""),
-		WS_VISIBLE | WS_CHILD | TCS_TABS | TCS_SINGLELINE | TCS_FIXEDWIDTH,
+		WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | TCS_TABS | TCS_SINGLELINE | TCS_FIXEDWIDTH,
 		0, 0, hClientArea.right, hClientArea.bottom,
 		hParentWnd, (HMENU)m_iResourceID,
 		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),

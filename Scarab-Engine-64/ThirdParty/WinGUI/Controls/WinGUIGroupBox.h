@@ -36,9 +36,9 @@ public:
 	virtual ~WinGUIGroupBoxModel();
 
 	// View
-	virtual const GChar * GetText() const = 0;
-
 	virtual const WinGUIRectangle * GetRectangle() const = 0;
+
+	virtual const GChar * GetText() const = 0;
 
 protected:
 

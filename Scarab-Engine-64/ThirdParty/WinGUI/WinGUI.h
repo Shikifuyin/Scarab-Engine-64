@@ -30,12 +30,12 @@
 
 #include "Controls/WinGUITabs.h"
 
-#include "Controls/WinGUIGroupBox.h"
-
 #include "Controls/WinGUIButton.h"
 #include "Controls/WinGUICheckBox.h"
 #include "Controls/WinGUIRadioButton.h"
+#include "Controls/WinGUIGroupBox.h"
 
+#include "Controls/WinGUIStatic.h"
 #include "Controls/WinGUITextEdit.h"
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -102,12 +102,12 @@ public:
     // Controls
     WinGUITabs * CreateTabs( WinGUIElement * pParent, WinGUITabsModel * pModel ) const;
 
-    WinGUIGroupBox * CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const;
-
     WinGUIButton * CreateButton( WinGUIElement * pParent, WinGUIButtonModel * pModel ) const;
     WinGUICheckBox * CreateCheckBox( WinGUIElement * pParent, WinGUICheckBoxModel * pModel ) const;
     WinGUIRadioButton * CreateRadioButton( WinGUIElement * pParent, WinGUIRadioButtonModel * pModel ) const;
+    WinGUIGroupBox * CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const;
 
+    WinGUIStatic * CreateStatic( WinGUIElement * pParent, WinGUIStaticModel * pModel ) const;
     WinGUITextEdit * CreateTextEdit( WinGUIElement * pParent, WinGUITextEditModel * pModel ) const;
 
     // Element Removal

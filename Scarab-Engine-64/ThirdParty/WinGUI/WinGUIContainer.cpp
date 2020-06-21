@@ -75,7 +75,7 @@ Void WinGUIContainer::_Create()
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
     // Build Style
-    DWord dwWindowStyle = ( WS_VISIBLE | WS_CHILD | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS );
+    DWord dwWindowStyle = ( WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS );
     if ( pModel->AllowResizing() )
         dwWindowStyle |= WS_SIZEBOX;
     if ( pModel->ClipChildren() )
@@ -96,7 +96,7 @@ Void WinGUIContainer::_Create()
 	winClass.lpfnWndProc = (WNDPROC)( _MessageCallback_Static );
 	winClass.lpszClassName = pModel->GetClassNameID();
     winClass.lpszMenuName = NULL;
-	winClass.hbrBackground = (HBRUSH)( COLOR_WINDOW + 1 );
+	winClass.hbrBackground = (HBRUSH)( COLOR_3DFACE + 1 );
 	winClass.hCursor = NULL;
 	winClass.hIcon = NULL;
 	winClass.hIconSm = NULL;

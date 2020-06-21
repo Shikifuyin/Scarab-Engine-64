@@ -253,7 +253,7 @@ public:
 	virtual WinGUIStaticType GetType() const { return WINGUI_STATIC_TEXT; }
 	virtual const GChar * GetText() const { return TEXT("Not Dynamic !"); }
 
-	virtual Bool AddSunkenBorder() const { return true; }
+	virtual Bool AddSunkenBorder() const { return false; }
 
 	virtual WinGUIStaticFrameType GetFrameType() const { return WINGUI_STATIC_FRAME_ETCHED; }
 
@@ -337,7 +337,7 @@ public:
 		return &hRect;
 	}
 
-	virtual WinGUIStaticType GetType() const { return WINGUI_STATIC_RECT; }
+	virtual WinGUIStaticType GetType() const { return WINGUI_STATIC_FRAME; }
 	virtual const GChar * GetText() const { return TEXT(""); }
 
 	virtual Bool AddSunkenBorder() const { return false; }

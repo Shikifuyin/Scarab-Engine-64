@@ -105,7 +105,7 @@ Void WinGUIWindow::_Create()
 	winClass.lpfnWndProc = (WNDPROC)( _MessageCallback_Static );
 	winClass.lpszClassName = pModel->GetClassNameID();
     winClass.lpszMenuName = NULL;
-	winClass.hbrBackground = (HBRUSH)( COLOR_WINDOW + 1 );
+	winClass.hbrBackground = (HBRUSH)( COLOR_3DFACE + 1 );
 	winClass.hCursor = (HCURSOR)( LoadImage(NULL, IDC_ARROW, IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE) );
 	winClass.hIcon = (HICON)( LoadImage(NULL, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE) );
 	winClass.hIconSm = (HICON)( LoadImage(NULL, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE) );

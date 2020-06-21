@@ -43,7 +43,16 @@ public:
 	virtual ~WinGUIContainerModel();
 
 	// Events
-	virtual Bool OnClose() = 0;
+
+	// View
+	virtual const GChar * GetClassNameID() const = 0;
+
+	virtual UInt GetPositionX() const = 0;
+	virtual UInt GetPositionY() const = 0;
+	virtual UInt GetWidth() const = 0;
+	virtual UInt GetHeight() const = 0;
+
+	virtual Bool AllowResizing() const = 0;
 
 protected:
 
@@ -65,6 +74,10 @@ public:
 	inline WinGUIElement * GetChild( UInt iIndex ) const;
 
 	WinGUIElement * GetChildByID( Int iResourceID ) const;
+
+	// Visibility
+	Bool IsVisible() const;
+	Void SetVisible( Bool bVisible );
 
 private:
 	friend class WinGUI;

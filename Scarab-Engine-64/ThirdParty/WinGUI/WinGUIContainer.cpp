@@ -26,6 +26,8 @@
 #include "WinGUIContainer.h"
 #include "WinGUIControl.h"
 
+#pragma warning(disable:4312) // Int to HMENU cast
+
 /////////////////////////////////////////////////////////////////////////////////
 // WinGUIContainerModel implementation
 WinGUIContainerModel::WinGUIContainerModel( Int iResourceID ):
@@ -63,13 +65,59 @@ WinGUIElement * WinGUIContainer::GetChildByID( Int iResourceID ) const
 	return NULL;
 }
 
+Bool WinGUIContainer::IsVisible() const
+{
+    return ( IsWindowVisible((HWND)m_hHandle) != FALSE );
+}
+Void WinGUIContainer::SetVisible( Bool bVisible )
+{
+    if ( bVisible ) {
+        ShowWindow( (HWND)m_hHandle, SW_SHOW );
+        UpdateWindow( (HWND)m_hHandle );
+    } else
+        ShowWindow( (HWND)m_hHandle, SW_HIDE );
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 
 Void WinGUIContainer::_Create()
 {
     DebugAssert( m_hHandle == NULL );
 
-    //////////
+    WinGUIContainerModel * pModel = (WinGUIContainerModel*)m_pModel;
+	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
+
+    // Build Style
+    DWord dwWindowStyle = ( WS_VISIBLE | WS_CHILD | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS );
+    if ( pModel->AllowResizing() )
+        dwWindowStyle |= WS_SIZEBOX;
+
+    // Window class
+    WNDCLASSEX winClass;
+    winClass.cbSize = sizeof(WNDCLASSEX);
+    winClass.cbClsExtra = 0;
+	winClass.cbWndExtra = 0;
+    winClass.hInstance = GetModuleHandle( NULL );
+	winClass.style = CS_DBLCLKS;
+	winClass.lpfnWndProc = (WNDPROC)( _MessageCallback_Static );
+	winClass.lpszClassName = pModel->GetClassNameID();
+    winClass.lpszMenuName = NULL;
+	winClass.hbrBackground = (HBRUSH)( COLOR_WINDOW + 1 );
+	winClass.hCursor = NULL;
+	winClass.hIcon = NULL;
+	winClass.hIconSm = NULL;
+	RegisterClassEx( &winClass );
+
+    // Window creation
+    m_hHandle = CreateWindowEx (
+        0, pModel->GetClassNameID(), NULL, dwWindowStyle,
+        pModel->GetPositionX(), pModel->GetPositionY(),
+        pModel->GetWidth(), pModel->GetHeight(),
+		hParentWnd, (HMENU)m_iResourceID,
+        GetModuleHandle(NULL),
+        (Void*)this
+	);
+    DebugAssert( m_hHandle != NULL );
 
     // Done
     _SaveElementToHandle();
@@ -78,10 +126,12 @@ Void WinGUIContainer::_Destroy()
 {
     DebugAssert( m_hHandle != NULL );
 
-    //DestroyWindow( (HWND)m_hHandle );
+    WinGUIContainerModel * pModel = (WinGUIContainerModel*)m_pModel;
+
+    DestroyWindow( (HWND)m_hHandle );
     m_hHandle = NULL;
 
-    //UnregisterClass(  );
+    UnregisterClass( pModel->GetClassNameID(), GetModuleHandle(NULL) );
 }
 
 UIntPtr __stdcall WinGUIContainer::_MessageCallback_Static( Void * hHandle, UInt iMessage, UIntPtr wParam, UIntPtr lParam )
@@ -275,22 +325,6 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UIn
                 }
             } break;
 
-        // Menu messages
-        //case WM_ENTERMENULOOP: {
-        //        // nothing to do
-        //    } break;
-        //case WM_EXITMENULOOP: {
-        //        // nothing to do
-        //    } break;
-
-        // Exit sequence
-        case WM_CLOSE: {
-                pModel->OnClose();
-                return 0;
-            } break;
-        case WM_DESTROY: {
-                //PostQuitMessage(0);
-            } break;
         default: break;
     }
 

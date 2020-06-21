@@ -34,12 +34,39 @@ MyWindowModel::MyWindowModel( MyApplication * pApplication ):
 }
 MyWindowModel::~MyWindowModel()
 {
+	// nothing to do
 }
 
 Bool MyWindowModel::OnClose()
 {
 	WinGUIFn->DestroyAppWindow();
 	return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// MyContainerModelLeft implementation
+MyContainerModelLeft::MyContainerModelLeft( MyApplication * pApplication ):
+	WinGUIContainerModel(RESID_CONTAINER_LEFT_TEST)
+{
+	m_pApplication = pApplication;
+	StringFn->NCopy( m_strClassName, TEXT("LeftContainer"), 31 );
+}
+MyContainerModelLeft::~MyContainerModelLeft()
+{
+	// nothing to do
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// MyContainerModelRight implementation
+MyContainerModelRight::MyContainerModelRight( MyApplication * pApplication ):
+	WinGUIContainerModel(RESID_CONTAINER_RIGHT_TEST)
+{
+	m_pApplication = pApplication;
+	StringFn->NCopy( m_strClassName, TEXT("RightContainer"), 31 );
+}
+MyContainerModelRight::~MyContainerModelRight()
+{
+	// nothing to do
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -70,32 +97,19 @@ Bool MyButtonModel::OnClick()
 		return true;
 	}
 
+	pRadioButton = (WinGUIRadioButton*)(m_pApplication->m_hRadioButtonModelB.GetView());
+	if ( pRadioButton->IsChecked() ) {
+		WinGUIContainer * pContainer = (WinGUIContainer*)(m_pApplication->m_hContainerModelRight.GetView());
+
+		if ( pContainer->IsVisible() )
+			pContainer->SetVisible( false );
+		else
+			pContainer->SetVisible( true );
+
+		return true;
+	}
+
 	return false;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-// MyCheckBoxModel implementation
-MyCheckBoxModel::MyCheckBoxModel( MyApplication * pApplication ):
-	WinGUICheckBoxModel(RESID_CHECKBOX_TEST)
-{
-	m_pApplication = pApplication;
-}
-MyCheckBoxModel::~MyCheckBoxModel()
-{
-	// nothing to do
-}
-
-Bool MyCheckBoxModel::OnClick()
-{
-	WinGUICheckBox * pCheckBox = (WinGUICheckBox*)( GetView() );
-	WinGUITextEdit * pTextEdit = (WinGUITextEdit*)( m_pApplication->m_hTextEditModel.GetView() );
-
-	if ( pCheckBox->IsChecked() )
-		pTextEdit->SetReadOnly( false );
-	else
-		pTextEdit->SetReadOnly( true );
-
-	return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -185,6 +199,31 @@ UInt MyRadioButtonModelB::GetHeight() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+// MyCheckBoxModel implementation
+MyCheckBoxModel::MyCheckBoxModel( MyApplication * pApplication ):
+	WinGUICheckBoxModel(RESID_CHECKBOX_TEST)
+{
+	m_pApplication = pApplication;
+}
+MyCheckBoxModel::~MyCheckBoxModel()
+{
+	// nothing to do
+}
+
+Bool MyCheckBoxModel::OnClick()
+{
+	WinGUICheckBox * pCheckBox = (WinGUICheckBox*)( GetView() );
+	WinGUITextEdit * pTextEdit = (WinGUITextEdit*)( m_pApplication->m_hTextEditModel.GetView() );
+
+	if ( pCheckBox->IsChecked() )
+		pTextEdit->SetReadOnly( false );
+	else
+		pTextEdit->SetReadOnly( true );
+
+	return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // MyTextEditModel implementation
 MyTextEditModel::MyTextEditModel( MyApplication * pApplication ):
 	WinGUITextEditModel(RESID_TEXTEDIT_TEST)
@@ -201,39 +240,54 @@ MyTextEditModel::~MyTextEditModel()
 MyApplication::MyApplication():
 	m_hAppWindowModel(this),
 
+	m_hContainerModelLeft(this),
+
 	m_hButtonModel(this),
-
-	m_hCheckBoxModel(this),
-
 	m_hGroupBoxModel(this),
-	m_hRadioButtonGroup(),
 	m_hRadioButtonModelA(this),
 	m_hRadioButtonModelB(this),
+	m_hRadioButtonGroup(),
 
+	m_hContainerModelRight(this),
+
+	m_hCheckBoxModel(this),
 	m_hTextEditModel(this)
 {
+	// App Window
 	WinGUIFn->CreateAppWindow( &m_hAppWindowModel );
 	WinGUIWindow * pAppWindow = WinGUIFn->GetAppWindow();
 
-	WinGUIFn->CreateButton( pAppWindow, &m_hButtonModel );
+	// Left Container
+	WinGUIContainer * pContainerLeft = WinGUIFn->CreateContainer( pAppWindow, &m_hContainerModelLeft );
 
-	WinGUICheckBox * pCheckBox = WinGUIFn->CreateCheckBox( pAppWindow, &m_hCheckBoxModel );
-	pCheckBox->Check();
+	// A Button
+	WinGUIFn->CreateButton( pContainerLeft, &m_hButtonModel );
 
-	WinGUIFn->CreateGroupBox( pAppWindow, &m_hGroupBoxModel );
+	// A GroupBox
+	WinGUIFn->CreateGroupBox( pContainerLeft, &m_hGroupBoxModel );
 
-	WinGUIRadioButton * pRadioButtonA = WinGUIFn->CreateRadioButton( pAppWindow, &m_hRadioButtonModelA );
-	WinGUIRadioButton * pRadioButtonB = WinGUIFn->CreateRadioButton( pAppWindow, &m_hRadioButtonModelB );
+	// A couple Radio Buttons
+	WinGUIRadioButton * pRadioButtonA = WinGUIFn->CreateRadioButton( pContainerLeft, &m_hRadioButtonModelA );
+	WinGUIRadioButton * pRadioButtonB = WinGUIFn->CreateRadioButton( pContainerLeft, &m_hRadioButtonModelB );
 	m_hRadioButtonGroup.AddButton( pRadioButtonA );
 	m_hRadioButtonGroup.AddButton( pRadioButtonB );
 	pRadioButtonA->SetGroup( &m_hRadioButtonGroup );
 	pRadioButtonB->SetGroup( &m_hRadioButtonGroup );
 	pRadioButtonA->Check();
 
-	WinGUITextEdit * pTextEdit = WinGUIFn->CreateTextEdit( pAppWindow, &m_hTextEditModel );
+	// Right Container
+	WinGUIContainer * pContainerRight = WinGUIFn->CreateContainer( pAppWindow, &m_hContainerModelRight );
+
+	// A CheckBox
+	WinGUICheckBox * pCheckBox = WinGUIFn->CreateCheckBox( pContainerRight, &m_hCheckBoxModel );
+	pCheckBox->Check();
+
+	// A TextEdit
+	WinGUITextEdit * pTextEdit = WinGUIFn->CreateTextEdit( pContainerRight, &m_hTextEditModel );
 	pTextEdit->SetCueText( TEXT("Type Stuff"), false );
 	pTextEdit->SetTextLimit( 32 );
 
+	// Done
 	pAppWindow->SetVisible( true );
 }
 MyApplication::~MyApplication()

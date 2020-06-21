@@ -160,7 +160,23 @@ WinGUIContainer * WinGUI::CreateContainer( WinGUIElement * pParent, WinGUIContai
 {
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
-    return NULL;
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIContainer) );
+    WinGUIContainer * pContainer = new(pMemory) WinGUIContainer( pParent, pModel );
+
+    ((WinGUIElement*)pContainer)->_Create();
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pContainer );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pContainer );
+    }
+
+    // Done
+    return pContainer;
 }
 
 WinGUIGroupBox * WinGUI::CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const

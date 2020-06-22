@@ -52,6 +52,22 @@ enum WinGUITextEditBalloonTipIcon {
 	WINGUI_TEXTEDIT_BALLOONTIP_ICON_ERROR
 };
 
+// Creation Parameters
+typedef struct _wingui_textedit_parameters {
+	GChar strInitialText[64];
+	WinGUITextEditAlign iAlign;
+	WinGUITextEditCase iCase;
+	WinGUITextEditMode iMode;
+	Bool bAllowHorizontalScroll;
+	Bool bDontHideSelection;
+	Bool bReadOnly;
+	Bool bEnableTabStop;
+} WinGUITextEditParameters;
+
+// Prototypes
+class WinGUITextEditModel;
+class WinGUITextEdit;
+
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUITextEditModel class
 class WinGUITextEditModel : public WinGUIControlModel
@@ -60,24 +76,14 @@ public:
 	WinGUITextEditModel( Int iResourceID );
 	virtual ~WinGUITextEditModel();
 
+	// Creation Parameters
+	inline const WinGUITextEditParameters * GetCreationParameters() const;
+
 	// Events
-	virtual Bool OnTextChange() = 0;
-
-	// View
-	virtual const WinGUIRectangle * GetRectangle() const = 0;
-
-	virtual const GChar * GetInitialText() const = 0;
-
-	virtual Bool DontHideSelection() const = 0;
-	virtual Bool AllowHorizScroll() const = 0;
-	virtual Bool IsReadOnly() const = 0;
-
-	virtual WinGUITextEditAlign GetTextAlign() const = 0;
-	virtual WinGUITextEditCase GetTextCase() const = 0;
-	virtual WinGUITextEditMode GetTextMode() const = 0;
+	virtual Bool OnTextChange() { return false; }
 
 protected:
-
+	WinGUITextEditParameters m_hCreationParameters;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -100,14 +106,14 @@ public:
 	Bool WasModified() const;
 	Void SetReadOnly( Bool bReadOnly );
 
-	// Text Access
+	// Label Text
 	UInt GetTextLength() const;
 	Void GetText( GChar * outText, UInt iMaxLength ) const;
 	Void SetText( const GChar * strText );
 
 	Void SetTextLimit( UInt iMaxLength );
 
-	// Selection Access
+	// Selection
 	Void GetSelection( UInt * outStartIndex, UInt * outLength ) const; // outStartIndex = Caret Position when no selection
 	Void SetSelection( UInt iStart, UInt iLength );
 	Void ReplaceSelection( const GChar * strText );                    // Insert at caret position when no selection

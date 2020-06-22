@@ -17,13 +17,14 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // WinGUIRadioButtonModel implementation
+inline const WinGUIRadioButtonParameters * WinGUIRadioButtonModel::GetCreationParameters() const {
+	return &m_hCreationParameters;
+}
 
-/////////////////////////////////////////////////////////////////////////////////
-// WinGUIRadioButton implementation
-inline WinGUIRadioButtonGroup * WinGUIRadioButton::GetGroup() const {
+inline WinGUIRadioButtonGroup * WinGUIRadioButtonModel::GetGroup() const {
 	return m_pRadioButtonGroup;
 }
-inline Void WinGUIRadioButton::SetGroup( WinGUIRadioButtonGroup * pGroup ) {
+inline Void WinGUIRadioButtonModel::SetGroup( WinGUIRadioButtonGroup * pGroup ) {
 	m_pRadioButtonGroup = pGroup;
 }
 
@@ -32,7 +33,13 @@ inline Void WinGUIRadioButton::SetGroup( WinGUIRadioButtonGroup * pGroup ) {
 inline UInt WinGUIRadioButtonGroup::GetButtonCount() const {
 	return m_iButtonCount;
 }
-inline WinGUIRadioButton * WinGUIRadioButtonGroup::GetButton( UInt iIndex ) const {
+inline WinGUIRadioButtonModel * WinGUIRadioButtonGroup::GetButton( UInt iIndex ) const {
 	DebugAssert( iIndex < m_iButtonCount );
 	return m_arrRadioButtons[iIndex];
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+// WinGUIRadioButton implementation
+
+
+

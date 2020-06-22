@@ -27,10 +27,6 @@
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
-enum WinGUIControlType {
-	WINGUI_CONTROL_ = 0
-};
-
 // Prototypes
 class WinGUIControlModel;
 class WinGUIControl;
@@ -45,7 +41,6 @@ class WinGUIControlModel : public WinGUIElementModel
 public:
 	WinGUIControlModel( Int iResourceID );
 	virtual ~WinGUIControlModel();
-
 
 protected:
 
@@ -63,9 +58,10 @@ public:
 	inline virtual WinGUIElementType GetElementType() const;
 
 protected:
-	// Event Dispatch
 	friend class WinGUIWindow;
 	friend class WinGUIContainer;
+
+	// Event Dispatch
 	virtual Bool _DispatchEvent( Int iNotificationCode ) = 0;
 };
 

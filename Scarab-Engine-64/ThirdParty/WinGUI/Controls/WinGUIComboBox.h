@@ -41,6 +41,20 @@ enum WinGUIComboBoxCase {
 	WINGUI_COMBOBOX_CASE_UPPER
 };
 
+// Creation Parameters
+typedef struct _wingui_combobox_parameters {
+	WinGUIComboBoxType iType;
+	WinGUIComboBoxCase iCase;
+	UInt iInitialSelectedItem;
+	Bool bAllowHorizontalScroll;
+	Bool bAutoSort;
+	Bool bEnableTabStop;
+} WinGUIComboBoxParameters;
+
+// Prototypes
+class WinGUIComboBoxModel;
+class WinGUIComboBox;
+
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUIComboBoxModel class
 class WinGUIComboBoxModel : public WinGUIControlModel
@@ -49,32 +63,24 @@ public:
 	WinGUIComboBoxModel( Int iResourceID );
 	virtual ~WinGUIComboBoxModel();
 
-	// Events
-	virtual Bool OnDblClick() = 0;
+	// Creation Parameters
+	inline const WinGUIComboBoxParameters * GetCreationParameters() const;
 
-	virtual Bool OnTextChange() = 0;
-	virtual Bool OnSelectionChange() = 0;
-	virtual Bool OnSelectionOK() = 0;
-	virtual Bool OnSelectionCancel() = 0;
-
-	// View
-	virtual const WinGUIRectangle * GetRectangle() const = 0;
-
-	virtual WinGUIComboBoxType GetType() = 0;
-
-	virtual Bool AllowHorizScroll() const = 0;
-	virtual Bool AutoSort() const = 0;
-
-	virtual WinGUIComboBoxCase GetTextCase() const = 0;
-
+	// Content Data (Must-Implement)
 	virtual UInt GetItemCount() const = 0;
 	virtual const GChar * GetItemString( UInt iIndex ) const = 0;
 	virtual Void * GetItemData( UInt iIndex ) const = 0;
 
-	virtual UInt GetInitialSelectedItem() const = 0;
+	// Events
+	virtual Bool OnDblClick() { return false; }
+
+	virtual Bool OnTextChange() { return false; }
+	virtual Bool OnSelectionChange() { return false; }
+	virtual Bool OnSelectionOK() { return false; }
+	virtual Bool OnSelectionCancel() { return false; }
 
 protected:
-
+	WinGUIComboBoxParameters m_hCreationParameters;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -94,13 +100,13 @@ public:
 	Void SetMinVisibleItems( UInt iCount );
 
 	UInt GetSelectionHeight() const;
-	UInt GetListItemHeight() const;
 	Void SetSelectionHeight( UInt iHeight );
+	UInt GetListItemHeight() const;
 	Void SetListItemHeight( UInt iHeight );
 
 	Void SetTextLimit( UInt iMaxLength );
 
-	// List access
+	// List
 	UInt GetItemCount() const;
 	UInt GetItemStringLength( UInt iIndex ) const;
 	Void GetItemString( UInt iIndex, GChar * outBuffer ) const; // DANGER : Buffer must be large enough !
@@ -112,11 +118,11 @@ public:
 	Void RemoveItem( UInt iIndex );
 	Void RemoveAllItems();
 
-	// Item Data access
+	// Item Data
 	Void * GetItemData( UInt iIndex ) const;
 	Void SetItemData( UInt iIndex, Void * pUserData );
 
-	// Selection access
+	// Selection
 	UInt GetSelectedItem() const;
 	UInt GetSelectedItemStringLength() const;
 	Void GetSelectedItemString( GChar * outBuffer, UInt iMaxLength ) const;
@@ -126,13 +132,13 @@ public:
 
 	Void SetSelectionText( const GChar * strText ); // Invalid for WINGUI_COMBOBOX_BUTTON type
 
-	// Directory Listing, Paths can be a directory or a filename with wildcard chars
-	UInt AddFiles( GChar * strPath, Bool bIncludeSubDirs );
-	Void MakeDirectoryList( GChar * strPath, Bool bIncludeSubDirs, WinGUIStatic * pDisplay = NULL );
-
 	// Text Cues (Invalid for WINGUI_COMBOBOX_BUTTON type)
 	Void GetCueText( GChar * outText, UInt iMaxLength ) const;
 	Void SetCueText( const GChar * strText );
+
+	// Directory Listing, Paths can be a directory or a filename with wildcard chars
+	UInt AddFiles( GChar * strPath, Bool bIncludeSubDirs );
+	Void MakeDirectoryList( GChar * strPath, Bool bIncludeSubDirs, WinGUIStatic * pDisplay = NULL );
 
 private:
 	// Create/Destroy Interface

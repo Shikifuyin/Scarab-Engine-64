@@ -15,8 +15,8 @@
 // Known Bugs : IMPORTANT INFO !!!!
 // The Parent Window MUST have ClipChildren DISABLED !
 // The Parent Window SHOULD have ClipSibblings ENABLED !
-// The Tab Containers SHOULD have ClipSibblings ENABLED !
-// The Tab Containers CAN have ClipChildren ENABLED !
+// TabPane Containers SHOULD have ClipSibblings ENABLED !
+// TabPane Containers CAN have ClipChildren ENABLED !
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -31,6 +31,22 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
+#define WINGUI_TABS_MAX 64 // Should be more than enough !
+
+// Creation Parameters
+typedef struct _wingui_tabs_parameters {
+	Bool bSingleLine;
+	Bool bFixedWidth;
+	UInt iTabCount;
+	struct _tab {
+		GChar strLabel[64];
+		Void * pUserData;
+	} arrTabs[WINGUI_TABS_MAX];
+} WinGUITabsParameters;
+
+// Prototypes
+class WinGUITabsModel;
+class WinGUITabs;
 
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUITabsModel class
@@ -40,16 +56,14 @@ public:
 	WinGUITabsModel( Int iResourceID );
 	virtual ~WinGUITabsModel();
 
-	// Events
-	virtual Bool OnTabSelect() = 0;
+	// Creation Parameters
+	inline WinGUITabsParameters * GetCreationParameters();
 
-	// View
-	virtual UInt GetTabCount() const = 0;
-	virtual GChar * GetTabLabel( UInt iTabIndex ) const = 0;
-	virtual Void * GetTabUserData( UInt iTabIndex ) const = 0;
+	// Events
+	virtual Bool OnTabSelect() = 0; // Must-Implement, Use WinGUITabs::SwitchSelectedTabPane here
 
 protected:
-
+	WinGUITabsParameters m_hCreationParameters;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -60,14 +74,14 @@ public:
 	WinGUITabs( WinGUIElement * pParent, WinGUITabsModel * pModel );
 	virtual ~WinGUITabs();
 
-	// Display Area access
+	// Display Area
 	Void GetDisplayArea( WinGUIRectangle * outDisplayArea ) const;
 
-	// TabPane access
+	// TabPane Switching
 	inline WinGUIContainer * GetSelectedTabPane() const;
 	Void SwitchSelectedTabPane( WinGUIContainer * pSelectedTabPane );
 
-	// Tabs access
+	// Tabs
 	UInt GetTabsRowCount() const;
 
 	Void SetMinTabWidth( UInt iWidth = INVALID_OFFSET );
@@ -79,12 +93,12 @@ public:
 
 	Void UpdateTab( UInt iIndex, GChar * strLabel, Void * pUserData );
 
-	// Selection access
+	// Selection
 	UInt GetSelectedTab() const;
 	Void SelectTab( UInt iIndex );
 	Void UnselectAll( Bool bKeepCurrent );
 
-	// ToolTips access
+	// ToolTips
 	//WinGUIToolTip * GetToolTip() const;
 	//Void SetToolTip( WinGUIToolTip * pToolTip );
 

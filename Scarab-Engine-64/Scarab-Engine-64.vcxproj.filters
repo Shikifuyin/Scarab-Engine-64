@@ -513,6 +513,9 @@
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIComboBox.h">
       <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\WinGUI\WinGUILayout.h">
+      <Filter>Header Files\ThirdParty\WinGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\System\Platform.inl">
@@ -809,6 +812,9 @@
     <None Include="ThirdParty\WinGUI\Controls\WinGUIComboBox.inl">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </None>
+    <None Include="ThirdParty\WinGUI\WinGUILayout.inl">
+      <Filter>Source Files\ThirdParty\WinGUI</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -1104,6 +1110,9 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIComboBox.cpp">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\WinGUI\WinGUILayout.cpp">
+      <Filter>Source Files\ThirdParty\WinGUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

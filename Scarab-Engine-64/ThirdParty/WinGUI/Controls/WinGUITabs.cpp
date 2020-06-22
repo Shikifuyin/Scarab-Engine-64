@@ -33,7 +33,16 @@
 WinGUITabsModel::WinGUITabsModel( Int iResourceID ):
 	WinGUIControlModel(iResourceID)
 {
-	// nothing to do
+	// Default Parameters
+	m_hCreationParameters.bSingleLine = true;
+	m_hCreationParameters.bFixedWidth = true;
+	m_hCreationParameters.iTabCount = 2;
+
+	StringFn->Copy( m_hCreationParameters.arrTabs[0].strLabel, TEXT("Tab1") );
+	m_hCreationParameters.arrTabs[0].pUserData = NULL;
+
+	StringFn->Copy( m_hCreationParameters.arrTabs[1].strLabel, TEXT("Tab2") );
+	m_hCreationParameters.arrTabs[1].pUserData = NULL;
 }
 WinGUITabsModel::~WinGUITabsModel()
 {
@@ -179,31 +188,54 @@ Void WinGUITabs::_Create()
 {
 	DebugAssert( m_hHandle == NULL );
 
-	WinGUITabsModel * pModel = (WinGUITabsModel*)m_pModel;
+	// Get Parent Handle
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
-	// Get Parent Dimension
-	RECT hClientArea;
-	::GetClientRect( hParentWnd, &hClientArea );
+    // Get Model
+    WinGUITabsModel * pModel = (WinGUITabsModel*)m_pModel;
 
+	// Compute Layout
+    const WinGUILayout * pLayout = pModel->GetLayout();
+
+    WinGUIRectangle hParentRect;
+    m_pParent->GetClientRect( &hParentRect );
+
+    WinGUIRectangle hWindowRect;
+    pLayout->ComputeLayout( &hWindowRect, hParentRect );
+
+	// Get Creation Parameters
+    WinGUITabsParameters * pParameters = pModel->GetCreationParameters();
+
+	// Build Style
+	DWord dwStyle = ( WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | TCS_TABS );
+	if ( pParameters->bSingleLine )
+		dwStyle |= TCS_SINGLELINE;
+	if ( pParameters->bFixedWidth )
+		dwStyle |= TCS_FIXEDWIDTH;
+
+    // Window creation
 	m_hHandle = CreateWindowEx (
-		0, WC_TABCONTROL, TEXT(""),
-		WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | TCS_TABS | TCS_SINGLELINE | TCS_FIXEDWIDTH,
-		0, 0, hClientArea.right, hClientArea.bottom,
-		hParentWnd, (HMENU)m_iResourceID,
+		0,
+		WC_TABCONTROL,
+		TEXT(""),
+		dwStyle,
+		hWindowRect.iLeft, hWindowRect.iTop,
+        hWindowRect.iWidth, hWindowRect.iHeight,
+		hParentWnd,
+		(HMENU)m_iResourceID,
 		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
 		NULL
 	);
 	DebugAssert( m_hHandle != NULL );
 
 	// Add Tabs
-	UInt iTabCount = pModel->GetTabCount();
+	UInt iTabCount = pParameters->iTabCount;
 	for( UInt i = 0; i < iTabCount; ++i ) {
 		TCITEM hTabItem;
 		hTabItem.mask = TCIF_TEXT | TCIF_IMAGE | TCIF_PARAM;
-		hTabItem.pszText = pModel->GetTabLabel(i);
+		hTabItem.pszText = pParameters->arrTabs[i].strLabel;
 		hTabItem.iImage = -1;
-		hTabItem.lParam = (LPARAM)( pModel->GetTabUserData(i) );
+		hTabItem.lParam = (LPARAM)( pParameters->arrTabs[i].pUserData );
 
 		TabCtrl_InsertItem( (HWND)m_hHandle, i, &hTabItem );
 	}
@@ -215,22 +247,20 @@ Void WinGUITabs::_Destroy()
 {
 	DebugAssert( m_hHandle != NULL );
 
+    // Window destruction
 	DestroyWindow( (HWND)m_hHandle );
 	m_hHandle = NULL;
 }
 
 Bool WinGUITabs::_DispatchEvent( Int iNotificationCode )
 {
+    // Get Model
 	WinGUITabsModel * pModel = (WinGUITabsModel*)m_pModel;
 
-	// Dispatch Event to our Model
+	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
-		case TCN_SELCHANGING:
-			return false; // Allow selection to change
-			break;
-		case TCN_SELCHANGE: {
-			return pModel->OnTabSelect();
-		} break;
+		case TCN_SELCHANGING: return false; break; // Allow selection to change
+		case TCN_SELCHANGE:   return pModel->OnTabSelect(); break;
 		default: break;
 	}
 

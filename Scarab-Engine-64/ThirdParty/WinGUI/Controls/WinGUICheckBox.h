@@ -27,6 +27,16 @@
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
+// Creation Parameters
+typedef struct _wingui_checkbox_parameters {
+	GChar strLabel[64];
+	Bool bEnableTabStop;
+} WinGUICheckBoxParameters;
+
+// Prototypes
+class WinGUICheckBoxModel;
+class WinGUICheckBox;
+
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUICheckBoxModel class
 class WinGUICheckBoxModel : public WinGUIControlModel
@@ -35,17 +45,15 @@ public:
 	WinGUICheckBoxModel( Int iResourceID );
 	virtual ~WinGUICheckBoxModel();
 
+	// Creation Parameters
+	inline const WinGUICheckBoxParameters * GetCreationParameters() const;
+
 	// Events
-	virtual Bool OnClick() = 0;
-	virtual Bool OnDblClick() = 0;
-
-	// View
-	virtual const WinGUIRectangle * GetRectangle() const = 0;
-
-	virtual const GChar * GetText() const = 0;
+	virtual Bool OnClick() { return false; }
+	virtual Bool OnDblClick() { return false; }
 
 protected:
-
+	WinGUICheckBoxParameters m_hCreationParameters;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -33,7 +33,18 @@
 WinGUITextEditModel::WinGUITextEditModel( Int iResourceID ):
 	WinGUIControlModel(iResourceID)
 {
-	// nothing to do
+	// Default Parameters
+	StringFn->Copy( m_hCreationParameters.strInitialText, TEXT("TextEdit") );
+
+	m_hCreationParameters.iAlign = WINGUI_TEXTEDIT_ALIGN_LEFT;
+	m_hCreationParameters.iCase = WINGUI_TEXTEDIT_CASE_BOTH;
+	m_hCreationParameters.iMode = WINGUI_TEXTEDIT_MODE_TEXT;
+
+	m_hCreationParameters.bAllowHorizontalScroll = true;
+	m_hCreationParameters.bDontHideSelection = false;
+	m_hCreationParameters.bReadOnly = false;
+
+	m_hCreationParameters.bEnableTabStop = true;
 }
 WinGUITextEditModel::~WinGUITextEditModel()
 {
@@ -165,43 +176,63 @@ Void WinGUITextEdit::_Create()
 {
 	DebugAssert( m_hHandle == NULL );
 
-	WinGUITextEditModel * pModel = (WinGUITextEditModel*)m_pModel;
+	// Get Parent Handle
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
-    const WinGUIRectangle * pRect = pModel->GetRectangle();
+    // Get Model
+    WinGUITextEditModel * pModel = (WinGUITextEditModel*)m_pModel;
 
-	DWord dwStyle = 0;
-	if ( pModel->DontHideSelection() )
-		dwStyle |= ES_NOHIDESEL;
-	if ( pModel->AllowHorizScroll() )
-		dwStyle |= ES_AUTOHSCROLL;
-	if ( pModel->IsReadOnly() )
-		dwStyle |= ES_READONLY;
-	switch( pModel->GetTextAlign() ) {
+	// Compute Layout
+    const WinGUILayout * pLayout = pModel->GetLayout();
+
+    WinGUIRectangle hParentRect;
+    m_pParent->GetClientRect( &hParentRect );
+
+    WinGUIRectangle hWindowRect;
+    pLayout->ComputeLayout( &hWindowRect, hParentRect );
+
+	// Get Creation Parameters
+    const WinGUITextEditParameters * pParameters = pModel->GetCreationParameters();
+
+	// Build Style
+	DWord dwStyle = ( WS_CHILD | WS_VISIBLE | WS_BORDER );
+	switch( pParameters->iAlign ) {
 		case WINGUI_TEXTEDIT_ALIGN_LEFT:   dwStyle |= ES_LEFT; break;
 		case WINGUI_TEXTEDIT_ALIGN_RIGHT:  dwStyle |= ES_RIGHT; break;
 		case WINGUI_TEXTEDIT_ALIGN_CENTER: dwStyle |= ES_CENTER; break;
 		default: DebugAssert(false); break;
 	}
-	switch( pModel->GetTextCase() ) {
+	switch( pParameters->iCase ) {
 		case WINGUI_TEXTEDIT_CASE_BOTH:  dwStyle |= 0; break;
 		case WINGUI_TEXTEDIT_CASE_LOWER: dwStyle |= ES_LOWERCASE; break;
 		case WINGUI_TEXTEDIT_CASE_UPPER: dwStyle |= ES_UPPERCASE; break;
 		default: DebugAssert(false); break;
 	}
-	switch( pModel->GetTextMode() ) {
+	switch( pParameters->iMode ) {
 		case WINGUI_TEXTEDIT_MODE_TEXT:     dwStyle |= 0; break;
 		case WINGUI_TEXTEDIT_MODE_NUMERIC:  dwStyle |= ES_NUMBER; break;
 		case WINGUI_TEXTEDIT_MODE_PASSWORD: dwStyle |= ES_PASSWORD; break;
 		default: DebugAssert(false); break;
 	}
+	if ( pParameters->bAllowHorizontalScroll )
+		dwStyle |= ES_AUTOHSCROLL;
+	if ( pParameters->bDontHideSelection )
+		dwStyle |= ES_NOHIDESEL;
+	if ( pParameters->bReadOnly )
+		dwStyle |= ES_READONLY;
+	if ( pParameters->bEnableTabStop )
+		dwStyle |= WS_TABSTOP;
 
+    // Window creation
 	m_hHandle = CreateWindowEx (
-		0, WC_EDIT, pModel->GetInitialText(),
-		WS_VISIBLE | WS_CHILD | WS_TABSTOP | WS_BORDER | dwStyle,
-		pRect->iLeft, pRect->iTop,
-        pRect->iWidth, pRect->iHeight,
-		hParentWnd, (HMENU)m_iResourceID,
+		0,
+		WC_EDIT,
+		pParameters->strInitialText,
+		dwStyle,
+		hWindowRect.iLeft, hWindowRect.iTop,
+        hWindowRect.iWidth, hWindowRect.iHeight,
+		hParentWnd,
+		(HMENU)m_iResourceID,
 		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
 		NULL
 	);
@@ -214,19 +245,19 @@ Void WinGUITextEdit::_Destroy()
 {
 	DebugAssert( m_hHandle != NULL );
 
+    // Window destruction
 	DestroyWindow( (HWND)m_hHandle );
 	m_hHandle = NULL;
 }
 
 Bool WinGUITextEdit::_DispatchEvent( Int iNotificationCode )
 {
+    // Get Model
 	WinGUITextEditModel * pModel = (WinGUITextEditModel*)m_pModel;
 
-	// Dispatch Event to our Model
+	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
-		case EN_CHANGE:
-			return pModel->OnTextChange();
-			break;
+		case EN_CHANGE: return pModel->OnTextChange(); break;
 		default: break;
 	}
 

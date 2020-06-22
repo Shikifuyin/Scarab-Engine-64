@@ -33,7 +33,14 @@
 WinGUIContainerModel::WinGUIContainerModel( Int iResourceID ):
 	WinGUIElementModel(iResourceID)
 {
-	// nothing to do
+	// Default Class Name
+    StringFn->Copy( m_hCreationParameters.strClassName, TEXT("ContainerWindow") );
+
+    // Default Parameters
+    m_hCreationParameters.bAllowResizing = false;     // Default to fixed size window
+
+    m_hCreationParameters.bClipChildren = false; // Allow Tabs to work properly
+    m_hCreationParameters.bClipSibblings = true; // Needed most of the time
 }
 WinGUIContainerModel::~WinGUIContainerModel()
 {
@@ -71,22 +78,34 @@ Void WinGUIContainer::_Create()
 {
     DebugAssert( m_hHandle == NULL );
 
-    WinGUIContainerModel * pModel = (WinGUIContainerModel*)m_pModel;
+    // Get Parent Handle
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
+    // Get Model
+    WinGUIContainerModel * pModel = (WinGUIContainerModel*)m_pModel;
+
+    // Compute Layout
+    const WinGUILayout * pLayout = pModel->GetLayout();
+
+    WinGUIRectangle hParentRect;
+    m_pParent->GetClientRect( &hParentRect );
+
+    WinGUIRectangle hWindowRect;
+    pLayout->ComputeLayout( &hWindowRect, hParentRect );
+
+    // Get Creation Parameters
+    const WinGUIContainerParameters * pParameters = pModel->GetCreationParameters();
+
     // Build Style
-    DWord dwWindowStyle = ( WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS );
-    if ( pModel->AllowResizing() )
+    DWord dwWindowStyle = ( WS_CHILD | WS_VISIBLE );
+    if ( pParameters->bAllowResizing )
         dwWindowStyle |= WS_SIZEBOX;
-    if ( pModel->ClipChildren() )
+    if ( pParameters->bClipChildren )
         dwWindowStyle |= WS_CLIPCHILDREN;
-    if ( pModel->ClipSibblings() )
+    if ( pParameters->bClipSibblings )
         dwWindowStyle |= WS_CLIPSIBLINGS;
 
-    // Window region
-    const WinGUIRectangle * pRect = pModel->GetRectangle();
-
-    // Window class
+    // Register Window class
     WNDCLASSEX winClass;
     winClass.cbSize = sizeof(WNDCLASSEX);
     winClass.cbClsExtra = 0;
@@ -94,7 +113,7 @@ Void WinGUIContainer::_Create()
     winClass.hInstance = GetModuleHandle( NULL );
 	winClass.style = CS_DBLCLKS | CS_PARENTDC;
 	winClass.lpfnWndProc = (WNDPROC)( _MessageCallback_Static );
-	winClass.lpszClassName = pModel->GetClassNameID();
+	winClass.lpszClassName = pParameters->strClassName;
     winClass.lpszMenuName = NULL;
 	winClass.hbrBackground = (HBRUSH)( COLOR_3DFACE + 1 );
 	winClass.hCursor = NULL;
@@ -104,11 +123,15 @@ Void WinGUIContainer::_Create()
 
     // Window creation
     m_hHandle = CreateWindowEx (
-        WS_EX_CONTROLPARENT, pModel->GetClassNameID(), NULL, dwWindowStyle,
-        pRect->iLeft, pRect->iTop,
-        pRect->iWidth, pRect->iHeight,
-		hParentWnd, (HMENU)m_iResourceID,
-        GetModuleHandle(NULL),
+        WS_EX_CONTROLPARENT,
+        pParameters->strClassName,
+        NULL,
+        dwWindowStyle,
+        hWindowRect.iLeft, hWindowRect.iTop,
+        hWindowRect.iWidth, hWindowRect.iHeight,
+		hParentWnd,
+        (HMENU)m_iResourceID,
+        (HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
         (Void*)this
 	);
     DebugAssert( m_hHandle != NULL );    
@@ -120,12 +143,15 @@ Void WinGUIContainer::_Destroy()
 {
     DebugAssert( m_hHandle != NULL );
 
+    // Get Model
     WinGUIContainerModel * pModel = (WinGUIContainerModel*)m_pModel;
 
+    // Window destruction
     DestroyWindow( (HWND)m_hHandle );
     m_hHandle = NULL;
 
-    UnregisterClass( pModel->GetClassNameID(), GetModuleHandle(NULL) );
+    // Unregister window class
+    UnregisterClass( pModel->GetCreationParameters()->strClassName, GetModuleHandle(NULL) );
 }
 
 UIntPtr __stdcall WinGUIContainer::_MessageCallback_Static( Void * hHandle, UInt iMessage, UIntPtr wParam, UIntPtr lParam )
@@ -141,8 +167,10 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Static( Void * hHandle, UInt
 }
 UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UInt iMessage, UIntPtr wParam, UIntPtr lParam )
 {
+    // Get Model
     WinGUIContainerModel * pModel = (WinGUIContainerModel*)m_pModel;
 
+    // Dispatch Message
     switch( iMessage ) {
         // Keyboard messages
         //case WM_SYSKEYDOWN:

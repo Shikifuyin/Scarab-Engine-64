@@ -33,7 +33,13 @@
 WinGUIStaticModel::WinGUIStaticModel( Int iResourceID ):
 	WinGUIControlModel(iResourceID)
 {
-	// nothing to do
+	// Default Parameters
+	m_hCreationParameters.iType = WINGUI_STATIC_TEXT;
+	m_hCreationParameters.bAddSunkenBorder = false;
+
+	StringFn->Copy( m_hCreationParameters.hText.strLabel, TEXT("StaticText") );
+	m_hCreationParameters.hText.iAlign = WINGUI_STATIC_TEXT_ALIGN_LEFT;
+	m_hCreationParameters.hText.iEllipsis = WINGUI_STATIC_TEXT_ELLIPSIS_NONE;
 }
 WinGUIStaticModel::~WinGUIStaticModel()
 {
@@ -96,16 +102,30 @@ Void WinGUIStatic::_Create()
 {
 	DebugAssert( m_hHandle == NULL );
 
-	WinGUIStaticModel * pModel = (WinGUIStaticModel*)m_pModel;
+	// Get Parent Handle
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
-    const WinGUIRectangle * pRect = pModel->GetRectangle();
+    // Get Model
+    WinGUIStaticModel * pModel = (WinGUIStaticModel*)m_pModel;
 
-	DWord dwStyle = SS_NOPREFIX; // Prevent ampersand conversion
+	// Compute Layout
+    const WinGUILayout * pLayout = pModel->GetLayout();
 
-	switch( pModel->GetType() ) {
+    WinGUIRectangle hParentRect;
+    m_pParent->GetClientRect( &hParentRect );
+
+    WinGUIRectangle hWindowRect;
+    pLayout->ComputeLayout( &hWindowRect, hParentRect );
+
+	// Get Creation Parameters
+    const WinGUIStaticParameters * pParameters = pModel->GetCreationParameters();
+
+	// Build Style
+	DWord dwStyle = ( WS_CHILD | WS_VISIBLE | SS_NOPREFIX );
+	const GChar * strValue = NULL;
+	switch( pParameters->iType ) {
 		case WINGUI_STATIC_FRAME:
-			switch( pModel->GetFrameType() ) {
+			switch( pParameters->hFrame.iFrameType ) {
 				case WINGUI_STATIC_FRAME_ETCHED:       dwStyle |= SS_ETCHEDFRAME; break;
 				case WINGUI_STATIC_FRAME_ETCHED_HORIZ: dwStyle |= SS_ETCHEDHORZ; break;
 				case WINGUI_STATIC_FRAME_ETCHED_VERT:  dwStyle |= SS_ETCHEDVERT; break;
@@ -113,7 +133,7 @@ Void WinGUIStatic::_Create()
 			}
 			break;
 		case WINGUI_STATIC_RECT:
-			switch( pModel->GetRectType() ) {
+			switch( pParameters->hRect.iRectType ) {
 				case WINGUI_STATIC_RECT_HOLLOW_BLACK: dwStyle |= SS_BLACKFRAME; break;
 				case WINGUI_STATIC_RECT_HOLLOW_GRAY:  dwStyle |= SS_GRAYFRAME; break;
 				case WINGUI_STATIC_RECT_HOLLOW_WHITE: dwStyle |= SS_WHITEFRAME; break;
@@ -124,13 +144,14 @@ Void WinGUIStatic::_Create()
 			}
 			break;
 		case WINGUI_STATIC_TEXT:
-			switch( pModel->GetTextAlign() ) {
+			strValue = pParameters->hText.strLabel;
+			switch( pParameters->hText.iAlign ) {
 				case WINGUI_STATIC_TEXT_ALIGN_LEFT:   dwStyle |= SS_LEFT; break;
 				case WINGUI_STATIC_TEXT_ALIGN_RIGHT:  dwStyle |= SS_RIGHT; break;
 				case WINGUI_STATIC_TEXT_ALIGN_CENTER: dwStyle |= SS_CENTER; break;
 				default: DebugAssert(false); break;
 			}
-			switch( pModel->GetTextEllipsis() ) {
+			switch( pParameters->hText.iEllipsis ) {
 				case WINGUI_STATIC_TEXT_ELLIPSIS_NONE: dwStyle |= 0; break;
 				case WINGUI_STATIC_TEXT_ELLIPSIS_END:  dwStyle |= SS_ENDELLIPSIS; break;
 				case WINGUI_STATIC_TEXT_ELLIPSIS_WORD: dwStyle |= SS_WORDELLIPSIS; break;
@@ -140,7 +161,8 @@ Void WinGUIStatic::_Create()
 			break;
 		case WINGUI_STATIC_BITMAP:
 			dwStyle |= SS_BITMAP;
-			switch( pModel->GetImageInfo() ) {
+			strValue = pParameters->hBitmap.strResourceName;
+			switch( pParameters->hBitmap.iInfos ) {
 				case WINGUI_STATIC_IMAGE_DEFAULT:      dwStyle |= 0; break;
 				case WINGUI_STATIC_IMAGE_CENTERED:     dwStyle |= SS_CENTERIMAGE; break;
 				case WINGUI_STATIC_IMAGE_FIT:		   dwStyle |= SS_REALSIZECONTROL; break;
@@ -150,7 +172,8 @@ Void WinGUIStatic::_Create()
 			break;
 		case WINGUI_STATIC_ICON:
 			dwStyle |= SS_ICON;
-			switch( pModel->GetImageInfo() ) {
+			strValue = pParameters->hIcon.strResourceName;
+			switch( pParameters->hIcon.iInfos ) {
 				case WINGUI_STATIC_IMAGE_DEFAULT:      dwStyle |= 0; break;
 				case WINGUI_STATIC_IMAGE_CENTERED:     dwStyle |= SS_CENTERIMAGE; break;
 				case WINGUI_STATIC_IMAGE_FIT:		   dwStyle |= SS_REALSIZEIMAGE; break;
@@ -160,16 +183,19 @@ Void WinGUIStatic::_Create()
 			break;
 		default: DebugAssert(false); break;
 	}
-	if ( pModel->AddSunkenBorder() ) {
+	if ( pParameters->bAddSunkenBorder )
 		dwStyle |= SS_SUNKEN;
-	}
 
+    // Window creation
 	m_hHandle = CreateWindowEx (
-		0, WC_STATIC, pModel->GetText(),
-		WS_VISIBLE | WS_CHILD | dwStyle,
-		pRect->iLeft, pRect->iTop,
-        pRect->iWidth, pRect->iHeight,
-		hParentWnd, (HMENU)m_iResourceID,
+		0,
+		WC_STATIC,
+		strValue,
+		dwStyle,
+		hWindowRect.iLeft, hWindowRect.iTop,
+        hWindowRect.iWidth, hWindowRect.iHeight,
+		hParentWnd,
+		(HMENU)m_iResourceID,
 		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
 		NULL
 	);
@@ -182,21 +208,14 @@ Void WinGUIStatic::_Destroy()
 {
 	DebugAssert( m_hHandle != NULL );
 
+    // Window destruction
 	DestroyWindow( (HWND)m_hHandle );
 	m_hHandle = NULL;
 }
 
 Bool WinGUIStatic::_DispatchEvent( Int iNotificationCode )
 {
-	WinGUIStaticModel * pModel = (WinGUIStaticModel*)m_pModel;
-
-	// Dispatch Event to our Model
-	switch( iNotificationCode ) {
-		// nothing to do
-		default: break;
-	}
-
-	// Unhandled
+	// nothing to do
 	return false;
 }
 

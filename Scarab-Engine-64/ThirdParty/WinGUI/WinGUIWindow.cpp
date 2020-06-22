@@ -31,7 +31,26 @@
 WinGUIWindowModel::WinGUIWindowModel( Int iResourceID ):
 	WinGUIElementModel(iResourceID)
 {
-	// nothing to do
+    // Default Size
+    m_hCreationParameters.hClientRect.iLeft = 100;
+    m_hCreationParameters.hClientRect.iTop = 100;
+    m_hCreationParameters.hClientRect.iWidth = 800;
+    m_hCreationParameters.hClientRect.iHeight = 600;
+
+    // Default Class Name
+    StringFn->Copy( m_hCreationParameters.strClassName, TEXT("ApplicationWindow") );
+
+    // Default Title
+    StringFn->Copy( m_hCreationParameters.strTitle, TEXT("Scarab-Engine-64 Application") );
+
+    // Default Parameters
+    m_hCreationParameters.bHasSystemMenu = true;
+    m_hCreationParameters.bHasMinimizeButton = true;
+    m_hCreationParameters.bHasMaximizeButton = false; // Default to fixed
+    m_hCreationParameters.bAllowResizing = false;     // size window
+
+    m_hCreationParameters.bClipChildren = false;  // Allow Tabs to work properly
+    m_hCreationParameters.bClipSibblings = false; // Not needed most of the time
 }
 WinGUIWindowModel::~WinGUIWindowModel()
 {
@@ -69,33 +88,36 @@ Void WinGUIWindow::_Create()
 {
     DebugAssert( m_hHandle == NULL );
 
+    // Get Model
     WinGUIWindowModel * pModel = (WinGUIWindowModel*)m_pModel;
+
+    // No-Parent case, Don't use Layout
+
+    // Get Creation Parameters
+    const WinGUIWindowParameters * pParameters = pModel->GetCreationParameters();
 
     // Build Style
     DWord dwWindowStyle = ( WS_OVERLAPPED | WS_CAPTION );
-    if ( pModel->HasSystemMenu() ) {
+    if ( pParameters->bHasSystemMenu ) {
         dwWindowStyle |= WS_SYSMENU;
-        if ( pModel->HasMinimizeButton() )
+        if ( pParameters->bHasMinimizeButton )
             dwWindowStyle |= WS_MINIMIZEBOX;
-        if ( pModel->HasMaximizeButton() )
+        if ( pParameters->bHasMaximizeButton )
             dwWindowStyle |= WS_MAXIMIZEBOX;
     }
-    if ( pModel->AllowResizing() )
+    if ( pParameters->bAllowResizing )
         dwWindowStyle |= WS_SIZEBOX;
-    if ( pModel->ClipChildren() )
+    if ( pParameters->bClipChildren )
         dwWindowStyle |= WS_CLIPCHILDREN;
-    if ( pModel->ClipSibblings() )
+    if ( pParameters->bClipSibblings )
         dwWindowStyle |= WS_CLIPSIBLINGS;
 
-    // Window region
-    const WinGUIRectangle * pRect = pModel->GetRectangle();
+    // Compute Window Rect
     RECT rectWindow;
-    SetRect( &rectWindow, pRect->iLeft, pRect->iTop,
-                          pRect->iLeft + pRect->iWidth,
-                          pRect->iTop + pRect->iHeight );
+    SetRect( &rectWindow, 0, 0, pParameters->hClientRect.iWidth, pParameters->hClientRect.iHeight );
     AdjustWindowRect( &rectWindow, dwWindowStyle, FALSE );
 
-    // Window class
+    // Register Window class
     WNDCLASSEX winClass;
     winClass.cbSize = sizeof(WNDCLASSEX);
     winClass.cbClsExtra = 0;
@@ -103,7 +125,7 @@ Void WinGUIWindow::_Create()
     winClass.hInstance = GetModuleHandle( NULL );
 	winClass.style = CS_DBLCLKS;
 	winClass.lpfnWndProc = (WNDPROC)( _MessageCallback_Static );
-	winClass.lpszClassName = pModel->GetClassNameID();
+	winClass.lpszClassName = pParameters->strClassName;
     winClass.lpszMenuName = NULL;
 	winClass.hbrBackground = (HBRUSH)( COLOR_3DFACE + 1 );
 	winClass.hCursor = (HCURSOR)( LoadImage(NULL, IDC_ARROW, IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE) );
@@ -113,11 +135,15 @@ Void WinGUIWindow::_Create()
 
     // Window creation
     m_hHandle = CreateWindowEx (
-        WS_EX_CONTROLPARENT, pModel->GetClassNameID(), pModel->GetTitle(), dwWindowStyle,
-        pRect->iLeft, pRect->iTop,
+        WS_EX_CONTROLPARENT,
+        pParameters->strClassName,
+        pParameters->strTitle,
+        dwWindowStyle,
+        pParameters->hClientRect.iLeft, pParameters->hClientRect.iTop,
         (rectWindow.right - rectWindow.left), (rectWindow.bottom - rectWindow.top),
-		NULL, NULL,
-        GetModuleHandle(NULL),
+		NULL, // No Parent
+        NULL, // No Menu
+        GetModuleHandle( NULL ),
         (Void*)this
 	);
     DebugAssert( m_hHandle != NULL );
@@ -129,12 +155,15 @@ Void WinGUIWindow::_Destroy()
 {
     DebugAssert( m_hHandle != NULL );
 
+    // Get Model
     WinGUIWindowModel * pModel = (WinGUIWindowModel*)m_pModel;
 
+    // Window destruction
     DestroyWindow( (HWND)m_hHandle );
     m_hHandle = NULL;
 
-    UnregisterClass( pModel->GetClassNameID(), GetModuleHandle(NULL) );
+    // Unregister window class
+    UnregisterClass( pModel->GetCreationParameters()->strClassName, GetModuleHandle(NULL) );
 }
 
 UIntPtr __stdcall WinGUIWindow::_MessageCallback_Static( Void * hHandle, UInt iMessage, UIntPtr wParam, UIntPtr lParam )
@@ -150,6 +179,7 @@ UIntPtr __stdcall WinGUIWindow::_MessageCallback_Static( Void * hHandle, UInt iM
 }
 UIntPtr __stdcall WinGUIWindow::_MessageCallback_Virtual( Void * hHandle, UInt iMessage, UIntPtr wParam, UIntPtr lParam )
 {
+    // Get Model
     WinGUIWindowModel * pModel = (WinGUIWindowModel*)m_pModel;
 
     // Dispatch Message
@@ -339,8 +369,8 @@ UIntPtr __stdcall WinGUIWindow::_MessageCallback_Virtual( Void * hHandle, UInt i
 
         // Exit sequence
         case WM_CLOSE: {
-                pModel->OnClose();
-                return 0;
+                if ( pModel->OnClose() )
+                    return 0;
             } break;
         case WM_DESTROY: {
                 PostQuitMessage(0);

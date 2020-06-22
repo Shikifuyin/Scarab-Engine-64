@@ -33,7 +33,8 @@
 WinGUIGroupBoxModel::WinGUIGroupBoxModel( Int iResourceID ):
 	WinGUIControlModel(iResourceID)
 {
-	// nothing to do
+	// Default Parameters
+	StringFn->Copy( m_hCreationParameters.strLabel, TEXT("GroupBox") );
 }
 WinGUIGroupBoxModel::~WinGUIGroupBoxModel()
 {
@@ -93,17 +94,37 @@ Void WinGUIGroupBox::_Create()
 {
 	DebugAssert( m_hHandle == NULL );
 
-	WinGUIGroupBoxModel * pModel = (WinGUIGroupBoxModel*)m_pModel;
+	// Get Parent Handle
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
-    const WinGUIRectangle * pRect = pModel->GetRectangle();
+    // Get Model
+    WinGUIGroupBoxModel * pModel = (WinGUIGroupBoxModel*)m_pModel;
 
+	// Compute Layout
+    const WinGUILayout * pLayout = pModel->GetLayout();
+
+    WinGUIRectangle hParentRect;
+    m_pParent->GetClientRect( &hParentRect );
+
+    WinGUIRectangle hWindowRect;
+    pLayout->ComputeLayout( &hWindowRect, hParentRect );
+
+	// Get Creation Parameters
+    const WinGUIGroupBoxParameters * pParameters = pModel->GetCreationParameters();
+
+	// Build Style
+	DWord dwStyle = ( WS_CHILD | WS_VISIBLE | BS_GROUPBOX );
+
+    // Window creation
 	m_hHandle = CreateWindowEx (
-		0, WC_BUTTON, pModel->GetText(),
-		WS_VISIBLE | WS_CHILD | BS_GROUPBOX,
-		pRect->iLeft, pRect->iTop,
-        pRect->iWidth, pRect->iHeight,
-		hParentWnd, (HMENU)m_iResourceID,
+		0,
+		WC_BUTTON,
+		pParameters->strLabel,
+		dwStyle,
+		hWindowRect.iLeft, hWindowRect.iTop,
+        hWindowRect.iWidth, hWindowRect.iHeight,
+		hParentWnd,
+		(HMENU)m_iResourceID,
 		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
 		NULL
 	);
@@ -116,6 +137,7 @@ Void WinGUIGroupBox::_Destroy()
 {
 	DebugAssert( m_hHandle != NULL );
 
+    // Window destruction
 	DestroyWindow( (HWND)m_hHandle );
 	m_hHandle = NULL;
 }

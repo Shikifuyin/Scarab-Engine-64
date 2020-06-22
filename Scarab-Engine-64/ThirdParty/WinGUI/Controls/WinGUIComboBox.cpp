@@ -33,7 +33,13 @@
 WinGUIComboBoxModel::WinGUIComboBoxModel( Int iResourceID ):
 	WinGUIControlModel(iResourceID)
 {
-	// nothing to do
+	// Default Parameters
+	m_hCreationParameters.iType = WINGUI_COMBOBOX_BUTTON;
+	m_hCreationParameters.iCase = WINGUI_COMBOBOX_CASE_BOTH;
+	m_hCreationParameters.iInitialSelectedItem = 0;
+	m_hCreationParameters.bAllowHorizontalScroll = false;
+	m_hCreationParameters.bAutoSort = false;
+	m_hCreationParameters.bEnableTabStop = true;
 }
 WinGUIComboBoxModel::~WinGUIComboBoxModel()
 {
@@ -79,15 +85,15 @@ UInt WinGUIComboBox::GetSelectionHeight() const
 	HWND hHandle = (HWND)m_hHandle;
 	return (UInt)( SendMessage(hHandle, CB_GETITEMHEIGHT, -1, 0) );
 }
-UInt WinGUIComboBox::GetListItemHeight() const
-{
-	HWND hHandle = (HWND)m_hHandle;
-	return ComboBox_GetItemHeight( hHandle );
-}
 Void WinGUIComboBox::SetSelectionHeight( UInt iHeight )
 {
 	HWND hHandle = (HWND)m_hHandle;
 	ComboBox_SetItemHeight( hHandle, -1, iHeight );
+}
+UInt WinGUIComboBox::GetListItemHeight() const
+{
+	HWND hHandle = (HWND)m_hHandle;
+	return ComboBox_GetItemHeight( hHandle );
 }
 Void WinGUIComboBox::SetListItemHeight( UInt iHeight )
 {
@@ -196,6 +202,17 @@ Void WinGUIComboBox::SetSelectionText( const GChar * strText )
 	ComboBox_SetText( hHandle, strText );
 }
 
+Void WinGUIComboBox::GetCueText( GChar * outText, UInt iMaxLength ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ComboBox_GetCueBannerText( hHandle, outText, iMaxLength );
+}
+Void WinGUIComboBox::SetCueText( const GChar * strText )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ComboBox_SetCueBannerText( hHandle, strText );
+}
+
 UInt WinGUIComboBox::AddFiles( GChar * strPath, Bool bIncludeSubDirs )
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -212,61 +229,69 @@ Void WinGUIComboBox::MakeDirectoryList( GChar * strPath, Bool bIncludeSubDirs, W
 	DlgDirListComboBox( hHandle, strPath, m_iResourceID, iStaticDisplayID, bIncludeSubDirs ? DDL_DIRECTORY : 0 );
 }
 
-Void WinGUIComboBox::GetCueText( GChar * outText, UInt iMaxLength ) const
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ComboBox_GetCueBannerText( hHandle, outText, iMaxLength );
-}
-Void WinGUIComboBox::SetCueText( const GChar * strText )
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ComboBox_SetCueBannerText( hHandle, strText );
-}
-
 /////////////////////////////////////////////////////////////////////////////////
 
 Void WinGUIComboBox::_Create()
 {
 	DebugAssert( m_hHandle == NULL );
 
-	WinGUIComboBoxModel * pModel = (WinGUIComboBoxModel*)m_pModel;
+	// Get Parent Handle
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
-    const WinGUIRectangle * pRect = pModel->GetRectangle();
+    // Get Model
+    WinGUIComboBoxModel * pModel = (WinGUIComboBoxModel*)m_pModel;
 
-	DWord dwStyle = CBS_NOINTEGRALHEIGHT;
-	switch( pModel->GetType() ) {
+	// Compute Layout
+    const WinGUILayout * pLayout = pModel->GetLayout();
+
+    WinGUIRectangle hParentRect;
+    m_pParent->GetClientRect( &hParentRect );
+
+    WinGUIRectangle hWindowRect;
+    pLayout->ComputeLayout( &hWindowRect, hParentRect );
+
+	// Get Creation Parameters
+    const WinGUIComboBoxParameters * pParameters = pModel->GetCreationParameters();
+
+    // Build Style
+	DWord dwStyle = ( WS_CHILD | WS_VISIBLE | CBS_NOINTEGRALHEIGHT );
+	switch( pParameters->iType ) {
 		case WINGUI_COMBOBOX_BUTTON:
-			dwStyle = CBS_DROPDOWNLIST;
+			dwStyle |= CBS_DROPDOWNLIST;
 			break;
 		case WINGUI_COMBOBOX_EDIT:
-			dwStyle = CBS_DROPDOWN;
-			if ( pModel->AllowHorizScroll() )
+			dwStyle |= CBS_DROPDOWN;
+			if ( pParameters->bAllowHorizontalScroll )
 				dwStyle |= CBS_AUTOHSCROLL;
 			break;
 		case WINGUI_COMBOBOX_LIST:
-			dwStyle = CBS_SIMPLE;
-			if ( pModel->AllowHorizScroll() )
+			dwStyle |= CBS_SIMPLE;
+			if ( pParameters->bAllowHorizontalScroll )
 				dwStyle |= CBS_AUTOHSCROLL;
 			break;
 		default: DebugAssert(false); break;
 	}
-	switch( pModel->GetTextCase() ) {
+	switch( pParameters->iCase ) {
 		case WINGUI_COMBOBOX_CASE_BOTH:  dwStyle |= 0; break;
 		case WINGUI_COMBOBOX_CASE_LOWER: dwStyle |= CBS_LOWERCASE; break;
 		case WINGUI_COMBOBOX_CASE_UPPER: dwStyle |= CBS_UPPERCASE; break;
 		default: DebugAssert(false); break;
 	}
-	if ( pModel->AutoSort() ) {
+	if ( pParameters->bAutoSort )
 		dwStyle |= CBS_SORT;
-	}
+	if ( pParameters->bEnableTabStop )
+		dwStyle |= WS_TABSTOP;
 
+    // Window creation
 	m_hHandle = CreateWindowEx (
-		0, WC_COMBOBOX, TEXT(""),
-		WS_VISIBLE | WS_CHILD | WS_TABSTOP | dwStyle,
-		pRect->iLeft, pRect->iTop,
-        pRect->iWidth, pRect->iHeight,
-		hParentWnd, (HMENU)m_iResourceID,
+		0,
+		WC_COMBOBOX,
+		TEXT(""),
+		dwStyle,
+		hWindowRect.iLeft, hWindowRect.iTop,
+        hWindowRect.iWidth, hWindowRect.iHeight,
+		hParentWnd,
+		(HMENU)m_iResourceID,
 		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
 		NULL
 	);
@@ -278,7 +303,7 @@ Void WinGUIComboBox::_Create()
 		AddItem( pModel->GetItemString(i) );
 		SetItemData( i, pModel->GetItemData(i) );
 	}
-	SelectItem( pModel->GetInitialSelectedItem() );
+	SelectItem( pParameters->iInitialSelectedItem );
 
 	// Done
 	_SaveElementToHandle();
@@ -287,31 +312,23 @@ Void WinGUIComboBox::_Destroy()
 {
 	DebugAssert( m_hHandle != NULL );
 
+    // Window destruction
 	DestroyWindow( (HWND)m_hHandle );
 	m_hHandle = NULL;
 }
 
 Bool WinGUIComboBox::_DispatchEvent( Int iNotificationCode )
 {
+    // Get Model
 	WinGUIComboBoxModel * pModel = (WinGUIComboBoxModel*)m_pModel;
 
-	// Dispatch Event to our Model
+	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
-		case CBN_DBLCLK:
-			return pModel->OnDblClick();
-			break;
-		case CBN_EDITCHANGE:
-			return pModel->OnTextChange();
-			break;
-		case CBN_SELCHANGE:
-			return pModel->OnSelectionChange();
-			break;
-		case CBN_SELENDOK:
-			return pModel->OnSelectionOK();
-			break;
-		case CBN_SELENDCANCEL:
-			return pModel->OnSelectionCancel();
-			break;
+		case CBN_DBLCLK:       return pModel->OnDblClick(); break;
+		case CBN_EDITCHANGE:   return pModel->OnTextChange(); break;
+		case CBN_SELCHANGE:    return pModel->OnSelectionChange(); break;
+		case CBN_SELENDOK:     return pModel->OnSelectionOK(); break;
+		case CBN_SELENDCANCEL: return pModel->OnSelectionCancel(); break;
 		default: break;
 	}
 

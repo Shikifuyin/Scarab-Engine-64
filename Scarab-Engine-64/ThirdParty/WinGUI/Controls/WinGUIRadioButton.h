@@ -28,6 +28,12 @@
 // Constants definitions
 #define WINGUI_RADIO_BUTTON_MAX_GROUP_SIZE 8 // If you need more, use a combo box !
 
+// Creation Parameters
+typedef struct _wingui_radiobutton_parameters {
+	GChar strLabel[64];
+	Bool bEnableTabStop;
+} WinGUIRadioButtonParameters;
+
 // Prototypes
 class WinGUIRadioButtonModel;
 class WinGUIRadioButton;
@@ -41,17 +47,41 @@ public:
 	WinGUIRadioButtonModel( Int iResourceID );
 	virtual ~WinGUIRadioButtonModel();
 
+	// Creation Parameters
+	inline const WinGUIRadioButtonParameters * GetCreationParameters() const;
+
+	// Radio Button Group
+	inline WinGUIRadioButtonGroup * GetGroup() const;
+	inline Void SetGroup( WinGUIRadioButtonGroup * pGroup );
+
 	// Events
-	virtual Bool OnClick() = 0;
-	virtual Bool OnDblClick() = 0;
-
-	// View
-	virtual const WinGUIRectangle * GetRectangle() const = 0;
-
-	virtual const GChar * GetText() const = 0;
+	virtual Bool OnClick() { return false; }
+	virtual Bool OnDblClick() { return false; }
 
 protected:
+	WinGUIRadioButtonParameters m_hCreationParameters;
 
+	// Radio Button Group
+	friend class WinGUIRadioButtonGroup;
+	WinGUIRadioButtonGroup * m_pRadioButtonGroup;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The WinGUIRadioButtonGroup class
+class WinGUIRadioButtonGroup
+{
+public:
+	WinGUIRadioButtonGroup();
+	~WinGUIRadioButtonGroup();
+
+	inline UInt GetButtonCount() const;
+	inline WinGUIRadioButtonModel * GetButton( UInt iIndex ) const;
+
+	Void AddButton( WinGUIRadioButtonModel * pButton );
+
+private:
+	UInt m_iButtonCount;
+	WinGUIRadioButtonModel * m_arrRadioButtons[WINGUI_RADIO_BUTTON_MAX_GROUP_SIZE];
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -63,8 +93,7 @@ public:
 	virtual ~WinGUIRadioButton();
 
 	// Radio Button Group Access
-	inline WinGUIRadioButtonGroup * GetGroup() const;
-	inline Void SetGroup( WinGUIRadioButtonGroup * pGroup );
+	
 
 	// Enable / Disable
 	Void Enable();
@@ -87,27 +116,7 @@ private:
 	// Event Dispatch
 	virtual Bool _DispatchEvent( Int iNotificationCode );
 
-	// Radio Button Group
-	friend class WinGUIRadioButtonGroup;
-	WinGUIRadioButtonGroup * m_pRadioButtonGroup;
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-// The WinGUIRadioButtonGroup class
-class WinGUIRadioButtonGroup
-{
-public:
-	WinGUIRadioButtonGroup();
-	~WinGUIRadioButtonGroup();
-
-	inline UInt GetButtonCount() const;
-	inline WinGUIRadioButton * GetButton( UInt iIndex ) const;
-
-	Void AddButton( WinGUIRadioButton * pButton );
-
-private:
-	UInt m_iButtonCount;
-	WinGUIRadioButton * m_arrRadioButtons[WINGUI_RADIO_BUTTON_MAX_GROUP_SIZE];
+	
 };
 
 /////////////////////////////////////////////////////////////////////////////////

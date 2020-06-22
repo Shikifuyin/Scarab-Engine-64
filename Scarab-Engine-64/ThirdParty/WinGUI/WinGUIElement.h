@@ -22,7 +22,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "../System/System.h"
+#include "WinGUILayout.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
@@ -33,14 +33,6 @@ enum WinGUIElementType {
 	WINGUI_ELEMENT_CONTAINER,
 	WINGUI_ELEMENT_CONTROL
 };
-
-// All-Purpose Rectangle structure
-typedef struct _wingui_rectangle {
-	UInt iLeft;
-	UInt iTop;
-	UInt iWidth;
-	UInt iHeight;
-} WinGUIRectangle;
 
 // Prototypes
 class WinGUIElementModel;
@@ -56,16 +48,20 @@ public:
 	WinGUIElementModel( Int iResourceID );
 	virtual ~WinGUIElementModel();
 
-	inline WinGUIElement * GetView() const;
+	// Controller access
+	inline WinGUIElement * GetController() const;
+
+	// Layout access
+	virtual const WinGUILayout * GetLayout() const = 0;
 
 protected:
 	friend class WinGUIElement;
 
-	// Model <-> View linkage
-	WinGUIElement * m_pView;
-
-private:
+	// Resource Identifier
 	Int m_iResourceID;
+
+	// Controller
+	WinGUIElement * m_pController;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -94,20 +90,21 @@ public:
 	Void GetClientRect( WinGUIRectangle * outRectangle ) const;
 
 protected:
-	// Create/Destroy Interface
 	friend class WinGUI;
+
+	// Create/Destroy Interface
 	virtual Void _Create() = 0;
 	virtual Void _Destroy() = 0;
 
 	virtual Void _ApplyDefaultFont( Void * hFont );
 
-	// Model <-> View linkage
+	// Model
 	WinGUIElementModel * m_pModel;
 
 	// Parent Element
 	WinGUIElement * m_pParent;
 
-	// Windows GUI Handles
+	// Windows Handles
 	Void _SaveElementToHandle() const; // _Create must always call this !
 	static WinGUIElement * _GetElementFromHandle( Void * hHandle );
 

@@ -28,9 +28,9 @@
 // WinGUIElementModel implementation
 WinGUIElementModel::WinGUIElementModel( Int iResourceID )
 {
-	m_pView = NULL;
-
 	m_iResourceID = iResourceID;
+
+	m_pController = NULL;
 }
 WinGUIElementModel::~WinGUIElementModel()
 {
@@ -43,7 +43,7 @@ WinGUIElement::WinGUIElement( WinGUIElement * pParent, WinGUIElementModel * pMod
 {
 	// Link with Model
 	m_pModel = pModel;
-	pModel->m_pView = this;
+	m_pModel->m_pController = this;
 
 	// Parent Link
 	m_pParent = pParent;
@@ -58,8 +58,8 @@ WinGUIElement::~WinGUIElement()
 {
 	DebugAssert( m_hHandle == NULL );
 
-	// Unnlink with Model
-	m_pModel->m_pView = NULL;
+	// Unlink with Model
+	m_pModel->m_pController = NULL;
 }
 
 Bool WinGUIElement::IsVisible() const

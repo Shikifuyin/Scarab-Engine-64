@@ -27,6 +27,17 @@
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
+// Creation Parameters
+typedef struct _wingui_button_parameters {
+	GChar strLabel[64];
+	Bool bCenterLabel;
+	Bool bEnableTabStop;
+} WinGUIButtonParameters;
+
+// Prototypes
+class WinGUIButtonModel;
+class WinGUIButton;
+
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUIButtonModel class
 class WinGUIButtonModel : public WinGUIControlModel
@@ -35,17 +46,15 @@ public:
 	WinGUIButtonModel( Int iResourceID );
 	virtual ~WinGUIButtonModel();
 
+	// Creation Parameters
+	inline const WinGUIButtonParameters * GetCreationParameters() const;
+
 	// Events
-	virtual Bool OnClick() = 0;
-	virtual Bool OnDblClick() = 0;
-
-	// View
-	virtual const WinGUIRectangle * GetRectangle() const = 0;
-
-	virtual const GChar * GetText() const = 0;
+	virtual Bool OnClick() { return false; }
+	virtual Bool OnDblClick() { return false; }
 
 protected:
-
+	WinGUIButtonParameters m_hCreationParameters;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +69,7 @@ public:
 	Void Enable();
 	Void Disable();
 
-	// Button Text
+	// Label Text
 	UInt GetTextLength() const;
 	Void GetText( GChar * outText, UInt iMaxLength ) const;
 	Void SetText( const GChar * strText );

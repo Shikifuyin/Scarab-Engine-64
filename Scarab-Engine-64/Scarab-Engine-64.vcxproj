@@ -256,6 +256,7 @@
     <ClInclude Include="ThirdParty\WinGUI\WinGUIContainer.h" />
     <ClInclude Include="ThirdParty\WinGUI\WinGUIControl.h" />
     <ClInclude Include="ThirdParty\WinGUI\WinGUIElement.h" />
+    <ClInclude Include="ThirdParty\WinGUI\WinGUILayout.h" />
     <ClInclude Include="ThirdParty\WinGUI\WinGUIWindow.h" />
   </ItemGroup>
   <ItemGroup>
@@ -356,6 +357,7 @@
     <None Include="ThirdParty\WinGUI\WinGUIContainer.inl" />
     <None Include="ThirdParty\WinGUI\WinGUIControl.inl" />
     <None Include="ThirdParty\WinGUI\WinGUIElement.inl" />
+    <None Include="ThirdParty\WinGUI\WinGUILayout.inl" />
     <None Include="ThirdParty\WinGUI\WinGUIWindow.inl" />
   </ItemGroup>
   <ItemGroup>
@@ -456,6 +458,7 @@
     <ClCompile Include="ThirdParty\WinGUI\WinGUIContainer.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\WinGUIControl.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\WinGUIElement.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\WinGUILayout.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\WinGUIWindow.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

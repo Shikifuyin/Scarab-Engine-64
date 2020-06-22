@@ -27,6 +27,15 @@
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
+// Creation Parameters
+typedef struct _wingui_groupbox_parameters {
+	GChar strLabel[64];
+} WinGUIGroupBoxParameters;
+
+// Prototypes
+class WinGUIGroupBoxModel;
+class WinGUIGroupBox;
+
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUIGroupBoxModel class
 class WinGUIGroupBoxModel : public WinGUIControlModel
@@ -35,13 +44,11 @@ public:
 	WinGUIGroupBoxModel( Int iResourceID );
 	virtual ~WinGUIGroupBoxModel();
 
-	// View
-	virtual const WinGUIRectangle * GetRectangle() const = 0;
-
-	virtual const GChar * GetText() const = 0;
+	// Creation Parameters
+	inline const WinGUIGroupBoxParameters * GetCreationParameters() const;
 
 protected:
-
+	WinGUIGroupBoxParameters m_hCreationParameters;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -28,11 +28,22 @@
 // Constants definitions
 #define WINGUI_WINDOW_MAX_CHILDREN 256 // Should be more than enough
 
+// Creation Parameters
+typedef struct _wingui_window_parameters {
+	WinGUIRectangle hClientRect; // Windows have no parent, they don't use layouts
+	GChar strClassName[64];
+	GChar strTitle[256];
+	Bool bHasSystemMenu;
+	Bool bHasMinimizeButton;
+	Bool bHasMaximizeButton;
+	Bool bAllowResizing;
+	Bool bClipChildren;
+	Bool bClipSibblings;
+} WinGUIWindowParameters;
+
 // Prototypes
 class WinGUIWindowModel;
 class WinGUIWindow;
-
-class WinGUIControl;
 
 class WinGUI;
 
@@ -44,27 +55,14 @@ public:
 	WinGUIWindowModel( Int iResourceID );
 	virtual ~WinGUIWindowModel();
 
+	// Creation Parameters
+	inline const WinGUIWindowParameters * GetCreationParameters() const;
+
 	// Events
-	virtual Bool OnClose() = 0;
+	virtual Bool OnClose() = 0; // Must-Implement, Destroy Application Window here
 
-	// View
-	virtual const GChar * GetClassNameID() const = 0;
-
-	virtual const GChar * GetTitle() const = 0;
-
-	virtual const WinGUIRectangle * GetRectangle() const = 0;
-
-	virtual Bool HasSystemMenu() const = 0;
-	virtual Bool HasMinimizeButton() const = 0;
-	virtual Bool HasMaximizeButton() const = 0;
-
-	virtual Bool AllowResizing() const = 0;
-
-	virtual Bool ClipChildren() const = 0;
-	virtual Bool ClipSibblings() const = 0;
-
-private:
-
+protected:
+	WinGUIWindowParameters m_hCreationParameters;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

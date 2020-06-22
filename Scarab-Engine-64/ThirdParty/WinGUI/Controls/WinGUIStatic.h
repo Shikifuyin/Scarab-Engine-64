@@ -74,6 +74,37 @@ enum WinGUIStaticImageInfo {
 	WINGUI_STATIC_IMAGE_FIT_CENTERED,
 };
 
+// Creation Parameters
+typedef struct _wingui_static_parameters {
+	WinGUIStaticType iType;
+	Bool bAddSunkenBorder;
+	union {
+		struct _frame {
+			WinGUIStaticFrameType iFrameType;
+		} hFrame;
+		struct _rect {
+			WinGUIStaticRectType iRectType;
+		} hRect;
+		struct _text {
+			GChar strLabel[64];
+			WinGUIStaticTextAlign iAlign;
+			WinGUIStaticTextEllipsis iEllipsis;
+		} hText;
+		struct _bitmap {
+			GChar strResourceName[64]; // NOT a filename
+			WinGUIStaticImageInfo iInfos;
+		} hBitmap;
+		struct _icon {
+			GChar strResourceName[64]; // NOT a filename
+			WinGUIStaticImageInfo iInfos;
+		} hIcon;
+	};
+} WinGUIStaticParameters;
+
+// Prototypes
+class WinGUIStaticModel;
+class WinGUIStatic;
+
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUIStaticModel class
 class WinGUIStaticModel : public WinGUIControlModel
@@ -82,29 +113,11 @@ public:
 	WinGUIStaticModel( Int iResourceID );
 	virtual ~WinGUIStaticModel();
 
-	// View
-	virtual const WinGUIRectangle * GetRectangle() const = 0;
-
-	virtual WinGUIStaticType GetType() const = 0;
-	virtual const GChar * GetText() const = 0; // Text or Bitmap/Icon Resource Name (not a filename)
-
-	virtual Bool AddSunkenBorder() const = 0;
-
-		// Frame Type
-	virtual WinGUIStaticFrameType GetFrameType() const = 0;
-
-		// Rect Type
-	virtual WinGUIStaticRectType GetRectType() const = 0;
-
-		// Text Type
-	virtual WinGUIStaticTextAlign GetTextAlign() const = 0;
-	virtual WinGUIStaticTextEllipsis GetTextEllipsis() const = 0;
-
-		// Image Type (Bitmap/Icon)
-	virtual WinGUIStaticImageInfo GetImageInfo() const = 0;
+	// Creation Parameters
+	inline const WinGUIStaticParameters * GetCreationParameters() const;
 
 protected:
-
+	WinGUIStaticParameters m_hCreationParameters;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -119,7 +132,7 @@ public:
 	Void Enable();
 	Void Disable();
 
-	// Text
+	// Label Text
 	UInt GetTextLength() const;
 	Void GetText( GChar * outText, UInt iMaxLength ) const;
 	Void SetText( const GChar * strText );

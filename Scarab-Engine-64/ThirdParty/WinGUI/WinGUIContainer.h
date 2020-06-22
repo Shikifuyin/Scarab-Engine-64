@@ -28,6 +28,14 @@
 // Constants definitions
 #define WINGUI_CONTAINER_MAX_CHILDREN 256 // Should be more than enough
 
+// Creation Parameters
+typedef struct _wingui_container_parameters {
+	GChar strClassName[64];
+	Bool bAllowResizing;
+	Bool bClipChildren;
+	Bool bClipSibblings;
+} WinGUIContainerParameters;
+
 // Prototypes
 class WinGUIContainerModel;
 class WinGUIContainer;
@@ -42,20 +50,13 @@ public:
 	WinGUIContainerModel( Int iResourceID );
 	virtual ~WinGUIContainerModel();
 
+	// Creation Parameters
+	inline const WinGUIContainerParameters * GetCreationParameters() const;
+
 	// Events
 
-	// View
-	virtual const GChar * GetClassNameID() const = 0;
-
-	virtual const WinGUIRectangle * GetRectangle() const = 0;
-	
-	virtual Bool AllowResizing() const = 0;
-
-	virtual Bool ClipChildren() const = 0;
-	virtual Bool ClipSibblings() const = 0;
-
 protected:
-
+	WinGUIContainerParameters m_hCreationParameters;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

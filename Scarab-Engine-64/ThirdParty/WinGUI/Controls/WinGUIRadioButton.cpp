@@ -33,11 +33,39 @@
 WinGUIRadioButtonModel::WinGUIRadioButtonModel( Int iResourceID ):
 	WinGUIControlModel(iResourceID)
 {
-	// nothing to do
+	// Default Parameters
+	StringFn->Copy( m_hCreationParameters.strLabel, TEXT("RadioButton") );
+
+	m_hCreationParameters.bEnableTabStop = true;
+
+	// Radio Button Group
+	m_pRadioButtonGroup = NULL;
 }
 WinGUIRadioButtonModel::~WinGUIRadioButtonModel()
 {
 	// nothing to do
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// WinGUIRadioButtonGroup implementation
+WinGUIRadioButtonGroup::WinGUIRadioButtonGroup()
+{
+	m_iButtonCount = 0;
+
+	for( UInt i = 0; i < WINGUI_RADIO_BUTTON_MAX_GROUP_SIZE; ++i )
+		m_arrRadioButtons[i] = NULL;
+}
+WinGUIRadioButtonGroup::~WinGUIRadioButtonGroup()
+{
+	for( UInt i = 0; i < m_iButtonCount; ++i )
+		m_arrRadioButtons[i]->SetGroup( NULL );
+}
+
+Void WinGUIRadioButtonGroup::AddButton( WinGUIRadioButtonModel * pButton )
+{
+	DebugAssert( m_iButtonCount < WINGUI_RADIO_BUTTON_MAX_GROUP_SIZE );
+	m_arrRadioButtons[m_iButtonCount] = pButton;
+	++m_iButtonCount;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -88,9 +116,12 @@ Bool WinGUIRadioButton::IsChecked() const
 }
 Void WinGUIRadioButton::Check()
 {
-	UInt iCount = m_pRadioButtonGroup->GetButtonCount();
+	WinGUIRadioButtonModel * pModel = (WinGUIRadioButtonModel*)m_pModel;
+	WinGUIRadioButtonGroup * pGroup = pModel->GetGroup();
+
+	UInt iCount = pGroup->GetButtonCount();
 	for ( UInt i = 0; i < iCount; ++i ) {
-		WinGUIRadioButton * pButton = m_pRadioButtonGroup->GetButton(i);
+		WinGUIRadioButton * pButton = (WinGUIRadioButton*)( pGroup->GetButton(i)->GetController() );
 		if ( pButton == this )
 			Button_SetCheck( (HWND)(_GetHandle(pButton)), BST_CHECKED );
 		else
@@ -104,17 +135,39 @@ Void WinGUIRadioButton::_Create()
 {
 	DebugAssert( m_hHandle == NULL );
 
-	WinGUIRadioButtonModel * pModel = (WinGUIRadioButtonModel*)m_pModel;
+	// Get Parent Handle
 	HWND hParentWnd = (HWND)( _GetHandle(m_pParent) );
 
-    const WinGUIRectangle * pRect = pModel->GetRectangle();
+    // Get Model
+    WinGUIRadioButtonModel * pModel = (WinGUIRadioButtonModel*)m_pModel;
 
+	// Compute Layout
+    const WinGUILayout * pLayout = pModel->GetLayout();
+
+    WinGUIRectangle hParentRect;
+    m_pParent->GetClientRect( &hParentRect );
+
+    WinGUIRectangle hWindowRect;
+    pLayout->ComputeLayout( &hWindowRect, hParentRect );
+
+	// Get Creation Parameters
+    const WinGUIRadioButtonParameters * pParameters = pModel->GetCreationParameters();
+
+	// Build Style
+	DWord dwStyle = ( WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON );
+	if ( pParameters->bEnableTabStop )
+		dwStyle |= WS_TABSTOP;
+
+    // Window creation
 	m_hHandle = CreateWindowEx (
-		0, WC_BUTTON, pModel->GetText(),
-		WS_VISIBLE | WS_CHILD | WS_TABSTOP | BS_AUTORADIOBUTTON,
-		pRect->iLeft, pRect->iTop,
-        pRect->iWidth, pRect->iHeight,
-		hParentWnd, (HMENU)m_iResourceID,
+		0,
+		WC_BUTTON,
+		pParameters->strLabel,
+		dwStyle,
+		hWindowRect.iLeft, hWindowRect.iTop,
+        hWindowRect.iWidth, hWindowRect.iHeight,
+		hParentWnd,
+		(HMENU)m_iResourceID,
 		(HINSTANCE)( GetWindowLongPtr(hParentWnd,GWLP_HINSTANCE) ),
 		NULL
 	);
@@ -127,22 +180,20 @@ Void WinGUIRadioButton::_Destroy()
 {
 	DebugAssert( m_hHandle != NULL );
 
+    // Window destruction
 	DestroyWindow( (HWND)m_hHandle );
 	m_hHandle = NULL;
 }
 
 Bool WinGUIRadioButton::_DispatchEvent( Int iNotificationCode )
 {
+    // Get Model
 	WinGUIRadioButtonModel * pModel = (WinGUIRadioButtonModel*)m_pModel;
 
-	// Dispatch Event to our Model
+	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
-		case BN_CLICKED:
-			return pModel->OnClick();
-			break;
-		case BN_DBLCLK:
-			return pModel->OnDblClick();
-			break;
+		case BN_CLICKED: return pModel->OnClick(); break;
+		case BN_DBLCLK:  return pModel->OnDblClick(); break;
 		default: break;
 	}
 
@@ -150,25 +201,5 @@ Bool WinGUIRadioButton::_DispatchEvent( Int iNotificationCode )
 	return false;
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-// WinGUIRadioButtonGroup implementation
-WinGUIRadioButtonGroup::WinGUIRadioButtonGroup()
-{
-	m_iButtonCount = 0;
 
-	for( UInt i = 0; i < WINGUI_RADIO_BUTTON_MAX_GROUP_SIZE; ++i )
-		m_arrRadioButtons[i] = NULL;
-}
-WinGUIRadioButtonGroup::~WinGUIRadioButtonGroup()
-{
-	for( UInt i = 0; i < m_iButtonCount; ++i )
-		m_arrRadioButtons[i]->SetGroup( NULL );
-}
-
-Void WinGUIRadioButtonGroup::AddButton( WinGUIRadioButton * pButton )
-{
-	DebugAssert( m_iButtonCount < WINGUI_RADIO_BUTTON_MAX_GROUP_SIZE );
-	m_arrRadioButtons[m_iButtonCount] = pButton;
-	++m_iButtonCount;
-}
 

@@ -244,6 +244,26 @@ MyTextEditModel::~MyTextEditModel()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+// MyComboBoxModel implementation
+MyComboBoxModel::MyComboBoxModel( MyApplication * pApplication ):
+	WinGUIComboBoxModel(RESID_COMBOBOX_TEST)
+{
+	m_pApplication = pApplication;
+}
+MyComboBoxModel::~MyComboBoxModel()
+{
+	// nothing to do
+}
+
+Bool MyComboBoxModel::OnSelectionOK()
+{
+	UInt iSelected = ((WinGUIComboBox*)m_pView)->GetSelectedItem();
+	Void * pData = ((WinGUIComboBox*)m_pView)->GetItemData( iSelected );
+	((WinGUIStatic*)(m_pApplication->m_hStaticTextModel.GetView()))->SetText((const GChar *)pData);
+	return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // MyStaticRectModel implementation
 MyStaticRectModel::MyStaticRectModel( MyApplication * pApplication ):
 	WinGUIStaticModel(RESID_STATIC_RECT_TEST)
@@ -275,6 +295,7 @@ MyApplication::MyApplication():
 
 	m_hCheckBoxModel(this),
 	m_hTextEditModel(this),
+	m_hComboBoxModel(this),
 	m_hStaticRectModel(this)
 {
 	// App Window
@@ -316,6 +337,9 @@ MyApplication::MyApplication():
 	WinGUITextEdit * pTextEdit = WinGUIFn->CreateTextEdit( pContainerRight, &m_hTextEditModel );
 	pTextEdit->SetCueText( TEXT("Type Stuff"), false );
 	pTextEdit->SetTextLimit( 32 );
+
+	// A ComboBox
+	WinGUIComboBox * pComboBox = WinGUIFn->CreateComboBox( pContainerRight, &m_hComboBoxModel );
 
 	// A Static Rect
 	WinGUIFn->CreateStatic( pContainerRight, &m_hStaticRectModel );

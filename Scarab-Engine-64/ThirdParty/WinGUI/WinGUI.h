@@ -38,6 +38,8 @@
 #include "Controls/WinGUIStatic.h"
 #include "Controls/WinGUITextEdit.h"
 
+#include "Controls/WinGUIComboBox.h"
+
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 #define WinGUIFn WinGUI::GetInstance()
@@ -109,6 +111,8 @@ public:
 
     WinGUIStatic * CreateStatic( WinGUIElement * pParent, WinGUIStaticModel * pModel ) const;
     WinGUITextEdit * CreateTextEdit( WinGUIElement * pParent, WinGUITextEditModel * pModel ) const;
+
+    WinGUIComboBox * CreateComboBox( WinGUIElement * pParent,WinGUIComboBoxModel * pModel ) const;
 
     // Element Removal
     Void DestroyElement( WinGUIElement * pElement ) const;

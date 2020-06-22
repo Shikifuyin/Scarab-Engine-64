@@ -37,7 +37,8 @@
 
 #define RESID_CHECKBOX_TEST 120
 #define RESID_TEXTEDIT_TEST 121
-#define RESID_STATIC_RECT_TEST 122
+#define RESID_COMBOBOX_TEST 122
+#define RESID_STATIC_RECT_TEST 123
 
 // Prototypes
 class MyApplication;
@@ -324,6 +325,63 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
+// The MyComboBoxModel class
+class MyComboBoxModel : public WinGUIComboBoxModel
+{
+public:
+	MyComboBoxModel( MyApplication * pApplication );
+	~MyComboBoxModel();
+
+	// Events
+	virtual Bool OnDblClick() { return false; }
+
+	virtual Bool OnTextChange() { return false; }
+	virtual Bool OnSelectionChange() { return false; }
+	virtual Bool OnSelectionOK();
+	virtual Bool OnSelectionCancel() { return false; }
+
+	// View
+	virtual const WinGUIRectangle * GetRectangle() const {
+		static WinGUIRectangle hRect = { 10, 60, 100, 20 };
+		return &hRect;
+	}
+
+	virtual WinGUIComboBoxType GetType() { return WINGUI_COMBOBOX_BUTTON; }
+
+	virtual Bool AllowHorizScroll() const { return false; }
+	virtual Bool AutoSort() const { return false; }
+
+	virtual WinGUIComboBoxCase GetTextCase() const { return WINGUI_COMBOBOX_CASE_BOTH; }
+
+	virtual UInt GetItemCount() const { return 4; }
+	virtual const GChar * GetItemString( UInt iIndex ) const {
+		static GChar strLabels[4][32] = {
+			TEXT("Some"),
+			TEXT("Another"),
+			TEXT("This"),
+			TEXT("That")
+		};
+		DebugAssert( iIndex < 4 );
+		return strLabels[iIndex];
+	}
+	virtual Void * GetItemData( UInt iIndex ) const {
+		static GChar strData[4][32] = {
+			TEXT("SomeData"),
+			TEXT("AnotherData"),
+			TEXT("ThisData"),
+			TEXT("ThatData")
+		};
+		DebugAssert( iIndex < 4 );
+		return strData[iIndex];
+	}
+
+	virtual UInt GetInitialSelectedItem() const { return 0; }
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
 // The MyStaticRectModel class
 class MyStaticRectModel : public WinGUIStaticModel
 {
@@ -380,5 +438,6 @@ public:
 
     MyCheckBoxModel m_hCheckBoxModel;
     MyTextEditModel m_hTextEditModel;
+    MyComboBoxModel m_hComboBoxModel;
 	MyStaticRectModel m_hStaticRectModel;
 };

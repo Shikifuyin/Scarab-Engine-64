@@ -516,6 +516,9 @@
     <ClInclude Include="ThirdParty\WinGUI\WinGUILayout.h">
       <Filter>Header Files\ThirdParty\WinGUI</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUITable.h">
+      <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\System\Platform.inl">
@@ -815,6 +818,9 @@
     <None Include="ThirdParty\WinGUI\WinGUILayout.inl">
       <Filter>Source Files\ThirdParty\WinGUI</Filter>
     </None>
+    <None Include="ThirdParty\WinGUI\Controls\WinGUITable.inl">
+      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -1113,6 +1119,9 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\WinGUI\WinGUILayout.cpp">
       <Filter>Source Files\ThirdParty\WinGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUITable.cpp">
+      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

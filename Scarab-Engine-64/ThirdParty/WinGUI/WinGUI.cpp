@@ -93,8 +93,9 @@ Void WinGUI::CreateAppWindow( WinGUIWindowModel * pModel )
     // Init Common Controls Here
     INITCOMMONCONTROLSEX hICCX;
     hICCX.dwSize = sizeof(INITCOMMONCONTROLSEX);
-    hICCX.dwICC = ICC_STANDARD_CLASSES // Button, Edit, Static, ListBox, ComboBox, ScrollBar
-                | ICC_TAB_CLASSES;     // Tabs, Tooltip
+    hICCX.dwICC = ICC_STANDARD_CLASSES  // Button, Edit, Static, ListBox, ComboBox, ScrollBar
+                | ICC_TAB_CLASSES       // Tabs, Tooltip
+                | ICC_LISTVIEW_CLASSES; // ListView
     InitCommonControlsEx( &hICCX );
 
     // Create Default Font

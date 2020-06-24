@@ -20,8 +20,7 @@
 inline Bool WinGUIImageList::IsCreated() const {
 	return ( m_hHandle != NULL );
 }
-
-inline Bool WinGUIImageList::IsMasked() const {
-	return m_bIsMasked;
+inline Bool WinGUIImageList::HasMasks() const {
+	return m_bHasMasks;
 }
 

@@ -220,7 +220,7 @@ Bool WinGUITable::IsItemChecked( UInt iIndex ) const
 	DebugAssert( m_bHasCheckBoxes == true );
 
 	HWND hHandle = (HWND)m_hHandle;
-	ListView_GetCheckState( hHandle, iIndex );
+	return ListView_GetCheckState( hHandle, iIndex );
 }
 
 Void * WinGUITable::EditItemLabelStart( UInt iIndex )

@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-// Known Bugs : Note we only use DIB here. (Device-Independant Bitmaps)
+// Known Bugs : Note we only use DDB here. (Device-Dependant Bitmaps)
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -35,22 +35,24 @@ public:
 	WinGUIImageList();
 	~WinGUIImageList();
 
-	// Deferred Creation/Destruction
+	// Properties
 	inline Bool IsCreated() const;
-	Void Create( UInt iWidth, UInt iHeight, WinGUIImageColorDepth iColorDepth, UInt iInitialImageCount, UInt iGrowCount );
-	Void CreateMasked( UInt iWidth, UInt iHeight, WinGUIImageColorDepth iColorDepth, UInt iInitialImageCount, UInt iGrowCount );
+	inline Bool HasMasks() const;
+
+	// Deferred Creation/Destruction
+	Void Create( UInt iWidth, UInt iHeight, UInt iInitialImageCount, UInt iGrowCount );
+	Void CreateMasked( UInt iWidth, UInt iHeight, UInt iInitialImageCount, UInt iGrowCount );
+
 	Void Destroy();
 
-	// Properties
-	inline Bool IsMasked() const;
-
 	// Images Management
-	Void AddImage();
+	Void AddImage( WinGUIImage * pImage, WinGUIImage * pMask = NULL );
 
 private:
+	// Members
 	Void * m_hHandle; // HIMAGELIST
 
-	Bool m_bIsMasked;
+	Bool m_bHasMasks;
 
 };
 

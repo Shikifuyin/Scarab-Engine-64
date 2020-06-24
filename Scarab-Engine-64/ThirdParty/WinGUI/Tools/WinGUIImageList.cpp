@@ -31,50 +31,31 @@ WinGUIImageList::WinGUIImageList()
 {
 	m_hHandle = NULL;
 
-	m_bIsMasked = false;
+	m_bHasMasks = false;
 }
 WinGUIImageList::~WinGUIImageList()
 {
 	// nothing to do
 }
 
-Void WinGUIImageList::Create( UInt iWidth, UInt iHeight, WinGUIImageListColorDepth iColorDepth, UInt iInitialImageCount, UInt iGrowCount )
+Void WinGUIImageList::Create( UInt iWidth, UInt iHeight, UInt iInitialImageCount, UInt iGrowCount )
 {
 	DebugAssert( m_hHandle == NULL );
 
-	UInt iFlags = 0;
-	switch( iColorDepth ) {
-		case WINGUI_IMAGELIST_COLOR_4:  iFlags |= ILC_COLOR4; break;
-		case WINGUI_IMAGELIST_COLOR_8:  iFlags |= ILC_COLOR8; break;
-		case WINGUI_IMAGELIST_COLOR_16: iFlags |= ILC_COLOR16; break;
-		case WINGUI_IMAGELIST_COLOR_24: iFlags |= ILC_COLOR24; break;
-		case WINGUI_IMAGELIST_COLOR_32: iFlags |= ILC_COLOR32; break;
-		default: DebugAssert(false); break;
-	}
-
-	m_hHandle = ImageList_Create( iWidth, iHeight, iFlags, iInitialImageCount, iGrowCount );
+	m_hHandle = ImageList_Create( iWidth, iHeight, ILC_COLORDDB, iInitialImageCount, iGrowCount );
 	DebugAssert( m_hHandle != NULL );
 
-	m_bIsMasked = false;
+	m_bHasMasks = false;
 }
-Void WinGUIImageList::CreateMasked( UInt iWidth, UInt iHeight, WinGUIImageListColorDepth iColorDepth, UInt iInitialImageCount, UInt iGrowCount )
+Void WinGUIImageList::CreateMasked( UInt iWidth, UInt iHeight, UInt iInitialImageCount, UInt iGrowCount )
 {
 	DebugAssert( m_hHandle == NULL );
 
-	UInt iFlags = ILC_MASK;
-	switch( iColorDepth ) {
-		case WINGUI_IMAGELIST_COLOR_4:  iFlags |= ILC_COLOR4; break;
-		case WINGUI_IMAGELIST_COLOR_8:  iFlags |= ILC_COLOR8; break;
-		case WINGUI_IMAGELIST_COLOR_16: iFlags |= ILC_COLOR16; break;
-		case WINGUI_IMAGELIST_COLOR_24: iFlags |= ILC_COLOR24; break;
-		case WINGUI_IMAGELIST_COLOR_32: iFlags |= ILC_COLOR32; break;
-		default: DebugAssert(false); break;
-	}
 
-	m_hHandle = ImageList_Create( iWidth, iHeight, iFlags, iInitialImageCount, iGrowCount );
+	m_hHandle = ImageList_Create( iWidth, iHeight, ILC_COLORDDB | ILC_MASK, iInitialImageCount, iGrowCount );
 	DebugAssert( m_hHandle != NULL );
 
-	m_bIsMasked = true;
+	m_bHasMasks = true;
 }
 Void WinGUIImageList::Destroy()
 {
@@ -83,12 +64,12 @@ Void WinGUIImageList::Destroy()
 	ImageList_Destroy( (HIMAGELIST)m_hHandle );
 
 	m_hHandle = NULL;
-	m_bIsMasked = false;
+	m_bHasMasks = false;
 }
 
-Void WinGUIImageList::AddImage()
+Void WinGUIImageList::AddImage( WinGUIImage * pImage, WinGUIImage * pMask )
 {
 	DebugAssert( m_hHandle != NULL );
 
-
+	//////////////////////////////
 }

@@ -40,6 +40,8 @@ class WinGUIElement;
 
 class WinGUI;
 
+class WinGUIImage;
+
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUIContainerModel class
 class WinGUIElementModel
@@ -91,6 +93,7 @@ public:
 
 protected:
 	friend class WinGUI;
+	friend class WinGUIImage;
 
 	// Create/Destroy Interface
 	virtual Void _Create() = 0;

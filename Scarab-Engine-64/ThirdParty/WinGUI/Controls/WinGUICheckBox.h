@@ -31,6 +31,7 @@
 typedef struct _wingui_checkbox_parameters {
 	GChar strLabel[64];
 	Bool bEnableTabStop;
+	Bool bEnableNotify;
 } WinGUICheckBoxParameters;
 
 // Prototypes
@@ -49,6 +50,12 @@ public:
 	inline const WinGUICheckBoxParameters * GetCreationParameters() const;
 
 	// Events
+	virtual Bool OnFocusGained() { return false; }
+	virtual Bool OnFocusLost() { return false; }
+
+	virtual Bool OnMouseHovering() { return false; }
+	virtual Bool OnMouseLeaving() { return false; }
+
 	virtual Bool OnClick() { return false; }
 	virtual Bool OnDblClick() { return false; }
 
@@ -84,7 +91,7 @@ private:
 	virtual Void _Destroy();
 
 	// Event Dispatch
-	virtual Bool _DispatchEvent( Int iNotificationCode );
+	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters );
 };
 
 /////////////////////////////////////////////////////////////////////////////////

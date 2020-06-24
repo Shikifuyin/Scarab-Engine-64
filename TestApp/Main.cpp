@@ -99,7 +99,7 @@ const WinGUILayout * MyTabsModel::GetLayout() const
 	return &hLayout;
 }
 
-Bool MyTabsModel::OnTabSelect()
+Bool MyTabsModel::OnSelect()
 {
 	WinGUITabs * pTabs = (WinGUITabs*)m_pController;
 	UInt iSelected = pTabs->GetSelectedTab();

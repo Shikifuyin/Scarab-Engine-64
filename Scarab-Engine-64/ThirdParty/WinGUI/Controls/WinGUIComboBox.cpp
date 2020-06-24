@@ -317,14 +317,18 @@ Void WinGUIComboBox::_Destroy()
 	m_hHandle = NULL;
 }
 
-Bool WinGUIComboBox::_DispatchEvent( Int iNotificationCode )
+Bool WinGUIComboBox::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 {
     // Get Model
 	WinGUIComboBoxModel * pModel = (WinGUIComboBoxModel*)m_pModel;
 
 	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
-		case CBN_DBLCLK:       return pModel->OnDblClick(); break;
+		case CBN_SETFOCUS:  return pModel->OnFocusGained(); break;
+		case CBN_KILLFOCUS: return pModel->OnFocusLost(); break;
+
+		case CBN_DBLCLK: return pModel->OnDblClick(); break;
+
 		case CBN_EDITCHANGE:   return pModel->OnTextChange(); break;
 		case CBN_SELCHANGE:    return pModel->OnSelectionChange(); break;
 		case CBN_SELENDOK:     return pModel->OnSelectionOK(); break;

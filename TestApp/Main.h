@@ -73,7 +73,7 @@ public:
 	virtual const WinGUILayout * GetLayout() const;
 
 	// Events
-	virtual Bool OnTabSelect();
+	virtual Bool OnSelect();
 
 private:
 	MyApplication * m_pApplication;

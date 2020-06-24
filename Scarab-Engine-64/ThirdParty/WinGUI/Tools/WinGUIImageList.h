@@ -1,10 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////////
-// File : ThirdParty/WinGUI/WinGUIControl.h
+// File : ThirdParty/WinGUI/Tools/WinGUIImageList.h
 /////////////////////////////////////////////////////////////////////////////////
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Windows GUI Element : Controls
+// Description : Windows GUI Image Lists
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -12,64 +12,53 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-// Known Bugs : None.
+// Known Bugs : Note we only use DIB here. (Device-Independant Bitmaps)
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 // Header prelude
-#ifndef SCARAB_THIRDPARTY_WINGUI_WINGUICONTROL_H
-#define SCARAB_THIRDPARTY_WINGUI_WINGUICONTROL_H
+#ifndef SCARAB_THIRDPARTY_WINGUI_TOOLS_WINGUIIMAGELIST_H
+#define SCARAB_THIRDPARTY_WINGUI_TOOLS_WINGUIIMAGELIST_H
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "WinGUIContainer.h"
+#include "WinGUIImage.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
-// Prototypes
-class WinGUIControlModel;
-class WinGUIControl;
-
-class WinGUIWindow;
-class WinGUIContainer;
-
 /////////////////////////////////////////////////////////////////////////////////
-// The WinGUIControlModel class
-class WinGUIControlModel : public WinGUIElementModel
+// The WinGUIImageList class
+class WinGUIImageList
 {
 public:
-	WinGUIControlModel( Int iResourceID );
-	virtual ~WinGUIControlModel();
+	WinGUIImageList();
+	~WinGUIImageList();
 
-protected:
+	// Deferred Creation/Destruction
+	inline Bool IsCreated() const;
+	Void Create( UInt iWidth, UInt iHeight, WinGUIImageColorDepth iColorDepth, UInt iInitialImageCount, UInt iGrowCount );
+	Void CreateMasked( UInt iWidth, UInt iHeight, WinGUIImageColorDepth iColorDepth, UInt iInitialImageCount, UInt iGrowCount );
+	Void Destroy();
 
-};
+	// Properties
+	inline Bool IsMasked() const;
 
-/////////////////////////////////////////////////////////////////////////////////
-// The WinGUIControl class
-class WinGUIControl : public WinGUIElement
-{
-public:
-	WinGUIControl( WinGUIElement * pParent, WinGUIControlModel * pModel );
-	virtual ~WinGUIControl();
+	// Images Management
+	Void AddImage();
 
-	// Type
-	inline virtual WinGUIElementType GetElementType() const;
+private:
+	Void * m_hHandle; // HIMAGELIST
 
-protected:
-	friend class WinGUIWindow;
-	friend class WinGUIContainer;
+	Bool m_bIsMasked;
 
-	// Event Dispatch
-	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters ) = 0;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
 // Backward Includes (Inlines & Templates)
-#include "WinGUIControl.inl"
+#include "WinGUIImageList.inl"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Header end
-#endif // SCARAB_THIRDPARTY_WINGUI_WINGUICONTROL_H
+#endif // SCARAB_THIRDPARTY_WINGUI_TOOLS_WINGUIIMAGELIST_H
 

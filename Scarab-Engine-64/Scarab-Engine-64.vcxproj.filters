@@ -217,6 +217,12 @@
     <Filter Include="Source Files\ThirdParty\WinGUI\Controls">
       <UniqueIdentifier>{0d1ab6e2-719f-4163-9bc2-7df2c4c60451}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ThirdParty\WinGUI\Tools">
+      <UniqueIdentifier>{b666dc46-8c44-4499-8a09-1697015c3d05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\WinGUI\Tools">
+      <UniqueIdentifier>{89d22077-311b-49e7-b651-cec52d961cba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -518,6 +524,12 @@
     </ClInclude>
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUITable.h">
       <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\WinGUI\Tools\WinGUIImageList.h">
+      <Filter>Header Files\ThirdParty\WinGUI\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\WinGUI\Tools\WinGUIImage.h">
+      <Filter>Header Files\ThirdParty\WinGUI\Tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -821,6 +833,12 @@
     <None Include="ThirdParty\WinGUI\Controls\WinGUITable.inl">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </None>
+    <None Include="ThirdParty\WinGUI\Tools\WinGUIImageList.inl">
+      <Filter>Source Files\ThirdParty\WinGUI\Tools</Filter>
+    </None>
+    <None Include="ThirdParty\WinGUI\Tools\WinGUIImage.inl">
+      <Filter>Source Files\ThirdParty\WinGUI\Tools</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -1122,6 +1140,12 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUITable.cpp">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\WinGUI\Tools\WinGUIImageList.cpp">
+      <Filter>Source Files\ThirdParty\WinGUI\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\WinGUI\Tools\WinGUIImage.cpp">
+      <Filter>Source Files\ThirdParty\WinGUI\Tools</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

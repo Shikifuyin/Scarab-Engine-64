@@ -99,6 +99,7 @@ typedef struct _wingui_static_parameters {
 			WinGUIStaticImageInfo iInfos;
 		} hIcon;
 	};
+	Bool bEnableNotify;
 } WinGUIStaticParameters;
 
 // Prototypes
@@ -115,6 +116,10 @@ public:
 
 	// Creation Parameters
 	inline const WinGUIStaticParameters * GetCreationParameters() const;
+
+	// Events
+	virtual Bool OnClick() { return false; }
+	virtual Bool OnDblClick() { return false; }
 
 protected:
 	WinGUIStaticParameters m_hCreationParameters;
@@ -147,7 +152,7 @@ private:
 	virtual Void _Destroy();
 
 	// Event Dispatch
-	virtual Bool _DispatchEvent( Int iNotificationCode );
+	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters );
 };
 
 /////////////////////////////////////////////////////////////////////////////////

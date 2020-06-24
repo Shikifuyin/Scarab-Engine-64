@@ -60,7 +60,17 @@ public:
 	inline WinGUITabsParameters * GetCreationParameters();
 
 	// Events
-	virtual Bool OnTabSelect() = 0; // Must-Implement, Use WinGUITabs::SwitchSelectedTabPane here
+	virtual Bool OnFocusChange() { return false; }
+
+	virtual Bool OnKeyPress( KeyCode iKey, UInt iRepeatCount, Bool bPreviouslyDown ) { return false; }
+
+	virtual Bool OnClick() { return false; }
+	virtual Bool OnRightClick() { return false; }
+	virtual Bool OnDblClick() { return false; }
+	virtual Bool OnRightDblClick() { return false; }
+
+	virtual Bool OnPreventSelect() { return false; }
+	virtual Bool OnSelect() = 0; // Must-Implement, Use WinGUITabs::SwitchSelectedTabPane here
 
 protected:
 	WinGUITabsParameters m_hCreationParameters;
@@ -108,7 +118,7 @@ private:
 	virtual Void _Destroy();
 
 	// Event Dispatch
-	virtual Bool _DispatchEvent( Int iNotificationCode );
+	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters );
 
 	// Currently Selected Tab Pane
 	WinGUIContainer * m_pSelectedTabPane;

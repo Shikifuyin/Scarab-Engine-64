@@ -47,6 +47,10 @@ public:
 	// Creation Parameters
 	inline const WinGUIGroupBoxParameters * GetCreationParameters() const;
 
+	// Events
+	virtual Bool OnMouseHovering() { return false; }
+	virtual Bool OnMouseLeaving() { return false; }
+
 protected:
 	WinGUIGroupBoxParameters m_hCreationParameters;
 };
@@ -73,7 +77,7 @@ private:
 	virtual Void _Destroy();
 
 	// Event Dispatch
-	virtual Bool _DispatchEvent( Int iNotificationCode );
+	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters );
 };
 
 /////////////////////////////////////////////////////////////////////////////////

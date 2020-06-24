@@ -72,6 +72,9 @@ public:
 	virtual Void * GetItemData( UInt iIndex ) const = 0;
 
 	// Events
+	virtual Bool OnFocusGained() { return false; }
+	virtual Bool OnFocusLost() { return false; }
+
 	virtual Bool OnDblClick() { return false; }
 
 	virtual Bool OnTextChange() { return false; }
@@ -146,7 +149,7 @@ private:
 	virtual Void _Destroy();
 
 	// Event Dispatch
-	virtual Bool _DispatchEvent( Int iNotificationCode );
+	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters );
 };
 
 /////////////////////////////////////////////////////////////////////////////////

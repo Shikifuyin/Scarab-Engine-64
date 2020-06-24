@@ -40,6 +40,8 @@ WinGUIStaticModel::WinGUIStaticModel( Int iResourceID ):
 	StringFn->Copy( m_hCreationParameters.hText.strLabel, TEXT("StaticText") );
 	m_hCreationParameters.hText.iAlign = WINGUI_STATIC_TEXT_ALIGN_LEFT;
 	m_hCreationParameters.hText.iEllipsis = WINGUI_STATIC_TEXT_ELLIPSIS_NONE;
+
+	m_hCreationParameters.bEnableNotify = false;
 }
 WinGUIStaticModel::~WinGUIStaticModel()
 {
@@ -185,6 +187,8 @@ Void WinGUIStatic::_Create()
 	}
 	if ( pParameters->bAddSunkenBorder )
 		dwStyle |= SS_SUNKEN;
+	if ( pParameters->bEnableNotify )
+		dwStyle |= SS_NOTIFY;
 
     // Window creation
 	m_hHandle = CreateWindowEx (
@@ -213,9 +217,19 @@ Void WinGUIStatic::_Destroy()
 	m_hHandle = NULL;
 }
 
-Bool WinGUIStatic::_DispatchEvent( Int iNotificationCode )
+Bool WinGUIStatic::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 {
-	// nothing to do
+	// Get Model
+	WinGUIStaticModel * pModel = (WinGUIStaticModel*)m_pModel;
+
+	// Dispatch Event to the Model
+	switch( iNotificationCode ) {
+		case STN_CLICKED: return pModel->OnClick(); break;
+		case STN_DBLCLK:  return pModel->OnDblClick(); break;
+		default: break;
+	}
+
+	// Unhandled
 	return false;
 }
 

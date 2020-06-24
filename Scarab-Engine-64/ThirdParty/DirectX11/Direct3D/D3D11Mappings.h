@@ -26,7 +26,6 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // General Declarations
-extern KeyCode KeyCodeFromWin32[256];
 DWord _D3D11ConvertFlags32( Byte * arrConvert, DWord iFlags );
 
 extern PixelFormat PixelFormatFromDXGI[PIXEL_FMT_COUNT];

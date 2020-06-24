@@ -677,6 +677,9 @@ typedef DWord KeyCode;
 #define KEYCODE_MOUSEWHEELUP   ( KEYCODE_FAMILY_MOUSE | 0xf0 )
 #define KEYCODE_MOUSEWHEELDOWN ( KEYCODE_FAMILY_MOUSE | 0xf1 )
 
+// Conversion from Virtual Keys
+extern KeyCode KeyCodeFromWin32[256];
+
 /////////////////////////////////////////////////////////////////////////////////
 // PixelFormat definitions
 enum PixelFormat {

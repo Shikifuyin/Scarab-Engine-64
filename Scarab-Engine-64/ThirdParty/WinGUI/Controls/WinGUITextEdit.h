@@ -80,6 +80,9 @@ public:
 	inline const WinGUITextEditParameters * GetCreationParameters() const;
 
 	// Events
+	virtual Bool OnFocusGained() { return false; }
+	virtual Bool OnFocusLost() { return false; }
+
 	virtual Bool OnTextChange() { return false; }
 
 protected:
@@ -132,7 +135,7 @@ private:
 	virtual Void _Destroy();
 
 	// Event Dispatch
-	virtual Bool _DispatchEvent( Int iNotificationCode );
+	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters );
 };
 
 /////////////////////////////////////////////////////////////////////////////////

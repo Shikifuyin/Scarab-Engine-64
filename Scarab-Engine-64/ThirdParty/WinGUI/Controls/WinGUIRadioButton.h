@@ -32,6 +32,7 @@
 typedef struct _wingui_radiobutton_parameters {
 	GChar strLabel[64];
 	Bool bEnableTabStop;
+	Bool bEnableNotify;
 } WinGUIRadioButtonParameters;
 
 // Prototypes
@@ -55,6 +56,12 @@ public:
 	inline Void SetGroup( WinGUIRadioButtonGroup * pGroup );
 
 	// Events
+	virtual Bool OnFocusGained() { return false; }
+	virtual Bool OnFocusLost() { return false; }
+
+	virtual Bool OnMouseHovering() { return false; }
+	virtual Bool OnMouseLeaving() { return false; }
+
 	virtual Bool OnClick() { return false; }
 	virtual Bool OnDblClick() { return false; }
 
@@ -114,7 +121,7 @@ private:
 	virtual Void _Destroy();
 
 	// Event Dispatch
-	virtual Bool _DispatchEvent( Int iNotificationCode );
+	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters );
 
 	
 };

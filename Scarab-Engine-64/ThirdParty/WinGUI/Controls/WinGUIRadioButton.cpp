@@ -37,6 +37,7 @@ WinGUIRadioButtonModel::WinGUIRadioButtonModel( Int iResourceID ):
 	StringFn->Copy( m_hCreationParameters.strLabel, TEXT("RadioButton") );
 
 	m_hCreationParameters.bEnableTabStop = true;
+	m_hCreationParameters.bEnableNotify = false;
 
 	// Radio Button Group
 	m_pRadioButtonGroup = NULL;
@@ -157,6 +158,8 @@ Void WinGUIRadioButton::_Create()
 	DWord dwStyle = ( WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON );
 	if ( pParameters->bEnableTabStop )
 		dwStyle |= WS_TABSTOP;
+	if ( pParameters->bEnableNotify )
+		dwStyle |= BS_NOTIFY;
 
     // Window creation
 	m_hHandle = CreateWindowEx (
@@ -185,13 +188,24 @@ Void WinGUIRadioButton::_Destroy()
 	m_hHandle = NULL;
 }
 
-Bool WinGUIRadioButton::_DispatchEvent( Int iNotificationCode )
+Bool WinGUIRadioButton::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 {
     // Get Model
 	WinGUIRadioButtonModel * pModel = (WinGUIRadioButtonModel*)m_pModel;
 
 	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
+		case BN_SETFOCUS:  return pModel->OnFocusGained(); break;
+		case BN_KILLFOCUS: return pModel->OnFocusLost(); break;
+
+		case BCN_HOTITEMCHANGE: {
+			NMBCHOTITEM * pParams = (NMBCHOTITEM *)pParameters;
+			if ( pParams->dwFlags & HICF_ENTERING )
+				return pModel->OnMouseHovering();
+			else if ( pParams->dwFlags & HICF_LEAVING )
+				return pModel->OnMouseLeaving();
+		} break;
+
 		case BN_CLICKED: return pModel->OnClick(); break;
 		case BN_DBLCLK:  return pModel->OnDblClick(); break;
 		default: break;

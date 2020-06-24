@@ -252,15 +252,30 @@ Void WinGUITabs::_Destroy()
 	m_hHandle = NULL;
 }
 
-Bool WinGUITabs::_DispatchEvent( Int iNotificationCode )
+Bool WinGUITabs::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 {
     // Get Model
 	WinGUITabsModel * pModel = (WinGUITabsModel*)m_pModel;
 
 	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
-		case TCN_SELCHANGING: return false; break; // Allow selection to change
-		case TCN_SELCHANGE:   return pModel->OnTabSelect(); break;
+		case TCN_FOCUSCHANGE: return pModel->OnFocusChange(); break;
+
+		case TCN_KEYDOWN: {
+			NMTCKEYDOWN * pParams = (NMTCKEYDOWN*)pParameters;
+			KeyCode iKey = KeyCodeFromWin32[pParams->wVKey & 0xff];
+			UInt iRepeatCount = ( pParams->flags & 0x0000ffff );
+			Bool bPreviouslyDown = ( (pParams->flags & 0x40000000) != 0 );
+			return pModel->OnKeyPress( iKey, iRepeatCount, bPreviouslyDown );
+		} break;
+
+		case NM_CLICK: return pModel->OnClick(); break;
+		case NM_RCLICK: return pModel->OnRightClick(); break;
+		case NM_DBLCLK: return pModel->OnDblClick(); break;
+		case NM_RDBLCLK: return pModel->OnRightDblClick(); break;
+
+		case TCN_SELCHANGING: return pModel->OnPreventSelect(); break;
+		case TCN_SELCHANGE:   return pModel->OnSelect(); break;
 		default: break;
 	}
 

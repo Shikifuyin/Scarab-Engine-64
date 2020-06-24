@@ -38,6 +38,7 @@ WinGUIButtonModel::WinGUIButtonModel( Int iResourceID ):
 
 	m_hCreationParameters.bCenterLabel = true;
 	m_hCreationParameters.bEnableTabStop = true;
+	m_hCreationParameters.bEnableNotify = false;
 }
 WinGUIButtonModel::~WinGUIButtonModel()
 {
@@ -113,6 +114,8 @@ Void WinGUIButton::_Create()
 		dwStyle |= ( BS_CENTER | BS_VCENTER );
 	if ( pParameters->bEnableTabStop )
 		dwStyle |= WS_TABSTOP;
+	if ( pParameters->bEnableNotify )
+		dwStyle |= BS_NOTIFY;
 
     // Window creation
 	m_hHandle = CreateWindowEx (
@@ -141,13 +144,24 @@ Void WinGUIButton::_Destroy()
 	m_hHandle = NULL;
 }
 
-Bool WinGUIButton::_DispatchEvent( Int iNotificationCode )
+Bool WinGUIButton::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 {
     // Get Model
 	WinGUIButtonModel * pModel = (WinGUIButtonModel*)m_pModel;
 
 	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
+		case BN_SETFOCUS:  return pModel->OnFocusGained(); break;
+		case BN_KILLFOCUS: return pModel->OnFocusLost(); break;
+
+		case BCN_HOTITEMCHANGE: {
+			NMBCHOTITEM * pParams = (NMBCHOTITEM *)pParameters;
+			if ( pParams->dwFlags & HICF_ENTERING )
+				return pModel->OnMouseHovering();
+			else if ( pParams->dwFlags & HICF_LEAVING )
+				return pModel->OnMouseLeaving();
+		} break;
+
 		case BN_CLICKED: return pModel->OnClick(); break;
 		case BN_DBLCLK:  return pModel->OnDblClick(); break;
 		default: break;

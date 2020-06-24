@@ -37,6 +37,7 @@ WinGUICheckBoxModel::WinGUICheckBoxModel( Int iResourceID ):
 	StringFn->Copy( m_hCreationParameters.strLabel, TEXT("CheckBox") );
 
 	m_hCreationParameters.bEnableTabStop = true;
+	m_hCreationParameters.bEnableNotify = false;
 }
 WinGUICheckBoxModel::~WinGUICheckBoxModel()
 {
@@ -126,6 +127,8 @@ Void WinGUICheckBox::_Create()
 	DWord dwStyle = ( WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX );
 	if ( pParameters->bEnableTabStop )
 		dwStyle |= WS_TABSTOP;
+	if ( pParameters->bEnableNotify )
+		dwStyle |= BS_NOTIFY;
 
     // Window creation
 	m_hHandle = CreateWindowEx (
@@ -154,13 +157,24 @@ Void WinGUICheckBox::_Destroy()
 	m_hHandle = NULL;
 }
 
-Bool WinGUICheckBox::_DispatchEvent( Int iNotificationCode )
+Bool WinGUICheckBox::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 {
     // Get Model
 	WinGUICheckBoxModel * pModel = (WinGUICheckBoxModel*)m_pModel;
 
 	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
+		case BN_SETFOCUS:  return pModel->OnFocusGained(); break;
+		case BN_KILLFOCUS: return pModel->OnFocusLost(); break;
+
+		case BCN_HOTITEMCHANGE: {
+			NMBCHOTITEM * pParams = (NMBCHOTITEM *)pParameters;
+			if ( pParams->dwFlags & HICF_ENTERING )
+				return pModel->OnMouseHovering();
+			else if ( pParams->dwFlags & HICF_LEAVING )
+				return pModel->OnMouseLeaving();
+		} break;
+
 		case BN_CLICKED: return pModel->OnClick(); break;
 		case BN_DBLCLK:  return pModel->OnDblClick(); break;
 		default: break;

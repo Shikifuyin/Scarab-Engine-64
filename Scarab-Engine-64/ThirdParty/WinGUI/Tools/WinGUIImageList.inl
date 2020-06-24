@@ -1,10 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////////
-// File : ThirdParty/WinGUI/Controls/WinGUITable.inl
+// File : ThirdParty/WinGUI/Tools/WinGUIImageList.inl
 /////////////////////////////////////////////////////////////////////////////////
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Windows GUI Control : Table (ListView)
+// Description : Windows GUI Image Lists
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -16,18 +16,12 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-// WinGUITableModel implementation
-inline const WinGUITableParameters * WinGUITableModel::GetCreationParameters() const {
-	return &m_hCreationParameters;
+// WinGUIImageList implementation
+inline Bool WinGUIImageList::IsCreated() const {
+	return ( m_hHandle != NULL );
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-// WinGUITable implementation
-inline Bool WinGUITable::IsVirtual() const {
-	return m_bVirtualTable;
-}
-
-inline WinGUITableViewMode WinGUITable::GetViewMode() const {
-	return m_iViewMode;
+inline Bool WinGUIImageList::IsMasked() const {
+	return m_bIsMasked;
 }
 

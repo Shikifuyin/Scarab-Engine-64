@@ -142,9 +142,25 @@ Void WinGUIGroupBox::_Destroy()
 	m_hHandle = NULL;
 }
 
-Bool WinGUIGroupBox::_DispatchEvent( Int iNotificationCode )
+Bool WinGUIGroupBox::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 {
-	// nothing to do
+	// Get Model
+	WinGUIGroupBoxModel * pModel = (WinGUIGroupBoxModel*)m_pModel;
+
+	// Dispatch Event to the Model
+	switch( iNotificationCode ) {
+		case BCN_HOTITEMCHANGE: {
+			NMBCHOTITEM * pParams = (NMBCHOTITEM *)pParameters;
+			if ( pParams->dwFlags & HICF_ENTERING )
+				return pModel->OnMouseHovering();
+			else if ( pParams->dwFlags & HICF_LEAVING )
+				return pModel->OnMouseLeaving();
+		} break;
+
+		default: break;
+	}
+
+	// Unhandled
 	return false;
 }
 

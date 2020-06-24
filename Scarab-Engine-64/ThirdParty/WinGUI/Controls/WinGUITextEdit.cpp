@@ -250,13 +250,16 @@ Void WinGUITextEdit::_Destroy()
 	m_hHandle = NULL;
 }
 
-Bool WinGUITextEdit::_DispatchEvent( Int iNotificationCode )
+Bool WinGUITextEdit::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 {
     // Get Model
 	WinGUITextEditModel * pModel = (WinGUITextEditModel*)m_pModel;
 
 	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
+		case EN_SETFOCUS:  return pModel->OnFocusGained(); break;
+		case EN_KILLFOCUS: return pModel->OnFocusLost(); break;
+
 		case EN_CHANGE: return pModel->OnTextChange(); break;
 		default: break;
 	}

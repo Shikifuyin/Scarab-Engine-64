@@ -36,6 +36,13 @@ enum WinGUITableViewMode {
 	WINGUI_TABLE_VIEW_TILES
 };
 
+// Text Alignment
+enum WinGUITableTextAlign {
+	WINGUI_TABLE_TEXT_ALIGN_LEFT = 0,
+	WINGUI_TABLE_TEXT_ALIGN_RIGHT,
+	WINGUI_TABLE_TEXT_ALIGN_CENTER
+};
+
 // Icons Alignment
 enum WinGUITableIconsAlign {
 	WINGUI_TABLE_ICONS_ALIGN_TOP = 0,
@@ -116,6 +123,29 @@ typedef struct _wingui_table_parameters {
 	};
 } WinGUITableParameters;
 
+// Column Infos
+typedef struct _wingui_table_column_infos {
+	UInt iOrderIndex;   // Left to Right Column Order
+	UInt iSubItemIndex; // Assigned Sub Item Index
+
+	GChar strHeaderText[64];
+	WinGUITableTextAlign iRowsTextAlign;
+
+	Bool bHeaderSplitButton;
+
+	Bool bHeaderHasImage;
+	Bool bRowsHaveImages;
+	Bool bIsImageOnRight;
+	UInt iImageListIndex;
+
+	Bool bFixedWidth;
+	Bool bFixedAspectRatio;
+	UInt iWidth;
+	UInt iMinWidth;
+	UInt iDefaultWidth;
+	UInt iIdealWidth;
+} WinGUITableColumnInfos;
+
 // Prototypes
 class WinGUIButtonModel;
 class WinGUIButton;
@@ -148,6 +178,62 @@ public:
 	WinGUITable( WinGUIElement * pParent, WinGUITableModel * pModel );
 	virtual ~WinGUITable();
 
+	// Virtual Tables
+	inline Bool IsVirtual() const;
+
+	// View Modes
+	inline WinGUITableViewMode GetViewMode() const;
+	Void SwitchViewMode( WinGUITableViewMode iViewMode );
+
+	// Display Properties
+	Void AdjustRequiredDimensions( UInt * pWidth, UInt * pHeight, UInt iItemCount ) const; // Actually an approximation !
+
+	UInt GetVisibleItemCount() const;
+
+	Void GetEmptyText( GChar * outText, UInt iMaxLength ) const;
+
+	//UInt GetBackgroundColor() const;
+	// ListView_GetBkImage
+
+	// View Operations
+	Void MakeItemVisible( UInt iIndex, Bool bAllowPartial );
+
+	// Columns Operations
+	Void GetColumnInfos( UInt iIndex, WinGUITableColumnInfos * outInfos ) const;
+	Void GetColumnOrder( UInt * outOrderedIndices, UInt iCount ) const;
+	UInt GetColumnWidth( UInt iIndex ) const;
+
+	Void RemoveColumn( UInt iIndex );
+
+	// List Operations
+	Void RemoveItem( UInt iIndex );
+	Void RemoveAllItems();
+
+	// Group Operations
+	Void EnableGroups( Bool bEnable );
+
+	UInt GetGroupCount() const;
+	UInt GetFocusedGroup() const;
+
+	// Item Operations
+	Bool IsItemChecked( UInt iIndex ) const; // Only when using checkboxes
+
+	Void * EditItemLabelStart( UInt iIndex ); // Table must have focus for this !
+	//ListView_GetEditControl
+	Void EditItemLabelCancel();
+
+	// Footer Operations
+	// Currently unsupported by Windows !
+
+	// Search
+	UInt SearchItem( const GChar * strLabel, Bool bExact, UInt iStartIndex, Bool bWrapAround ) const;
+	UInt SearchItem( Void * pData, UInt iStartIndex, Bool bWrapAround ) const;
+	UInt SearchItem( const WinGUIPoint * pPoint, KeyCode iDirection, UInt iStartIndex, Bool bWrapAround ) const; // Only in Icon views
+
+	// Arrangement / Sorting
+	//ListView_Arrange()
+
+	//ListView_GetCallbackMask
 
 private:
 	// Create/Destroy Interface
@@ -155,10 +241,12 @@ private:
 	virtual Void _Destroy();
 
 	// Event Dispatch
-	virtual Bool _DispatchEvent( Int iNotificationCode );
+	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters );
 
-	// Flag for Virtual Tables
+	// State
 	Bool m_bVirtualTable;
+	WinGUITableViewMode m_iViewMode;
+	Bool m_bHasCheckBoxes;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

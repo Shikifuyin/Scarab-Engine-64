@@ -321,10 +321,14 @@ UIntPtr __stdcall WinGUIWindow::_MessageCallback_Virtual( Void * hHandle, UInt i
         // Command messages
         case WM_COMMAND: {
                 HWND hCallerHandle = (HWND)lParam;
-                Int iCallerResourceID = (Int)( LOWORD(wParam) );
                 Int iNotificationCode = (Int)( HIWORD(wParam) );
+                Int iCallerResourceID = (Int)( LOWORD(wParam) );
 
-                // Retrieve Caller Element
+                // Check for Menu / Accelerator
+                if ( hCallerHandle == NULL )
+                    break;
+
+                // Control Notification
                 WinGUIElement * pCallerElement = _GetElementFromHandle( hCallerHandle );
                 if ( pCallerElement != NULL ) {
                     DebugAssert( _GetResourceID( pCallerElement ) == iCallerResourceID );
@@ -332,7 +336,7 @@ UIntPtr __stdcall WinGUIWindow::_MessageCallback_Virtual( Void * hHandle, UInt i
                     // Dispatch message to the Control
                     if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
                         WinGUIControl * pCallerControl = (WinGUIControl *)pCallerElement;
-                        if ( pCallerControl->_DispatchEvent( iNotificationCode ) )
+                        if ( pCallerControl->_DispatchEvent( iNotificationCode, NULL ) )
                             return 0;
                     }
                 }
@@ -353,7 +357,7 @@ UIntPtr __stdcall WinGUIWindow::_MessageCallback_Virtual( Void * hHandle, UInt i
                     // Dispatch message to the Control
                     if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
                         WinGUIControl * pCallerControl = (WinGUIControl *)pCallerElement;
-                        if ( pCallerControl->_DispatchEvent( iNotificationCode ) )
+                        if ( pCallerControl->_DispatchEvent( iNotificationCode, (Void*)lParam ) )
                             return 0;
                     }
                 }

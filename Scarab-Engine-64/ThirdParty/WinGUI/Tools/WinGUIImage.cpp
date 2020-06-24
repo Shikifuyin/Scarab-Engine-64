@@ -26,15 +26,14 @@
 #include "../WinGUI.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-// WinGUIImage implementation
-WinGUIImage::WinGUIImage()
+// WinGUIBitmap implementation
+WinGUIBitmap::WinGUIBitmap()
 {
 	m_bIsDeviceDependant = false;
 	m_bShared = false;
 
 	m_hHandle = NULL;
 
-	m_iType = WINGUI_IMAGE_BITMAP;
 	m_iDDWidth = 0;
 	m_iDDHeight = 0;
 
@@ -42,12 +41,12 @@ WinGUIImage::WinGUIImage()
 	m_pBitmapData = NULL;
 	m_bLocked = false;
 }
-WinGUIImage::~WinGUIImage()
+WinGUIBitmap::~WinGUIBitmap()
 {
 	// nothing to do
 }
 
-Void WinGUIImage::CreateDDBitmap( UInt iWidth, UInt iHeight )
+Void WinGUIBitmap::CreateDDBitmap( UInt iWidth, UInt iHeight )
 {
 	DebugAssert( m_hHandle == NULL );
 
@@ -63,11 +62,10 @@ Void WinGUIImage::CreateDDBitmap( UInt iWidth, UInt iHeight )
 	m_bIsDeviceDependant = true;
 	m_bShared = false;
 
-	m_iType = WINGUI_IMAGE_BITMAP;
 	m_iDDWidth = iWidth;
 	m_iDDHeight = iHeight;
 }
-Void WinGUIImage::CreateDDBitmapMask( UInt iWidth, UInt iHeight )
+Void WinGUIBitmap::CreateDDBitmapMask( UInt iWidth, UInt iHeight )
 {
 	DebugAssert( m_hHandle == NULL );
 
@@ -78,12 +76,11 @@ Void WinGUIImage::CreateDDBitmapMask( UInt iWidth, UInt iHeight )
 	m_bIsDeviceDependant = true;
 	m_bShared = false;
 
-	m_iType = WINGUI_IMAGE_BITMAP;
 	m_iDDWidth = iWidth;
 	m_iDDHeight = iHeight;
 }
 
-Void WinGUIImage::CreateDIBitmap( const WinGUIBitmapDescriptor & hDescriptor )
+Void WinGUIBitmap::CreateDIBitmap( const WinGUIBitmapDescriptor & hDescriptor )
 {
 	DebugAssert( m_hHandle == NULL );
 
@@ -165,7 +162,6 @@ Void WinGUIImage::CreateDIBitmap( const WinGUIBitmapDescriptor & hDescriptor )
 	m_bIsDeviceDependant = false;
 	m_bShared = false;
 
-	m_iType = WINGUI_IMAGE_BITMAP;
 	m_iDDWidth = 0;
 	m_iDDHeight = 0;
 
@@ -174,7 +170,7 @@ Void WinGUIImage::CreateDIBitmap( const WinGUIBitmapDescriptor & hDescriptor )
 	m_bLocked = false;
 }
 
-Void WinGUIImage::LockDIB( Byte ** ppMemory )
+Void WinGUIBitmap::LockDIB( Byte ** ppMemory )
 {
 	DebugAssert( m_hHandle != NULL && !m_bIsDeviceDependant && m_pBitmapData != NULL );
 	DebugAssert( !m_bLocked );
@@ -186,7 +182,7 @@ Void WinGUIImage::LockDIB( Byte ** ppMemory )
 	m_bLocked = true;
 	*ppMemory = m_pBitmapData;
 }
-Void WinGUIImage::UnlockDIB( Byte ** ppMemory )
+Void WinGUIBitmap::UnlockDIB( Byte ** ppMemory )
 {
 	DebugAssert( m_hHandle != NULL && !m_bIsDeviceDependant && m_pBitmapData != NULL );
 	DebugAssert( m_bLocked );
@@ -196,11 +192,11 @@ Void WinGUIImage::UnlockDIB( Byte ** ppMemory )
 	m_bLocked = false;
 }
 
-Void WinGUIImage::LoadFromFile( const GChar * strFilename, const WinGUIImageLoadParameters & hLoadParams )
+Void WinGUIBitmap::LoadFromFile( const GChar * strFilename, const WinGUIImageLoadParameters & hLoadParams )
 {
 	DebugAssert( m_hHandle == NULL );
 
-	UInt iType, iFlags;
+	UInt iFlags;
 	UInt iWidth, iHeight;
 
 	// Flags
@@ -212,128 +208,29 @@ Void WinGUIImage::LoadFromFile( const GChar * strFilename, const WinGUIImageLoad
 	if ( hLoadParams.bTrueVGA )
 		iFlags |= LR_VGACOLOR;
 
-	// Type
-	switch( hLoadParams.iType ) {
-		case WINGUI_IMAGE_BITMAP:
-			iType = IMAGE_BITMAP;
-			switch( hLoadParams.iResizeWidth ) {
-				case WINGUI_IMAGE_RESIZE_KEEP: iWidth = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_USER: iWidth = hLoadParams.iWidth; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			switch( hLoadParams.iResizeHeight ) {
-				case WINGUI_IMAGE_RESIZE_KEEP: iHeight = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_USER: iHeight = hLoadParams.iHeight; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			break;
-		case WINGUI_IMAGE_ICON:
-			iType = IMAGE_ICON;
-			switch( hLoadParams.iResizeWidth ) {
-				case WINGUI_IMAGE_RESIZE_KEEP:    iWidth = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_DEFAULT: iWidth = 0; iFlags |= LR_DEFAULTSIZE; break;
-				case WINGUI_IMAGE_RESIZE_USER:    iWidth = hLoadParams.iWidth; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			switch( hLoadParams.iResizeHeight ) {
-				case WINGUI_IMAGE_RESIZE_KEEP:    iHeight = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_DEFAULT: iHeight = 0; iFlags |= LR_DEFAULTSIZE; break;
-				case WINGUI_IMAGE_RESIZE_USER:    iHeight = hLoadParams.iHeight; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			break;
-		case WINGUI_IMAGE_CURSOR:
-			iType = IMAGE_CURSOR;
-			switch( hLoadParams.iResizeWidth ) {
-				case WINGUI_IMAGE_RESIZE_KEEP:    iWidth = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_DEFAULT: iWidth = 0; iFlags |= LR_DEFAULTSIZE; break;
-				case WINGUI_IMAGE_RESIZE_USER:    iWidth = hLoadParams.iWidth; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			switch( hLoadParams.iResizeHeight ) {
-				case WINGUI_IMAGE_RESIZE_KEEP:    iHeight = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_DEFAULT: iHeight = 0; iFlags |= LR_DEFAULTSIZE; break;
-				case WINGUI_IMAGE_RESIZE_USER:    iHeight = hLoadParams.iHeight; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			break;
+	switch( hLoadParams.iResizeWidth ) {
+		case WINGUI_IMAGE_RESIZE_KEEP: iWidth = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_USER: iWidth = hLoadParams.iWidth; iFlags |= 0; break;
+		default: DebugAssert(false); break;
+	}
+	switch( hLoadParams.iResizeHeight ) {
+		case WINGUI_IMAGE_RESIZE_KEEP: iHeight = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_USER: iHeight = hLoadParams.iHeight; iFlags |= 0; break;
 		default: DebugAssert(false); break;
 	}
 
 	// Load File
-	m_hHandle = LoadImage( NULL, strFilename, iType, iWidth, iHeight, iFlags );
-	DebugAssert( m_hHandle != NULL );
+	HBITMAP hBMP = (HBITMAP)( LoadImage(NULL, strFilename, IMAGE_BITMAP, iWidth, iHeight, iFlags) );
+	DebugAssert( hBMP != NULL );
 
 	// Setup
-	m_bIsDeviceDependant = !(hLoadParams.bMakeDIB);
-	m_bShared = false;
-
-	m_iType = hLoadParams.iType;
-	m_iDDWidth = 0;
-	m_iDDHeight = 0;
-	if ( m_bIsDeviceDependant ) {
-		BITMAP hBMP;
-		GetObject( m_hHandle, sizeof(BITMAP), &hBMP );
-
-		m_iDDWidth = hBMP.bmWidth;
-		m_iDDHeight = hBMP.bmHeight;
-	}
-
-	MemZero( &m_hBitmapDesc, sizeof(WinGUIBitmapDescriptor) );
-	m_pBitmapData = NULL;
-
-	// Retrieve DIB Infos
-	if ( hLoadParams.bMakeDIB ) {
-		DIBSECTION hDIBSection;
-		GetObject( m_hHandle, sizeof(DIBSECTION), &hDIBSection );
-
-		hDIBSection.dsBmih.biWidth;
-
-		m_hBitmapDesc.bBottomUpElseTopDown = ( hDIBSection.dsBmih.biHeight > 0 );
-		m_hBitmapDesc.iWidth = hDIBSection.dsBmih.biWidth;
-		m_hBitmapDesc.iHeight = hDIBSection.dsBmih.biHeight;
-		m_hBitmapDesc.iBPP = (WinGUIBitmapBPP)( hDIBSection.dsBmih.biBitCount );
-
-		switch( hDIBSection.dsBmih.biCompression ) {
-			case BI_RGB:       m_hBitmapDesc.iCompression = WINGUI_BITMAP_RGB; break;
-			case BI_BITFIELDS: m_hBitmapDesc.iCompression = WINGUI_BITMAP_BITFIELD; break;
-			case BI_JPEG:      m_hBitmapDesc.iCompression = WINGUI_BITMAP_JPEG; break;
-			case BI_PNG:       m_hBitmapDesc.iCompression = WINGUI_BITMAP_PNG; break;
-			default: DebugAssert(false); break;
-		}
-
-		m_hBitmapDesc.iByteSize = hDIBSection.dsBmih.biSizeImage;
-		m_hBitmapDesc.iPixelsPerMeterX = hDIBSection.dsBmih.biXPelsPerMeter;
-		m_hBitmapDesc.iPixelsPerMeterY = hDIBSection.dsBmih.biYPelsPerMeter;
-		m_hBitmapDesc.iMaskRed = hDIBSection.dsBitfields[0];
-		m_hBitmapDesc.iMaskGreen = hDIBSection.dsBitfields[1];
-		m_hBitmapDesc.iMaskBlue = hDIBSection.dsBitfields[2];
-		m_hBitmapDesc.iMaskAlpha = 0;
-		m_hBitmapDesc.iColorSpace = WINGUI_BITMAP_SRGB;
-		m_hBitmapDesc.hEndPoints.Red.iFixed2_30_X = 0;
-		m_hBitmapDesc.hEndPoints.Red.iFixed2_30_Y = 0;
-		m_hBitmapDesc.hEndPoints.Red.iFixed2_30_Z = 0;
-		m_hBitmapDesc.hEndPoints.Green.iFixed2_30_X = 0;
-		m_hBitmapDesc.hEndPoints.Green.iFixed2_30_Y = 0;
-		m_hBitmapDesc.hEndPoints.Green.iFixed2_30_Z = 0;
-		m_hBitmapDesc.hEndPoints.Blue.iFixed2_30_X = 0;
-		m_hBitmapDesc.hEndPoints.Blue.iFixed2_30_Y = 0;
-		m_hBitmapDesc.hEndPoints.Blue.iFixed2_30_Z = 0;
-		m_hBitmapDesc.iGammaRed = 0;
-		m_hBitmapDesc.iGammaGreen = 0;
-		m_hBitmapDesc.iGammaBlue = 0;
-		m_hBitmapDesc.iRenderingIntent = WINGUI_BITMAP_COLORIMETRIC_ABS;
-
-		m_pBitmapData = (Byte*)( hDIBSection.dsBm.bmBits );
-	}
-
-	m_bLocked = false;
+	_CreateFromHandle( hBMP, !(hLoadParams.bMakeDIB), false );
 }
-Void WinGUIImage::LoadFromResource( UInt iResourceID, const WinGUIImageLoadParameters & hLoadParams )
+Void WinGUIBitmap::LoadFromResource( UInt iResourceID, const WinGUIImageLoadParameters & hLoadParams )
 {
 	DebugAssert( m_hHandle == NULL );
 
-	UInt iType, iFlags;
+	UInt iFlags;
 	UInt iWidth, iHeight;
 
 	// Obtain Application Handle
@@ -352,138 +249,34 @@ Void WinGUIImage::LoadFromResource( UInt iResourceID, const WinGUIImageLoadParam
 		iFlags |= LR_SHARED;
 
 	// Type
-	switch( hLoadParams.iType ) {
-		case WINGUI_IMAGE_BITMAP:
-			iType = IMAGE_BITMAP;
-			switch( hLoadParams.iResizeWidth ) {
-				case WINGUI_IMAGE_RESIZE_KEEP: iWidth = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_USER: iWidth = hLoadParams.iWidth; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			switch( hLoadParams.iResizeHeight ) {
-				case WINGUI_IMAGE_RESIZE_KEEP: iHeight = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_USER: iHeight = hLoadParams.iHeight; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			break;
-		case WINGUI_IMAGE_ICON:
-			iType = IMAGE_ICON;
-			switch( hLoadParams.iResizeWidth ) {
-				case WINGUI_IMAGE_RESIZE_KEEP:    iWidth = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_DEFAULT: iWidth = 0; iFlags |= LR_DEFAULTSIZE; break;
-				case WINGUI_IMAGE_RESIZE_USER:    iWidth = hLoadParams.iWidth; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			switch( hLoadParams.iResizeHeight ) {
-				case WINGUI_IMAGE_RESIZE_KEEP:    iHeight = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_DEFAULT: iHeight = 0; iFlags |= LR_DEFAULTSIZE; break;
-				case WINGUI_IMAGE_RESIZE_USER:    iHeight = hLoadParams.iHeight; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			break;
-		case WINGUI_IMAGE_CURSOR:
-			iType = IMAGE_CURSOR;
-			switch( hLoadParams.iResizeWidth ) {
-				case WINGUI_IMAGE_RESIZE_KEEP:    iWidth = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_DEFAULT: iWidth = 0; iFlags |= LR_DEFAULTSIZE; break;
-				case WINGUI_IMAGE_RESIZE_USER:    iWidth = hLoadParams.iWidth; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			switch( hLoadParams.iResizeHeight ) {
-				case WINGUI_IMAGE_RESIZE_KEEP:    iHeight = 0; iFlags |= 0; break;
-				case WINGUI_IMAGE_RESIZE_DEFAULT: iHeight = 0; iFlags |= LR_DEFAULTSIZE; break;
-				case WINGUI_IMAGE_RESIZE_USER:    iHeight = hLoadParams.iHeight; iFlags |= 0; break;
-				default: DebugAssert(false); break;
-			}
-			break;
+	switch( hLoadParams.iResizeWidth ) {
+		case WINGUI_IMAGE_RESIZE_KEEP: iWidth = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_USER: iWidth = hLoadParams.iWidth; iFlags |= 0; break;
+		default: DebugAssert(false); break;
+	}
+	switch( hLoadParams.iResizeHeight ) {
+		case WINGUI_IMAGE_RESIZE_KEEP: iHeight = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_USER: iHeight = hLoadParams.iHeight; iFlags |= 0; break;
 		default: DebugAssert(false); break;
 	}
 
 	// Load File
-	m_hHandle = LoadImage( hInst, MAKEINTRESOURCE(iResourceID), iType, iWidth, iHeight, iFlags );
-	DebugAssert( m_hHandle != NULL );
+	HBITMAP hBMP = (HBITMAP)( LoadImage(hInst, MAKEINTRESOURCE(iResourceID), IMAGE_BITMAP, iWidth, iHeight, iFlags) );
+	DebugAssert( hBMP != NULL );
 
 	// Setup
-	m_bIsDeviceDependant = !(hLoadParams.bMakeDIB);
-	m_bShared = hLoadParams.bSharedResource;
-
-	m_iType = hLoadParams.iType;
-	m_iDDWidth = 0;
-	m_iDDHeight = 0;
-	if ( m_bIsDeviceDependant ) {
-		BITMAP hBMP;
-		GetObject( m_hHandle, sizeof(BITMAP), &hBMP );
-
-		m_iDDWidth = hBMP.bmWidth;
-		m_iDDHeight = hBMP.bmHeight;
-	}
-
-	MemZero( &m_hBitmapDesc, sizeof(WinGUIBitmapDescriptor) );
-	m_pBitmapData = NULL;
-
-	// Retrieve DIB Infos
-	if ( hLoadParams.bMakeDIB ) {
-		DIBSECTION hDIBSection;
-		GetObject( m_hHandle, sizeof(DIBSECTION), &hDIBSection );
-
-		hDIBSection.dsBmih.biWidth;
-
-		m_hBitmapDesc.bBottomUpElseTopDown = ( hDIBSection.dsBmih.biHeight > 0 );
-		m_hBitmapDesc.iWidth = hDIBSection.dsBmih.biWidth;
-		m_hBitmapDesc.iHeight = hDIBSection.dsBmih.biHeight;
-		m_hBitmapDesc.iBPP = (WinGUIBitmapBPP)( hDIBSection.dsBmih.biBitCount );
-
-		switch( hDIBSection.dsBmih.biCompression ) {
-			case BI_RGB:       m_hBitmapDesc.iCompression = WINGUI_BITMAP_RGB; break;
-			case BI_BITFIELDS: m_hBitmapDesc.iCompression = WINGUI_BITMAP_BITFIELD; break;
-			case BI_JPEG:      m_hBitmapDesc.iCompression = WINGUI_BITMAP_JPEG; break;
-			case BI_PNG:       m_hBitmapDesc.iCompression = WINGUI_BITMAP_PNG; break;
-			default: DebugAssert(false); break;
-		}
-
-		m_hBitmapDesc.iByteSize = hDIBSection.dsBmih.biSizeImage;
-		m_hBitmapDesc.iPixelsPerMeterX = hDIBSection.dsBmih.biXPelsPerMeter;
-		m_hBitmapDesc.iPixelsPerMeterY = hDIBSection.dsBmih.biYPelsPerMeter;
-		m_hBitmapDesc.iMaskRed = hDIBSection.dsBitfields[0];
-		m_hBitmapDesc.iMaskGreen = hDIBSection.dsBitfields[1];
-		m_hBitmapDesc.iMaskBlue = hDIBSection.dsBitfields[2];
-		m_hBitmapDesc.iMaskAlpha = 0;
-		m_hBitmapDesc.iColorSpace = WINGUI_BITMAP_SRGB;
-		m_hBitmapDesc.hEndPoints.Red.iFixed2_30_X = 0;
-		m_hBitmapDesc.hEndPoints.Red.iFixed2_30_Y = 0;
-		m_hBitmapDesc.hEndPoints.Red.iFixed2_30_Z = 0;
-		m_hBitmapDesc.hEndPoints.Green.iFixed2_30_X = 0;
-		m_hBitmapDesc.hEndPoints.Green.iFixed2_30_Y = 0;
-		m_hBitmapDesc.hEndPoints.Green.iFixed2_30_Z = 0;
-		m_hBitmapDesc.hEndPoints.Blue.iFixed2_30_X = 0;
-		m_hBitmapDesc.hEndPoints.Blue.iFixed2_30_Y = 0;
-		m_hBitmapDesc.hEndPoints.Blue.iFixed2_30_Z = 0;
-		m_hBitmapDesc.iGammaRed = 0;
-		m_hBitmapDesc.iGammaGreen = 0;
-		m_hBitmapDesc.iGammaBlue = 0;
-		m_hBitmapDesc.iRenderingIntent = WINGUI_BITMAP_COLORIMETRIC_ABS;
-
-		m_pBitmapData = (Byte*)( hDIBSection.dsBm.bmBits );
-	}
-
-	m_bLocked = false;
+	_CreateFromHandle( hBMP, !(hLoadParams.bMakeDIB), hLoadParams.bSharedResource );
 }
 
-Void WinGUIImage::Destroy()
+Void WinGUIBitmap::Destroy()
 {
 	DebugAssert( m_hHandle != NULL && !m_bShared && !m_bLocked );
 
 	m_bIsDeviceDependant = false;
 
-	switch( m_iType ) {
-		case WINGUI_IMAGE_BITMAP: DeleteObject( m_hHandle ); break;
-		case WINGUI_IMAGE_ICON:   DestroyIcon( (HICON)m_hHandle ); break;
-		case WINGUI_IMAGE_CURSOR: DestroyCursor( (HCURSOR)m_hHandle ); break;
-		default: DebugAssert(false); break;
-	}
+	DeleteObject( m_hHandle );
 	m_hHandle = NULL;
 
-	m_iType = WINGUI_IMAGE_BITMAP;
 	m_iDDWidth = 0;
 	m_iDDHeight = 0;
 
@@ -492,31 +285,17 @@ Void WinGUIImage::Destroy()
 	m_bLocked = false;
 }
 
-Void WinGUIImage::BitBlit( const WinGUIRectangle & hDestRect, const WinGUIImage * pSrcImage, const WinGUIPoint & hSrcOrigin, WinGUIRasterOperation iOperation )
+Void WinGUIBitmap::BitBlit( const WinGUIRectangle & hDestRect, const WinGUIBitmap * pSrcBitmap, const WinGUIPoint & hSrcOrigin, WinGUIRasterOperation iOperation )
 {
 	DebugAssert( m_hHandle != NULL && !m_bLocked );
-	DebugAssert( pSrcImage->m_hHandle != NULL && !(pSrcImage->m_bLocked) );
+	DebugAssert( pSrcBitmap->m_hHandle != NULL && !(pSrcBitmap->m_bLocked) );
 
 	// Retrieve Handles
 	HBITMAP hDestBitmap = (HBITMAP)m_hHandle;
-	HBITMAP hSrcBitmap = (HBITMAP)(pSrcImage->m_hHandle);
+	HBITMAP hSrcBitmap = (HBITMAP)(pSrcBitmap->m_hHandle);
 
 	// Raster Operation
-	DWORD iROP = 0;
-	switch( iOperation ) {
-		case WINGUI_RASTER_BLACK:             iROP = BLACKNESS; break;
-		case WINGUI_RASTER_WHITE:             iROP = WHITENESS; break;
-		case WINGUI_RASTER_COPY:              iROP = SRCCOPY; break;
-		case WINGUI_RASTER_NOTDST:            iROP = DSTINVERT; break;
-		case WINGUI_RASTER_NOTSRC:            iROP = NOTSRCCOPY; break;
-		case WINGUI_RASTER_AND:               iROP = SRCAND; break;
-		case WINGUI_RASTER_OR:                iROP = SRCPAINT; break;
-		case WINGUI_RASTER_XOR:               iROP = SRCINVERT; break;
-		case WINGUI_RASTER_NOTDST_AND_SRC:    iROP = SRCERASE; break;
-		case WINGUI_RASTER_DST_OR_NOTSRC:     iROP = MERGEPAINT; break;
-		case WINGUI_RASTER_NOTDST_AND_NOTSRC: iROP = NOTSRCERASE; break;
-		default: DebugAssert(false); break;
-	};
+	DWORD iROP = _ConvertRasterOperation( iOperation );
 
 	// Get Window DC
 	HWND hAppWindow = (HWND)( _GetAppWindowHandle() );
@@ -542,31 +321,17 @@ Void WinGUIImage::BitBlit( const WinGUIRectangle & hDestRect, const WinGUIImage 
 	DeleteDC( hSrcMemoryDC );
 	ReleaseDC( hAppWindow, hDC );
 }
-Void WinGUIImage::StretchBlit( const WinGUIRectangle & hDestRect, const WinGUIImage * pSrcImage, const WinGUIRectangle & hSrcRect, WinGUIRasterOperation iOperation )
+Void WinGUIBitmap::StretchBlit( const WinGUIRectangle & hDestRect, const WinGUIBitmap * pSrcBitmap, const WinGUIRectangle & hSrcRect, WinGUIRasterOperation iOperation )
 {
 	DebugAssert( m_hHandle != NULL && !m_bLocked );
-	DebugAssert( pSrcImage->m_hHandle != NULL && !(pSrcImage->m_bLocked) );
+	DebugAssert( pSrcBitmap->m_hHandle != NULL && !(pSrcBitmap->m_bLocked) );
 
 	// Retrieve Handles
 	HBITMAP hDestBitmap = (HBITMAP)m_hHandle;
-	HBITMAP hSrcBitmap = (HBITMAP)(pSrcImage->m_hHandle);
+	HBITMAP hSrcBitmap = (HBITMAP)(pSrcBitmap->m_hHandle);
 
 	// Raster Operation
-	DWORD iROP = 0;
-	switch( iOperation ) {
-		case WINGUI_RASTER_BLACK:             iROP = BLACKNESS; break;
-		case WINGUI_RASTER_WHITE:             iROP = WHITENESS; break;
-		case WINGUI_RASTER_COPY:              iROP = SRCCOPY; break;
-		case WINGUI_RASTER_NOTDST:            iROP = DSTINVERT; break;
-		case WINGUI_RASTER_NOTSRC:            iROP = NOTSRCCOPY; break;
-		case WINGUI_RASTER_AND:               iROP = SRCAND; break;
-		case WINGUI_RASTER_OR:                iROP = SRCPAINT; break;
-		case WINGUI_RASTER_XOR:               iROP = SRCINVERT; break;
-		case WINGUI_RASTER_NOTDST_AND_SRC:    iROP = SRCERASE; break;
-		case WINGUI_RASTER_DST_OR_NOTSRC:     iROP = MERGEPAINT; break;
-		case WINGUI_RASTER_NOTDST_AND_NOTSRC: iROP = NOTSRCERASE; break;
-		default: DebugAssert(false); break;
-	};
+	DWORD iROP = _ConvertRasterOperation( iOperation );
 
 	// Get Window DC
 	HWND hAppWindow = (HWND)( _GetAppWindowHandle() );
@@ -592,49 +357,22 @@ Void WinGUIImage::StretchBlit( const WinGUIRectangle & hDestRect, const WinGUIIm
 	DeleteDC( hSrcMemoryDC );
 	ReleaseDC( hAppWindow, hDC );
 }
-Void WinGUIImage::MaskBlit( const WinGUIRectangle & hDestRect, const WinGUIImage * pSrcImage, const WinGUIPoint & hSrcOrigin,
-							const WinGUIImage * pMask, const WinGUIPoint & hMaskOrigin,
-							WinGUIRasterOperation iForegroundOP, WinGUIRasterOperation iBackgroundOP )
+Void WinGUIBitmap::MaskBlit( const WinGUIRectangle & hDestRect, const WinGUIBitmap * pSrcBitmap, const WinGUIPoint & hSrcOrigin,
+						 	 const WinGUIBitmap * pMask, const WinGUIPoint & hMaskOrigin,
+							 WinGUIRasterOperation iForegroundOP, WinGUIRasterOperation iBackgroundOP )
 {
 	DebugAssert( m_hHandle != NULL && !m_bLocked );
-	DebugAssert( pSrcImage->m_hHandle != NULL && !(pSrcImage->m_bLocked) );
+	DebugAssert( pSrcBitmap->m_hHandle != NULL && !(pSrcBitmap->m_bLocked) );
 	DebugAssert( pMask->m_hHandle != NULL && !(pMask->m_bLocked) );
 
 	// Retrieve Handles
 	HBITMAP hDestBitmap = (HBITMAP)m_hHandle;
-	HBITMAP hSrcBitmap = (HBITMAP)(pSrcImage->m_hHandle);
+	HBITMAP hSrcBitmap = (HBITMAP)(pSrcBitmap->m_hHandle);
 	HBITMAP hMaskBitmap = (HBITMAP)(pMask->m_hHandle);
 
 	// Raster Operations
-	DWORD iForegroundROP = 0, iBackgroundROP = 0;
-	switch( iForegroundOP ) {
-		case WINGUI_RASTER_BLACK:             iForegroundROP = BLACKNESS; break;
-		case WINGUI_RASTER_WHITE:             iForegroundROP = WHITENESS; break;
-		case WINGUI_RASTER_COPY:              iForegroundROP = SRCCOPY; break;
-		case WINGUI_RASTER_NOTDST:            iForegroundROP = DSTINVERT; break;
-		case WINGUI_RASTER_NOTSRC:            iForegroundROP = NOTSRCCOPY; break;
-		case WINGUI_RASTER_AND:               iForegroundROP = SRCAND; break;
-		case WINGUI_RASTER_OR:                iForegroundROP = SRCPAINT; break;
-		case WINGUI_RASTER_XOR:               iForegroundROP = SRCINVERT; break;
-		case WINGUI_RASTER_NOTDST_AND_SRC:    iForegroundROP = SRCERASE; break;
-		case WINGUI_RASTER_DST_OR_NOTSRC:     iForegroundROP = MERGEPAINT; break;
-		case WINGUI_RASTER_NOTDST_AND_NOTSRC: iForegroundROP = NOTSRCERASE; break;
-		default: DebugAssert(false); break;
-	};
-	switch( iBackgroundOP ) {
-		case WINGUI_RASTER_BLACK:             iBackgroundROP = BLACKNESS; break;
-		case WINGUI_RASTER_WHITE:             iBackgroundROP = WHITENESS; break;
-		case WINGUI_RASTER_COPY:              iBackgroundROP = SRCCOPY; break;
-		case WINGUI_RASTER_NOTDST:            iBackgroundROP = DSTINVERT; break;
-		case WINGUI_RASTER_NOTSRC:            iBackgroundROP = NOTSRCCOPY; break;
-		case WINGUI_RASTER_AND:               iBackgroundROP = SRCAND; break;
-		case WINGUI_RASTER_OR:                iBackgroundROP = SRCPAINT; break;
-		case WINGUI_RASTER_XOR:               iBackgroundROP = SRCINVERT; break;
-		case WINGUI_RASTER_NOTDST_AND_SRC:    iBackgroundROP = SRCERASE; break;
-		case WINGUI_RASTER_DST_OR_NOTSRC:     iBackgroundROP = MERGEPAINT; break;
-		case WINGUI_RASTER_NOTDST_AND_NOTSRC: iBackgroundROP = NOTSRCERASE; break;
-		default: DebugAssert(false); break;
-	};
+	DWORD iForegroundROP = _ConvertRasterOperation( iForegroundOP );
+	DWORD iBackgroundROP = _ConvertRasterOperation( iBackgroundOP );
 	DWORD iROP = MAKEROP4( iForegroundROP, iBackgroundROP );
 
 	// Get Window DC
@@ -662,14 +400,14 @@ Void WinGUIImage::MaskBlit( const WinGUIRectangle & hDestRect, const WinGUIImage
 	DeleteDC( hSrcMemoryDC );
 	ReleaseDC( hAppWindow, hDC );
 }
-Void WinGUIImage::TransparentBlit( const WinGUIRectangle & hDestRect, const WinGUIImage * pSrcImage, const WinGUIRectangle & hSrcRect, UInt iKeyColor )
+Void WinGUIBitmap::TransparentBlit( const WinGUIRectangle & hDestRect, const WinGUIBitmap * pSrcBitmap, const WinGUIRectangle & hSrcRect, UInt iKeyColor )
 {
 	DebugAssert( m_hHandle != NULL && !m_bLocked );
-	DebugAssert( pSrcImage->m_hHandle != NULL && !(pSrcImage->m_bLocked) );
+	DebugAssert( pSrcBitmap->m_hHandle != NULL && !(pSrcBitmap->m_bLocked) );
 
 	// Retrieve Handles
 	HBITMAP hDestBitmap = (HBITMAP)m_hHandle;
-	HBITMAP hSrcBitmap = (HBITMAP)(pSrcImage->m_hHandle);
+	HBITMAP hSrcBitmap = (HBITMAP)(pSrcBitmap->m_hHandle);
 
 	// Get Window DC
 	HWND hAppWindow = (HWND)( _GetAppWindowHandle() );
@@ -696,11 +434,573 @@ Void WinGUIImage::TransparentBlit( const WinGUIRectangle & hDestRect, const WinG
 	ReleaseDC( hAppWindow, hDC );
 }
 
+Void WinGUIBitmap::Render( WinGUIElement * pTarget, const WinGUIRectangle & hDestRect, const WinGUIPoint & hSrcOrigin, WinGUIRasterOperation iOperation )
+{
+	DebugAssert( m_hHandle != NULL && !m_bLocked );
+
+	// Retrieve Handles
+	HWND hTargetWnd = NULL;
+	switch( pTarget->GetElementType() ) {
+		case WINGUI_ELEMENT_WINDOW:    hTargetWnd = (HWND)( WinGUIElement::_GetHandle(pTarget) ); break;
+		case WINGUI_ELEMENT_CONTAINER: hTargetWnd = (HWND)( WinGUIElement::_GetHandle(pTarget) ); break;
+		default: DebugAssert(false); break;
+	}
+
+	HBITMAP hSrcBitmap = (HBITMAP)m_hHandle;
+
+	// Raster Operation
+	DWORD iROP = _ConvertRasterOperation( iOperation );
+
+	// Get Window DC
+	HDC hDC = GetDC( hTargetWnd );
+
+	// Create Memory DCs
+	HDC hSrcMemoryDC = CreateCompatibleDC( hDC );
+
+	// Select Bitmaps
+	HBITMAP hSrcSaved = (HBITMAP)SelectObject( hSrcMemoryDC, hSrcBitmap );
+
+	// Perform Operation
+	BitBlt( hDC, hDestRect.iLeft, hDestRect.iTop, hDestRect.iWidth, hDestRect.iHeight,
+			hSrcMemoryDC, hSrcOrigin.iX, hSrcOrigin.iY,
+			iROP );
+
+	// Release All
+	SelectObject( hSrcMemoryDC, hSrcSaved );
+	DeleteDC( hSrcMemoryDC );
+	ReleaseDC( hTargetWnd, hDC );
+}
+Void WinGUIBitmap::StretchRender( WinGUIElement * pTarget, const WinGUIRectangle & hDestRect, const WinGUIRectangle & hSrcRect, WinGUIRasterOperation iOperation )
+{
+	DebugAssert( m_hHandle != NULL && !m_bLocked );
+
+	// Retrieve Handles
+	HWND hTargetWnd = NULL;
+	switch( pTarget->GetElementType() ) {
+		case WINGUI_ELEMENT_WINDOW:    hTargetWnd = (HWND)( WinGUIElement::_GetHandle(pTarget) ); break;
+		case WINGUI_ELEMENT_CONTAINER: hTargetWnd = (HWND)( WinGUIElement::_GetHandle(pTarget) ); break;
+		default: DebugAssert(false); break;
+	}
+
+	HBITMAP hSrcBitmap = (HBITMAP)m_hHandle;
+
+	// Raster Operation
+	DWORD iROP = _ConvertRasterOperation( iOperation );
+
+	// Get Window DC
+	HDC hDC = GetDC( hTargetWnd );
+
+	// Create Memory DCs
+	HDC hSrcMemoryDC = CreateCompatibleDC( hDC );
+
+	// Select Bitmaps
+	HBITMAP hSrcSaved = (HBITMAP)SelectObject( hSrcMemoryDC, hSrcBitmap );
+
+	// Perform Operation
+	StretchBlt( hDC, hDestRect.iLeft, hDestRect.iTop, hDestRect.iWidth, hDestRect.iHeight,
+				hSrcMemoryDC, hSrcRect.iLeft, hSrcRect.iTop, hSrcRect.iWidth, hSrcRect.iHeight,
+				iROP );
+
+	// Release All
+	SelectObject( hSrcMemoryDC, hSrcSaved );
+	DeleteDC( hSrcMemoryDC );
+	ReleaseDC( hTargetWnd, hDC );
+}
+Void WinGUIBitmap::MaskRender( WinGUIElement * pTarget, const WinGUIRectangle & hDestRect, const WinGUIPoint & hSrcOrigin,
+							  const WinGUIBitmap * pMask, const WinGUIPoint & hMaskOrigin,
+							  WinGUIRasterOperation iForegroundOP, WinGUIRasterOperation iBackgroundOP )
+{
+	DebugAssert( m_hHandle != NULL && !m_bLocked );
+	DebugAssert( pMask->m_hHandle != NULL && !(pMask->m_bLocked) );
+
+	// Retrieve Handles
+	HWND hTargetWnd = NULL;
+	switch( pTarget->GetElementType() ) {
+		case WINGUI_ELEMENT_WINDOW:    hTargetWnd = (HWND)( WinGUIElement::_GetHandle(pTarget) ); break;
+		case WINGUI_ELEMENT_CONTAINER: hTargetWnd = (HWND)( WinGUIElement::_GetHandle(pTarget) ); break;
+		default: DebugAssert(false); break;
+	}
+
+	HBITMAP hSrcBitmap = (HBITMAP)m_hHandle;
+	HBITMAP hMaskBitmap = (HBITMAP)(pMask->m_hHandle);
+
+	// Raster Operations
+	DWORD iForegroundROP = _ConvertRasterOperation( iForegroundOP );
+	DWORD iBackgroundROP = _ConvertRasterOperation( iBackgroundOP );
+	DWORD iROP = MAKEROP4( iForegroundROP, iBackgroundROP );
+
+	// Get Window DC
+	HDC hDC = GetDC( hTargetWnd );
+
+	// Create Memory DCs
+	HDC hSrcMemoryDC = CreateCompatibleDC( hDC );
+
+	// Select Bitmaps
+	HBITMAP hSrcSaved = (HBITMAP)SelectObject( hSrcMemoryDC, hSrcBitmap );
+
+	// Perform Operation
+	MaskBlt( hDC, hDestRect.iLeft, hDestRect.iTop, hDestRect.iWidth, hDestRect.iHeight,
+			 hSrcMemoryDC, hSrcOrigin.iX, hSrcOrigin.iY,
+			 hMaskBitmap, hMaskOrigin.iX, hMaskOrigin.iY,
+			 iROP );
+
+	// Release All
+	SelectObject( hSrcMemoryDC, hSrcSaved );
+	DeleteDC( hSrcMemoryDC );
+	ReleaseDC( hTargetWnd, hDC );
+}
+Void WinGUIBitmap::TransparentRender( WinGUIElement * pTarget, const WinGUIRectangle & hDestRect, const WinGUIRectangle & hSrcRect, UInt iKeyColor )
+{
+	DebugAssert( m_hHandle != NULL && !m_bLocked );
+
+	// Retrieve Handles
+	HWND hTargetWnd = NULL;
+	switch( pTarget->GetElementType() ) {
+		case WINGUI_ELEMENT_WINDOW:    hTargetWnd = (HWND)( WinGUIElement::_GetHandle(pTarget) ); break;
+		case WINGUI_ELEMENT_CONTAINER: hTargetWnd = (HWND)( WinGUIElement::_GetHandle(pTarget) ); break;
+		default: DebugAssert(false); break;
+	}
+
+	HBITMAP hSrcBitmap = (HBITMAP)m_hHandle;
+
+	// Get Window DC
+	HDC hDC = GetDC( hTargetWnd );
+
+	// Create Memory DCs
+	HDC hSrcMemoryDC = CreateCompatibleDC( hDC );
+
+	// Select Bitmaps
+	HBITMAP hSrcSaved = (HBITMAP)SelectObject( hSrcMemoryDC, hSrcBitmap );
+
+	// Perform Operation
+	TransparentBlt( hDC, hDestRect.iLeft, hDestRect.iTop, hDestRect.iWidth, hDestRect.iHeight,
+					hSrcMemoryDC, hSrcRect.iLeft, hSrcRect.iTop, hSrcRect.iWidth, hSrcRect.iHeight,
+					iKeyColor );
+
+	// Release All
+	SelectObject( hSrcMemoryDC, hSrcSaved );
+	DeleteDC( hSrcMemoryDC );
+	ReleaseDC( hTargetWnd, hDC );
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 
-Void * WinGUIImage::_GetAppWindowHandle() const
+DWord WinGUIBitmap::_ConvertRasterOperation( WinGUIRasterOperation iROP )
+{
+	switch( iROP ) {
+		case WINGUI_RASTER_BLACK:             return BLACKNESS; break;
+		case WINGUI_RASTER_WHITE:             return WHITENESS; break;
+		case WINGUI_RASTER_COPY:              return SRCCOPY; break;
+		case WINGUI_RASTER_NOTDST:            return DSTINVERT; break;
+		case WINGUI_RASTER_NOTSRC:            return NOTSRCCOPY; break;
+		case WINGUI_RASTER_AND:               return SRCAND; break;
+		case WINGUI_RASTER_OR:                return SRCPAINT; break;
+		case WINGUI_RASTER_XOR:               return SRCINVERT; break;
+		case WINGUI_RASTER_NOTDST_AND_SRC:    return SRCERASE; break;
+		case WINGUI_RASTER_DST_OR_NOTSRC:     return MERGEPAINT; break;
+		case WINGUI_RASTER_NOTDST_AND_NOTSRC: return NOTSRCERASE; break;
+		default: DebugAssert(false); break;
+	};
+	return 0;
+}
+
+Void * WinGUIBitmap::_GetAppWindowHandle() const
 {
 	WinGUIWindow * pAppWindow = WinGUIFn->GetAppWindow();
 	return WinGUIElement::_GetHandle(pAppWindow);
 }
+Void WinGUIBitmap::_CreateFromHandle( Void * hHandle, Bool bDeviceDependant, Bool bShared )
+{
+	DebugAssert( m_hHandle == NULL );
 
+	m_hHandle = hHandle;
+	DebugAssert( m_hHandle != NULL );
+
+	// Setup
+	m_bIsDeviceDependant = bDeviceDependant;
+	m_bShared = bShared;
+
+	m_iDDWidth = 0;
+	m_iDDHeight = 0;
+	if ( m_bIsDeviceDependant ) {
+		BITMAP hBMP;
+		GetObject( m_hHandle, sizeof(BITMAP), &hBMP );
+
+		m_iDDWidth = hBMP.bmWidth;
+		m_iDDHeight = hBMP.bmHeight;
+	}
+
+	MemZero( &m_hBitmapDesc, sizeof(WinGUIBitmapDescriptor) );
+	m_pBitmapData = NULL;
+	m_bLocked = false;
+
+	if ( !m_bIsDeviceDependant ) {
+		DIBSECTION hDIBSection;
+		GetObject( m_hHandle, sizeof(DIBSECTION), &hDIBSection );
+
+		hDIBSection.dsBmih.biWidth;
+
+		m_hBitmapDesc.bBottomUpElseTopDown = ( hDIBSection.dsBmih.biHeight > 0 );
+		m_hBitmapDesc.iWidth = hDIBSection.dsBmih.biWidth;
+		m_hBitmapDesc.iHeight = hDIBSection.dsBmih.biHeight;
+		m_hBitmapDesc.iBPP = (WinGUIBitmapBPP)( hDIBSection.dsBmih.biBitCount );
+
+		switch( hDIBSection.dsBmih.biCompression ) {
+			case BI_RGB:       m_hBitmapDesc.iCompression = WINGUI_BITMAP_RGB; break;
+			case BI_BITFIELDS: m_hBitmapDesc.iCompression = WINGUI_BITMAP_BITFIELD; break;
+			case BI_JPEG:      m_hBitmapDesc.iCompression = WINGUI_BITMAP_JPEG; break;
+			case BI_PNG:       m_hBitmapDesc.iCompression = WINGUI_BITMAP_PNG; break;
+			default: DebugAssert(false); break;
+		}
+
+		m_hBitmapDesc.iByteSize = hDIBSection.dsBmih.biSizeImage;
+		m_hBitmapDesc.iPixelsPerMeterX = hDIBSection.dsBmih.biXPelsPerMeter;
+		m_hBitmapDesc.iPixelsPerMeterY = hDIBSection.dsBmih.biYPelsPerMeter;
+		m_hBitmapDesc.iMaskRed = hDIBSection.dsBitfields[0];
+		m_hBitmapDesc.iMaskGreen = hDIBSection.dsBitfields[1];
+		m_hBitmapDesc.iMaskBlue = hDIBSection.dsBitfields[2];
+		m_hBitmapDesc.iMaskAlpha = 0;
+		m_hBitmapDesc.iColorSpace = WINGUI_BITMAP_SRGB;
+		m_hBitmapDesc.hEndPoints.Red.iFixed2_30_X = 0;
+		m_hBitmapDesc.hEndPoints.Red.iFixed2_30_Y = 0;
+		m_hBitmapDesc.hEndPoints.Red.iFixed2_30_Z = 0;
+		m_hBitmapDesc.hEndPoints.Green.iFixed2_30_X = 0;
+		m_hBitmapDesc.hEndPoints.Green.iFixed2_30_Y = 0;
+		m_hBitmapDesc.hEndPoints.Green.iFixed2_30_Z = 0;
+		m_hBitmapDesc.hEndPoints.Blue.iFixed2_30_X = 0;
+		m_hBitmapDesc.hEndPoints.Blue.iFixed2_30_Y = 0;
+		m_hBitmapDesc.hEndPoints.Blue.iFixed2_30_Z = 0;
+		m_hBitmapDesc.iGammaRed = 0;
+		m_hBitmapDesc.iGammaGreen = 0;
+		m_hBitmapDesc.iGammaBlue = 0;
+		m_hBitmapDesc.iRenderingIntent = WINGUI_BITMAP_COLORIMETRIC_ABS;
+
+		m_pBitmapData = (Byte*)( hDIBSection.dsBm.bmBits );
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// WinGUIIcon implementation
+WinGUIIcon::WinGUIIcon():
+	m_hBitmapColor(), m_hBitmapMask()
+{
+	m_bShared = false;
+
+	m_hHandle = NULL;
+
+	m_hHotSpot.iX = 0;
+	m_hHotSpot.iY = 0;
+}
+WinGUIIcon::~WinGUIIcon()
+{
+	// nothing to do
+}
+
+Void WinGUIIcon::Create( const WinGUIBitmap * pBitmapColor, const WinGUIBitmap * pBitmapMask, const WinGUIPoint & hHotSpot )
+{
+	DebugAssert( m_hHandle == NULL );
+	DebugAssert( pBitmapColor->IsCreated() && pBitmapMask->IsCreated() );
+	DebugAssert( pBitmapColor->IsDeviceDependant() && pBitmapMask->IsDeviceDependant() );
+
+	// Obtain Application Handle
+	HWND hAppWindow = (HWND)( _GetAppWindowHandle() );
+	HINSTANCE hInst = (HINSTANCE)( GetWindowLongPtr(hAppWindow, GWLP_HINSTANCE) );
+
+	// Check Required dimensions
+	UInt iWidth = GetSystemMetrics( SM_CXICON );
+	UInt iHeight = GetSystemMetrics( SM_CYICON );
+	DebugAssert( iWidth == pBitmapColor->GetDDWidth() && iWidth == pBitmapMask->GetDDWidth() );
+	DebugAssert( iHeight == pBitmapColor->GetDDHeight() && iHeight == pBitmapMask->GetDDHeight() );
+
+	// Create Icon
+	ICONINFO hIconInfo;
+	hIconInfo.fIcon = TRUE;
+	hIconInfo.xHotspot = hHotSpot.iX;
+	hIconInfo.yHotspot = hHotSpot.iY;
+	hIconInfo.hbmColor = (HBITMAP)( pBitmapColor->m_hHandle );
+	hIconInfo.hbmMask = (HBITMAP)( pBitmapMask->m_hHandle );
+
+	HICON hIcon = CreateIconIndirect( &hIconInfo );
+	DebugAssert( hIcon != NULL );
+
+	_CreateFromHandle( hIcon, false );
+}
+Void WinGUIIcon::Destroy()
+{
+	DebugAssert( m_hHandle != NULL && !m_bShared );
+
+	m_hBitmapColor.Destroy();
+	m_hBitmapMask.Destroy();
+
+	DestroyIcon( (HICON)m_hHandle );
+	m_hHandle = NULL;
+
+	m_hHotSpot.iX = 0;
+	m_hHotSpot.iY = 0;
+}
+
+Void WinGUIIcon::LoadFromFile( const GChar * strFilename, const WinGUIImageLoadParameters & hLoadParams )
+{
+	DebugAssert( m_hHandle == NULL );
+
+	UInt iFlags;
+	UInt iWidth, iHeight;
+
+	// Flags
+	iFlags = LR_LOADFROMFILE;
+	if ( hLoadParams.bMonochrome )
+		iFlags |= LR_MONOCHROME;
+	if ( hLoadParams.bTrueVGA )
+		iFlags |= LR_VGACOLOR;
+
+	switch( hLoadParams.iResizeWidth ) {
+		case WINGUI_IMAGE_RESIZE_KEEP:    iWidth = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_DEFAULT: iWidth = 0; iFlags |= LR_DEFAULTSIZE; break;
+		case WINGUI_IMAGE_RESIZE_USER:    iWidth = hLoadParams.iWidth; iFlags |= 0; break;
+		default: DebugAssert(false); break;
+	}
+	switch( hLoadParams.iResizeHeight ) {
+		case WINGUI_IMAGE_RESIZE_KEEP:    iHeight = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_DEFAULT: iHeight = 0; iFlags |= LR_DEFAULTSIZE; break;
+		case WINGUI_IMAGE_RESIZE_USER:    iHeight = hLoadParams.iHeight; iFlags |= 0; break;
+		default: DebugAssert(false); break;
+	}
+
+	// Load File
+	HICON hIcon = (HICON)( LoadImage(NULL, strFilename, IMAGE_ICON, iWidth, iHeight, iFlags) );
+	DebugAssert( hIcon != NULL );
+
+	// Setup
+	_CreateFromHandle( hIcon, false );
+}
+Void WinGUIIcon::LoadFromResource( UInt iResourceID, const WinGUIImageLoadParameters & hLoadParams )
+{
+	DebugAssert( m_hHandle == NULL );
+
+	UInt iFlags;
+	UInt iWidth, iHeight;
+
+	// Obtain Application Handle
+	HWND hAppWindow = (HWND)( _GetAppWindowHandle() );
+	HINSTANCE hInst = (HINSTANCE)( GetWindowLongPtr(hAppWindow, GWLP_HINSTANCE) );
+
+	// Flags
+	iFlags = 0;
+	if ( hLoadParams.bMonochrome )
+		iFlags |= LR_MONOCHROME;
+	if ( hLoadParams.bTrueVGA )
+		iFlags |= LR_VGACOLOR;
+	if ( hLoadParams.bSharedResource )
+		iFlags |= LR_SHARED;
+
+	switch( hLoadParams.iResizeWidth ) {
+		case WINGUI_IMAGE_RESIZE_KEEP:    iWidth = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_DEFAULT: iWidth = 0; iFlags |= LR_DEFAULTSIZE; break;
+		case WINGUI_IMAGE_RESIZE_USER:    iWidth = hLoadParams.iWidth; iFlags |= 0; break;
+		default: DebugAssert(false); break;
+	}
+	switch( hLoadParams.iResizeHeight ) {
+		case WINGUI_IMAGE_RESIZE_KEEP:    iHeight = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_DEFAULT: iHeight = 0; iFlags |= LR_DEFAULTSIZE; break;
+		case WINGUI_IMAGE_RESIZE_USER:    iHeight = hLoadParams.iHeight; iFlags |= 0; break;
+		default: DebugAssert(false); break;
+	}
+
+	// Load File
+	HICON hIcon = (HICON)( LoadImage(hInst, MAKEINTRESOURCE(iResourceID), IMAGE_ICON, iWidth, iHeight, iFlags) );
+	DebugAssert( hIcon != NULL );
+
+	// Setup
+	_CreateFromHandle( hIcon, hLoadParams.bSharedResource );
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+Void * WinGUIIcon::_GetAppWindowHandle() const
+{
+	WinGUIWindow * pAppWindow = WinGUIFn->GetAppWindow();
+	return WinGUIElement::_GetHandle(pAppWindow);
+}
+Void WinGUIIcon::_CreateFromHandle( Void * hHandle, Bool bShared )
+{
+	DebugAssert( m_hHandle == NULL );
+
+	m_hHandle = hHandle;
+	DebugAssert( m_hHandle != NULL );
+
+	// Setup
+	m_bShared = bShared;
+
+	ICONINFOEX hIconInfos;
+	GetIconInfoEx( (HICON)m_hHandle, &hIconInfos );
+	DebugAssert( hIconInfos.fIcon == TRUE );
+
+	m_hHotSpot.iX = hIconInfos.xHotspot;
+	m_hHotSpot.iY = hIconInfos.yHotspot;
+
+	m_hBitmapColor._CreateFromHandle( hIconInfos.hbmColor, true, bShared );
+	m_hBitmapMask._CreateFromHandle( hIconInfos.hbmMask, true, bShared );
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// WinGUICursor implementation
+WinGUICursor::WinGUICursor():
+	m_hBitmapColor(), m_hBitmapMask()
+{
+	m_bShared = false;
+
+	m_hHandle = NULL;
+
+	m_hHotSpot.iX = 0;
+	m_hHotSpot.iY = 0;
+}
+WinGUICursor::~WinGUICursor()
+{
+	// nothing to do
+}
+
+Void WinGUICursor::Create( const WinGUIBitmap * pBitmapColor, const WinGUIBitmap * pBitmapMask, const WinGUIPoint & hHotSpot )
+{
+	DebugAssert( m_hHandle == NULL );
+	DebugAssert( pBitmapColor->IsCreated() && pBitmapMask->IsCreated() );
+	DebugAssert( pBitmapColor->IsDeviceDependant() && pBitmapMask->IsDeviceDependant() );
+
+	// Obtain Application Handle
+	HWND hAppWindow = (HWND)( _GetAppWindowHandle() );
+	HINSTANCE hInst = (HINSTANCE)( GetWindowLongPtr(hAppWindow, GWLP_HINSTANCE) );
+
+	// Check Required dimensions
+	UInt iWidth = GetSystemMetrics( SM_CXCURSOR );
+	UInt iHeight = GetSystemMetrics( SM_CYCURSOR );
+	DebugAssert( iWidth == pBitmapColor->GetDDWidth() && iWidth == pBitmapMask->GetDDWidth() );
+	DebugAssert( iHeight == pBitmapColor->GetDDHeight() && iHeight == pBitmapMask->GetDDHeight() );
+
+	// Create Cursor
+	ICONINFO hIconInfo;
+	hIconInfo.fIcon = FALSE;
+	hIconInfo.xHotspot = hHotSpot.iX;
+	hIconInfo.yHotspot = hHotSpot.iY;
+	hIconInfo.hbmColor = (HBITMAP)( pBitmapColor->m_hHandle );
+	hIconInfo.hbmMask = (HBITMAP)( pBitmapMask->m_hHandle );
+
+	HCURSOR hCursor = CreateIconIndirect( &hIconInfo );
+	DebugAssert( hCursor != NULL );
+
+	_CreateFromHandle( hCursor, false );
+}
+Void WinGUICursor::Destroy()
+{
+	DebugAssert( m_hHandle != NULL && !m_bShared );
+
+	m_hBitmapColor.Destroy();
+	m_hBitmapMask.Destroy();
+
+	DestroyCursor( (HCURSOR)m_hHandle );
+	m_hHandle = NULL;
+
+	m_hHotSpot.iX = 0;
+	m_hHotSpot.iY = 0;
+}
+
+Void WinGUICursor::LoadFromFile( const GChar * strFilename, const WinGUIImageLoadParameters & hLoadParams )
+{
+	DebugAssert( m_hHandle == NULL );
+
+	UInt iFlags;
+	UInt iWidth, iHeight;
+
+	// Flags
+	iFlags = LR_LOADFROMFILE;
+	if ( hLoadParams.bMonochrome )
+		iFlags |= LR_MONOCHROME;
+	if ( hLoadParams.bTrueVGA )
+		iFlags |= LR_VGACOLOR;
+
+	switch( hLoadParams.iResizeWidth ) {
+		case WINGUI_IMAGE_RESIZE_KEEP:    iWidth = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_DEFAULT: iWidth = 0; iFlags |= LR_DEFAULTSIZE; break;
+		case WINGUI_IMAGE_RESIZE_USER:    iWidth = hLoadParams.iWidth; iFlags |= 0; break;
+		default: DebugAssert(false); break;
+	}
+	switch( hLoadParams.iResizeHeight ) {
+		case WINGUI_IMAGE_RESIZE_KEEP:    iHeight = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_DEFAULT: iHeight = 0; iFlags |= LR_DEFAULTSIZE; break;
+		case WINGUI_IMAGE_RESIZE_USER:    iHeight = hLoadParams.iHeight; iFlags |= 0; break;
+		default: DebugAssert(false); break;
+	}
+
+	// Load File
+	HCURSOR hCursor = (HCURSOR)( LoadImage(NULL, strFilename, IMAGE_CURSOR, iWidth, iHeight, iFlags) );
+	DebugAssert( hCursor != NULL );
+
+	// Setup
+	_CreateFromHandle( hCursor, false );
+}
+Void WinGUICursor::LoadFromResource( UInt iResourceID, const WinGUIImageLoadParameters & hLoadParams )
+{
+	DebugAssert( m_hHandle == NULL );
+
+	UInt iFlags;
+	UInt iWidth, iHeight;
+
+	// Obtain Application Handle
+	HWND hAppWindow = (HWND)( _GetAppWindowHandle() );
+	HINSTANCE hInst = (HINSTANCE)( GetWindowLongPtr(hAppWindow, GWLP_HINSTANCE) );
+
+	// Flags
+	iFlags = 0;
+	if ( hLoadParams.bMonochrome )
+		iFlags |= LR_MONOCHROME;
+	if ( hLoadParams.bTrueVGA )
+		iFlags |= LR_VGACOLOR;
+	if ( hLoadParams.bSharedResource )
+		iFlags |= LR_SHARED;
+
+	switch( hLoadParams.iResizeWidth ) {
+		case WINGUI_IMAGE_RESIZE_KEEP:    iWidth = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_DEFAULT: iWidth = 0; iFlags |= LR_DEFAULTSIZE; break;
+		case WINGUI_IMAGE_RESIZE_USER:    iWidth = hLoadParams.iWidth; iFlags |= 0; break;
+		default: DebugAssert(false); break;
+	}
+	switch( hLoadParams.iResizeHeight ) {
+		case WINGUI_IMAGE_RESIZE_KEEP:    iHeight = 0; iFlags |= 0; break;
+		case WINGUI_IMAGE_RESIZE_DEFAULT: iHeight = 0; iFlags |= LR_DEFAULTSIZE; break;
+		case WINGUI_IMAGE_RESIZE_USER:    iHeight = hLoadParams.iHeight; iFlags |= 0; break;
+		default: DebugAssert(false); break;
+	}
+
+	// Load File
+	HCURSOR hCursor = (HCURSOR)( LoadImage(hInst, MAKEINTRESOURCE(iResourceID), IMAGE_CURSOR, iWidth, iHeight, iFlags) );
+	DebugAssert( hCursor != NULL );
+
+	// Setup
+	_CreateFromHandle( hCursor, hLoadParams.bSharedResource );
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+Void * WinGUICursor::_GetAppWindowHandle() const
+{
+	WinGUIWindow * pAppWindow = WinGUIFn->GetAppWindow();
+	return WinGUIElement::_GetHandle(pAppWindow);
+}
+Void WinGUICursor::_CreateFromHandle( Void * hHandle, Bool bShared )
+{
+	DebugAssert( m_hHandle == NULL );
+
+	m_hHandle = hHandle;
+	DebugAssert( m_hHandle != NULL );
+
+	// Setup
+	m_bShared = bShared;
+
+	ICONINFOEX hIconInfos;
+	GetIconInfoEx( (HCURSOR)m_hHandle, &hIconInfos );
+	DebugAssert( hIconInfos.fIcon == FALSE );
+
+	m_hHotSpot.iX = hIconInfos.xHotspot;
+	m_hHotSpot.iY = hIconInfos.yHotspot;
+
+	m_hBitmapColor._CreateFromHandle( hIconInfos.hbmColor, true, bShared );
+	m_hBitmapMask._CreateFromHandle( hIconInfos.hbmMask, true, bShared );
+}

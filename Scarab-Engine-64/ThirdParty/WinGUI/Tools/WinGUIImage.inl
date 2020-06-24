@@ -16,31 +16,68 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-// WinGUIImage implementation
-inline Bool WinGUIImage::IsCreated() const {
+// WinGUIBitmap implementation
+inline Bool WinGUIBitmap::IsCreated() const {
 	return ( m_hHandle != NULL );
 }
-inline Bool WinGUIImage::IsDeviceDependant() const {
+inline Bool WinGUIBitmap::IsDeviceDependant() const {
 	return m_bIsDeviceDependant;
 }
-inline Bool WinGUIImage::IsShared() const {
+inline Bool WinGUIBitmap::IsShared() const {
 	return m_bShared;
 }
-inline WinGUIImageType WinGUIImage::GetType() const {
-	return m_iType;
-}
 
-inline UInt WinGUIImage::GetDDWidth() const {
+inline UInt WinGUIBitmap::GetDDWidth() const {
 	DebugAssert( m_hHandle != NULL && m_bIsDeviceDependant );
 	return m_iDDWidth;
 }
-inline UInt WinGUIImage::GetDDHeight() const {
+inline UInt WinGUIBitmap::GetDDHeight() const {
 	DebugAssert( m_hHandle != NULL && m_bIsDeviceDependant );
 	return m_iDDHeight;
 }
 
-inline const WinGUIBitmapDescriptor * WinGUIImage::GetDIBDescriptor() const {
+inline const WinGUIBitmapDescriptor * WinGUIBitmap::GetDIBDescriptor() const {
 	DebugAssert( m_hHandle != NULL && !m_bIsDeviceDependant );
 	return &m_hBitmapDesc;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// WinGUIIcon implementation
+inline Bool WinGUIIcon::IsCreated() const {
+	return ( m_hHandle != NULL );
+}
+inline Bool WinGUIIcon::IsShared() const {
+	return m_bShared;
+}
+
+inline const WinGUIPoint * WinGUIIcon::GetHotSpot() const {
+	return &m_hHotSpot;
+}
+
+inline WinGUIBitmap * WinGUIIcon::GetBitmapColor() {
+	return &m_hBitmapColor;
+}
+inline WinGUIBitmap * WinGUIIcon::GetBitmapMask() {
+	return &m_hBitmapMask;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// WinGUICursor implementation
+inline Bool WinGUICursor::IsCreated() const {
+	return ( m_hHandle != NULL );
+}
+inline Bool WinGUICursor::IsShared() const {
+	return m_bShared;
+}
+
+inline const WinGUIPoint * WinGUICursor::GetHotSpot() const {
+	return &m_hHotSpot;
+}
+
+inline WinGUIBitmap * WinGUICursor::GetBitmapColor() {
+	return &m_hBitmapColor;
+}
+inline WinGUIBitmap * WinGUICursor::GetBitmapMask() {
+	return &m_hBitmapMask;
 }
 

@@ -466,4 +466,13 @@ Void WinGUI::DestroyElement( WinGUIElement * pElement ) const
     pElement = NULL;
 }
 
+Void WinGUI::ShowCursor( Bool bShow ) const
+{
+    ::ShowCursor( bShow ? TRUE : FALSE );
+}
+Void WinGUI::SetCursor( WinGUICursor * pCursor ) const
+{
+    ::SetCursor( (HCURSOR)(pCursor->m_hHandle) );
+}
+
 /////////////////////////////////////////////////////////////////////////////////

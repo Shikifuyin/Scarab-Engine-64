@@ -40,7 +40,10 @@ class WinGUIElement;
 
 class WinGUI;
 
-class WinGUIImage;
+class WinGUIBitmap;
+class WinGUIIcon;
+class WinGUICursor;
+class WinGUIImageList;
 
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUIContainerModel class
@@ -77,6 +80,9 @@ public:
 	// Type
 	virtual WinGUIElementType GetElementType() const = 0;
 
+	// State
+	inline Bool IsCreated() const;
+
 	// Model access
 	inline WinGUIElementModel * GetModel() const;
 
@@ -93,7 +99,10 @@ public:
 
 protected:
 	friend class WinGUI;
-	friend class WinGUIImage;
+	friend class WinGUIBitmap;
+	friend class WinGUIIcon;
+	friend class WinGUICursor;
+	friend class WinGUIImageList;
 
 	// Create/Destroy Interface
 	virtual Void _Create() = 0;

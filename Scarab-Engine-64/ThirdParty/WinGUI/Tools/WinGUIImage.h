@@ -4,7 +4,7 @@
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : Windows GUI Images (Bitmap or Icon)
+// Description : Windows GUI Images (Bitmap, Icon, Cursor)
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-// Known Bugs : None
+// Known Bugs : Icons & Cursors are always Device-Dependant
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -22,17 +22,10 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "../WinGUILayout.h" // Rectangle, Point structures
+#include "../WinGUILayout.h" // Rectangle & Point structures
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
-
-// Image types
-enum WinGUIImageType {
-	WINGUI_IMAGE_BITMAP = 0,
-	WINGUI_IMAGE_ICON,
-	WINGUI_IMAGE_CURSOR
-};
 
 // Color Depth
 enum WinGUIBitmapBPP {
@@ -120,30 +113,39 @@ enum WinGUIImageResizeMode {
 
 // Load Parameters
 typedef struct _wingui_image_load_params {
-	WinGUIImageType iType;
 	WinGUIImageResizeMode iResizeWidth;
 	WinGUIImageResizeMode iResizeHeight;
 	UInt iWidth;
 	UInt iHeight;
-	Bool bMakeDIB;
+	Bool bMakeDIB; // Only for Bitmaps
 	Bool bMonochrome;
 	Bool bTrueVGA;
-	Bool bSharedResource; // Resources only, Required for system icon/cursor
+	Bool bSharedResource; // LoadFromResource only, Required for system icon/cursor
 } WinGUIImageLoadParameters;
 
+// Prototypes
+class WinGUIBitmap;
+class WinGUIIcon;
+class WinGUICursor;
+
+class WinGUIImageList;
+
+class WinGUIElement;
+
+class WinGUI;
+
 /////////////////////////////////////////////////////////////////////////////////
-// The WinGUIImage class
-class WinGUIImage
+// The WinGUIBitmap class
+class WinGUIBitmap
 {
 public:
-	WinGUIImage();
-	~WinGUIImage();
+	WinGUIBitmap();
+	~WinGUIBitmap();
 
 	// State
 	inline Bool IsCreated() const;
 	inline Bool IsDeviceDependant() const;
 	inline Bool IsShared() const;
-	inline WinGUIImageType GetType() const;
 
 	// Device-Dependant Bitmap (DDB)
 	Void CreateDDBitmap( UInt iWidth, UInt iHeight );
@@ -168,19 +170,34 @@ public:
 	Void Destroy();
 
 	// Bit Block Transfer Operations
-	Void BitBlit( const WinGUIRectangle & hDestRect, const WinGUIImage * pSrcImage, const WinGUIPoint & hSrcOrigin, WinGUIRasterOperation iOperation );
-	Void StretchBlit( const WinGUIRectangle & hDestRect, const WinGUIImage * pSrcImage, const WinGUIRectangle & hSrcRect, WinGUIRasterOperation iOperation );
-	Void MaskBlit( const WinGUIRectangle & hDestRect, const WinGUIImage * pSrcImage, const WinGUIPoint & hSrcOrigin,
-				   const WinGUIImage * pMask, const WinGUIPoint & hMaskOrigin,
+	Void BitBlit( const WinGUIRectangle & hDestRect, const WinGUIBitmap * pSrcBitmap, const WinGUIPoint & hSrcOrigin, WinGUIRasterOperation iOperation );
+	Void StretchBlit( const WinGUIRectangle & hDestRect, const WinGUIBitmap * pSrcBitmap, const WinGUIRectangle & hSrcRect, WinGUIRasterOperation iOperation );
+	Void MaskBlit( const WinGUIRectangle & hDestRect, const WinGUIBitmap * pSrcBitmap, const WinGUIPoint & hSrcOrigin,
+				   const WinGUIBitmap * pMask, const WinGUIPoint & hMaskOrigin,
 				   WinGUIRasterOperation iForegroundOP, WinGUIRasterOperation iBackgroundOP );
-	Void TransparentBlit( const WinGUIRectangle & hDestRect, const WinGUIImage * pSrcImage, const WinGUIRectangle & hSrcRect, UInt iKeyColor );
+	Void TransparentBlit( const WinGUIRectangle & hDestRect, const WinGUIBitmap * pSrcBitmap, const WinGUIRectangle & hSrcRect, UInt iKeyColor );
+
+	// Rendering (Bit Block Transfer to Screen)
+	Void Render( WinGUIElement * pTarget, const WinGUIRectangle & hDestRect, const WinGUIPoint & hSrcOrigin, WinGUIRasterOperation iOperation );
+	Void StretchRender( WinGUIElement * pTarget, const WinGUIRectangle & hDestRect, const WinGUIRectangle & hSrcRect, WinGUIRasterOperation iOperation );
+	Void MaskRender( WinGUIElement * pTarget, const WinGUIRectangle & hDestRect, const WinGUIPoint & hSrcOrigin,
+					 const WinGUIBitmap * pMask, const WinGUIPoint & hMaskOrigin,
+					 WinGUIRasterOperation iForegroundOP, WinGUIRasterOperation iBackgroundOP );
+	Void TransparentRender( WinGUIElement * pTarget, const WinGUIRectangle & hDestRect, const WinGUIRectangle & hSrcRect, UInt iKeyColor );
 
 	// TODO : Screen Capture ?
 	// TODO : Save to File ?
 
 private:
+	friend class WinGUIIcon;
+	friend class WinGUICursor;
+	friend class WinGUIImageList;
+
 	// Helpers
+	static DWord _ConvertRasterOperation( WinGUIRasterOperation iROP );
+
 	Void * _GetAppWindowHandle() const;
+	Void _CreateFromHandle( Void * hHandle, Bool bDeviceDependant, Bool bShared );
 
 	// Members
 	Bool m_bIsDeviceDependant;
@@ -188,13 +205,103 @@ private:
 
 	Void * m_hHandle; // HBITMAP
 
-	WinGUIImageType m_iType;
 	UInt m_iDDWidth;
 	UInt m_iDDHeight;
 
 	WinGUIBitmapDescriptor m_hBitmapDesc;
 	Byte * m_pBitmapData;
 	Bool m_bLocked;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The WinGUIIcon class
+class WinGUIIcon
+{
+public:
+	WinGUIIcon();
+	~WinGUIIcon();
+
+	// State
+	inline Bool IsCreated() const;
+	inline Bool IsShared() const;
+
+	// Creation / Destruction
+	Void Create( const WinGUIBitmap * pBitmapColor, const WinGUIBitmap * pBitmapMask, const WinGUIPoint & hHotSpot );
+	Void Destroy();
+
+	// Load from File/Resource
+	Void LoadFromFile( const GChar * strFilename, const WinGUIImageLoadParameters & hLoadParams );
+	Void LoadFromResource( UInt iResourceID, const WinGUIImageLoadParameters & hLoadParams );
+
+	// Members access
+	inline const WinGUIPoint * GetHotSpot() const;
+
+	inline WinGUIBitmap * GetBitmapColor();
+	inline WinGUIBitmap * GetBitmapMask();
+
+	// TODO : Save to File ?
+
+private:
+	friend class WinGUIImageList;
+
+	// Helpers
+	Void * _GetAppWindowHandle() const;
+	Void _CreateFromHandle( Void * hHandle, Bool bShared );
+
+	// Members
+	Bool m_bShared;
+
+	Void * m_hHandle; // HICON
+
+	WinGUIBitmap m_hBitmapColor;
+	WinGUIBitmap m_hBitmapMask;
+	WinGUIPoint m_hHotSpot;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The WinGUICursor class
+class WinGUICursor
+{
+public:
+	WinGUICursor();
+	~WinGUICursor();
+
+	// State
+	inline Bool IsCreated() const;
+	inline Bool IsShared() const;
+
+	// Creation / Destruction
+	Void Create( const WinGUIBitmap * pBitmapColor, const WinGUIBitmap * pBitmapMask, const WinGUIPoint & hHotSpot );
+	Void Destroy();
+
+	// Load from File/Resource
+	Void LoadFromFile( const GChar * strFilename, const WinGUIImageLoadParameters & hLoadParams );
+	Void LoadFromResource( UInt iResourceID, const WinGUIImageLoadParameters & hLoadParams );
+
+	// Members access
+	inline const WinGUIPoint * GetHotSpot() const;
+
+	inline WinGUIBitmap * GetBitmapColor();
+	inline WinGUIBitmap * GetBitmapMask();
+
+	// TODO : Save to File ?
+
+private:
+	friend class WinGUIImageList;
+	friend class WinGUI;
+
+	// Helpers
+	Void * _GetAppWindowHandle() const;
+	Void _CreateFromHandle( Void * hHandle, Bool bShared );
+
+	// Members
+	Bool m_bShared;
+
+	Void * m_hHandle; // HCURSOR
+
+	WinGUIBitmap m_hBitmapColor;
+	WinGUIBitmap m_hBitmapMask;
+	WinGUIPoint m_hHotSpot;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

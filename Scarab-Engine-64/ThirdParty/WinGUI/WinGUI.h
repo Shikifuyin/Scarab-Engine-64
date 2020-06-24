@@ -28,6 +28,9 @@
 #include "WinGUIContainer.h"
 #include "WinGUIControl.h"
 
+#include "Tools/WinGUIImage.h"
+#include "Tools/WinGUIImageList.h"
+
 #include "Controls/WinGUITabs.h"
 
 #include "Controls/WinGUIButton.h"
@@ -116,6 +119,10 @@ public:
 
     // Element Removal
     Void DestroyElement( WinGUIElement * pElement ) const;
+
+    // Cursor management
+    Void ShowCursor( Bool bShow ) const;
+    Void SetCursor( WinGUICursor * pCursor ) const;
 
     // Font Infos
     inline UInt GetFontHeight() const;

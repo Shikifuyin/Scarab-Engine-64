@@ -27,6 +27,28 @@
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
+// Drawing Options
+enum WinGUIImageListDrawMode {
+	WINGUI_IMAGELIST_DRAW_NORMAL = 0, // Use Background Color only
+	WINGUI_IMAGELIST_DRAW_MASK,       // Draw the Mask
+	WINGUI_IMAGELIST_DRAW_BLEND25,    // Blend with system highlight color, requires a Mask
+	WINGUI_IMAGELIST_DRAW_BLEND50,    // Blend with system highlight color, requires a Mask
+	WINGUI_IMAGELIST_DRAW_TRANSPARENT // Draw using Mask, ignore Background Color
+};
+
+typedef struct _wingui_imagelist_draw_options {
+	WinGUIImageListDrawMode iMode;
+	Bool bUseOverlay;
+	Bool bOverlayRequiresMask;
+	UInt iOverlayIndex;
+	Bool bScaleElseClip;
+	Bool bUseDPIScaling;
+	Bool bPreserveDestAlpha;
+} WinGUIImageListDrawOptions;
+
+// Prototypes
+class WinGUIWindow;
+
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUIImageList class
 class WinGUIImageList
@@ -39,21 +61,74 @@ public:
 	inline Bool IsCreated() const;
 	inline Bool HasMasks() const;
 
+	inline UInt GetWidth() const;
+	inline UInt GetHeight() const;
+
 	// Deferred Creation/Destruction
 	Void Create( UInt iWidth, UInt iHeight, UInt iInitialImageCount, UInt iGrowCount );
 	Void CreateMasked( UInt iWidth, UInt iHeight, UInt iInitialImageCount, UInt iGrowCount );
 
+	Void CreateDuplicate( const WinGUIImageList * pList );
+
+		// Create the list from 2 provided images, Image B drawn transparently over ImageA.
+		// Their Mask are ORed to generate result mask, both ImageLists A and B must have masks.
+	Void MergeImages( WinGUIImageList * pListA, UInt iIndexA, WinGUIImageList * pListB, UInt iIndexB, Int iDX, Int iDY );
+
 	Void Destroy();
 
 	// Images Management
-	Void AddImage( WinGUIImage * pImage, WinGUIImage * pMask = NULL );
+	UInt GetImageCount() const;
+	Void GetImage( UInt iIndex, WinGUIRectangle * outBoundingRect, WinGUIBitmap * outImage, WinGUIBitmap * outMask = NULL ) const;
+
+	Void MakeIcon( UInt iIndex, WinGUIIcon * outIcon, const WinGUIImageListDrawOptions & hOptions ) const;
+
+	UInt AddImage( WinGUIBitmap * pImage, WinGUIBitmap * pMask = NULL );
+	UInt AddImageMasked( WinGUIBitmap * pImage, UInt iKeyColor );
+	UInt AddIcon( WinGUIIcon * pIcon );
+	UInt AddCursor( WinGUICursor * pCursor );
+
+	Void ReplaceImage( UInt iIndex, WinGUIBitmap * pImage, WinGUIBitmap * pMask = NULL );
+	Void ReplaceIcon( UInt iIndex, WinGUIIcon * pIcon );
+	Void ReplaceCursor( UInt iIndex, WinGUICursor * pCursor );
+
+	Void SwapImages( UInt iIndexA, UInt iIndexB );    // Current Windows versions don't
+	Void CopyImage( UInt iIndexDst, UInt iIndexSrc ); // allow to specify Dst/Src Lists
+
+	Void RemoveImage( UInt iIndex );
+	Void RemoveAll();
+
+	// Settings
+	UInt GetBackgroundColor();
+	UInt SetBackgroundColor( UInt iColor );
+
+		// Requires Masks
+	Void SetOverlayImage( UInt iImageIndex, UInt iOverlayIndex );
+
+	// Drawing ?
+	// ImageList_Draw(Ex)
+
+	// Drag & Drop (Positions are given in window rect coords, not client rect !)
+	Void DragBegin( UInt iImageIndex, const WinGUIPoint & hHotSpot );
+	Void DragEnter( WinGUIWindow * pOwner, const WinGUIPoint & hPosition );
+	Void DragEnd();
+	Void DragLeave( WinGUIWindow * pOwner );
+
+	Void DragShow( Bool bShow );
+	Void DragMove( const WinGUIPoint & hPosition );
+
+	//Void GetDragImage( WinGUIImageList * outImageList, WinGUIPoint * outDragPosition, WinGUIPoint * outHotSpot ) const;
+	Void CombineDragImages( UInt iNewImageIndex, const WinGUIPoint & hNewHotSpot );
+
 
 private:
 	// Members
 	Void * m_hHandle; // HIMAGELIST
 
 	Bool m_bHasMasks;
+	UInt m_iWidth;
+	UInt m_iHeight;
 
+	Bool m_bIsDragging;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

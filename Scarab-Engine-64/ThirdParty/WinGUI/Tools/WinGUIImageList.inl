@@ -24,3 +24,10 @@ inline Bool WinGUIImageList::HasMasks() const {
 	return m_bHasMasks;
 }
 
+inline UInt WinGUIImageList::GetWidth() const {
+	return m_iWidth;
+}
+inline UInt WinGUIImageList::GetHeight() const {
+	return m_iHeight;
+}
+

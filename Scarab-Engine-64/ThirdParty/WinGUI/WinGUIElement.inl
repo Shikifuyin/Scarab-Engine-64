@@ -23,6 +23,10 @@ inline WinGUIElement * WinGUIElementModel::GetController() const {
 
 /////////////////////////////////////////////////////////////////////////////////
 // WinGUIElement implementation
+inline Bool WinGUIElement::IsCreated() const {
+	return ( m_hHandle != NULL );
+}
+
 inline WinGUIElementModel * WinGUIElement::GetModel() const {
 	return m_pModel;
 }

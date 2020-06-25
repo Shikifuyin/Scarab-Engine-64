@@ -81,29 +81,16 @@ WinGUITable::WinGUITable( WinGUIElement * pParent, WinGUITableModel * pModel ):
 	m_iViewMode = WINGUI_TABLE_VIEW_LIST;
 	m_bGroupMode = false;
 
+	m_bHasHeadersInAllViews = false;
 	m_bHasCheckBoxes = false;
+	m_bHasEditableLabels = false;
 }
 WinGUITable::~WinGUITable()
 {
 	// nothing to do
 }
 
-Void WinGUITable::SwitchViewMode( WinGUITableViewMode iViewMode )
-{
-	HWND hHandle = (HWND)m_hHandle;
-
-	switch( iViewMode ) {
-		case WINGUI_TABLE_VIEW_LIST:        ListView_SetView( hHandle, LV_VIEW_LIST ); break;
-		case WINGUI_TABLE_VIEW_ICONS:       ListView_SetView( hHandle, LV_VIEW_ICON ); break;
-		case WINGUI_TABLE_VIEW_ICONS_SMALL: ListView_SetView( hHandle, LV_VIEW_SMALLICON ); break;
-		case WINGUI_TABLE_VIEW_DETAILED:    ListView_SetView( hHandle, LV_VIEW_DETAILS ); break;
-		case WINGUI_TABLE_VIEW_TILES:       ListView_SetView( hHandle, LV_VIEW_TILE ); break;
-		default: DebugAssert(false); break;
-	}
-
-	m_iViewMode = iViewMode;
-}
-
+// General Settings /////////////////////////////////////////////////////////////
 Bool WinGUITable::IsUnicode() const
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -126,7 +113,7 @@ Void WinGUITable::SetANSI()
 	ListView_SetUnicodeFormat( hHandle, FALSE );
 }
 
-Void WinGUITable::SetItemCount( UInt iPreAllocatedItemCount )
+Void WinGUITable::SetAllocatedItemCount( UInt iPreAllocatedItemCount )
 {
 	HWND hHandle = (HWND)m_hHandle;
 
@@ -137,83 +124,96 @@ Void WinGUITable::SetItemCount( UInt iPreAllocatedItemCount )
 	}
 }
 
-Void WinGUITable::AdjustRequiredDimensions( UInt * pWidth, UInt * pHeight, UInt iItemCount ) const
+Void WinGUITable::ForceRedraw( UInt iFirstItem, UInt iLastItem, Bool bImmediate )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_RedrawItems( hHandle, iFirstItem, iLastItem );
+	if ( bImmediate )
+		UpdateWindow( hHandle );
+}
+
+// View Modes ///////////////////////////////////////////////////////////////////
+Void WinGUITable::SwitchViewMode( WinGUITableViewMode iViewMode )
 {
 	HWND hHandle = (HWND)m_hHandle;
 
-	DWord dwResult = ListView_ApproximateViewRect( hHandle, *pWidth, *pHeight, iItemCount );
-	*pWidth = (UInt)( LOWORD(dwResult) );
-	*pHeight = (UInt)( HIWORD(dwResult) );
+	switch( iViewMode ) {
+		case WINGUI_TABLE_VIEW_LIST:        ListView_SetView( hHandle, LV_VIEW_LIST ); break;
+		case WINGUI_TABLE_VIEW_ICONS:       ListView_SetView( hHandle, LV_VIEW_ICON ); break;
+		case WINGUI_TABLE_VIEW_ICONS_SMALL: ListView_SetView( hHandle, LV_VIEW_SMALLICON ); break;
+		case WINGUI_TABLE_VIEW_DETAILED:    ListView_SetView( hHandle, LV_VIEW_DETAILS ); break;
+		case WINGUI_TABLE_VIEW_TILES:       ListView_SetView( hHandle, LV_VIEW_TILE ); break;
+		default: DebugAssert(false); break;
+	}
+
+	m_iViewMode = iViewMode;
 }
 
-UInt WinGUITable::GetStringWidth( const GChar * strText ) const
+Void WinGUITable::ToggleGroupMode( Bool bEnable )
 {
 	HWND hHandle = (HWND)m_hHandle;
-	return ListView_GetStringWidth( hHandle, strText );
+	ListView_EnableGroupView( hHandle, bEnable ? TRUE : FALSE );
+
+	m_bGroupMode = bEnable;
 }
 
-Void WinGUITable::GetViewOrigin( WinGUIPoint * outOrigin ) const
+Void WinGUITable::ToggleHeadersInAllViews( Bool bEnable )
 {
 	HWND hHandle = (HWND)m_hHandle;
 
-	POINT hPt;
-	ListView_GetOrigin( hHandle, &hPt );
+	DWORD dwMask = LVS_EX_HEADERINALLVIEWS;
+	if ( bEnable ) {
+		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, LVS_EX_HEADERINALLVIEWS );
+	} else {
+		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, 0 );
+	}
 
-	outOrigin->iX = hPt.x;
-	outOrigin->iY = hPt.y;
+	m_bHasHeadersInAllViews = bEnable;
 }
-Void WinGUITable::GetIconViewRect( WinGUIRectangle * outRectangle ) const
+
+Void WinGUITable::ToggleCheckBoxes( Bool bEnable )
 {
-	DebugAssert( m_iViewMode == WINGUI_TABLE_VIEW_ICONS || m_iViewMode == WINGUI_TABLE_VIEW_ICONS_SMALL );
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_CHECKBOXES;
+	if ( bEnable ) {
+		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, LVS_EX_CHECKBOXES );
+	} else {
+		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, 0 );
+	}
+
+	m_bHasCheckBoxes = bEnable;
+}
+Void WinGUITable::ToggleAutoCheckOnSelect( Bool bEnable )
+{
+	DebugAssert( m_bHasCheckBoxes );
 
 	HWND hHandle = (HWND)m_hHandle;
 
-	RECT hRect;
-	ListView_GetViewRect( hHandle, &hRect );
-
-	outRectangle->iLeft = hRect.left;
-	outRectangle->iTop = hRect.top;
-	outRectangle->iWidth = ( hRect.right - hRect.left );
-	outRectangle->iHeight = ( hRect.bottom - hRect.top );
+	DWORD dwMask = LVS_EX_AUTOCHECKSELECT;
+	if ( bEnable ) {
+		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, LVS_EX_AUTOCHECKSELECT );
+	} else {
+		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, 0 );
+	}
 }
 
-Bool WinGUITable::IsItemVisible( UInt iIndex ) const
+Void WinGUITable::ToggleEditableLabels( Bool bEnable )
 {
 	HWND hHandle = (HWND)m_hHandle;
-	return ( ListView_IsItemVisible(hHandle, iIndex) != FALSE );
+
+	DWORD dwStyle = GetWindowLong( hHandle, GWL_STYLE );
+	if ( bEnable ) {
+		dwStyle |= LVS_EDITLABELS;
+	} else {
+		dwStyle &= (~LVS_EDITLABELS);
+	}
+	SetWindowLong( hHandle, GWL_STYLE, dwStyle );
+
+	m_bHasEditableLabels = bEnable;
 }
 
-UInt WinGUITable::GetFirstVisibleItem() const
-{
-	HWND hHandle = (HWND)m_hHandle;
-	return ListView_GetTopIndex( hHandle );
-}
-UInt WinGUITable::GetVisibleItemCount() const
-{
-	HWND hHandle = (HWND)m_hHandle;
-	return ListView_GetCountPerPage( hHandle );
-}
-Void WinGUITable::GetIconSpacing( UInt * outSpacingH, UInt * outSpacingV, Bool bSmallIcons ) const
-{
-	HWND hHandle = (HWND)m_hHandle;
-	
-	DWord dwSpacing = ListView_GetItemSpacing( hHandle, bSmallIcons ? TRUE : FALSE );
-
-	*outSpacingH = LOWORD(dwSpacing);
-	*outSpacingV = HIWORD(dwSpacing);
-}
-Void WinGUITable::SetIconSpacing( UInt iSpacingH, UInt iSpacingV )
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_SetIconSpacing( hHandle, iSpacingH, iSpacingV );
-}
-
-Void WinGUITable::GetEmptyText( GChar * outText, UInt iMaxLength ) const
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_GetEmptyText( hHandle, outText, iMaxLength );
-}
-
+// Visual Settings //////////////////////////////////////////////////////////////
 UInt WinGUITable::GetBackgroundColor() const
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -292,18 +292,10 @@ Void WinGUITable::SetBorderSelectionColor( UInt iColor )
 	ListView_SetOutlineColor( hHandle, iColor );
 }
 
-Void WinGUITable::GetInsertionMarkMetrics( WinGUIRectangle * outRectangle, UInt * outColor ) const
+UInt WinGUITable::GetInsertionMarkColor() const
 {
 	HWND hHandle = (HWND)m_hHandle;
-
-	RECT hRect;
-	ListView_GetInsertMarkRect( hHandle, &hRect );
-
-	outRectangle->iLeft = hRect.left;
-	outRectangle->iTop = hRect.top;
-	outRectangle->iWidth = ( hRect.right - hRect.left );
-	outRectangle->iHeight = ( hRect.bottom - hRect.top );
-	*outColor = ListView_GetInsertMarkColor( hHandle );
+	return ListView_GetInsertMarkColor( hHandle );
 }
 Void WinGUITable::SetInsertionMarkColor( UInt iColor )
 {
@@ -311,170 +303,10 @@ Void WinGUITable::SetInsertionMarkColor( UInt iColor )
 	ListView_SetInsertMarkColor( hHandle, iColor );
 }
 
-Void WinGUITable::GetGroupMetrics( WinGUIPoint * outBorderSizeLeftTop, WinGUIPoint * outBorderSizeRightBottom ) const
-{
-	DebugAssert( m_bGroupMode );
-
-	HWND hHandle = (HWND)m_hHandle;
-
-	LVGROUPMETRICS hGroupMetrics;
-	hGroupMetrics.cbSize = sizeof(LVGROUPMETRICS);
-	hGroupMetrics.mask = LVGMF_BORDERSIZE; // Other fields are unimplemented
-
-	ListView_GetGroupMetrics( hHandle, &hGroupMetrics );
-
-	outBorderSizeLeftTop->iX = hGroupMetrics.Left;
-	outBorderSizeLeftTop->iY = hGroupMetrics.Top;
-
-	outBorderSizeRightBottom->iX = hGroupMetrics.Right;
-	outBorderSizeRightBottom->iY = hGroupMetrics.Bottom;
-}
-Void WinGUITable::SetGroupMetrics( const WinGUIPoint & hBorderSizeLeftTop, const WinGUIPoint & hBorderSizeRightBottom )
-{
-	DebugAssert( m_bGroupMode );
-
-	HWND hHandle = (HWND)m_hHandle;
-
-	LVGROUPMETRICS hGroupMetrics;
-	hGroupMetrics.cbSize = sizeof(LVGROUPMETRICS);
-	hGroupMetrics.mask = LVGMF_BORDERSIZE; // Other fields are unimplemented
-
-	hGroupMetrics.Left = hBorderSizeLeftTop.iX;
-	hGroupMetrics.Top = hBorderSizeLeftTop.iY;
-
-	hGroupMetrics.Right = hBorderSizeRightBottom.iX;
-	hGroupMetrics.Bottom = hBorderSizeRightBottom.iY;
-
-	ListView_SetGroupMetrics( hHandle, &hGroupMetrics );
-}
-
-Void WinGUITable::GetGroupRect( WinGUIRectangle * outRectangle, UInt iGroupID, Bool bCollapsed, Bool bLabelOnly ) const
-{
-	DebugAssert( m_bGroupMode );
-
-	HWND hHandle = (HWND)m_hHandle;
-
-	LONG iType = 0;
-	if ( bLabelOnly )
-		iType = LVGGR_LABEL;
-	else if ( bCollapsed )
-		iType = LVGGR_HEADER;
-	else
-		iType = LVGGR_GROUP;
-
-	RECT hRect;
-	ListView_GetGroupRect( hHandle, iGroupID, iType, &hRect );
-
-	outRectangle->iLeft = hRect.left;
-	outRectangle->iTop = hRect.top;
-	outRectangle->iWidth = ( hRect.right - hRect.left );
-	outRectangle->iHeight = ( hRect.bottom - hRect.top );
-}
-
-Void WinGUITable::GetItemPosition( WinGUIPoint * outPosition, UInt iIndex ) const
+Void WinGUITable::GetEmptyText( GChar * outText, UInt iMaxLength ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
-
-	POINT hPt;
-	ListView_GetItemPosition( hHandle, iIndex, &hPt );
-
-	outPosition->iX = hPt.x;
-	outPosition->iY = hPt.y;
-}
-Void WinGUITable::GetItemRect( WinGUIRectangle * outRectangle, UInt iIndex, Bool bIconOnly, Bool bLabelOnly ) const
-{
-	HWND hHandle = (HWND)m_hHandle;
-
-	UInt iCode = LVIR_BOUNDS;
-	if ( bIconOnly )
-		iCode |= LVIR_ICON;
-	if ( bLabelOnly )
-		iCode |= LVIR_LABEL;
-	// Both combined = LVIR_SELECTBOUNDS
-
-	RECT hRect;
-	ListView_GetItemRect( hHandle, iIndex, &hRect, iCode );
-
-	outRectangle->iLeft = hRect.left;
-	outRectangle->iTop = hRect.top;
-	outRectangle->iWidth = ( hRect.right - hRect.left );
-	outRectangle->iHeight = ( hRect.bottom - hRect.top );
-}
-Void WinGUITable::GetSubItemRect( WinGUIRectangle * outRectangle, UInt iIndex, UInt iSubItem, Bool bIconOnly, Bool bLabelOnly ) const
-{
-	HWND hHandle = (HWND)m_hHandle;
-
-	UInt iCode = LVIR_BOUNDS;
-	if ( bIconOnly )
-		iCode |= LVIR_ICON;
-	if ( bLabelOnly )
-		iCode |= LVIR_LABEL;
-	DebugAssert( iCode != LVIR_SELECTBOUNDS ); // Both combined = LVIR_SELECTBOUNDS, NOT ALLOWED HERE
-
-	RECT hRect;
-	ListView_GetSubItemRect( hHandle, iIndex, (1 + iSubItem), iCode, &hRect );
-
-	outRectangle->iLeft = hRect.left;
-	outRectangle->iTop = hRect.top;
-	outRectangle->iWidth = ( hRect.right - hRect.left );
-	outRectangle->iHeight = ( hRect.bottom - hRect.top );
-}
-Void WinGUITable::GetSubItemRect( WinGUIRectangle * outRectangle, UInt iGroupIndex, UInt iIndex, UInt iSubItem, Bool bIconOnly, Bool bLabelOnly ) const
-{
-	HWND hHandle = (HWND)m_hHandle;
-
-	UInt iCode = LVIR_BOUNDS;
-	if ( bIconOnly )
-		iCode |= LVIR_ICON;
-	if ( bLabelOnly )
-		iCode |= LVIR_LABEL;
-	DebugAssert( iCode != LVIR_SELECTBOUNDS ); // Both combined = LVIR_SELECTBOUNDS, NOT ALLOWED HERE
-
-	LVITEMINDEX hItemIndex;
-	hItemIndex.iGroup = iGroupIndex;
-	hItemIndex.iItem = iIndex;
-
-	RECT hRect;
-	ListView_GetItemIndexRect( hHandle, &hItemIndex, (1 + iSubItem), iCode, &hRect );
-
-	outRectangle->iLeft = hRect.left;
-	outRectangle->iTop = hRect.top;
-	outRectangle->iWidth = ( hRect.right - hRect.left );
-	outRectangle->iHeight = ( hRect.bottom - hRect.top );
-}
-
-Void WinGUITable::SetItemIconPosition( UInt iIndex, const WinGUIPoint & hPosition )
-{
-	DebugAssert( m_iViewMode == WINGUI_TABLE_VIEW_ICONS || m_iViewMode == WINGUI_TABLE_VIEW_ICONS_SMALL );
-
-	HWND hHandle = (HWND)m_hHandle;
-
-	ListView_SetItemPosition( hHandle, iIndex, hPosition.iX, hPosition.iY );
-}
-
-Void WinGUITable::GetTileMetrics( WinGUITableTileMetrics * outTileMetrics ) const
-{
-	HWND hHandle = (HWND)m_hHandle;
-
-	LVTILEVIEWINFO hTileViewInfos;
-	hTileViewInfos.cbSize = sizeof(LVTILEVIEWINFO);
-	hTileViewInfos.dwMask = LVTVIM_TILESIZE | LVTVIM_COLUMNS | LVTVIM_LABELMARGIN;
-
-	ListView_GetTileViewInfo( hHandle, &hTileViewInfos );
-
-	_Convert_TileMetrics( outTileMetrics, &hTileViewInfos );
-}
-Void WinGUITable::SetTileMetrics( const WinGUITableTileMetrics * pTileMetrics )
-{
-	HWND hHandle = (HWND)m_hHandle;
-
-	LVTILEVIEWINFO hTileViewInfos;
-	hTileViewInfos.cbSize = sizeof(LVTILEVIEWINFO);
-	hTileViewInfos.dwMask = LVTVIM_TILESIZE | LVTVIM_COLUMNS | LVTVIM_LABELMARGIN;
-
-	_Convert_TileMetrics( &hTileViewInfos, pTileMetrics );
-
-	ListView_SetTileViewInfo( hHandle, &hTileViewInfos );
+	ListView_GetEmptyText( hHandle, outText, iMaxLength );
 }
 
 Void WinGUITable::GetImageListIcons( WinGUIImageList * outImageList ) const
@@ -550,14 +382,272 @@ Void WinGUITable::SetImageListStates( const WinGUIImageList * pImageList )
 	ListView_SetImageList( hHandle, (HIMAGELIST)(pImageList->m_hHandle), LVSIL_STATE );
 }
 
-Void WinGUITable::ForceRedraw( UInt iFirstItem, UInt iLastItem, Bool bImmediate )
+// Metrics //////////////////////////////////////////////////////////////////////
+Void WinGUITable::GetViewOrigin( WinGUIPoint * outOrigin ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
-	ListView_RedrawItems( hHandle, iFirstItem, iLastItem );
-	if ( bImmediate )
-		UpdateWindow( hHandle );
+
+	POINT hPt;
+	ListView_GetOrigin( hHandle, &hPt );
+
+	outOrigin->iX = hPt.x;
+	outOrigin->iY = hPt.y;
+}
+Void WinGUITable::GetViewRect( WinGUIRectangle * outRectangle ) const
+{
+	DebugAssert( m_iViewMode == WINGUI_TABLE_VIEW_ICONS || m_iViewMode == WINGUI_TABLE_VIEW_ICONS_SMALL );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	RECT hRect;
+	ListView_GetViewRect( hHandle, &hRect );
+
+	outRectangle->iLeft = hRect.left;
+	outRectangle->iTop = hRect.top;
+	outRectangle->iWidth = ( hRect.right - hRect.left );
+	outRectangle->iHeight = ( hRect.bottom - hRect.top );
 }
 
+Void WinGUITable::GetRequiredDimensions( UInt * pWidth, UInt * pHeight, UInt iItemCount ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWord dwResult = ListView_ApproximateViewRect( hHandle, *pWidth, *pHeight, iItemCount );
+	*pWidth = (UInt)( LOWORD(dwResult) );
+	*pHeight = (UInt)( HIWORD(dwResult) );
+}
+UInt WinGUITable::GetStringWidth( const GChar * strText ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+	return ListView_GetStringWidth( hHandle, strText );
+}
+
+Void WinGUITable::GetIconSpacing( UInt * outSpacingH, UInt * outSpacingV, Bool bSmallIcons ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+	
+	DWord dwSpacing = ListView_GetItemSpacing( hHandle, bSmallIcons ? TRUE : FALSE );
+
+	*outSpacingH = LOWORD(dwSpacing);
+	*outSpacingV = HIWORD(dwSpacing);
+}
+Void WinGUITable::SetIconSpacing( UInt iSpacingH, UInt iSpacingV )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_SetIconSpacing( hHandle, iSpacingH, iSpacingV );
+}
+
+Void WinGUITable::GetItemPosition( WinGUIPoint * outPosition, UInt iItemIndex ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	POINT hPt;
+	ListView_GetItemPosition( hHandle, iItemIndex, &hPt );
+
+	outPosition->iX = hPt.x;
+	outPosition->iY = hPt.y;
+}
+Void WinGUITable::GetItemRect( WinGUIRectangle * outRectangle, UInt iItemIndex, Bool bIconOnly, Bool bLabelOnly ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	UInt iCode = LVIR_BOUNDS;
+	if ( bIconOnly )
+		iCode |= LVIR_ICON;
+	if ( bLabelOnly )
+		iCode |= LVIR_LABEL;
+	// Both combined = LVIR_SELECTBOUNDS
+
+	RECT hRect;
+	ListView_GetItemRect( hHandle, iItemIndex, &hRect, iCode );
+
+	outRectangle->iLeft = hRect.left;
+	outRectangle->iTop = hRect.top;
+	outRectangle->iWidth = ( hRect.right - hRect.left );
+	outRectangle->iHeight = ( hRect.bottom - hRect.top );
+}
+Void WinGUITable::GetSubItemRect( WinGUIRectangle * outRectangle, UInt iItemIndex, UInt iSubItemIndex, Bool bIconOnly, Bool bLabelOnly ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	UInt iCode = LVIR_BOUNDS;
+	if ( bIconOnly )
+		iCode |= LVIR_ICON;
+	if ( bLabelOnly )
+		iCode |= LVIR_LABEL;
+	DebugAssert( iCode != LVIR_SELECTBOUNDS ); // Both combined = LVIR_SELECTBOUNDS, NOT ALLOWED HERE
+
+	RECT hRect;
+	ListView_GetSubItemRect( hHandle, iItemIndex, (1 + iSubItemIndex), iCode, &hRect );
+
+	outRectangle->iLeft = hRect.left;
+	outRectangle->iTop = hRect.top;
+	outRectangle->iWidth = ( hRect.right - hRect.left );
+	outRectangle->iHeight = ( hRect.bottom - hRect.top );
+}
+Void WinGUITable::GetSubItemRect( WinGUIRectangle * outRectangle, UInt iGroupIndex, UInt iItemIndex, UInt iSubItemIndex, Bool bIconOnly, Bool bLabelOnly ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	UInt iCode = LVIR_BOUNDS;
+	if ( bIconOnly )
+		iCode |= LVIR_ICON;
+	if ( bLabelOnly )
+		iCode |= LVIR_LABEL;
+	DebugAssert( iCode != LVIR_SELECTBOUNDS ); // Both combined = LVIR_SELECTBOUNDS, NOT ALLOWED HERE
+
+	LVITEMINDEX hItemIndex;
+	hItemIndex.iGroup = iGroupIndex;
+	hItemIndex.iItem = iItemIndex;
+
+	RECT hRect;
+	ListView_GetItemIndexRect( hHandle, &hItemIndex, (1 + iSubItemIndex), iCode, &hRect );
+
+	outRectangle->iLeft = hRect.left;
+	outRectangle->iTop = hRect.top;
+	outRectangle->iWidth = ( hRect.right - hRect.left );
+	outRectangle->iHeight = ( hRect.bottom - hRect.top );
+}
+
+Void WinGUITable::GetGroupMetrics( WinGUIPoint * outBorderSizeLeftTop, WinGUIPoint * outBorderSizeRightBottom ) const
+{
+	DebugAssert( m_bGroupMode );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	LVGROUPMETRICS hGroupMetrics;
+	hGroupMetrics.cbSize = sizeof(LVGROUPMETRICS);
+	hGroupMetrics.mask = LVGMF_BORDERSIZE; // Other fields are unimplemented
+
+	ListView_GetGroupMetrics( hHandle, &hGroupMetrics );
+
+	outBorderSizeLeftTop->iX = hGroupMetrics.Left;
+	outBorderSizeLeftTop->iY = hGroupMetrics.Top;
+
+	outBorderSizeRightBottom->iX = hGroupMetrics.Right;
+	outBorderSizeRightBottom->iY = hGroupMetrics.Bottom;
+}
+Void WinGUITable::SetGroupMetrics( const WinGUIPoint & hBorderSizeLeftTop, const WinGUIPoint & hBorderSizeRightBottom )
+{
+	DebugAssert( m_bGroupMode );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	LVGROUPMETRICS hGroupMetrics;
+	hGroupMetrics.cbSize = sizeof(LVGROUPMETRICS);
+	hGroupMetrics.mask = LVGMF_BORDERSIZE; // Other fields are unimplemented
+
+	hGroupMetrics.Left = hBorderSizeLeftTop.iX;
+	hGroupMetrics.Top = hBorderSizeLeftTop.iY;
+
+	hGroupMetrics.Right = hBorderSizeRightBottom.iX;
+	hGroupMetrics.Bottom = hBorderSizeRightBottom.iY;
+
+	ListView_SetGroupMetrics( hHandle, &hGroupMetrics );
+}
+
+Void WinGUITable::GetGroupRect( WinGUIRectangle * outRectangle, UInt iGroupID, Bool bCollapsed, Bool bLabelOnly ) const
+{
+	DebugAssert( m_bGroupMode );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	LONG iType = 0;
+	if ( bLabelOnly )
+		iType = LVGGR_LABEL;
+	else if ( bCollapsed )
+		iType = LVGGR_HEADER;
+	else
+		iType = LVGGR_GROUP;
+
+	RECT hRect;
+	ListView_GetGroupRect( hHandle, iGroupID, iType, &hRect );
+
+	outRectangle->iLeft = hRect.left;
+	outRectangle->iTop = hRect.top;
+	outRectangle->iWidth = ( hRect.right - hRect.left );
+	outRectangle->iHeight = ( hRect.bottom - hRect.top );
+}
+
+Void WinGUITable::GetTileMetrics( WinGUITableTileMetrics * outTileMetrics ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	LVTILEVIEWINFO hTileViewInfos;
+	hTileViewInfos.cbSize = sizeof(LVTILEVIEWINFO);
+	hTileViewInfos.dwMask = LVTVIM_TILESIZE | LVTVIM_COLUMNS | LVTVIM_LABELMARGIN;
+
+	ListView_GetTileViewInfo( hHandle, &hTileViewInfos );
+
+	_Convert_TileMetrics( outTileMetrics, &hTileViewInfos );
+}
+Void WinGUITable::SetTileMetrics( const WinGUITableTileMetrics * pTileMetrics )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	LVTILEVIEWINFO hTileViewInfos;
+	hTileViewInfos.cbSize = sizeof(LVTILEVIEWINFO);
+	hTileViewInfos.dwMask = LVTVIM_TILESIZE | LVTVIM_COLUMNS | LVTVIM_LABELMARGIN;
+
+	_Convert_TileMetrics( &hTileViewInfos, pTileMetrics );
+
+	ListView_SetTileViewInfo( hHandle, &hTileViewInfos );
+}
+
+Void WinGUITable::GetInsertionMarkMetrics( WinGUIRectangle * outRectangle ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	RECT hRect;
+	ListView_GetInsertMarkRect( hHandle, &hRect );
+
+	outRectangle->iLeft = hRect.left;
+	outRectangle->iTop = hRect.top;
+	outRectangle->iWidth = ( hRect.right - hRect.left );
+	outRectangle->iHeight = ( hRect.bottom - hRect.top );
+}
+
+Void WinGUITable::HitTest( WinGUITableHitTestResult * outResult, const WinGUIPoint & hPoint ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	LVHITTESTINFO hHitTestInfos;
+	hHitTestInfos.pt.x = hPoint.iX;
+	hHitTestInfos.pt.y = hPoint.iY;
+
+	ListView_HitTestEx( hHandle, &hHitTestInfos );
+
+	outResult->hPoint.iX = hPoint.iX;
+	outResult->hPoint.iY = hPoint.iY;
+
+	outResult->iGroupIndex = hHitTestInfos.iGroup;
+	outResult->iItemIndex = hHitTestInfos.iItem;
+	outResult->iSubItemIndex = ( hHitTestInfos.iSubItem - 1 );
+
+	outResult->bOutsideAbove = ( (hHitTestInfos.flags & LVHT_ABOVE) != 0 );
+	outResult->bOutsideBelow = ( (hHitTestInfos.flags & LVHT_BELOW) != 0 );
+	outResult->bOutsideLeft = ( (hHitTestInfos.flags & LVHT_TOLEFT) != 0 );
+	outResult->bOutsideRight = ( (hHitTestInfos.flags & LVHT_TORIGHT) != 0 );
+
+	outResult->bInsideNoWhere = ( (hHitTestInfos.flags & LVHT_NOWHERE) != 0 );
+
+	outResult->bOnItem = ( (hHitTestInfos.flags & LVHT_EX_ONCONTENTS) != 0 );
+	outResult->bOnItemIcon = ( (hHitTestInfos.flags & LVHT_ONITEMICON) != 0 );
+	outResult->bOnItemLabel = ( (hHitTestInfos.flags & LVHT_ONITEMLABEL) != 0 );
+	outResult->bOnItemStateIcon = ( (hHitTestInfos.flags & LVHT_ONITEMSTATEICON) != 0 );
+
+	outResult->bOnGroup = ( (hHitTestInfos.flags & LVHT_EX_GROUP) != 0 );
+	outResult->bOnGroupHeader = ( (hHitTestInfos.flags & LVHT_EX_GROUP_HEADER) != 0 );
+	outResult->bOnGroupFooter = ( (hHitTestInfos.flags & LVHT_EX_GROUP_FOOTER) != 0 );
+	outResult->bOnGroupBackground = ( (hHitTestInfos.flags & LVHT_EX_GROUP_BACKGROUND) != 0 );
+	outResult->bOnGroupExpandCollapse = ( (hHitTestInfos.flags & LVHT_EX_GROUP_COLLAPSE) != 0 );
+	outResult->bOnGroupStateIcon = ( (hHitTestInfos.flags & LVHT_EX_GROUP_STATEICON) != 0 );
+	outResult->bOnGroupSubSetLink = ( (hHitTestInfos.flags & LVHT_EX_GROUP_SUBSETLINK) != 0 );
+
+	outResult->bOnFooter = ( (hHitTestInfos.flags & LVHT_EX_FOOTER) != 0 );
+}
+
+// Scroll Operations ////////////////////////////////////////////////////////////
 Void WinGUITable::Scroll( Int iScrollH, Int iScrollV )
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -569,20 +659,16 @@ Void WinGUITable::ScrollToItem( UInt iIndex, Bool bAllowPartial )
 	ListView_EnsureVisible( hHandle, iIndex, bAllowPartial ? TRUE : FALSE );
 }
 
-Void WinGUITable::GetColumnInfos( WinGUITableColumnInfos * outInfos, UInt iIndex ) const
+// Column Operations ////////////////////////////////////////////////////////////
+UInt WinGUITable::GetColumnWidth( UInt iIndex ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
-
-	LVCOLUMN hColumnInfos;
-	hColumnInfos.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM | LVCF_IMAGE
-		              | LVCF_ORDER | LVCF_MINWIDTH | LVCF_DEFAULTWIDTH | LVCF_IDEALWIDTH;
-
-	hColumnInfos.pszText = outInfos->strHeaderText;
-	hColumnInfos.cchTextMax = 64;
-
-	ListView_GetColumn( hHandle, (1 + iIndex), &hColumnInfos );
-
-	_Convert_ColumnInfos( outInfos, &hColumnInfos );
+	return ListView_GetColumnWidth( hHandle, iIndex );
+}
+Void WinGUITable::SetColumnWidth( UInt iIndex, UInt iWidth )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_SetColumnWidth( hHandle, iIndex, iWidth );
 }
 
 Void WinGUITable::GetColumnOrder( UInt * outOrderedIndices, UInt iCount ) const
@@ -596,26 +682,20 @@ Void WinGUITable::SetColumnOrder( const UInt * arrOrderedIndices, UInt iCount )
 	ListView_SetColumnOrderArray( hHandle, iCount, arrOrderedIndices );
 }
 
-UInt WinGUITable::GetColumnWidth( UInt iIndex ) const
+Void WinGUITable::GetColumn( WinGUITableColumnInfos * outInfos, UInt iIndex ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
-	return ListView_GetColumnWidth( hHandle, iIndex );
-}
-Void WinGUITable::SetColumnWidth( UInt iIndex, UInt iWidth )
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_SetColumnWidth( hHandle, iIndex, iWidth );
-}
 
-UInt WinGUITable::GetSelectedColumn() const
-{
-	HWND hHandle = (HWND)m_hHandle;
-	return ListView_GetSelectedColumn( hHandle );
-}
-Void WinGUITable::SelectColumn( UInt iIndex )
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_SetSelectedColumn( hHandle, iIndex );
+	LVCOLUMN hColumnInfos;
+	hColumnInfos.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM | LVCF_IMAGE
+		              | LVCF_ORDER | LVCF_MINWIDTH | LVCF_DEFAULTWIDTH | LVCF_IDEALWIDTH;
+
+	hColumnInfos.pszText = outInfos->strHeaderText;
+	hColumnInfos.cchTextMax = 64;
+
+	ListView_GetColumn( hHandle, (1 + iIndex), &hColumnInfos );
+
+	_Convert_ColumnInfos( outInfos, &hColumnInfos );
 }
 
 Void WinGUITable::AddColumn( UInt iIndex, const WinGUITableColumnInfos * pColumnInfos )
@@ -648,71 +728,76 @@ Void WinGUITable::RemoveColumn( UInt iIndex )
 	ListView_DeleteColumn( hHandle, iIndex );
 }
 
+UInt WinGUITable::GetSelectedColumn() const
+{
+	HWND hHandle = (HWND)m_hHandle;
+	return ListView_GetSelectedColumn( hHandle );
+}
+Void WinGUITable::SelectColumn( UInt iIndex )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_SetSelectedColumn( hHandle, iIndex );
+}
+
+// Item Operations //////////////////////////////////////////////////////////////
+Bool WinGUITable::IsItemVisible( UInt iItemIndex ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+	return ( ListView_IsItemVisible(hHandle, iItemIndex) != FALSE );
+}
+UInt WinGUITable::GetFirstVisibleItem() const
+{
+	HWND hHandle = (HWND)m_hHandle;
+	return ListView_GetTopIndex( hHandle );
+}
+UInt WinGUITable::GetVisibleItemCount() const
+{
+	HWND hHandle = (HWND)m_hHandle;
+	return ListView_GetCountPerPage( hHandle );
+}
+
+Void WinGUITable::SetItemIconPosition( UInt iItemIndex, const WinGUIPoint & hPosition )
+{
+	DebugAssert( m_iViewMode == WINGUI_TABLE_VIEW_ICONS || m_iViewMode == WINGUI_TABLE_VIEW_ICONS_SMALL );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	ListView_SetItemPosition( hHandle, iItemIndex, hPosition.iX, hPosition.iY );
+}
+
 UInt WinGUITable::GetItemCount() const
 {
 	HWND hHandle = (HWND)m_hHandle;
 	return ListView_GetItemCount( hHandle );
 }
-
-UInt WinGUITable::GetMultiSelectMark() const
-{
-	HWND hHandle = (HWND)m_hHandle;
-	return ListView_GetSelectionMark( hHandle );
-}
-Void WinGUITable::SetMultiSelectMark( UInt iIndex )
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_SetSelectionMark( hHandle, iIndex );
-}
-
-UInt WinGUITable::GetSelectedItemCount() const
-{
-	HWND hHandle = (HWND)m_hHandle;
-	return ListView_GetSelectedCount( hHandle );
-}
-
-UInt WinGUITable::GetInsertionMark( Bool * outInsertAfter ) const
+Void WinGUITable::GetItem( WinGUITableItemInfos * outItemInfos, UInt iItemIndex, UInt iSubItemIndex ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
 
-	LVINSERTMARK hInsertMark;
-	hInsertMark.cbSize = sizeof(LVINSERTMARK);
-	ListView_GetInsertMark( hHandle, &hInsertMark );
+	LVITEM hItemInfos;
+	hItemInfos.mask = LVIF_GROUPID | LVIF_TEXT | LVIF_PARAM | LVIF_COLUMNS | LVIF_COLFMT | LVIF_INDENT | LVIF_IMAGE | LVIF_STATE;
+	hItemInfos.stateMask = 0xffffffff;
 
-	*outInsertAfter = ( (hInsertMark.dwFlags & LVIM_AFTER) != 0 );
-	return hInsertMark.iItem;
-}
-UInt WinGUITable::GetInsertionMark( Bool * outInsertAfter, const WinGUIPoint & hPoint ) const
-{
-	HWND hHandle = (HWND)m_hHandle;
+	hItemInfos.iItem = iItemIndex;
+	hItemInfos.iSubItem = 0;
+	if ( iSubItemIndex != INVALID_OFFSET )
+		hItemInfos.iSubItem = ( 1 + iSubItemIndex );
 
-	LVINSERTMARK hInsertMark;
-	hInsertMark.cbSize = sizeof(LVINSERTMARK);
+	hItemInfos.pszText = outItemInfos->strLabelText;
+	hItemInfos.cchTextMax = 64;
 
-	POINT hPt;
-	hPt.x = hPoint.iX;
-	hPt.y = hPoint.iY;
+	hItemInfos.cColumns = 32;
+	static UInt arrTempIndices[32];
+	hItemInfos.puColumns = arrTempIndices;
+	static Int arrTempFormats[32];
+	hItemInfos.piColFmt = arrTempFormats;
 
-	ListView_InsertMarkHitTest( hHandle, &hPt, &hInsertMark );
+	ListView_GetItem( hHandle, &hItemInfos );
 
-	*outInsertAfter = ( (hInsertMark.dwFlags & LVIM_AFTER) != 0 );
-	return hInsertMark.iItem;
-}
-Void WinGUITable::SetInsertionMark( UInt iIndex, Bool bInsertAfter )
-{
-	HWND hHandle = (HWND)m_hHandle;
-
-	LVINSERTMARK hInsertMark;
-	hInsertMark.cbSize = sizeof(LVINSERTMARK);
-	hInsertMark.iItem = iIndex;
-	hInsertMark.dwFlags = 0;
-	if ( bInsertAfter )
-		hInsertMark.dwFlags |= LVIM_AFTER;
-
-	ListView_SetInsertMark( hHandle, &hInsertMark );
+	_Convert_ItemInfos( outItemInfos, &hItemInfos );
 }
 
-Void WinGUITable::AddItem( UInt iIndex, const WinGUITableItemInfos * pItemInfos )
+Void WinGUITable::AddItem( UInt iItemIndex, const WinGUITableItemInfos * pItemInfos )
 {
 	HWND hHandle = (HWND)m_hHandle;
 
@@ -727,7 +812,7 @@ Void WinGUITable::AddItem( UInt iIndex, const WinGUITableItemInfos * pItemInfos 
 
 	_Convert_ItemInfos( &hItemInfos, pItemInfos );
 
-	hItemInfos.iItem = iIndex;
+	hItemInfos.iItem = iItemIndex;
 	hItemInfos.iSubItem = 0;
 
 	ListView_InsertItem( hHandle, &hItemInfos );
@@ -772,10 +857,10 @@ Void WinGUITable::SetSubItem( UInt iItemIndex, UInt iSubItemIndex, const WinGUIT
 
 	ListView_SetItem( hHandle, &hItemInfos );
 }
-Void WinGUITable::RemoveItem( UInt iIndex )
+Void WinGUITable::RemoveItem( UInt iItemIndex )
 {
 	HWND hHandle = (HWND)m_hHandle;
-	ListView_DeleteItem( hHandle, iIndex );
+	ListView_DeleteItem( hHandle, iItemIndex );
 }
 Void WinGUITable::RemoveAllItems()
 {
@@ -783,14 +868,119 @@ Void WinGUITable::RemoveAllItems()
 	ListView_DeleteAllItems( hHandle );
 }
 
-Void WinGUITable::EnableGroups( Bool bEnable )
+UInt WinGUITable::GetSelectedItemCount() const
 {
 	HWND hHandle = (HWND)m_hHandle;
-	ListView_EnableGroupView( hHandle, bEnable ? TRUE : FALSE );
-
-	m_bGroupMode = bEnable;
+	return ListView_GetSelectedCount( hHandle );
+}
+UInt WinGUITable::GetMultiSelectMark() const
+{
+	HWND hHandle = (HWND)m_hHandle;
+	return ListView_GetSelectionMark( hHandle );
+}
+Void WinGUITable::SetMultiSelectMark( UInt iItemIndex )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_SetSelectionMark( hHandle, iItemIndex );
 }
 
+UInt WinGUITable::GetInsertionMark( Bool * outInsertAfter ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	LVINSERTMARK hInsertMark;
+	hInsertMark.cbSize = sizeof(LVINSERTMARK);
+	ListView_GetInsertMark( hHandle, &hInsertMark );
+
+	*outInsertAfter = ( (hInsertMark.dwFlags & LVIM_AFTER) != 0 );
+	return hInsertMark.iItem;
+}
+UInt WinGUITable::GetInsertionMark( Bool * outInsertAfter, const WinGUIPoint & hPoint ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	LVINSERTMARK hInsertMark;
+	hInsertMark.cbSize = sizeof(LVINSERTMARK);
+
+	POINT hPt;
+	hPt.x = hPoint.iX;
+	hPt.y = hPoint.iY;
+
+	ListView_InsertMarkHitTest( hHandle, &hPt, &hInsertMark );
+
+	*outInsertAfter = ( (hInsertMark.dwFlags & LVIM_AFTER) != 0 );
+	return hInsertMark.iItem;
+}
+Void WinGUITable::SetInsertionMark( UInt iItemIndex, Bool bInsertAfter )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	LVINSERTMARK hInsertMark;
+	hInsertMark.cbSize = sizeof(LVINSERTMARK);
+	hInsertMark.iItem = iItemIndex;
+	hInsertMark.dwFlags = 0;
+	if ( bInsertAfter )
+		hInsertMark.dwFlags |= LVIM_AFTER;
+
+	ListView_SetInsertMark( hHandle, &hInsertMark );
+}
+
+Bool WinGUITable::IsItemChecked( UInt iItemIndex ) const
+{
+	DebugAssert( m_bHasCheckBoxes == true );
+
+	HWND hHandle = (HWND)m_hHandle;
+	return ListView_GetCheckState( hHandle, iItemIndex );
+}
+Void WinGUITable::CheckItem( UInt iItemIndex, Bool bChecked )
+{
+	DebugAssert( m_bHasCheckBoxes == true );
+
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_SetCheckState( hHandle, iItemIndex, bChecked ? TRUE : FALSE );
+}
+
+UInt WinGUITable::AssignItemID( UInt iItemIndex )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	return ListView_MapIndexToID( hHandle, iItemIndex );
+}
+UInt WinGUITable::GetItemFromID( UInt iUniqueID )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	return ListView_MapIDToIndex( hHandle, iUniqueID );
+}
+
+Void WinGUITable::SetItemLabelText( UInt iItemIndex, UInt iSubItemIndex, GChar * strLabelText )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	if ( iSubItemIndex == INVALID_OFFSET )
+		iSubItemIndex = 0;
+	else
+		++iSubItemIndex;
+
+	ListView_SetItemText( hHandle, iItemIndex, iSubItemIndex, strLabelText );
+}
+
+//Void * WinGUITable::EditItemLabelStart( UInt iIndex )
+//{
+//	HWND hHandle = (HWND)m_hHandle;
+//	return ListView_EditLabel( hHandle, iIndex );
+//}
+Void WinGUITable::EditItemLabelCancel()
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_CancelEditLabel( hHandle );
+}
+
+Void WinGUITable::UpdateItem( UInt iItemIndex )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_Update( hHandle, iItemIndex );
+}
+
+// Group Operations /////////////////////////////////////////////////////////////
 Bool WinGUITable::HasGroup( UInt iGroupID ) const
 {
 	DebugAssert( m_bGroupMode );
@@ -806,15 +996,7 @@ UInt WinGUITable::GetGroupCount() const
 	HWND hHandle = (HWND)m_hHandle;
 	return ListView_GetGroupCount( hHandle );
 }
-UInt WinGUITable::GetFocusedGroup() const
-{
-	DebugAssert( m_bGroupMode );
-
-	HWND hHandle = (HWND)m_hHandle;
-	return ListView_GetFocusedGroup( hHandle );
-}
-
-Void WinGUITable::GetGroupInfosByID( WinGUITableGroupInfos * outInfos, UInt iGroupID ) const
+Void WinGUITable::GetGroupByID( WinGUITableGroupInfos * outGroupInfos, UInt iGroupID ) const
 {
 	DebugAssert( m_bGroupMode );
 
@@ -827,26 +1009,26 @@ Void WinGUITable::GetGroupInfosByID( WinGUITableGroupInfos * outInfos, UInt iGro
 		LVGF_TITLEIMAGE | LVGF_EXTENDEDIMAGE | LVGF_SUBSET; // | LVGF_SUBSETITEMS;
 	hGroupInfos.stateMask = 0xff;
 
-	hGroupInfos.pszHeader = outInfos->strHeaderText;
+	hGroupInfos.pszHeader = outGroupInfos->strHeaderText;
 	hGroupInfos.cchHeader = 64;
-	hGroupInfos.pszFooter = outInfos->strFooterText;
+	hGroupInfos.pszFooter = outGroupInfos->strFooterText;
 	hGroupInfos.cchFooter = 64;
-	hGroupInfos.pszSubtitle = outInfos->strSubTitleText;
+	hGroupInfos.pszSubtitle = outGroupInfos->strSubTitleText;
 	hGroupInfos.cchSubtitle = 64;
-	hGroupInfos.pszTask = outInfos->strTaskLinkText;
+	hGroupInfos.pszTask = outGroupInfos->strTaskLinkText;
 	hGroupInfos.cchTask = 64;
-	hGroupInfos.pszDescriptionTop = outInfos->strTopDescriptionText;
+	hGroupInfos.pszDescriptionTop = outGroupInfos->strTopDescriptionText;
 	hGroupInfos.cchDescriptionTop = 64;
-	hGroupInfos.pszDescriptionBottom = outInfos->strBottomDescriptionText;
+	hGroupInfos.pszDescriptionBottom = outGroupInfos->strBottomDescriptionText;
 	hGroupInfos.cchDescriptionBottom = 64;
-	hGroupInfos.pszSubsetTitle = outInfos->strSubSetTitleText;
+	hGroupInfos.pszSubsetTitle = outGroupInfos->strSubSetTitleText;
 	hGroupInfos.cchSubsetTitle = 64;
 
 	ListView_GetGroupInfo( hHandle, iGroupID, &hGroupInfos );
 
-	_Convert_GroupInfos( outInfos, &hGroupInfos );
+	_Convert_GroupInfos( outGroupInfos, &hGroupInfos );
 }
-Void WinGUITable::GetGroupInfosByIndex( WinGUITableGroupInfos * outInfos, UInt iIndex ) const
+Void WinGUITable::GetGroupByIndex( WinGUITableGroupInfos * outGroupInfos, UInt iGroupIndex ) const
 {
 	DebugAssert( m_bGroupMode );
 
@@ -859,27 +1041,27 @@ Void WinGUITable::GetGroupInfosByIndex( WinGUITableGroupInfos * outInfos, UInt i
 		LVGF_TITLEIMAGE | LVGF_EXTENDEDIMAGE | LVGF_SUBSET; // | LVGF_SUBSETITEMS;
 	hGroupInfos.stateMask = 0xff;
 
-	hGroupInfos.pszHeader = outInfos->strHeaderText;
+	hGroupInfos.pszHeader = outGroupInfos->strHeaderText;
 	hGroupInfos.cchHeader = 64;
-	hGroupInfos.pszFooter = outInfos->strFooterText;
+	hGroupInfos.pszFooter = outGroupInfos->strFooterText;
 	hGroupInfos.cchFooter = 64;
-	hGroupInfos.pszSubtitle = outInfos->strSubTitleText;
+	hGroupInfos.pszSubtitle = outGroupInfos->strSubTitleText;
 	hGroupInfos.cchSubtitle = 64;
-	hGroupInfos.pszTask = outInfos->strTaskLinkText;
+	hGroupInfos.pszTask = outGroupInfos->strTaskLinkText;
 	hGroupInfos.cchTask = 64;
-	hGroupInfos.pszDescriptionTop = outInfos->strTopDescriptionText;
+	hGroupInfos.pszDescriptionTop = outGroupInfos->strTopDescriptionText;
 	hGroupInfos.cchDescriptionTop = 64;
-	hGroupInfos.pszDescriptionBottom = outInfos->strBottomDescriptionText;
+	hGroupInfos.pszDescriptionBottom = outGroupInfos->strBottomDescriptionText;
 	hGroupInfos.cchDescriptionBottom = 64;
-	hGroupInfos.pszSubsetTitle = outInfos->strSubSetTitleText;
+	hGroupInfos.pszSubsetTitle = outGroupInfos->strSubSetTitleText;
 	hGroupInfos.cchSubsetTitle = 64;
 
-	ListView_GetGroupInfoByIndex( hHandle, iIndex, &hGroupInfos );
+	ListView_GetGroupInfoByIndex( hHandle, iGroupIndex, &hGroupInfos );
 
-	_Convert_GroupInfos( outInfos, &hGroupInfos );
+	_Convert_GroupInfos( outGroupInfos, &hGroupInfos );
 }
 
-Void WinGUITable::AddGroup( UInt iIndex, const WinGUITableGroupInfos * pGroupInfos )
+Void WinGUITable::AddGroup( UInt iGroupIndex, const WinGUITableGroupInfos * pGroupInfos )
 {
 	DebugAssert( m_bGroupMode );
 
@@ -894,7 +1076,7 @@ Void WinGUITable::AddGroup( UInt iIndex, const WinGUITableGroupInfos * pGroupInf
 
 	_Convert_GroupInfos( &hGroupInfos, pGroupInfos );
 
-	ListView_InsertGroup( hHandle, iIndex, &hGroupInfos );
+	ListView_InsertGroup( hHandle, iGroupIndex, &hGroupInfos );
 }
 Void WinGUITable::AddGroup( const WinGUITableGroupInfos * pGroupInfos, WinGUITableGroupComparator pfComparator, Void * pUserData )
 {
@@ -948,40 +1130,22 @@ Void WinGUITable::RemoveAllGroups()
 	ListView_RemoveAllGroups( hHandle );
 }
 
-Void WinGUITable::GetItemInfos( WinGUITableItemInfos * outInfos, UInt iIndex, UInt iSubItem ) const
+UInt WinGUITable::GetFocusedGroup() const
 {
+	DebugAssert( m_bGroupMode );
+
 	HWND hHandle = (HWND)m_hHandle;
-
-	LVITEM hItemInfos;
-	hItemInfos.mask = LVIF_GROUPID | LVIF_TEXT | LVIF_PARAM | LVIF_COLUMNS | LVIF_COLFMT | LVIF_INDENT | LVIF_IMAGE | LVIF_STATE;
-	hItemInfos.stateMask = 0xffffffff;
-
-	hItemInfos.iItem = iIndex;
-	hItemInfos.iSubItem = 0;
-	if ( iSubItem != INVALID_OFFSET )
-		hItemInfos.iSubItem = ( 1 + iSubItem );
-
-	hItemInfos.pszText = outInfos->strLabelText;
-	hItemInfos.cchTextMax = 64;
-
-	hItemInfos.cColumns = 32;
-	static UInt arrTempIndices[32];
-	hItemInfos.puColumns = arrTempIndices;
-	static Int arrTempFormats[32];
-	hItemInfos.piColFmt = arrTempFormats;
-
-	ListView_GetItem( hHandle, &hItemInfos );
-
-	_Convert_ItemInfos( outInfos, &hItemInfos );
+	return ListView_GetFocusedGroup( hHandle );
 }
 
-Void WinGUITable::GetTileInfos( WinGUITableTileInfos * outInfos, UInt iIndex ) const
+// Tile Operations //////////////////////////////////////////////////////////////
+Void WinGUITable::GetTile( WinGUITableTileInfos * outInfos, UInt iItemIndex ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
 
 	LVTILEINFO hTileInfos;
 	hTileInfos.cbSize = sizeof(LVTILEINFO);
-	hTileInfos.iItem = iIndex;
+	hTileInfos.iItem = iItemIndex;
 
 	hTileInfos.cColumns = 32;
 	static UInt arrTempIndices[32];
@@ -993,7 +1157,7 @@ Void WinGUITable::GetTileInfos( WinGUITableTileInfos * outInfos, UInt iIndex ) c
 
 	_Convert_TileInfos( outInfos, &hTileInfos );
 }
-Void WinGUITable::SetTileInfos( UInt iIndex, const WinGUITableTileInfos * pTileInfos )
+Void WinGUITable::SetTile( UInt iItemIndex, const WinGUITableTileInfos * pTileInfos )
 {
 	HWND hHandle = (HWND)m_hHandle;
 
@@ -1008,66 +1172,12 @@ Void WinGUITable::SetTileInfos( UInt iIndex, const WinGUITableTileInfos * pTileI
 
 	_Convert_TileInfos( &hTileInfos, pTileInfos );
 
-	hTileInfos.iItem = iIndex;
+	hTileInfos.iItem = iItemIndex;
 
 	ListView_SetTileInfo( hHandle, &hTileInfos );
 }
 
-Bool WinGUITable::IsItemChecked( UInt iIndex ) const
-{
-	DebugAssert( m_bHasCheckBoxes == true );
-
-	HWND hHandle = (HWND)m_hHandle;
-	return ListView_GetCheckState( hHandle, iIndex );
-}
-Void WinGUITable::CheckItem( UInt iIndex, Bool bChecked )
-{
-	DebugAssert( m_bHasCheckBoxes == true );
-
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_SetCheckState( hHandle, iIndex, bChecked ? TRUE : FALSE );
-}
-
-Void * WinGUITable::EditItemLabelStart( UInt iIndex )
-{
-	HWND hHandle = (HWND)m_hHandle;
-	return ListView_EditLabel( hHandle, iIndex );
-}
-Void WinGUITable::EditItemLabelCancel()
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_CancelEditLabel( hHandle );
-}
-
-Void WinGUITable::SetItemLabelText( UInt iItemIndex, UInt iSubItemIndex, GChar * strLabelText )
-{
-	HWND hHandle = (HWND)m_hHandle;
-
-	if ( iSubItemIndex == INVALID_OFFSET )
-		iSubItemIndex = 0;
-	else
-		++iSubItemIndex;
-
-	ListView_SetItemText( hHandle, iItemIndex, iSubItemIndex, strLabelText );
-}
-
-Void WinGUITable::UpdateItem( UInt iIndex )
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_Update( hHandle, iIndex );
-}
-
-UInt WinGUITable::AssignItemID( UInt iIndex )
-{
-	HWND hHandle = (HWND)m_hHandle;
-	return ListView_MapIndexToID( hHandle, iIndex );
-}
-UInt WinGUITable::GetItemFromID( UInt iUniqueID )
-{
-	HWND hHandle = (HWND)m_hHandle;
-	return ListView_MapIDToIndex( hHandle, iUniqueID );
-}
-
+// Search Operations ////////////////////////////////////////////////////////////
 UInt WinGUITable::GetIncrementalSearchStringLength() const
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -1240,6 +1350,26 @@ UInt WinGUITable::SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, KeyCo
 	return ListView_GetNextItemIndex( hHandle, &hItemIndex, iFlags );
 }
 
+// Sorting Operations ///////////////////////////////////////////////////////////
+Void WinGUITable::SortGroups( WinGUITableGroupComparator pfComparator, Void * pUserData )
+{
+	DebugAssert( m_bGroupMode );
+
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_SortGroups( hHandle, pfComparator, pUserData );
+}
+Void WinGUITable::SortItemsByIndex( WinGUITableItemComparator pfComparator, Void * pUserData )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_SortItemsEx( hHandle, pfComparator, pUserData );
+}
+Void WinGUITable::SortItemsByData( WinGUITableItemComparator pfComparator, Void * pUserData )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_SortItems( hHandle, pfComparator, pUserData );
+}
+
+// Hot Tracking /////////////////////////////////////////////////////////////////
 UInt WinGUITable::GetHotItem() const
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -1262,64 +1392,11 @@ Void WinGUITable::SetHoverTime( UInt iTimeMS )
 	ListView_SetHoverTime( hHandle, iTimeMS );
 }
 
-Void WinGUITable::HitTest( WinGUITableHitTestResult * outResult, const WinGUIPoint & hPoint ) const
-{
-	HWND hHandle = (HWND)m_hHandle;
+// Work Areas ///////////////////////////////////////////////////////////////////
 
-	LVHITTESTINFO hHitTestInfos;
-	hHitTestInfos.pt.x = hPoint.iX;
-	hHitTestInfos.pt.y = hPoint.iY;
+// Drag & Drop //////////////////////////////////////////////////////////////////
 
-	ListView_HitTestEx( hHandle, &hHitTestInfos );
-
-	outResult->hPoint.iX = hPoint.iX;
-	outResult->hPoint.iY = hPoint.iY;
-
-	outResult->iGroupIndex = hHitTestInfos.iGroup;
-	outResult->iItemIndex = hHitTestInfos.iItem;
-	outResult->iSubItemIndex = ( hHitTestInfos.iSubItem - 1 );
-
-	outResult->bOutsideAbove = ( (hHitTestInfos.flags & LVHT_ABOVE) != 0 );
-	outResult->bOutsideBelow = ( (hHitTestInfos.flags & LVHT_BELOW) != 0 );
-	outResult->bOutsideLeft = ( (hHitTestInfos.flags & LVHT_TOLEFT) != 0 );
-	outResult->bOutsideRight = ( (hHitTestInfos.flags & LVHT_TORIGHT) != 0 );
-
-	outResult->bInsideNoWhere = ( (hHitTestInfos.flags & LVHT_NOWHERE) != 0 );
-
-	outResult->bOnItem = ( (hHitTestInfos.flags & LVHT_EX_ONCONTENTS) != 0 );
-	outResult->bOnItemIcon = ( (hHitTestInfos.flags & LVHT_ONITEMICON) != 0 );
-	outResult->bOnItemLabel = ( (hHitTestInfos.flags & LVHT_ONITEMLABEL) != 0 );
-	outResult->bOnItemStateIcon = ( (hHitTestInfos.flags & LVHT_ONITEMSTATEICON) != 0 );
-
-	outResult->bOnGroup = ( (hHitTestInfos.flags & LVHT_EX_GROUP) != 0 );
-	outResult->bOnGroupHeader = ( (hHitTestInfos.flags & LVHT_EX_GROUP_HEADER) != 0 );
-	outResult->bOnGroupFooter = ( (hHitTestInfos.flags & LVHT_EX_GROUP_FOOTER) != 0 );
-	outResult->bOnGroupBackground = ( (hHitTestInfos.flags & LVHT_EX_GROUP_BACKGROUND) != 0 );
-	outResult->bOnGroupExpandCollapse = ( (hHitTestInfos.flags & LVHT_EX_GROUP_COLLAPSE) != 0 );
-	outResult->bOnGroupStateIcon = ( (hHitTestInfos.flags & LVHT_EX_GROUP_STATEICON) != 0 );
-	outResult->bOnGroupSubSetLink = ( (hHitTestInfos.flags & LVHT_EX_GROUP_SUBSETLINK) != 0 );
-
-	outResult->bOnFooter = ( (hHitTestInfos.flags & LVHT_EX_FOOTER) != 0 );
-}
-
-Void WinGUITable::SortGroups( WinGUITableGroupComparator pfComparator, Void * pUserData )
-{
-	DebugAssert( m_bGroupMode );
-
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_SortGroups( hHandle, pfComparator, pUserData );
-}
-Void WinGUITable::SortItemsByIndex( WinGUITableItemComparator pfComparator, Void * pUserData )
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_SortItemsEx( hHandle, pfComparator, pUserData );
-}
-Void WinGUITable::SortItemsByData( WinGUITableItemComparator pfComparator, Void * pUserData )
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_SortItems( hHandle, pfComparator, pUserData );
-}
-
+// Tool/Info Tips ///////////////////////////////////////////////////////////////
 Void WinGUITable::SetInfoTip( UInt iItemIndex, UInt iSubItemIndex, GChar * strInfoText )
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -1707,7 +1784,10 @@ Void WinGUITable::_Create()
 	// Save State
 	m_bVirtualTable = pParameters->bMakeVirtualTable;
 	m_iViewMode = pParameters->iViewMode;
+
+	m_bHasHeadersInAllViews = pParameters->bHeadersInAllViews;
 	m_bHasCheckBoxes = pParameters->bAddCheckBoxes;
+	m_bHasEditableLabels = pParameters->bEditableLabels;
 
     // Build Style
 	DWord dwStyle = ( WS_CHILD | WS_VISIBLE );
@@ -1933,7 +2013,7 @@ Void WinGUITable::_Destroy()
 Bool WinGUITable::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 {
     // Get Model
-	WinGUIButtonModel * pModel = (WinGUIButtonModel*)m_pModel;
+	WinGUITableModel * pModel = (WinGUITableModel*)m_pModel;
 
 	// Dispatch Event to the Model
 	switch( iNotificationCode ) {

@@ -24,16 +24,25 @@ inline const WinGUITableParameters * WinGUITableModel::GetCreationParameters() c
 /////////////////////////////////////////////////////////////////////////////////
 // WinGUITable implementation
 inline Bool WinGUITable::IsVirtual() const {
-	DebugAssert( m_hHandle != NULL );
 	return m_bVirtualTable;
 }
 
 inline WinGUITableViewMode WinGUITable::GetViewMode() const {
-	DebugAssert( m_hHandle != NULL );
 	return m_iViewMode;
 }
 
 inline Bool WinGUITable::IsGroupModeEnabled() const {
-	DebugAssert( m_hHandle != NULL );
 	return m_bGroupMode;
+}
+
+inline Bool WinGUITable::HasHeadersInAllViews() const {
+	return m_bHasHeadersInAllViews;
+}
+
+inline Bool WinGUITable::HasCheckBoxes() const {
+	return m_bHasCheckBoxes;
+}
+
+inline Bool WinGUITable::HasEditableLabels() const {
+	return m_bHasEditableLabels;
 }

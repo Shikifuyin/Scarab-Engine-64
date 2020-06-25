@@ -315,42 +315,40 @@ public:
 	WinGUITable( WinGUIElement * pParent, WinGUITableModel * pModel );
 	virtual ~WinGUITable();
 
-	// Virtual Tables
+	// General Settings /////////////////////////////////////////////////////////
 	inline Bool IsVirtual() const;
 
-	// View Modes
-	inline WinGUITableViewMode GetViewMode() const;
-	Void SwitchViewMode( WinGUITableViewMode iViewMode );
-
-	inline Bool IsGroupModeEnabled() const;
-
-	// Text Formating
 	Bool IsUnicode() const;
 	Bool IsANSI() const;
 
 	Void SetUnicode();
 	Void SetANSI();
 
-	// Allocation
-	Void SetItemCount( UInt iPreAllocatedItemCount );
+	Void SetAllocatedItemCount( UInt iPreAllocatedItemCount );
 
-	// Display Properties
-	Void AdjustRequiredDimensions( UInt * pWidth, UInt * pHeight, UInt iItemCount ) const; // Actually an approximation !
+	Void ForceRedraw( UInt iFirstItem, UInt iLastItem, Bool bImmediate );
 
-	UInt GetStringWidth( const GChar * strText ) const;
+	//ListView_GetCallbackMask
+	//ListView_SetCallbackMask
 
-	Void GetViewOrigin( WinGUIPoint * outOrigin ) const;
-	Void GetIconViewRect( WinGUIRectangle * outRectangle ) const;
+	// View Modes ///////////////////////////////////////////////////////////////
+	inline WinGUITableViewMode GetViewMode() const;
+	Void SwitchViewMode( WinGUITableViewMode iViewMode );
 
-	Bool IsItemVisible( UInt iIndex ) const;
+	inline Bool IsGroupModeEnabled() const;
+	Void ToggleGroupMode( Bool bEnable );
 
-	UInt GetFirstVisibleItem() const;
-	UInt GetVisibleItemCount() const;
-	Void GetIconSpacing( UInt * outSpacingH, UInt * outSpacingV, Bool bSmallIcons ) const; // Relative to icons' top-left corners
-	Void SetIconSpacing( UInt iSpacingH, UInt iSpacingV );                                 // Values must include icon widths
+	inline Bool HasHeadersInAllViews() const;
+	Void ToggleHeadersInAllViews( Bool bEnable );
 
-	Void GetEmptyText( GChar * outText, UInt iMaxLength ) const;
+	inline Bool HasCheckBoxes() const;
+	Void ToggleCheckBoxes( Bool bEnable );
+	Void ToggleAutoCheckOnSelect( Bool bEnable );
 
+	inline Bool HasEditableLabels() const;
+	Void ToggleEditableLabels( Bool bEnable );
+
+	// Visual Settings //////////////////////////////////////////////////////////
 	UInt GetBackgroundColor() const;
 	Void SetBackgroundColor( UInt iColor );
 
@@ -367,23 +365,10 @@ public:
 	UInt GetBorderSelectionColor() const;
 	Void SetBorderSelectionColor( UInt iColor );
 
-	Void GetInsertionMarkMetrics( WinGUIRectangle * outRectangle, UInt * outColor ) const;
+	UInt GetInsertionMarkColor() const;
 	Void SetInsertionMarkColor( UInt iColor );
 
-	Void GetGroupMetrics( WinGUIPoint * outBorderSizeLeftTop, WinGUIPoint * outBorderSizeRightBottom ) const;   // Only Border sizes as of now
-	Void SetGroupMetrics( const WinGUIPoint & hBorderSizeLeftTop, const WinGUIPoint & hBorderSizeRightBottom ); // Only Border sizes as of now
-
-	Void GetGroupRect( WinGUIRectangle * outRectangle, UInt iGroupID, Bool bCollapsed, Bool bLabelOnly ) const;
-
-	Void GetItemPosition( WinGUIPoint * outPosition, UInt iIndex ) const;
-	Void GetItemRect( WinGUIRectangle * outRectangle, UInt iIndex, Bool bIconOnly, Bool bLabelOnly ) const;
-	Void GetSubItemRect( WinGUIRectangle * outRectangle, UInt iIndex, UInt iSubItem, Bool bIconOnly, Bool bLabelOnly ) const;
-	Void GetSubItemRect( WinGUIRectangle * outRectangle, UInt iGroupIndex, UInt iIndex, UInt iSubItem, Bool bIconOnly, Bool bLabelOnly ) const;
-
-	Void SetItemIconPosition( UInt iIndex, const WinGUIPoint & hPosition );
-
-	Void GetTileMetrics( WinGUITableTileMetrics * outTileMetrics ) const;
-	Void SetTileMetrics( const WinGUITableTileMetrics * pTileMetrics );
+	Void GetEmptyText( GChar * outText, UInt iMaxLength ) const;
 
 	Void GetImageListIcons( WinGUIImageList * outImageList ) const;
 	Void SetImageListIcons( const WinGUIImageList * pImageList );
@@ -397,87 +382,112 @@ public:
 	Void GetImageListStates( WinGUIImageList * outImageList ) const;
 	Void SetImageListStates( const WinGUIImageList * pImageList );
 
-	Void ForceRedraw( UInt iFirstItem, UInt iLastItem, Bool bImmediate );
+	// Metrics //////////////////////////////////////////////////////////////////
+	Void GetViewOrigin( WinGUIPoint * outOrigin ) const;
+	Void GetViewRect( WinGUIRectangle * outRectangle ) const; // Icon modes only
 
-	// Scroll Operations
+	Void GetRequiredDimensions( UInt * pWidth, UInt * pHeight, UInt iItemCount ) const; // Actually an approximation !
+	UInt GetStringWidth( const GChar * strText ) const;
+
+	Void GetIconSpacing( UInt * outSpacingH, UInt * outSpacingV, Bool bSmallIcons ) const; // Relative to icons' top-left corners
+	Void SetIconSpacing( UInt iSpacingH, UInt iSpacingV );                                 // Values must include icon widths
+
+	Void GetItemPosition( WinGUIPoint * outPosition, UInt iItemIndex ) const;
+	Void GetItemRect( WinGUIRectangle * outRectangle, UInt iItemIndex, Bool bIconOnly, Bool bLabelOnly ) const;
+	Void GetSubItemRect( WinGUIRectangle * outRectangle, UInt iItemIndex, UInt iSubItemIndex, Bool bIconOnly, Bool bLabelOnly ) const;
+	Void GetSubItemRect( WinGUIRectangle * outRectangle, UInt iGroupIndex, UInt iItemIndex, UInt iSubItemIndex, Bool bIconOnly, Bool bLabelOnly ) const;
+
+	Void GetGroupMetrics( WinGUIPoint * outBorderSizeLeftTop, WinGUIPoint * outBorderSizeRightBottom ) const;   // Only Border sizes
+	Void SetGroupMetrics( const WinGUIPoint & hBorderSizeLeftTop, const WinGUIPoint & hBorderSizeRightBottom ); // as of now
+	
+	Void GetGroupRect( WinGUIRectangle * outRectangle, UInt iGroupID, Bool bCollapsed, Bool bLabelOnly ) const;
+
+	Void GetTileMetrics( WinGUITableTileMetrics * outTileMetrics ) const;
+	Void SetTileMetrics( const WinGUITableTileMetrics * pTileMetrics );
+
+	Void GetInsertionMarkMetrics( WinGUIRectangle * outRectangle ) const;
+
+	Void HitTest( WinGUITableHitTestResult * outResult, const WinGUIPoint & hPoint ) const; // In client-rect coords
+
+	// Scroll Operations ////////////////////////////////////////////////////////
 	Void Scroll( Int iScrollH, Int iScrollV );
 	Void ScrollToItem( UInt iIndex, Bool bAllowPartial );
 
-	// Columns Operations
-	Void GetColumnInfos( WinGUITableColumnInfos * outInfos, UInt iIndex ) const;
+	// Column Operations ////////////////////////////////////////////////////////
+	UInt GetColumnWidth( UInt iIndex ) const;
+	Void SetColumnWidth( UInt iIndex, UInt iWidth );
 
 	Void GetColumnOrder( UInt * outOrderedIndices, UInt iCount ) const;
 	Void SetColumnOrder( const UInt * arrOrderedIndices, UInt iCount );
 
-	UInt GetColumnWidth( UInt iIndex ) const;
-	Void SetColumnWidth( UInt iIndex, UInt iWidth );
-
-	UInt GetSelectedColumn() const;
-	Void SelectColumn( UInt iIndex );
+	// GetColumnCount ?
+	Void GetColumn( WinGUITableColumnInfos * outInfos, UInt iIndex ) const;
 
 	Void AddColumn( UInt iIndex, const WinGUITableColumnInfos * pColumnInfos );
 	Void SetColumn( UInt iIndex, const WinGUITableColumnInfos * pColumnInfos );
 	Void RemoveColumn( UInt iIndex );
 
-	// List Operations
-	UInt GetItemCount() const;
+	UInt GetSelectedColumn() const;
+	Void SelectColumn( UInt iIndex );
 
-	UInt GetMultiSelectMark() const;
-	Void SetMultiSelectMark( UInt iIndex );
+	// Item Operations //////////////////////////////////////////////////////////
+	Bool IsItemVisible( UInt iItemIndex ) const;
+	UInt GetFirstVisibleItem() const;
+	UInt GetVisibleItemCount() const;
+
+	Void SetItemIconPosition( UInt iItemIndex, const WinGUIPoint & hPosition );
+
+	UInt GetItemCount() const;
+	Void GetItem( WinGUITableItemInfos * outItemInfos, UInt iItemIndex, UInt iSubItemIndex ) const;
+
+	Void AddItem( UInt iItemIndex, const WinGUITableItemInfos * pItemInfos );
+	Void SetItem( UInt iItemIndex, const WinGUITableItemInfos * pItemInfos );
+	Void SetSubItem( UInt iItemIndex, UInt iSubItemIndex, const WinGUITableItemInfos * pItemInfos );
+	Void RemoveItem( UInt iItemIndex );
+	Void RemoveAllItems();
 
 	UInt GetSelectedItemCount() const;
+	UInt GetMultiSelectMark() const;
+	Void SetMultiSelectMark( UInt iItemIndex );
 
 	UInt GetInsertionMark( Bool * outInsertAfter ) const;
 	UInt GetInsertionMark( Bool * outInsertAfter, const WinGUIPoint & hPoint ) const;
-	Void SetInsertionMark( UInt iIndex, Bool bInsertAfter );
+	Void SetInsertionMark( UInt iItemIndex, Bool bInsertAfter );
 
-	Void AddItem( UInt iIndex, const WinGUITableItemInfos * pItemInfos );
-	Void SetItem( UInt iItemIndex, const WinGUITableItemInfos * pItemInfos );
-	Void SetSubItem( UInt iItemIndex, UInt iSubItemIndex, const WinGUITableItemInfos * pItemInfos );
-	Void RemoveItem( UInt iIndex );
-	Void RemoveAllItems();
+	Bool IsItemChecked( UInt iItemIndex ) const;      // Only when using
+	Void CheckItem( UInt iItemIndex, Bool bChecked ); // Checkboxes
 
-	// Group Operations
-	Void EnableGroups( Bool bEnable );
+	UInt AssignItemID( UInt iItemIndex );
+	UInt GetItemFromID( UInt iUniqueID );
 
+	Void SetItemLabelText( UInt iItemIndex, UInt iSubItemIndex, GChar * strLabelText );
+
+	//Void * EditItemLabelStart( UInt iIndex ); // Table must have focus for this !
+	Void EditItemLabelCancel();
+	//ListView_GetEditControl
+
+	Void UpdateItem( UInt iItemIndex );
+
+	// Group Operations /////////////////////////////////////////////////////////
 	Bool HasGroup( UInt iGroupID ) const;
 
 	UInt GetGroupCount() const;
-	UInt GetFocusedGroup() const;
+	Void GetGroupByID( WinGUITableGroupInfos * outGroupInfos, UInt iGroupID ) const;
+	Void GetGroupByIndex( WinGUITableGroupInfos * outGroupInfos, UInt iGroupIndex ) const;
 
-	Void GetGroupInfosByID( WinGUITableGroupInfos * outInfos, UInt iGroupID ) const;
-	Void GetGroupInfosByIndex( WinGUITableGroupInfos * outInfos, UInt iIndex ) const;
-
-	Void AddGroup( UInt iIndex, const WinGUITableGroupInfos * pGroupInfos );
+	Void AddGroup( UInt iGroupIndex, const WinGUITableGroupInfos * pGroupInfos );
 	Void AddGroup( const WinGUITableGroupInfos * pGroupInfos, WinGUITableGroupComparator pfComparator, Void * pUserData );
 	Void SetGroup( UInt iGroupID, const WinGUITableGroupInfos * pGroupInfos );
 	Void RemoveGroup( UInt iGroupID );
 	Void RemoveAllGroups();
 
-	// Item Operations
-	Void GetItemInfos( WinGUITableItemInfos * outInfos, UInt iIndex, UInt iSubItem ) const;
+	UInt GetFocusedGroup() const; // Returns a Group Index
 
-	Void GetTileInfos( WinGUITableTileInfos * outInfos, UInt iIndex ) const;
-	Void SetTileInfos( UInt iIndex, const WinGUITableTileInfos * pTileInfos );
+	// Tile Operations //////////////////////////////////////////////////////////
+	Void GetTile( WinGUITableTileInfos * outInfos, UInt iItemIndex ) const;
+	Void SetTile( UInt iItemIndex, const WinGUITableTileInfos * pTileInfos );
 
-	Bool IsItemChecked( UInt iIndex ) const;      // Only when using checkboxes
-	Void CheckItem( UInt iIndex, Bool bChecked ); // Only when using checkboxes
-
-	Void * EditItemLabelStart( UInt iIndex ); // Table must have focus for this !
-	//ListView_GetEditControl
-	Void EditItemLabelCancel();
-
-	Void SetItemLabelText( UInt iItemIndex, UInt iSubItemIndex, GChar * strLabelText );
-
-	Void UpdateItem( UInt iIndex );
-
-	UInt AssignItemID( UInt iIndex );
-	UInt GetItemFromID( UInt iUniqueID );
-
-	// Footer Operations
-	// Currently unsupported by Windows !
-
-	// Search
+	// Search Operations ////////////////////////////////////////////////////////
 	UInt GetIncrementalSearchStringLength() const;
 	Void GetIncrementalSearchString( GChar * outSearchString ) const; // DANGER ! Get the Length first !
 
@@ -491,7 +501,14 @@ public:
 	UInt SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, Bool bReverse, Bool bSameGroup, Bool bVisible, Bool bHasFocus, Bool bSelected, Bool bCutMarked, Bool bDropHighlight ) const;
 	UInt SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, KeyCode iDirection, Bool bSameGroup, Bool bVisible, Bool bHasFocus, Bool bSelected, Bool bCutMarked, Bool bDropHighlight ) const;
 
-	// Hot Tracking
+	// Sorting Operations ///////////////////////////////////////////////////////
+	Void SortGroups( WinGUITableGroupComparator pfComparator, Void * pUserData );
+	Void SortItemsByIndex( WinGUITableItemComparator pfComparator, Void * pUserData );
+	Void SortItemsByData( WinGUITableItemComparator pfComparator, Void * pUserData );
+
+	//ListView_Arrange()
+
+	// Hot Tracking /////////////////////////////////////////////////////////////
 	UInt GetHotItem() const;
 	Void SetHotItem( UInt iIndex );
 
@@ -501,35 +518,73 @@ public:
 	//ListView_GetHotCursor
 	//ListView_SetHotCursor
 
-	// Hit Tests
-	Void HitTest( WinGUITableHitTestResult * outResult, const WinGUIPoint & hPoint ) const; // In client-rect coords
-
-	// Arrangement / Sorting
-	Void SortGroups( WinGUITableGroupComparator pfComparator, Void * pUserData );
-	Void SortItemsByIndex( WinGUITableItemComparator pfComparator, Void * pUserData );
-	Void SortItemsByData( WinGUITableItemComparator pfComparator, Void * pUserData );
-
-	//ListView_Arrange()
-
-	//ListView_GetCallbackMask
-	//ListView_SetCallbackMask
-
-	// Drag & Drop
-	//ListView_CreateDragImage
-
-	// ToolTips
-	Void SetInfoTip( UInt iItemIndex, UInt iSubItemIndex, GChar * strInfoText );
-	//ListView_GetToolTips
-	//ListView_SetToolTips
-
-	// Work Areas
+	// Work Areas ///////////////////////////////////////////////////////////////
 	//ListView_GetNumberOfWorkAreas
 	//ListView_GetWorkAreas
 	//ListView_SetWorkAreas
 
-	// SetWindowLong + GWL_STYLE
-	// ListView_GetExtendedListViewStyle
-	// ListView_SetExtendedListViewStyleEx
+	// Drag & Drop //////////////////////////////////////////////////////////////
+	//ListView_CreateDragImage
+
+	// Tool/Info Tips ///////////////////////////////////////////////////////////
+	Void SetInfoTip( UInt iItemIndex, UInt iSubItemIndex, GChar * strInfoText );
+
+	//ListView_GetToolTips
+	//ListView_SetToolTips
+	
+
+
+	
+
+		// HeadersInAllViews or Detailed View
+	Void ToggleStaticColumnHeaders( Bool bEnable );
+	Void SnapColumnWidths( Bool bEnable );
+	Void AutoSizeColumns( Bool bEnable );
+
+
+	
+
+	Void ToggleSingleItemSelection( Bool bEnable );
+
+	Void AlwaysShowSelection( Bool bEnable );
+
+	Void ToggleBorderSelection( Bool bEnable );
+	
+	Void ToggleSorting( Bool bEnable, Bool bAscendingElseDescending ); // Not with virtual tables
+
+	
+
+	Void ToggleInfoTips( Bool bEnable );
+
+	Void ToggleHotTracking( Bool bEnable, Bool bUseSingleClick );
+	Void ToggleHotTrackSelection( Bool bEnable );
+	Void ToggleHotUnderline( Bool bEnable );
+	Void ToggleColdUnderline( Bool bEnable ); // Requires DblClick HotTracking
+
+	Void UseSharedImageLists( Bool bEnable );
+	Void UseBackBuffering( Bool bEnable );
+	Void UseTransparentBackground( Bool bEnable );
+	Void UseTransparentShadowText( Bool bEnable );
+
+		// Icon Modes
+	Void SetIconAlignment( WinGUITableIconsAlign iAlign );
+	Void ToggleAutoArrangeIcons( Bool bEnable );
+	Void HideIconLabels( Bool bEnable );
+	Void PreventIconLabelWrap( Bool bEnable );
+	Void ToggleIconColumnOverflowButton( Bool bEnable ); // Only when HeadersInAllViews
+	Void JustifyIconColumns( Bool bEnable );
+	Void ToggleIconSnapToGrid( Bool bEnable );
+	Void UseIconSimpleSelection( Bool bEnable );
+
+		// Detailed Mode / HeadersInAllViews
+	Void ToggleColumnHeaders( Bool bEnable );
+	Void ToggleHeaderDragNDrop( Bool bEnable );
+	Void ToggleFullRowSelection( Bool bEnable );
+	Void ShowGridLines( Bool bEnable );
+	Void ToggleSubItemImages( Bool bEnable );
+
+
+
 
 private:
 	// Helpers
@@ -560,7 +615,9 @@ private:
 	WinGUITableViewMode m_iViewMode;
 	Bool m_bGroupMode;
 
+	Bool m_bHasHeadersInAllViews;
 	Bool m_bHasCheckBoxes;
+	Bool m_bHasEditableLabels;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

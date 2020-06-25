@@ -155,28 +155,48 @@ Void WinGUIImageList::MakeIcon( UInt iIndex, WinGUIIcon * outIcon, const WinGUII
 
 	// Modes
 	UInt iFlags = 0;
-	switch( hOptions.iMode ) {
-		case WINGUI_IMAGELIST_DRAW_NORMAL:      iFlags |= ILD_NORMAL; break;
-		case WINGUI_IMAGELIST_DRAW_MASK:        iFlags |= ILD_MASK; break;
-		case WINGUI_IMAGELIST_DRAW_BLEND25:     iFlags |= ILD_BLEND25; break;
-		case WINGUI_IMAGELIST_DRAW_BLEND50:     iFlags |= ILD_BLEND50; break;
-		case WINGUI_IMAGELIST_DRAW_TRANSPARENT: iFlags |= ILD_TRANSPARENT; break;
-		default: DebugAssert(false); break;
+		// Stencil Mode
+	if ( hOptions.bStencilMode ) {
+		DebugAssert( m_bHasMasks );
+		iFlags |= ILD_MASK;
 	}
-	if ( hOptions.bUseOverlay ) {
-		DebugAssert( hOptions.iOverlayIndex < 15 );
-		iFlags |= INDEXTOOVERLAYMASK(1 + hOptions.iOverlayIndex);
-		if ( !(hOptions.bOverlayRequiresMask) )
-			iFlags |= ILD_IMAGE;
-	}
-	if ( hOptions.bScaleElseClip ) {
-		if ( hOptions.bUseDPIScaling )
-			iFlags |= ILD_DPISCALE;
-		else
-			iFlags |= ILD_SCALE;
-	}
+
+		// Alpha Preserve
 	if ( hOptions.bPreserveDestAlpha )
 		iFlags |= ILD_PRESERVEALPHA;
+
+		// Background
+	if ( hOptions.bUseBackgroundColor )
+		iFlags |= ILD_NORMAL;
+	else {
+		DebugAssert( m_bHasMasks );
+		iFlags |= ILD_TRANSPARENT;
+	}
+
+		// Blending
+	if ( hOptions.bUseBlending25 ) {
+		DebugAssert( m_bHasMasks );
+		iFlags |= ILD_BLEND25;
+	} else if ( hOptions.bUseBlending50 ) {
+		DebugAssert( m_bHasMasks );
+		iFlags |= ILD_BLEND50;
+	}
+
+		// Overlay
+	if ( hOptions.bUseOverlay ) {
+		DebugAssert( hOptions.iOverlayIndex < 15 );
+		iFlags |= INDEXTOOVERLAYMASK( 1 + hOptions.iOverlayIndex );
+		if ( hOptions.bOverlayRequiresMask ) {
+			DebugAssert( m_bHasMasks );
+		} else
+			iFlags |= ILD_IMAGE;
+	}
+
+		// Scaling
+	if ( hOptions.bUseScaling )
+		iFlags |= ILD_SCALE;
+	if ( hOptions.bUseDPIScaling )
+		iFlags |= ILD_DPISCALE;
 
 	HICON hIcon = ImageList_GetIcon( hHandle, iIndex, iFlags );
 	DebugAssert( hIcon != NULL );
@@ -287,7 +307,7 @@ Void WinGUIImageList::RemoveAll()
 	ImageList_RemoveAll( hHandle );
 }
 
-UInt WinGUIImageList::GetBackgroundColor()
+UInt WinGUIImageList::GetBackgroundColor() const
 {
 	DebugAssert( m_hHandle != NULL );
 
@@ -308,6 +328,254 @@ Void WinGUIImageList::SetOverlayImage( UInt iImageIndex, UInt iOverlayIndex )
 
 	HIMAGELIST hHandle = (HIMAGELIST)m_hHandle;
 	ImageList_SetOverlayImage( hHandle, iImageIndex, 1 + iOverlayIndex ); // Overlay indices are 1-based
+}
+
+Void WinGUIImageList::Draw( WinGUIBitmap * pTarget, const WinGUIPoint & hDestOrigin, UInt iSrcImage, const WinGUIRectangle & hSrcRect, const WinGUIImageListDrawOptions & hOptions )
+{
+	DebugAssert( m_hHandle != NULL );
+	DebugAssert( pTarget->IsCreated() && pTarget->IsDeviceDependant() );
+
+	// Retrieve Handles
+	HBITMAP hDestBitmap = (HBITMAP)( pTarget->m_hHandle );
+
+	// Get Window DC
+	HWND hAppWindow = (HWND)( WinGUIBitmap::_GetAppWindowHandle() );
+	HDC hDC = GetDC( hAppWindow );
+
+	// Create Memory DC
+	HDC hDestMemoryDC = CreateCompatibleDC( hDC );
+
+	// Select Bitmap
+	HBITMAP hDestSaved = (HBITMAP)SelectObject( hDestMemoryDC, hDestBitmap );
+
+	// Perform Operation
+	IMAGELISTDRAWPARAMS hDrawParams;
+	hDrawParams.cbSize = sizeof(IMAGELISTDRAWPARAMS);
+	hDrawParams.fStyle = 0;
+	
+		// Destination
+	hDrawParams.hdcDst = hDestMemoryDC;
+	hDrawParams.x = hDestOrigin.iX;
+	hDrawParams.y = hDestOrigin.iY;
+
+		// Source
+	hDrawParams.himl = (HIMAGELIST)m_hHandle;
+	hDrawParams.i = iSrcImage;
+	hDrawParams.xBitmap = hSrcRect.iLeft;
+	hDrawParams.yBitmap = hSrcRect.iTop;
+	hDrawParams.cx = hSrcRect.iWidth;
+	hDrawParams.cy = hSrcRect.iHeight;
+
+		// Stencil Mode
+	if ( hOptions.bStencilMode ) {
+		DebugAssert( m_bHasMasks );
+		hDrawParams.fStyle |= ILD_MASK;
+	}
+
+		// Alpha Preserve
+	if ( hOptions.bPreserveDestAlpha )
+		hDrawParams.fStyle |= ILD_PRESERVEALPHA;
+
+		// Background
+	if ( hOptions.bUseBackgroundColor ) {
+		hDrawParams.fStyle |= ILD_NORMAL;
+		if ( hOptions.bUseDefaultBackgroundColor )
+			hDrawParams.rgbBk = CLR_DEFAULT;
+		else
+			hDrawParams.rgbBk = hOptions.iBackgroundColor;
+	} else {
+		DebugAssert( m_bHasMasks );
+		hDrawParams.fStyle |= ILD_TRANSPARENT;
+		hDrawParams.rgbBk = CLR_NONE;
+	}
+
+		// Blending
+	hDrawParams.rgbFg = CLR_NONE;
+	if ( hOptions.bUseBlending25 ) {
+		DebugAssert( m_bHasMasks );
+		hDrawParams.fStyle |= ILD_BLEND25;
+		if ( hOptions.bBlendWithDestination )
+			hDrawParams.rgbFg = CLR_NONE;
+		else if ( hOptions.bUseDefaultBlendForegroundColor )
+			hDrawParams.rgbFg = CLR_DEFAULT;
+		else
+			hDrawParams.rgbFg = hOptions.iBlendForegroundColor;
+	} else if ( hOptions.bUseBlending50 ) {
+		DebugAssert( m_bHasMasks );
+		hDrawParams.fStyle |= ILD_BLEND50;
+		if ( hOptions.bBlendWithDestination )
+			hDrawParams.rgbFg = CLR_NONE;
+		else if ( hOptions.bUseDefaultBlendForegroundColor )
+			hDrawParams.rgbFg = CLR_DEFAULT;
+		else
+			hDrawParams.rgbFg = hOptions.iBlendForegroundColor;
+	}
+
+		// Alpha Blending
+	hDrawParams.fState = ILS_NORMAL;
+	if ( hOptions.bUseAlphaBlending ) {
+		hDrawParams.fState |= ILS_ALPHA;
+		hDrawParams.Frame = hOptions.iAlphaValue;
+	}
+
+		// Saturation
+	if ( hOptions.bUseSaturation )
+		hDrawParams.fState |= ILS_SATURATE;
+
+		// Glow & Shadow not supported yet ...
+	hDrawParams.crEffect = 0;
+
+		// Raster Operation
+	hDrawParams.dwRop = 0;
+	if ( hOptions.bUseRasterOp ) {
+		hDrawParams.fStyle |= ILD_ROP;
+		hDrawParams.dwRop = WinGUIBitmap::_ConvertRasterOperation( hOptions.iRasterOp );
+	}
+
+		// Overlay
+	if ( hOptions.bUseOverlay ) {
+		DebugAssert( hOptions.iOverlayIndex < 15 );
+		hDrawParams.fStyle |= INDEXTOOVERLAYMASK( 1 + hOptions.iOverlayIndex );
+		if ( hOptions.bOverlayRequiresMask ) {
+			DebugAssert( m_bHasMasks );
+		} else
+			hDrawParams.fStyle |= ILD_IMAGE;
+	}
+
+		// Scaling
+	if ( hOptions.bUseScaling )
+		hDrawParams.fStyle |= ILD_SCALE;
+	if ( hOptions.bUseDPIScaling )
+		hDrawParams.fStyle |= ILD_DPISCALE;
+
+		// Draw
+	ImageList_DrawIndirect( &hDrawParams );
+
+	// Release All
+	SelectObject( hDestMemoryDC, hDestSaved );
+	DeleteDC( hDestMemoryDC );
+	ReleaseDC( hAppWindow, hDC );
+}
+Void WinGUIImageList::Render( WinGUIElement * pTarget, const WinGUIPoint & hDestOrigin, UInt iSrcImage, const WinGUIRectangle & hSrcRect, const WinGUIImageListDrawOptions & hOptions )
+{
+	DebugAssert( m_hHandle != NULL );
+
+	// Retrieve Handles
+	HWND hTargetWnd = NULL;
+	switch( pTarget->GetElementType() ) {
+		case WINGUI_ELEMENT_WINDOW:    hTargetWnd = (HWND)( WinGUIElement::_GetHandle(pTarget) ); break;
+		case WINGUI_ELEMENT_CONTAINER: hTargetWnd = (HWND)( WinGUIElement::_GetHandle(pTarget) ); break;
+		default: DebugAssert(false); break;
+	}
+
+	// Get Window DC
+	HDC hDC = GetDC( hTargetWnd );
+
+	// Perform Operation
+	IMAGELISTDRAWPARAMS hDrawParams;
+	hDrawParams.cbSize = sizeof(IMAGELISTDRAWPARAMS);
+	hDrawParams.fStyle = 0;
+	
+		// Destination
+	hDrawParams.hdcDst = hDC;
+	hDrawParams.x = hDestOrigin.iX;
+	hDrawParams.y = hDestOrigin.iY;
+
+		// Source
+	hDrawParams.himl = (HIMAGELIST)m_hHandle;
+	hDrawParams.i = iSrcImage;
+	hDrawParams.xBitmap = hSrcRect.iLeft;
+	hDrawParams.yBitmap = hSrcRect.iTop;
+	hDrawParams.cx = hSrcRect.iWidth;
+	hDrawParams.cy = hSrcRect.iHeight;
+
+		// Stencil Mode
+	if ( hOptions.bStencilMode ) {
+		DebugAssert( m_bHasMasks );
+		hDrawParams.fStyle |= ILD_MASK;
+	}
+
+		// Alpha Preserve
+	if ( hOptions.bPreserveDestAlpha )
+		hDrawParams.fStyle |= ILD_PRESERVEALPHA;
+
+		// Background
+	if ( hOptions.bUseBackgroundColor ) {
+		hDrawParams.fStyle |= ILD_NORMAL;
+		if ( hOptions.bUseDefaultBackgroundColor )
+			hDrawParams.rgbBk = CLR_DEFAULT;
+		else
+			hDrawParams.rgbBk = hOptions.iBackgroundColor;
+	} else {
+		DebugAssert( m_bHasMasks );
+		hDrawParams.fStyle |= ILD_TRANSPARENT;
+		hDrawParams.rgbBk = CLR_NONE;
+	}
+
+		// Blending
+	hDrawParams.rgbFg = CLR_NONE;
+	if ( hOptions.bUseBlending25 ) {
+		DebugAssert( m_bHasMasks );
+		hDrawParams.fStyle |= ILD_BLEND25;
+		if ( hOptions.bBlendWithDestination )
+			hDrawParams.rgbFg = CLR_NONE;
+		else if ( hOptions.bUseDefaultBlendForegroundColor )
+			hDrawParams.rgbFg = CLR_DEFAULT;
+		else
+			hDrawParams.rgbFg = hOptions.iBlendForegroundColor;
+	} else if ( hOptions.bUseBlending50 ) {
+		DebugAssert( m_bHasMasks );
+		hDrawParams.fStyle |= ILD_BLEND50;
+		if ( hOptions.bBlendWithDestination )
+			hDrawParams.rgbFg = CLR_NONE;
+		else if ( hOptions.bUseDefaultBlendForegroundColor )
+			hDrawParams.rgbFg = CLR_DEFAULT;
+		else
+			hDrawParams.rgbFg = hOptions.iBlendForegroundColor;
+	}
+
+		// Alpha Blending
+	hDrawParams.fState = ILS_NORMAL;
+	if ( hOptions.bUseAlphaBlending ) {
+		hDrawParams.fState |= ILS_ALPHA;
+		hDrawParams.Frame = hOptions.iAlphaValue;
+	}
+
+		// Saturation
+	if ( hOptions.bUseSaturation )
+		hDrawParams.fState |= ILS_SATURATE;
+
+		// Glow & Shadow not supported yet ...
+	hDrawParams.crEffect = 0;
+
+		// Raster Operation
+	hDrawParams.dwRop = 0;
+	if ( hOptions.bUseRasterOp ) {
+		hDrawParams.fStyle |= ILD_ROP;
+		hDrawParams.dwRop = WinGUIBitmap::_ConvertRasterOperation( hOptions.iRasterOp );
+	}
+
+		// Overlay
+	if ( hOptions.bUseOverlay ) {
+		DebugAssert( hOptions.iOverlayIndex < 15 );
+		hDrawParams.fStyle |= INDEXTOOVERLAYMASK( 1 + hOptions.iOverlayIndex );
+		if ( hOptions.bOverlayRequiresMask ) {
+			DebugAssert( m_bHasMasks );
+		} else
+			hDrawParams.fStyle |= ILD_IMAGE;
+	}
+
+		// Scaling
+	if ( hOptions.bUseScaling )
+		hDrawParams.fStyle |= ILD_SCALE;
+	if ( hOptions.bUseDPIScaling )
+		hDrawParams.fStyle |= ILD_DPISCALE;
+
+		// Draw
+	ImageList_DrawIndirect( &hDrawParams );
+
+	// Release All
+	ReleaseDC( hTargetWnd, hDC );
 }
 
 Void WinGUIImageList::DragBegin( UInt iImageIndex, const WinGUIPoint & hHotSpot )

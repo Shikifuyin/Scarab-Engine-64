@@ -196,7 +196,7 @@ private:
 	// Helpers
 	static DWord _ConvertRasterOperation( WinGUIRasterOperation iROP );
 
-	Void * _GetAppWindowHandle() const;
+	static Void * _GetAppWindowHandle();
 	Void _CreateFromHandle( Void * hHandle, Bool bDeviceDependant, Bool bShared );
 
 	// Members

@@ -28,22 +28,41 @@
 // Constants definitions
 
 // Drawing Options
-enum WinGUIImageListDrawMode {
-	WINGUI_IMAGELIST_DRAW_NORMAL = 0, // Use Background Color only
-	WINGUI_IMAGELIST_DRAW_MASK,       // Draw the Mask
-	WINGUI_IMAGELIST_DRAW_BLEND25,    // Blend with system highlight color, requires a Mask
-	WINGUI_IMAGELIST_DRAW_BLEND50,    // Blend with system highlight color, requires a Mask
-	WINGUI_IMAGELIST_DRAW_TRANSPARENT // Draw using Mask, ignore Background Color
-};
-
 typedef struct _wingui_imagelist_draw_options {
-	WinGUIImageListDrawMode iMode;
+	Bool bStencilMode;       // Draw the mask instead of the image
+	Bool bPreserveDestAlpha; // Operations don't affect dest alpha channel
+	
+	// Background
+	Bool bUseBackgroundColor;
+	Bool bUseDefaultBackgroundColor;
+	UInt iBackgroundColor;
+
+	// Blending
+	Bool bUseBlending25; // Mutually
+	Bool bUseBlending50; // Exclusive
+	Bool bBlendWithDestination;
+	Bool bUseDefaultBlendForegroundColor;
+	UInt iBlendForegroundColor;
+
+	// Alpha Blending
+	Bool bUseAlphaBlending;
+	UInt iAlphaValue;
+
+	// Saturation
+	Bool bUseSaturation;
+
+	// Raster Operation
+	Bool bUseRasterOp;
+	WinGUIRasterOperation iRasterOp;
+
+	// Overlay
 	Bool bUseOverlay;
 	Bool bOverlayRequiresMask;
 	UInt iOverlayIndex;
-	Bool bScaleElseClip;
+	
+	// Scaling
+	Bool bUseScaling;
 	Bool bUseDPIScaling;
-	Bool bPreserveDestAlpha;
 } WinGUIImageListDrawOptions;
 
 // Prototypes
@@ -70,7 +89,7 @@ public:
 
 	Void CreateDuplicate( const WinGUIImageList * pList );
 
-		// Create the list from 2 provided images, Image B drawn transparently over ImageA.
+		// Create the list from 2 provided images, Image B drawn transparently over Image A.
 		// Their Mask are ORed to generate result mask, both ImageLists A and B must have masks.
 	Void MergeImages( WinGUIImageList * pListA, UInt iIndexA, WinGUIImageList * pListB, UInt iIndexB, Int iDX, Int iDY );
 
@@ -98,14 +117,15 @@ public:
 	Void RemoveAll();
 
 	// Settings
-	UInt GetBackgroundColor();
+	UInt GetBackgroundColor() const;
 	UInt SetBackgroundColor( UInt iColor );
 
 		// Requires Masks
 	Void SetOverlayImage( UInt iImageIndex, UInt iOverlayIndex );
 
-	// Drawing ?
-	// ImageList_Draw(Ex)
+	// Drawing
+	Void Draw( WinGUIBitmap * pTarget, const WinGUIPoint & hDestOrigin, UInt iSrcImage, const WinGUIRectangle & hSrcRect, const WinGUIImageListDrawOptions & hOptions );
+	Void Render( WinGUIElement * pTarget, const WinGUIPoint & hDestOrigin, UInt iSrcImage, const WinGUIRectangle & hSrcRect, const WinGUIImageListDrawOptions & hOptions );
 
 	// Drag & Drop (Positions are given in window rect coords, not client rect !)
 	Void DragBegin( UInt iImageIndex, const WinGUIPoint & hHotSpot );

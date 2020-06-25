@@ -604,7 +604,7 @@ DWord WinGUIBitmap::_ConvertRasterOperation( WinGUIRasterOperation iROP )
 	return 0;
 }
 
-Void * WinGUIBitmap::_GetAppWindowHandle() const
+Void * WinGUIBitmap::_GetAppWindowHandle()
 {
 	WinGUIWindow * pAppWindow = WinGUIFn->GetAppWindow();
 	return WinGUIElement::_GetHandle(pAppWindow);

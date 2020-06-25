@@ -68,6 +68,8 @@ typedef struct _wingui_imagelist_draw_options {
 // Prototypes
 class WinGUIWindow;
 
+class WinGUITable;
+
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUIImageList class
 class WinGUIImageList
@@ -139,8 +141,12 @@ public:
 	//Void GetDragImage( WinGUIImageList * outImageList, WinGUIPoint * outDragPosition, WinGUIPoint * outHotSpot ) const;
 	Void CombineDragImages( UInt iNewImageIndex, const WinGUIPoint & hNewHotSpot );
 
-
 private:
+	friend class WinGUITable;
+
+	// Helpers
+	Void _CreateFromHandle( Void * hHandle );
+
 	// Members
 	Void * m_hHandle; // HIMAGELIST
 

@@ -132,6 +132,8 @@ class WinGUIImageList;
 
 class WinGUIElement;
 
+class WinGUITable;
+
 class WinGUI;
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -192,6 +194,8 @@ private:
 	friend class WinGUIIcon;
 	friend class WinGUICursor;
 	friend class WinGUIImageList;
+
+	friend class WinGUITable;
 
 	// Helpers
 	static DWord _ConvertRasterOperation( WinGUIRasterOperation iROP );

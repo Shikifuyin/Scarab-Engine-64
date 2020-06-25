@@ -664,3 +664,25 @@ Void WinGUIImageList::CombineDragImages( UInt iNewImageIndex, const WinGUIPoint 
 	ImageList_SetDragCursorImage( hHandle, iNewImageIndex, hNewHotSpot.iX, hNewHotSpot.iY );
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+
+Void WinGUIImageList::_CreateFromHandle( Void * hHandle )
+{
+	DebugAssert( m_hHandle == NULL );
+
+	m_hHandle = hHandle;
+
+	IMAGEINFO hImageInfos;
+	ImageList_GetImageInfo( (HIMAGELIST)m_hHandle, 0, &hImageInfos );
+
+	m_bHasMasks = ( hImageInfos.hbmMask != NULL );
+
+	Int iWidth, iHeight;
+	ImageList_GetIconSize( (HIMAGELIST)m_hHandle, &iWidth, &iHeight );
+
+	m_iWidth = iWidth;
+	m_iHeight = iHeight;
+
+	m_bIsDragging = false;
+}
+

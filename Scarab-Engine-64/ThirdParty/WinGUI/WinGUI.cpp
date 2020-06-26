@@ -20,6 +20,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <commctrl.h>
+#include <objbase.h>
 
 // Enable Visual Styles, Use Common Controls version 6.0 (No need for a manifest)
 #pragma comment( linker, \
@@ -85,6 +86,10 @@ Void WinGUI::CreateAppWindow( WinGUIWindowModel * pModel )
 {
     DebugAssert( m_pAppWindow == NULL );
 
+    // Required by some stuff
+    CoInitialize(NULL);
+
+    // Create App Window
     Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIWindow) );
     m_pAppWindow = new(pMemory) WinGUIWindow( pModel );
 
@@ -118,9 +123,11 @@ Void WinGUI::DestroyAppWindow()
 {
     DebugAssert( m_pAppWindow != NULL );
 
+    // Destroy Default Font
     DeleteObject( m_pDefaultFont );
     m_pDefaultFont = NULL;
 
+    // Destroy App Window
     while( m_pAppWindow->GetChildCount() > 0 )
         DestroyElement( m_pAppWindow->GetChild(0) );
 
@@ -130,7 +137,8 @@ Void WinGUI::DestroyAppWindow()
     SystemFn->MemFree( m_pAppWindow );
     m_pAppWindow = NULL;
 
-    // Destroy Default Font
+    // Required by some stuff
+    CoUninitialize();
 }
 
 Int WinGUI::MessageLoop() const

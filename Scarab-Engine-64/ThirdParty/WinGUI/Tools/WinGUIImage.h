@@ -294,6 +294,8 @@ private:
 	friend class WinGUIImageList;
 	friend class WinGUI;
 
+	friend class WinGUITable;
+
 	// Helpers
 	Void * _GetAppWindowHandle() const;
 	Void _CreateFromHandle( Void * hHandle, Bool bShared );

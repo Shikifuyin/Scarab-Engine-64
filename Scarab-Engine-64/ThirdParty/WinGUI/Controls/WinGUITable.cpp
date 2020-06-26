@@ -34,38 +34,35 @@ WinGUITableModel::WinGUITableModel( Int iResourceID ):
 	WinGUIControlModel(iResourceID)
 {
 	// Default Parameters
-	m_hCreationParameters.bMakeVirtualTable = false;
-	m_hCreationParameters.bHeadersInAllViews = false;
+	m_hCreationParameters.bVirtualTable = false;
+
+	m_hCreationParameters.bHasBackBuffer = false;
+	m_hCreationParameters.bHasSharedImageLists = false;
+
 	m_hCreationParameters.iViewMode = WINGUI_TABLE_VIEW_LIST;
+	m_hCreationParameters.bHasHeadersInAllViews = false;
 
-	m_hCreationParameters.bStaticColumnHeaders = false;
-	m_hCreationParameters.bSnapColumnsWidth = false;
-	m_hCreationParameters.bAutoSizeColumns = false;
+	m_hCreationParameters.bHasColumnHeaders = true;
+	m_hCreationParameters.bHasStaticColumnHeaders = false;
+	m_hCreationParameters.bHasDraggableColumnHeaders = false;
+	m_hCreationParameters.bHasIconColumnOverflowButton = false;
 
-	m_hCreationParameters.bEditableLabels = false;
+	m_hCreationParameters.bHasCheckBoxes = false;
+	m_hCreationParameters.bHasIconLabels = true;
+	m_hCreationParameters.bHasEditableLabels = false;
+	m_hCreationParameters.bHasSubItemImages = false;
 
 	m_hCreationParameters.bSingleItemSelection = false;
-	m_hCreationParameters.bAlwaysShowSelection = true;
-	m_hCreationParameters.bBorderSelection = false;
+	m_hCreationParameters.bIconSimpleSelection = false;
 
-	m_hCreationParameters.bSortAscending = false;
-	m_hCreationParameters.bSortDescending = false;
+	m_hCreationParameters.bAutoSortAscending = false;
+	m_hCreationParameters.bAutoSortDescending = false;
 
-	m_hCreationParameters.bAddCheckBoxes = false;
-	m_hCreationParameters.bAutoCheckOnSelect = false;
+	m_hCreationParameters.bHasHotTrackingSingleClick = true;
+	m_hCreationParameters.bHasHotTrackingDoubleClick = false;
+	m_hCreationParameters.bHasHotTrackingSelection = true;
 
-	m_hCreationParameters.bHandleInfoTips = false;
-
-	m_hCreationParameters.bHotTrackingSingleClick = true;
-	m_hCreationParameters.bHotTrackingDoubleClick = false;
-	m_hCreationParameters.bHotTrackSelection = true;
-	m_hCreationParameters.bUnderlineHot = false;
-	m_hCreationParameters.bUnderlineCold = false;
-
-	m_hCreationParameters.bSharedImageList = false;
-	m_hCreationParameters.bUseBackBuffer = true;
-	m_hCreationParameters.bTransparentBackground = false;
-	m_hCreationParameters.bTransparentShadowText = false;
+	m_hCreationParameters.bHasInfoTips = false;
 }
 WinGUITableModel::~WinGUITableModel()
 {
@@ -78,12 +75,38 @@ WinGUITable::WinGUITable( WinGUIElement * pParent, WinGUITableModel * pModel ):
 	WinGUIControl(pParent, pModel)
 {
 	m_bVirtualTable = false;
+
+	m_bHasBackBuffer = false;
+	m_bHasSharedImageLists = false;
+
 	m_iViewMode = WINGUI_TABLE_VIEW_LIST;
 	m_bGroupMode = false;
-
 	m_bHasHeadersInAllViews = false;
+
+	m_bHasColumnHeaders = true;
+	m_bHasStaticColumnHeaders = false;
+	m_bHasDraggableColumnHeaders = false;
+	m_bHasIconColumnOverflowButton = false;
+
 	m_bHasCheckBoxes = false;
+	m_bHasIconLabels = true;
 	m_bHasEditableLabels = false;
+	m_bHasSubItemImages = false;
+
+	m_bSingleItemSelection = false;
+	m_bIconSimpleSelection = false;
+
+	m_bAutoSortAscending = false;
+	m_bAutoSortDescending = false;
+
+	m_bHasHotTrackingSingleClick = false;
+	m_bHasHotTrackingDoubleClick = false;
+	m_bHasHotTrackingSelection = false;
+
+	m_bHasInfoTips = false;
+
+	m_hEditLabelHandle = NULL;
+	m_iEditLabelItemIndex = INVALID_OFFSET;
 }
 WinGUITable::~WinGUITable()
 {
@@ -124,6 +147,32 @@ Void WinGUITable::SetAllocatedItemCount( UInt iPreAllocatedItemCount )
 	}
 }
 
+Void WinGUITable::UseBackBuffer( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_DOUBLEBUFFER;
+	DWORD dwValue = bEnable ? LVS_EX_DOUBLEBUFFER : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+
+	m_bHasBackBuffer = bEnable;
+}
+
+Void WinGUITable::UseSharedImageLists( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwStyle = GetWindowLong( hHandle, GWL_STYLE );
+	if ( bEnable ) {
+		dwStyle |= LVS_SHAREIMAGELISTS;
+	} else {
+		dwStyle &= (~LVS_SHAREIMAGELISTS);
+	}
+	SetWindowLong( hHandle, GWL_STYLE, dwStyle );
+
+	m_bHasSharedImageLists = bEnable;
+}
+
 Void WinGUITable::ForceRedraw( UInt iFirstItem, UInt iLastItem, Bool bImmediate )
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -162,13 +211,63 @@ Void WinGUITable::ToggleHeadersInAllViews( Bool bEnable )
 	HWND hHandle = (HWND)m_hHandle;
 
 	DWORD dwMask = LVS_EX_HEADERINALLVIEWS;
-	if ( bEnable ) {
-		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, LVS_EX_HEADERINALLVIEWS );
-	} else {
-		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, 0 );
-	}
+	DWORD dwValue = bEnable ? LVS_EX_HEADERINALLVIEWS : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
 
 	m_bHasHeadersInAllViews = bEnable;
+}
+
+// Options //////////////////////////////////////////////////////////////////////
+Void WinGUITable::ToggleColumnHeaders( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwStyle = GetWindowLong( hHandle, GWL_STYLE );
+	if ( bEnable ) {
+		dwStyle &= (~LVS_NOCOLUMNHEADER);
+	} else {
+		dwStyle |= LVS_NOCOLUMNHEADER;
+	}
+	SetWindowLong( hHandle, GWL_STYLE, dwStyle );
+
+	m_bHasColumnHeaders = bEnable;
+}
+
+Void WinGUITable::ToggleStaticColumnHeaders( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwStyle = GetWindowLong( hHandle, GWL_STYLE );
+	if ( bEnable ) {
+		dwStyle |= LVS_NOSORTHEADER;
+	} else {
+		dwStyle &= (~LVS_NOSORTHEADER);
+	}
+	SetWindowLong( hHandle, GWL_STYLE, dwStyle );
+
+	m_bHasStaticColumnHeaders = bEnable;
+}
+
+Void WinGUITable::ToggleDraggableColumnHeaders( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_HEADERDRAGDROP;
+	DWORD dwValue = bEnable ? LVS_EX_HEADERDRAGDROP : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+
+	m_bHasDraggableColumnHeaders = bEnable;
+}
+
+Void WinGUITable::ToggleIconColumnOverflowButton( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_COLUMNOVERFLOW;
+	DWORD dwValue = bEnable ? LVS_EX_COLUMNOVERFLOW : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+
+	m_bHasIconColumnOverflowButton = bEnable;
 }
 
 Void WinGUITable::ToggleCheckBoxes( Bool bEnable )
@@ -176,11 +275,8 @@ Void WinGUITable::ToggleCheckBoxes( Bool bEnable )
 	HWND hHandle = (HWND)m_hHandle;
 
 	DWORD dwMask = LVS_EX_CHECKBOXES;
-	if ( bEnable ) {
-		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, LVS_EX_CHECKBOXES );
-	} else {
-		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, 0 );
-	}
+	DWORD dwValue = bEnable ? LVS_EX_CHECKBOXES : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
 
 	m_bHasCheckBoxes = bEnable;
 }
@@ -191,11 +287,31 @@ Void WinGUITable::ToggleAutoCheckOnSelect( Bool bEnable )
 	HWND hHandle = (HWND)m_hHandle;
 
 	DWORD dwMask = LVS_EX_AUTOCHECKSELECT;
+	DWORD dwValue = bEnable ? LVS_EX_AUTOCHECKSELECT : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+
+Void WinGUITable::ToggleIconLabels( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_CHECKBOXES;
+	DWORD dwValue = bEnable ? 0 : LVS_EX_HIDELABELS;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+
+	m_bHasIconLabels = bEnable;
+}
+Void WinGUITable::PreventIconLabelWrap( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwStyle = GetWindowLong( hHandle, GWL_STYLE );
 	if ( bEnable ) {
-		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, LVS_EX_AUTOCHECKSELECT );
+		dwStyle |= LVS_NOLABELWRAP;
 	} else {
-		ListView_SetExtendedListViewStyleEx( hHandle, dwMask, 0 );
+		dwStyle &= (~LVS_NOLABELWRAP);
 	}
+	SetWindowLong( hHandle, GWL_STYLE, dwStyle );
 }
 
 Void WinGUITable::ToggleEditableLabels( Bool bEnable )
@@ -213,7 +329,148 @@ Void WinGUITable::ToggleEditableLabels( Bool bEnable )
 	m_bHasEditableLabels = bEnable;
 }
 
+Void WinGUITable::ToggleSubItemImages( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_SUBITEMIMAGES;
+	DWORD dwValue = bEnable ? LVS_EX_SUBITEMIMAGES : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+
+Void WinGUITable::ToggleSingleItemSelection( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwStyle = GetWindowLong( hHandle, GWL_STYLE );
+	if ( bEnable ) {
+		dwStyle |= LVS_SINGLESEL;
+	} else {
+		dwStyle &= (~LVS_SINGLESEL);
+	}
+	SetWindowLong( hHandle, GWL_STYLE, dwStyle );
+
+	m_bSingleItemSelection = bEnable;
+}
+
+Void WinGUITable::ToggleIconSimpleSelection( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_SIMPLESELECT;
+	DWORD dwValue = bEnable ? LVS_EX_SIMPLESELECT : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+
+	m_bIconSimpleSelection = bEnable;
+}
+
+Void WinGUITable::ToggleAutoSorting( Bool bEnable, Bool bAscendingElseDescending )
+{
+	DebugAssert( !m_bVirtualTable );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwStyle = GetWindowLong( hHandle, GWL_STYLE );
+	if ( bEnable ) {
+		if ( bAscendingElseDescending ) {
+			dwStyle |= LVS_SORTASCENDING;
+			dwStyle &= (~LVS_SORTDESCENDING);
+			m_bAutoSortAscending = true;
+			m_bAutoSortDescending = false;
+		} else {
+			dwStyle &= (~LVS_SORTASCENDING);
+			dwStyle |= LVS_SORTDESCENDING;
+			m_bAutoSortAscending = false;
+			m_bAutoSortDescending = true;
+		}
+	} else {
+		dwStyle &= (~LVS_SORTASCENDING);
+		dwStyle &= (~LVS_SORTDESCENDING);
+		m_bAutoSortAscending = false;
+		m_bAutoSortDescending = false;
+	}
+	SetWindowLong( hHandle, GWL_STYLE, dwStyle );
+}
+
+Void WinGUITable::ToggleHotTracking( Bool bEnable, Bool bUseSingleClick )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_ONECLICKACTIVATE | LVS_EX_TWOCLICKACTIVATE;
+	DWORD dwValue = 0;
+	m_bHasHotTrackingSingleClick = false;
+	m_bHasHotTrackingDoubleClick = false;
+	if ( bEnable ) {
+		if ( bUseSingleClick ) {
+			dwValue = LVS_EX_ONECLICKACTIVATE;
+			m_bHasHotTrackingSingleClick = true;
+		} else {
+			dwValue = LVS_EX_TWOCLICKACTIVATE;
+			m_bHasHotTrackingDoubleClick = true;
+		}
+	}
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+Void WinGUITable::ToggleHotTrackingSelection( Bool bEnable )
+{
+	DebugAssert( m_bHasHotTrackingSingleClick || m_bHasHotTrackingDoubleClick );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_TRACKSELECT;
+	DWORD dwValue = bEnable ? LVS_EX_TRACKSELECT : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+
+	m_bHasHotTrackingSelection = bEnable;
+}
+Void WinGUITable::ToggleHotTrackingUnderline( Bool bEnable, Bool bUnderlineHotElseCold )
+{
+	DebugAssert( m_bHasHotTrackingSingleClick || m_bHasHotTrackingDoubleClick );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_UNDERLINEHOT | LVS_EX_UNDERLINECOLD;
+	DWORD dwValue = 0;
+	if ( bEnable ) {
+		if ( bUnderlineHotElseCold )
+			dwValue = LVS_EX_UNDERLINEHOT;
+		else {
+			DebugAssert( m_bHasHotTrackingDoubleClick );
+			dwValue = LVS_EX_UNDERLINECOLD;
+		}
+	}
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+
+Void WinGUITable::ToggleInfoTips( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_INFOTIP;
+	DWORD dwValue = bEnable ? LVS_EX_INFOTIP : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+
+	m_bHasInfoTips = bEnable;
+}
+
 // Visual Settings //////////////////////////////////////////////////////////////
+Void WinGUITable::ToggleTransparentBackground( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_TRANSPARENTBKGND;
+	DWORD dwValue = bEnable ? LVS_EX_TRANSPARENTBKGND : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+Void WinGUITable::ShowGridLines( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_GRIDLINES;
+	DWORD dwValue = bEnable ? LVS_EX_GRIDLINES : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+
 UInt WinGUITable::GetBackgroundColor() const
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -225,6 +482,26 @@ Void WinGUITable::SetBackgroundColor( UInt iColor )
 	ListView_SetBkColor( hHandle, iColor );
 }
 
+Void WinGUITable::GetBackgroundImage( WinGUIBitmap * outImage, WinGUIPointF * outRelativePos, Bool * outIsTiled ) const
+{
+	DebugAssert( !(outImage->IsCreated()) );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	LVBKIMAGE hBkgImageInfos;
+	hBkgImageInfos.pszImage = NULL;
+	hBkgImageInfos.cchImageMax = 0;
+	hBkgImageInfos.ulFlags = LVBKIF_SOURCE_HBITMAP;
+
+	ListView_GetBkImage( hHandle, &hBkgImageInfos );
+	DebugAssert( hBkgImageInfos.hbm != NULL );
+
+	outImage->_CreateFromHandle( hBkgImageInfos.hbm, true, true );
+
+	outRelativePos->fX = ( 0.01f * (Float)(hBkgImageInfos.xOffsetPercent) );
+	outRelativePos->fY = ( 0.01f * (Float)(hBkgImageInfos.yOffsetPercent) );
+	*outIsTiled = ( (hBkgImageInfos.ulFlags & LVBKIF_STYLE_TILE) != 0 );
+}
 Void WinGUITable::SetBackgroundImage( const WinGUIBitmap * pImage, const WinGUIPointF & hRelativePos, Bool bUseTiling )
 {
 	DebugAssert( pImage->IsCreated() && pImage->IsDeviceDependant() );
@@ -259,6 +536,15 @@ Void WinGUITable::RemoveBackgroundImage()
 	ListView_SetBkImage( hHandle, &hBkgImageInfos );
 }
 
+Void WinGUITable::ToggleTransparentShadowText( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_TRANSPARENTSHADOWTEXT;
+	DWORD dwValue = bEnable ? LVS_EX_TRANSPARENTSHADOWTEXT : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+
 UInt WinGUITable::GetTextBackgroundColor() const
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -281,6 +567,110 @@ Void WinGUITable::SetTextColor( UInt iColor )
 	ListView_SetTextColor( hHandle, iColor );
 }
 
+Void WinGUITable::AutoSizeColumns( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_AUTOSIZECOLUMNS;
+	DWORD dwValue = bEnable ? LVS_EX_AUTOSIZECOLUMNS : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+Void WinGUITable::SnapColumnWidths( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_COLUMNSNAPPOINTS;
+	DWORD dwValue = bEnable ? LVS_EX_COLUMNSNAPPOINTS : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+Void WinGUITable::JustifyIconColumns( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_JUSTIFYCOLUMNS;
+	DWORD dwValue = bEnable ? LVS_EX_JUSTIFYCOLUMNS : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+
+Void WinGUITable::SetIconAlignment( WinGUITableIconsAlign iAlign )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwStyle = GetWindowLong( hHandle, GWL_STYLE );
+	switch( iAlign ) {
+		case WINGUI_TABLE_ICONS_ALIGN_DEFAULT:
+			dwStyle &= (~LVS_ALIGNTOP);
+			dwStyle &= (~LVS_ALIGNLEFT);
+			break;
+		case WINGUI_TABLE_ICONS_ALIGN_TOP:
+			dwStyle |= LVS_ALIGNTOP;
+			dwStyle &= (~LVS_ALIGNLEFT);
+			break;
+		case WINGUI_TABLE_ICONS_ALIGN_LEFT:
+			dwStyle &= (~LVS_ALIGNTOP);
+			dwStyle |= LVS_ALIGNLEFT;
+			break;
+		default: DebugAssert(false); break;
+	}
+	SetWindowLong( hHandle, GWL_STYLE, dwStyle );
+}
+Void WinGUITable::SnapIconsToGrid( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_SNAPTOGRID;
+	DWORD dwValue = bEnable ? LVS_EX_SNAPTOGRID : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+Void WinGUITable::AutoArrangeIcons( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwStyle = GetWindowLong( hHandle, GWL_STYLE );
+	if ( bEnable ) {
+		dwStyle |= LVS_AUTOARRANGE;
+	} else {
+		dwStyle &= (~LVS_AUTOARRANGE);
+	}
+	SetWindowLong( hHandle, GWL_STYLE, dwStyle );
+}
+
+Void WinGUITable::ToggleAlwaysShowSelection( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwStyle = GetWindowLong( hHandle, GWL_STYLE );
+	if ( bEnable ) {
+		dwStyle |= LVS_SHOWSELALWAYS;
+	} else {
+		dwStyle &= (~LVS_SHOWSELALWAYS);
+	}
+	SetWindowLong( hHandle, GWL_STYLE, dwStyle );
+}
+Void WinGUITable::ToggleFullRowSelection( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_FULLROWSELECT;
+	DWORD dwValue = bEnable ? LVS_EX_FULLROWSELECT : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
+
+Bool WinGUITable::HasBorderSelection() const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwStyleEx = ListView_GetExtendedListViewStyle( hHandle );
+	return ( (dwStyleEx & LVS_EX_BORDERSELECT) != 0 );
+}
+Void WinGUITable::ToggleBorderSelection( Bool bEnable )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	DWORD dwMask = LVS_EX_BORDERSELECT;
+	DWORD dwValue = bEnable ? LVS_EX_BORDERSELECT : 0;
+	ListView_SetExtendedListViewStyleEx( hHandle, dwMask, dwValue );
+}
 UInt WinGUITable::GetBorderSelectionColor() const
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -868,6 +1258,93 @@ Void WinGUITable::RemoveAllItems()
 	ListView_DeleteAllItems( hHandle );
 }
 
+Void WinGUITable::GetItemLabelText( GChar * outLabelText, UInt iMaxLength, UInt iItemIndex, UInt iSubItemIndex )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	if ( iSubItemIndex == INVALID_OFFSET )
+		iSubItemIndex = 0;
+	else
+		++iSubItemIndex;
+
+	ListView_GetItemText( hHandle, iItemIndex, iSubItemIndex, outLabelText, iMaxLength );
+}
+Void WinGUITable::SetItemLabelText( UInt iItemIndex, UInt iSubItemIndex, GChar * strLabelText )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	if ( iSubItemIndex == INVALID_OFFSET )
+		iSubItemIndex = 0;
+	else
+		++iSubItemIndex;
+
+	ListView_SetItemText( hHandle, iItemIndex, iSubItemIndex, strLabelText );
+}
+
+UInt WinGUITable::GetItemIcon( UInt iItemIndex, UInt iSubItemIndex )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	if ( iSubItemIndex == INVALID_OFFSET )
+		iSubItemIndex = 0;
+	else
+		++iSubItemIndex;
+
+	LVITEM hItemInfos;
+	hItemInfos.mask = LVIF_IMAGE;
+	hItemInfos.iItem = iItemIndex;
+	hItemInfos.iSubItem = iSubItemIndex;
+	hItemInfos.iImage = INVALID_OFFSET;
+
+	ListView_GetItem( hHandle, &hItemInfos );
+
+	return hItemInfos.iImage;
+}
+Void WinGUITable::SetItemIcon( UInt iItemIndex, UInt iSubItemIndex, UInt iIconIndex )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	if ( iSubItemIndex == INVALID_OFFSET )
+		iSubItemIndex = 0;
+	else
+		++iSubItemIndex;
+
+	LVITEM hItemInfos;
+	hItemInfos.mask = LVIF_IMAGE;
+	hItemInfos.iItem = iItemIndex;
+	hItemInfos.iSubItem = iSubItemIndex;
+	hItemInfos.iImage = iIconIndex;
+
+	ListView_SetItem( hHandle, &hItemInfos );
+}
+
+Void * WinGUITable::GetItemData( UInt iItemIndex )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	LVITEM hItemInfos;
+	hItemInfos.mask = LVIF_PARAM;
+	hItemInfos.iItem = iItemIndex;
+	hItemInfos.iSubItem = 0;
+	hItemInfos.lParam = NULL;
+
+	ListView_GetItem( hHandle, &hItemInfos );
+
+	return (Void*)( hItemInfos.lParam );
+}
+Void WinGUITable::SetItemData( UInt iItemIndex, Void * pData )
+{
+	HWND hHandle = (HWND)m_hHandle;
+	
+	LVITEM hItemInfos;
+	hItemInfos.mask = LVIF_PARAM;
+	hItemInfos.iItem = iItemIndex;
+	hItemInfos.iSubItem = 0;
+	hItemInfos.lParam = (LPARAM)pData;
+
+	ListView_SetItem( hHandle, &hItemInfos );
+}
+
 UInt WinGUITable::GetSelectedItemCount() const
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -951,33 +1428,63 @@ UInt WinGUITable::GetItemFromID( UInt iUniqueID )
 	return ListView_MapIDToIndex( hHandle, iUniqueID );
 }
 
-Void WinGUITable::SetItemLabelText( UInt iItemIndex, UInt iSubItemIndex, GChar * strLabelText )
-{
-	HWND hHandle = (HWND)m_hHandle;
-
-	if ( iSubItemIndex == INVALID_OFFSET )
-		iSubItemIndex = 0;
-	else
-		++iSubItemIndex;
-
-	ListView_SetItemText( hHandle, iItemIndex, iSubItemIndex, strLabelText );
-}
-
-//Void * WinGUITable::EditItemLabelStart( UInt iIndex )
-//{
-//	HWND hHandle = (HWND)m_hHandle;
-//	return ListView_EditLabel( hHandle, iIndex );
-//}
-Void WinGUITable::EditItemLabelCancel()
-{
-	HWND hHandle = (HWND)m_hHandle;
-	ListView_CancelEditLabel( hHandle );
-}
-
 Void WinGUITable::UpdateItem( UInt iItemIndex )
 {
 	HWND hHandle = (HWND)m_hHandle;
 	ListView_Update( hHandle, iItemIndex );
+}
+
+// Item Label Edition ///////////////////////////////////////////////////////////
+Void WinGUITable::GetEditItemLabel( WinGUITextEdit * outTextEdit )
+{
+	DebugAssert( m_bHasEditableLabels && (m_hEditLabelHandle != NULL) );
+	outTextEdit->_CreateFromHandle( m_hEditLabelHandle );
+}
+Void WinGUITable::ReleaseEditItemLabel( WinGUITextEdit * pTextEdit )
+{
+	DebugAssert( m_bHasEditableLabels && (m_hEditLabelHandle != NULL) );
+	pTextEdit->_Release();
+}
+
+Void WinGUITable::EditItemLabelStart( WinGUITextEdit * outTextEdit, UInt iItemIndex )
+{
+	DebugAssert( m_bHasEditableLabels && (m_hEditLabelHandle == NULL) );
+	DebugAssert( !(outTextEdit->IsCreated()) );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	SetFocus( hHandle ); // Required
+
+	m_hEditLabelHandle = ListView_EditLabel( hHandle, iItemIndex );
+	DebugAssert( m_hEditLabelHandle != NULL );
+
+	m_iEditLabelItemIndex = iItemIndex;
+
+	outTextEdit->_CreateFromHandle( m_hEditLabelHandle );
+}
+Void WinGUITable::EditItemLabelEnd( WinGUITextEdit * pTextEdit )
+{
+	DebugAssert( m_bHasEditableLabels && (m_hEditLabelHandle != NULL) );
+	DebugAssert( !pTextEdit->IsCreated() );
+
+	m_hEditLabelHandle = NULL; // We do NOT own this handle, let the ListView destroy it
+	m_iEditLabelItemIndex = INVALID_OFFSET;
+
+	pTextEdit->_Release();
+}
+Void WinGUITable::EditItemLabelCancel( WinGUITextEdit * pTextEdit )
+{
+	DebugAssert( m_bHasEditableLabels && (m_hEditLabelHandle != NULL) );
+	DebugAssert( !pTextEdit->IsCreated() );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	ListView_CancelEditLabel( hHandle );
+
+	m_hEditLabelHandle = NULL; // We do NOT own this handle, let the ListView destroy it
+	m_iEditLabelItemIndex = INVALID_OFFSET;
+
+	pTextEdit->_Release();
 }
 
 // Group Operations /////////////////////////////////////////////////////////////
@@ -1215,7 +1722,7 @@ UInt WinGUITable::SearchItem( Void * pUserData, UInt iStartIndex, Bool bWrapArou
 
 	return ListView_FindItem( hHandle, ((Int)iStartIndex) - 1, &hInfos );
 }
-UInt WinGUITable::SearchItem( const WinGUIPoint * pPoint, KeyCode iDirection, UInt iStartIndex, Bool bWrapAround ) const
+UInt WinGUITable::SearchItem( const WinGUIPoint * pPoint, WinGUITableSearchSpatialDirection iSpatialDirection, UInt iStartIndex, Bool bWrapAround ) const
 {
 	DebugAssert( m_iViewMode == WINGUI_TABLE_VIEW_ICONS || m_iViewMode == WINGUI_TABLE_VIEW_ICONS_SMALL );
 
@@ -1227,70 +1734,52 @@ UInt WinGUITable::SearchItem( const WinGUIPoint * pPoint, KeyCode iDirection, UI
 		hInfos.flags |= LVFI_WRAP;
 	hInfos.pt.x = pPoint->iX;
 	hInfos.pt.y = pPoint->iY;
-	switch( iDirection ) {
-		case KEYCODE_UP:    hInfos.vkDirection = VK_UP; break;
-		case KEYCODE_DOWN:  hInfos.vkDirection = VK_DOWN; break;
-		case KEYCODE_LEFT:  hInfos.vkDirection = VK_LEFT; break;
-		case KEYCODE_RIGHT: hInfos.vkDirection = VK_RIGHT; break;
+	switch( iSpatialDirection ) {
+		case WINGUI_TABLE_SEARCH_SPATIAL_UP:    hInfos.vkDirection = VK_UP; break;
+		case WINGUI_TABLE_SEARCH_SPATIAL_DOWN:  hInfos.vkDirection = VK_DOWN; break;
+		case WINGUI_TABLE_SEARCH_SPATIAL_LEFT:  hInfos.vkDirection = VK_LEFT; break;
+		case WINGUI_TABLE_SEARCH_SPATIAL_RIGHT: hInfos.vkDirection = VK_RIGHT; break;
 		default: DebugAssert(false); break;
 	}
 
 	return ListView_FindItem( hHandle, ((Int)iStartIndex) - 1, &hInfos );
 }
 
-UInt WinGUITable::SearchNextItem( UInt iStartIndex, Bool bReverse, Bool bSameGroup, Bool bVisible, Bool bHasFocus, Bool bSelected, Bool bCutMarked, Bool bDropHighlight ) const
-{
-	HWND hHandle = (HWND)m_hHandle;
-
-	UInt iFlags = LVNI_ALL;
-	if ( bReverse )
-		iFlags |= LVNI_PREVIOUS;
-
-	if ( bSameGroup )
-		iFlags |= LVNI_SAMEGROUPONLY;
-	if ( bVisible )
-		iFlags |= LVNI_VISIBLEONLY;
-	if ( bHasFocus )
-		iFlags |= LVNI_FOCUSED;
-	if ( bSelected )
-		iFlags |= LVNI_SELECTED;
-	if ( bCutMarked )
-		iFlags |= LVNI_CUT;
-	if ( bDropHighlight )
-		iFlags |= LVNI_DROPHILITED;
-
-	return ListView_GetNextItem( hHandle, ((Int)iStartIndex) - 1, iFlags );
-}
-UInt WinGUITable::SearchNextItem( UInt iStartIndex, KeyCode iDirection, Bool bSameGroup, Bool bVisible, Bool bHasFocus, Bool bSelected, Bool bCutMarked, Bool bDropHighlight ) const
+UInt WinGUITable::SearchNextItem( UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
 
 	UInt iFlags = 0;
-	switch( iDirection ) {
-		case KEYCODE_UP:    iFlags |= LVNI_ABOVE; break;
-		case KEYCODE_DOWN:  iFlags |= LVNI_BELOW; break;
-		case KEYCODE_LEFT:  iFlags |= LVNI_TOLEFT; break;
-		case KEYCODE_RIGHT: iFlags |= LVNI_TORIGHT; break;
-		default: DebugAssert(false); break;
+	if ( hSearchOptions.bSpatialSearch ) {
+		switch( hSearchOptions.iSpatialDirection ) {
+			case WINGUI_TABLE_SEARCH_SPATIAL_UP:    iFlags |= LVNI_ABOVE; break;
+			case WINGUI_TABLE_SEARCH_SPATIAL_DOWN:  iFlags |= LVNI_BELOW; break;
+			case WINGUI_TABLE_SEARCH_SPATIAL_LEFT:  iFlags |= LVNI_TOLEFT; break;
+			case WINGUI_TABLE_SEARCH_SPATIAL_RIGHT: iFlags |= LVNI_TORIGHT; break;
+			default: DebugAssert(false); break;
+		}
+	} else {
+		iFlags = LVNI_ALL;
+		if ( hSearchOptions.bReverseSearch )
+			iFlags |= LVNI_PREVIOUS;
 	}
 
-	if ( bSameGroup )
+	if ( hSearchOptions.bSameGroup )
 		iFlags |= LVNI_SAMEGROUPONLY;
-	if ( bVisible )
+	if ( hSearchOptions.bVisible )
 		iFlags |= LVNI_VISIBLEONLY;
-	if ( bHasFocus )
+	if ( hSearchOptions.bHasFocus )
 		iFlags |= LVNI_FOCUSED;
-	if ( bSelected )
+	if ( hSearchOptions.bSelected )
 		iFlags |= LVNI_SELECTED;
-	if ( bCutMarked )
+	if ( hSearchOptions.bCutMarked )
 		iFlags |= LVNI_CUT;
-	if ( bDropHighlight )
+	if ( hSearchOptions.bDropHighlight )
 		iFlags |= LVNI_DROPHILITED;
 
 	return ListView_GetNextItem( hHandle, ((Int)iStartIndex) - 1, iFlags );
 }
-
-UInt WinGUITable::SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, Bool bReverse, Bool bSameGroup, Bool bVisible, Bool bHasFocus, Bool bSelected, Bool bCutMarked, Bool bDropHighlight ) const
+UInt WinGUITable::SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
 
@@ -1299,52 +1788,31 @@ UInt WinGUITable::SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, Bool 
 	hItemIndex.iItem = ((Int)iStartIndex) - 1;
 
 	UInt iFlags = 0;
-	if ( bReverse )
-		iFlags |= LVNI_PREVIOUS;
-
-	if ( bSameGroup )
-		iFlags |= LVNI_SAMEGROUPONLY;
-	if ( bVisible )
-		iFlags |= LVNI_VISIBLEONLY;
-	if ( bHasFocus )
-		iFlags |= LVNI_FOCUSED;
-	if ( bSelected )
-		iFlags |= LVNI_SELECTED;
-	if ( bCutMarked )
-		iFlags |= LVNI_CUT;
-	if ( bDropHighlight )
-		iFlags |= LVNI_DROPHILITED;
-
-	return ListView_GetNextItemIndex( hHandle, &hItemIndex, iFlags );
-}
-UInt WinGUITable::SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, KeyCode iDirection, Bool bSameGroup, Bool bVisible, Bool bHasFocus, Bool bSelected, Bool bCutMarked, Bool bDropHighlight ) const
-{
-	HWND hHandle = (HWND)m_hHandle;
-
-	LVITEMINDEX hItemIndex;
-	hItemIndex.iGroup = iStartGroupIndex;
-	hItemIndex.iItem = ((Int)iStartIndex) - 1;
-
-	UInt iFlags = 0;
-	switch( iDirection ) {
-		case KEYCODE_UP:    iFlags |= LVNI_ABOVE; break;
-		case KEYCODE_DOWN:  iFlags |= LVNI_BELOW; break;
-		case KEYCODE_LEFT:  iFlags |= LVNI_TOLEFT; break;
-		case KEYCODE_RIGHT: iFlags |= LVNI_TORIGHT; break;
-		default: DebugAssert(false); break;
+	if ( hSearchOptions.bSpatialSearch ) {
+		switch( hSearchOptions.iSpatialDirection ) {
+			case WINGUI_TABLE_SEARCH_SPATIAL_UP:    iFlags |= LVNI_ABOVE; break;
+			case WINGUI_TABLE_SEARCH_SPATIAL_DOWN:  iFlags |= LVNI_BELOW; break;
+			case WINGUI_TABLE_SEARCH_SPATIAL_LEFT:  iFlags |= LVNI_TOLEFT; break;
+			case WINGUI_TABLE_SEARCH_SPATIAL_RIGHT: iFlags |= LVNI_TORIGHT; break;
+			default: DebugAssert(false); break;
+		}
+	} else {
+		iFlags = LVNI_ALL;
+		if ( hSearchOptions.bReverseSearch )
+			iFlags |= LVNI_PREVIOUS;
 	}
 
-	if ( bSameGroup )
+	if ( hSearchOptions.bSameGroup )
 		iFlags |= LVNI_SAMEGROUPONLY;
-	if ( bVisible )
+	if ( hSearchOptions.bVisible )
 		iFlags |= LVNI_VISIBLEONLY;
-	if ( bHasFocus )
+	if ( hSearchOptions.bHasFocus )
 		iFlags |= LVNI_FOCUSED;
-	if ( bSelected )
+	if ( hSearchOptions.bSelected )
 		iFlags |= LVNI_SELECTED;
-	if ( bCutMarked )
+	if ( hSearchOptions.bCutMarked )
 		iFlags |= LVNI_CUT;
-	if ( bDropHighlight )
+	if ( hSearchOptions.bDropHighlight )
 		iFlags |= LVNI_DROPHILITED;
 
 	return ListView_GetNextItemIndex( hHandle, &hItemIndex, iFlags );
@@ -1369,36 +1837,145 @@ Void WinGUITable::SortItemsByData( WinGUITableItemComparator pfComparator, Void 
 	ListView_SortItems( hHandle, pfComparator, pUserData );
 }
 
+Void WinGUITable::ArrangeIcons( WinGUITableIconsAlign iAlign, Bool bSnapToGrid )
+{
+	DebugAssert( m_iViewMode == WINGUI_TABLE_VIEW_ICONS || m_iViewMode == WINGUI_TABLE_VIEW_ICONS_SMALL );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	UInt iCode = 0;
+	if ( bSnapToGrid )
+		iCode = LVA_SNAPTOGRID;
+	else {
+		switch( iAlign ) {
+			case WINGUI_TABLE_ICONS_ALIGN_DEFAULT: iCode = LVA_DEFAULT; break;
+			case WINGUI_TABLE_ICONS_ALIGN_TOP:     iCode = LVA_ALIGNTOP; break;
+			case WINGUI_TABLE_ICONS_ALIGN_LEFT:    iCode = LVA_ALIGNLEFT; break;
+			default: DebugAssert(false); break;
+		}
+	}
+	
+	ListView_Arrange( hHandle, iCode );
+}
+
 // Hot Tracking /////////////////////////////////////////////////////////////////
 UInt WinGUITable::GetHotItem() const
 {
+	DebugAssert( m_bHasHotTrackingSingleClick || m_bHasHotTrackingDoubleClick );
+
 	HWND hHandle = (HWND)m_hHandle;
 	return ListView_GetHotItem( hHandle );
 }
 Void WinGUITable::SetHotItem( UInt iIndex )
 {
+	DebugAssert( m_bHasHotTrackingSingleClick || m_bHasHotTrackingDoubleClick );
+
 	HWND hHandle = (HWND)m_hHandle;
 	ListView_SetHotItem( hHandle, iIndex );
 }
 
 UInt WinGUITable::GetHoverTime() const
 {
+	DebugAssert( m_bHasHotTrackingSingleClick || m_bHasHotTrackingDoubleClick );
+
 	HWND hHandle = (HWND)m_hHandle;
 	return ListView_GetHoverTime( hHandle );
 }
 Void WinGUITable::SetHoverTime( UInt iTimeMS )
 {
+	DebugAssert( m_bHasHotTrackingSingleClick || m_bHasHotTrackingDoubleClick );
+
 	HWND hHandle = (HWND)m_hHandle;
 	ListView_SetHoverTime( hHandle, iTimeMS );
 }
 
+Void WinGUITable::GetHotCursor( WinGUICursor * outCursor ) const
+{
+	DebugAssert( m_bHasHotTrackingSingleClick || m_bHasHotTrackingDoubleClick );
+	DebugAssert( !(outCursor->IsCreated()) );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	HCURSOR hCursor = ListView_GetHotCursor( hHandle );
+	DebugAssert( hCursor != NULL );
+
+	outCursor->_CreateFromHandle( hCursor, true );
+}
+Void WinGUITable::SetHotCursor( const WinGUICursor * pCursor )
+{
+	DebugAssert( m_bHasHotTrackingSingleClick || m_bHasHotTrackingDoubleClick );
+	DebugAssert( pCursor->IsCreated() );
+
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_SetHotCursor( hHandle, (HCURSOR)(pCursor->m_hHandle) );
+}
+
 // Work Areas ///////////////////////////////////////////////////////////////////
+UInt WinGUITable::GetMaxWorkAreasCount() const
+{
+	return LV_MAX_WORKAREAS;
+}
+UInt WinGUITable::GetWorkAreasCount() const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	UInt iCount = 0;
+	ListView_GetNumberOfWorkAreas( hHandle, &iCount );
+	return iCount;
+}
+
+Void WinGUITable::GetWorkAreas( WinGUIRectangle * outWorkAreas, UInt iMaxCount ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	static RECT arrWorkAreasTemp[LV_MAX_WORKAREAS];
+	ListView_GetWorkAreas( hHandle, iMaxCount, arrWorkAreasTemp );
+
+	for( UInt i = 0; i < iMaxCount; ++i ) {
+		outWorkAreas[i].iLeft = arrWorkAreasTemp[i].left;
+		outWorkAreas[i].iTop = arrWorkAreasTemp[i].top;
+		outWorkAreas[i].iWidth = ( arrWorkAreasTemp[i].right - arrWorkAreasTemp[i].left );
+		outWorkAreas[i].iHeight = ( arrWorkAreasTemp[i].bottom - arrWorkAreasTemp[i].top );
+	}
+}
+Void WinGUITable::SetWorkAreas( const WinGUIRectangle * arrWorkAreas, UInt iCount )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	static RECT arrWorkAreasTemp[LV_MAX_WORKAREAS];
+	for( UInt i = 0; i < iCount; ++i ) {
+		arrWorkAreasTemp[i].left = arrWorkAreas[i].iLeft;
+		arrWorkAreasTemp[i].top = arrWorkAreas[i].iTop;
+		arrWorkAreasTemp[i].right = ( arrWorkAreas[i].iLeft + arrWorkAreas[i].iWidth );
+		arrWorkAreasTemp[i].bottom = ( arrWorkAreas[i].iTop + arrWorkAreas[i].iHeight );
+	}
+
+	ListView_SetWorkAreas( hHandle, iCount, arrWorkAreasTemp );
+}
 
 // Drag & Drop //////////////////////////////////////////////////////////////////
+Void WinGUITable::CreateDragImageList( WinGUIImageList * outDragImageList, WinGUIPoint * outInitialPosition, UInt iItemIndex )
+{
+	DebugAssert( !(outDragImageList->IsCreated()) );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	POINT hPt;
+	HIMAGELIST hImageList = ListView_CreateDragImage( hHandle, iItemIndex, &hPt );
+	DebugAssert( hImageList != NULL );
+
+	outDragImageList->_CreateFromHandle( hImageList );
+	// outDragImageList->m_bIsDragging = true; ???
+
+	outInitialPosition->iX = hPt.x;
+	outInitialPosition->iY = hPt.y;
+}
 
 // Tool/Info Tips ///////////////////////////////////////////////////////////////
 Void WinGUITable::SetInfoTip( UInt iItemIndex, UInt iSubItemIndex, GChar * strInfoText )
 {
+	DebugAssert( m_bHasInfoTips );
+
 	HWND hHandle = (HWND)m_hHandle;
 
 	LVSETINFOTIP hInfoTip;
@@ -1782,196 +2359,108 @@ Void WinGUITable::_Create()
     const WinGUITableParameters * pParameters = pModel->GetCreationParameters();
 
 	// Save State
-	m_bVirtualTable = pParameters->bMakeVirtualTable;
-	m_iViewMode = pParameters->iViewMode;
+	m_bVirtualTable = pParameters->bVirtualTable;
 
-	m_bHasHeadersInAllViews = pParameters->bHeadersInAllViews;
-	m_bHasCheckBoxes = pParameters->bAddCheckBoxes;
-	m_bHasEditableLabels = pParameters->bEditableLabels;
+	m_bHasBackBuffer = pParameters->bHasBackBuffer;
+	m_bHasSharedImageLists = pParameters->bHasSharedImageLists;
+
+	m_iViewMode = pParameters->iViewMode;
+	m_bGroupMode = pParameters->bGroupMode;
+	m_bHasHeadersInAllViews = pParameters->bHasHeadersInAllViews;
+
+	m_bHasColumnHeaders = pParameters->bHasColumnHeaders;
+	m_bHasStaticColumnHeaders = pParameters->bHasStaticColumnHeaders;
+	m_bHasDraggableColumnHeaders = pParameters->bHasDraggableColumnHeaders;
+	m_bHasIconColumnOverflowButton = pParameters->bHasIconColumnOverflowButton;
+
+	m_bHasCheckBoxes = pParameters->bHasCheckBoxes;
+	m_bHasIconLabels = pParameters->bHasIconLabels;
+	m_bHasEditableLabels = pParameters->bHasEditableLabels;
+	m_bHasSubItemImages = pParameters->bHasSubItemImages;
+
+	m_bSingleItemSelection = pParameters->bSingleItemSelection;
+	m_bIconSimpleSelection = pParameters->bIconSimpleSelection;
+
+	if ( !m_bVirtualTable ) {
+		m_bAutoSortAscending = pParameters->bAutoSortAscending;
+		m_bAutoSortDescending = pParameters->bAutoSortDescending;
+		DebugAssert( !m_bAutoSortAscending || !m_bAutoSortDescending );
+	}
+
+	m_bHasHotTrackingSingleClick = pParameters->bHasHotTrackingSingleClick;
+	m_bHasHotTrackingDoubleClick = pParameters->bHasHotTrackingDoubleClick;
+	DebugAssert( !m_bHasHotTrackingSingleClick || !m_bHasHotTrackingDoubleClick );
+	if ( m_bHasHotTrackingSingleClick || m_bHasHotTrackingDoubleClick )
+		m_bHasHotTrackingSelection = pParameters->bHasHotTrackingSelection;
+
+	m_bHasInfoTips = pParameters->bHasInfoTips;
 
     // Build Style
 	DWord dwStyle = ( WS_CHILD | WS_VISIBLE );
 	DWord dwStyleEx = LVS_EX_LABELTIP;
 
-	if ( pParameters->bMakeVirtualTable )
+	if ( m_bVirtualTable )
 		dwStyle |= LVS_OWNERDATA;
-	if ( pParameters->bHeadersInAllViews )
-		dwStyleEx |= LVS_EX_HEADERINALLVIEWS;
 
-	switch( pParameters->iViewMode ) {
-		case WINGUI_TABLE_VIEW_LIST:
-			dwStyle |= LVS_LIST;
-
-			if ( pParameters->bHeadersInAllViews ) {
-				if ( pParameters->bStaticColumnHeaders )
-					dwStyle |= LVS_NOSORTHEADER;
-				if ( pParameters->bSnapColumnsWidth )
-					dwStyleEx |= LVS_EX_COLUMNSNAPPOINTS;
-				if ( pParameters->bAutoSizeColumns )
-					dwStyleEx |= LVS_EX_AUTOSIZECOLUMNS;
-			}
-			break;
-		case WINGUI_TABLE_VIEW_ICONS:
-			dwStyle |= LVS_ICON;
-			if ( pParameters->hIconsMode.iAlign == WINGUI_TABLE_ICONS_ALIGN_TOP )
-				dwStyle |= LVS_ALIGNTOP;
-			else if ( pParameters->hIconsMode.iAlign == WINGUI_TABLE_ICONS_ALIGN_LEFT )
-				dwStyle |= LVS_ALIGNLEFT;
-
-			if ( pParameters->hIconsMode.bAutoArrange )
-				dwStyle |= LVS_AUTOARRANGE;
-
-			if ( pParameters->hIconsMode.bHideLabels )
-				dwStyleEx |= LVS_EX_HIDELABELS;
-			else if ( pParameters->hIconsMode.bNoLabelWrap )
-				dwStyle |= LVS_NOLABELWRAP;
-
-			if ( pParameters->hIconsMode.bJustifiedColumns )
-				dwStyleEx |= LVS_EX_JUSTIFYCOLUMNS;
-			if ( pParameters->hIconsMode.bSnapToGrid )
-				dwStyleEx |= LVS_EX_SNAPTOGRID;
-
-			if ( pParameters->hIconsMode.bSimpleSelection )
-				dwStyleEx |= LVS_EX_SIMPLESELECT;
-
-			if ( pParameters->bHeadersInAllViews ) {
-				if ( pParameters->bStaticColumnHeaders )
-					dwStyle |= LVS_NOSORTHEADER;
-				if ( pParameters->bSnapColumnsWidth )
-					dwStyleEx |= LVS_EX_COLUMNSNAPPOINTS;
-				if ( pParameters->bAutoSizeColumns )
-					dwStyleEx |= LVS_EX_AUTOSIZECOLUMNS;
-				if ( pParameters->hIconsMode.bColumnOverflow )
-					dwStyleEx |= LVS_EX_COLUMNOVERFLOW;
-			}
-			break;
-		case WINGUI_TABLE_VIEW_ICONS_SMALL:
-			dwStyle |= LVS_SMALLICON;
-			if ( pParameters->hSmallIconsMode.iAlign == WINGUI_TABLE_ICONS_ALIGN_TOP )
-				dwStyle |= LVS_ALIGNTOP;
-			else if ( pParameters->hSmallIconsMode.iAlign == WINGUI_TABLE_ICONS_ALIGN_LEFT )
-				dwStyle |= LVS_ALIGNLEFT;
-
-			if ( pParameters->hSmallIconsMode.bAutoArrange )
-				dwStyle |= LVS_AUTOARRANGE;
-
-			if ( pParameters->hSmallIconsMode.bHideLabels )
-				dwStyleEx |= LVS_EX_HIDELABELS;
-			else if ( pParameters->hSmallIconsMode.bNoLabelWrap )
-				dwStyle |= LVS_NOLABELWRAP;
-
-			if ( pParameters->hSmallIconsMode.bJustifiedColumns )
-				dwStyleEx |= LVS_EX_JUSTIFYCOLUMNS;
-			if ( pParameters->hSmallIconsMode.bSnapToGrid )
-				dwStyleEx |= LVS_EX_SNAPTOGRID;
-
-			if ( pParameters->hSmallIconsMode.bSimpleSelection )
-				dwStyleEx |= LVS_EX_SIMPLESELECT;
-
-			if ( pParameters->bHeadersInAllViews ) {
-				if ( pParameters->bStaticColumnHeaders )
-					dwStyle |= LVS_NOSORTHEADER;
-				if ( pParameters->bSnapColumnsWidth )
-					dwStyleEx |= LVS_EX_COLUMNSNAPPOINTS;
-				if ( pParameters->bAutoSizeColumns )
-					dwStyleEx |= LVS_EX_AUTOSIZECOLUMNS;
-				if ( pParameters->hSmallIconsMode.bColumnOverflow )
-					dwStyleEx |= LVS_EX_COLUMNOVERFLOW;
-			}
-			break;
-		case WINGUI_TABLE_VIEW_DETAILED:
-			dwStyle |= LVS_REPORT;
-			if ( pParameters->hDetailedMode.bNoColumnHeaders )
-				dwStyle |= LVS_NOCOLUMNHEADER;
-			else {
-				if ( pParameters->bStaticColumnHeaders )
-					dwStyle |= LVS_NOSORTHEADER;
-				if ( pParameters->bSnapColumnsWidth )
-					dwStyleEx |= LVS_EX_COLUMNSNAPPOINTS;
-				if ( pParameters->hDetailedMode.bHeaderDragNDrop )
-					dwStyleEx |= LVS_EX_HEADERDRAGDROP;
-			}
-
-			if ( pParameters->bAutoSizeColumns )
-				dwStyleEx |= LVS_EX_AUTOSIZECOLUMNS;
-			
-			if ( pParameters->hDetailedMode.bFullRowSelection )
-				dwStyleEx |= LVS_EX_FULLROWSELECT;
-			if ( pParameters->hDetailedMode.bShowGridLines )
-				dwStyleEx |= LVS_EX_GRIDLINES;
-			if ( pParameters->hDetailedMode.bSubItemImages )
-				dwStyleEx |= LVS_EX_SUBITEMIMAGES;
-			break;
-		case WINGUI_TABLE_VIEW_TILES:
-			dwStyle |= LVS_LIST; // Can't set at creation, delay
-
-			if ( pParameters->bHeadersInAllViews ) {
-				if ( pParameters->bStaticColumnHeaders )
-					dwStyle |= LVS_NOSORTHEADER;
-				if ( pParameters->bSnapColumnsWidth )
-					dwStyleEx |= LVS_EX_COLUMNSNAPPOINTS;
-				if ( pParameters->bAutoSizeColumns )
-					dwStyleEx |= LVS_EX_AUTOSIZECOLUMNS;
-				if ( pParameters->hTilesMode.bColumnOverflow )
-					dwStyleEx |= LVS_EX_COLUMNOVERFLOW;
-			}
-			break;
+	if ( m_bHasBackBuffer )
+		dwStyleEx |= LVS_EX_DOUBLEBUFFER;
+	if ( m_bHasSharedImageLists )
+		dwStyle |= LVS_SHAREIMAGELISTS;
+	
+	switch( m_iViewMode ) {
+		case WINGUI_TABLE_VIEW_LIST:        dwStyle |= LVS_LIST; break;
+		case WINGUI_TABLE_VIEW_ICONS:       dwStyle |= LVS_ICON; break;
+		case WINGUI_TABLE_VIEW_ICONS_SMALL: dwStyle |= LVS_SMALLICON; break;
+		case WINGUI_TABLE_VIEW_DETAILED:    dwStyle |= LVS_REPORT; break;
+		case WINGUI_TABLE_VIEW_TILES:       dwStyle |= LVS_LIST; break; // Can't set at creation, delay
 		default: DebugAssert(false); break;
 	}
+	// Can't set group mode at creation, delay
+	if ( m_bHasHeadersInAllViews )
+		dwStyleEx |= LVS_EX_HEADERINALLVIEWS;
 
-	if ( pParameters->bEditableLabels )
+	if ( !m_bHasColumnHeaders )
+		dwStyle |= LVS_NOCOLUMNHEADER;
+	if ( m_bHasStaticColumnHeaders )
+		dwStyle |= LVS_NOSORTHEADER;
+	if ( m_bHasDraggableColumnHeaders )
+		dwStyleEx |= LVS_EX_HEADERDRAGDROP;
+	if ( m_bHasIconColumnOverflowButton )
+		dwStyleEx |= LVS_EX_COLUMNOVERFLOW;
+
+	if ( m_bHasCheckBoxes )
+		dwStyleEx |= LVS_EX_CHECKBOXES;
+	if ( !m_bHasIconLabels )
+		dwStyleEx |= LVS_EX_HIDELABELS;
+	if ( m_bHasEditableLabels )
 		dwStyle |= LVS_EDITLABELS;
+	if ( m_bHasSubItemImages )
+		dwStyleEx |= LVS_EX_SUBITEMIMAGES;
 
-	if ( pParameters->bSingleItemSelection )
+	if ( m_bSingleItemSelection )
 		dwStyle |= LVS_SINGLESEL;
-	if ( pParameters->bAlwaysShowSelection )
-		dwStyle |= LVS_SHOWSELALWAYS;
-	if ( pParameters->bBorderSelection )
-		dwStyleEx |= LVS_EX_BORDERSELECT;
+	if ( m_bIconSimpleSelection )
+		dwStyleEx |= LVS_EX_SIMPLESELECT;
 
 	if ( !m_bVirtualTable ) {
-		if ( pParameters->bSortAscending )
+		if ( m_bAutoSortAscending )
 			dwStyle |= LVS_SORTASCENDING;
-		if ( pParameters->bSortDescending )
+		else if ( m_bAutoSortDescending )
 			dwStyle |= LVS_SORTDESCENDING;
 	}
 
-	if ( pParameters->bAddCheckBoxes ) {
-		dwStyleEx |= LVS_EX_CHECKBOXES;
-		if ( pParameters->bAutoCheckOnSelect )
-			dwStyleEx |= LVS_EX_AUTOCHECKSELECT;
-	}
-
-	if ( pParameters->bHandleInfoTips )
-		dwStyleEx |= LVS_EX_INFOTIP;
-
-	if ( pParameters->bHotTrackingSingleClick ) {
+	if ( m_bHasHotTrackingSingleClick ) {
 		dwStyleEx |= LVS_EX_ONECLICKACTIVATE;
-		if ( pParameters->bHotTrackSelection )
+		if ( m_bHasHotTrackingSelection )
 			dwStyleEx |= LVS_EX_TRACKSELECT;
-
-		if ( pParameters->bUnderlineHot )
-			dwStyleEx |= LVS_EX_UNDERLINEHOT;
-	} else if ( pParameters->bHotTrackingDoubleClick ) {
+	} else if ( m_bHasHotTrackingDoubleClick ) {
 		dwStyleEx |= LVS_EX_TWOCLICKACTIVATE;
-		if ( pParameters->bHotTrackSelection )
+		if ( m_bHasHotTrackingSelection )
 			dwStyleEx |= LVS_EX_TRACKSELECT;
-
-		if ( pParameters->bUnderlineHot )
-			dwStyleEx |= LVS_EX_UNDERLINEHOT;
-		else if ( pParameters->bUnderlineCold )
-			dwStyleEx |= LVS_EX_UNDERLINECOLD;
 	}
 
-	if ( pParameters->bSharedImageList )
-		dwStyle |= LVS_SHAREIMAGELISTS;
-	if ( pParameters->bUseBackBuffer )
-		dwStyleEx |= LVS_EX_DOUBLEBUFFER;
-	if ( pParameters->bTransparentBackground ) {
-		dwStyleEx |= LVS_EX_TRANSPARENTBKGND;
-		if ( pParameters->bTransparentShadowText )
-			dwStyleEx |= LVS_EX_TRANSPARENTSHADOWTEXT;
-	}
+	if ( m_bHasInfoTips )
+		dwStyleEx |= LVS_EX_INFOTIP;
 
     // Window creation
 	m_hHandle = CreateWindowEx (
@@ -1989,14 +2478,14 @@ Void WinGUITable::_Create()
 	DebugAssert( m_hHandle != NULL );
 
 	// Set Tile Mode after creation
-	if ( pParameters->iViewMode == WINGUI_TABLE_VIEW_TILES )
-		ListView_SetView( (HWND)m_hHandle, LV_VIEW_TILE );
+	if ( m_iViewMode == WINGUI_TABLE_VIEW_TILES )
+		SwitchViewMode( WINGUI_TABLE_VIEW_TILES );
 
-	// Populate the list
-	UInt iCount = pModel->GetItemCount();
-	for( UInt i = 0; i < iCount; ++i ) {
+	// Set Group Mode after creation
+	if ( m_bGroupMode )
+		ToggleGroupMode( true );
 
-	}
+	// Start with an empty list
 
 	// Done
 	_SaveElementToHandle();
@@ -2015,10 +2504,13 @@ Bool WinGUITable::_DispatchEvent( Int iNotificationCode, Void * pParameters )
     // Get Model
 	WinGUITableModel * pModel = (WinGUITableModel*)m_pModel;
 
+	// LVN_COLUMNDROPDOWN      // When using a HeaderControl as child of the listview ...
+	// LVN_COLUMNOVERFLOWCLICK // When using a HeaderControl as child of the listview ...
+
 	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
-		//case NM_SETFOCUS:  return pModel->OnFocusGained(); break;
-		//case NM_KILLFOCUS: return pModel->OnFocusLost(); break;
+		case NM_SETFOCUS:  return pModel->OnFocusGained(); break;
+		case NM_KILLFOCUS: return pModel->OnFocusLost(); break;
 
 		//case LVN_KEYDOWN: return pModel->OnKeyPress(); break;
 		//case NM_RETURN:   return pModel->OnKeyPressEnter(); break;
@@ -2029,19 +2521,84 @@ Bool WinGUITable::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 		//case NM_RDBLCLK: return pModel->OnDblClickRightItem(); break;
 		//case NM_HOVER:   return pModel->OnHoverItem(); break;
 
-		//case LVN_COLUMNCLICK: return pModel->OnClickHeader(); break;
+		// Column Headers Interactions
+		case LVN_COLUMNCLICK: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+				return pModel->OnColumnHeaderClick( pParams->iSubItem );
+			} break;
 		//case LVN_LINKCLICK:   return pModel->OnClickLink(); break;
 
-		//case LVN_BEGINDRAG:      return pModel->OnDragLeftStart(); break;
-		//case LVN_BEGINRDRAG:     return pModel->OnDragRightStart(); break;
-		//case LVN_BEGINSCROLL:    return pModel->OnScrollStart(); break;
-		//case LVN_ENDSCROLL:      return pModel->OnScrollEnd(); break;
-		//case LVN_BEGINLABELEDIT: return pModel->OnLabelEditStart(); break;
-		//case LVN_ENDLABELEDIT:   return pModel->OnLabelEditEnd(); break;
+		// Item Interactions
+		case LVN_INSERTITEM: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+				return pModel->OnAddItem( pParams->iItem );
+			} break;
+		case LVN_DELETEITEM: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+				return pModel->OnRemoveItem( pParams->iItem, (Void*)(pParams->lParam) );
+			} break;
+		case LVN_DELETEALLITEMS: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+				return pModel->OnRemoveAllItems(); // return false to receive subsequent LVN_DELETEITEM notifications
+			} break;
 
-		//case LVN_INSERTITEM:     return pModel->OnInsertItem(); break;
-		//case LVN_DELETEALLITEMS: return pModel->OnDeleteAllItems(); break;
-		//case LVN_DELETEITEM:     return pModel->OnDeleteItem(); break;
+		// Scrolling
+		case LVN_BEGINSCROLL: {
+				NMLVSCROLL * pParams = (NMLVSCROLL*)pParameters;
+				WinGUIPoint hScrollPoint;
+				hScrollPoint.iX = pParams->dx;
+				hScrollPoint.iY = pParams->dy;
+				return pModel->OnScrollStart( hScrollPoint );
+			} break;
+		case LVN_ENDSCROLL: {
+				NMLVSCROLL * pParams = (NMLVSCROLL*)pParameters;
+				WinGUIPoint hScrollPoint;
+				hScrollPoint.iX = pParams->dx;
+				hScrollPoint.iY = pParams->dy;
+				return pModel->OnScrollEnd( hScrollPoint );
+			} break;
+
+		// Drag & Drop
+		case LVN_BEGINDRAG: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+				return pModel->OnDragLeftStart( pParams->iItem );
+			} break;
+		case LVN_BEGINRDRAG: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+				return pModel->OnDragRightStart( pParams->iItem );
+			} break;
+
+		// Editable Labels
+		case LVN_BEGINLABELEDIT: {
+				NMLVDISPINFO * pParams = (NMLVDISPINFO*)pParameters;
+
+				m_hEditLabelHandle = ListView_GetEditControl( (HWND)m_hHandle );
+				m_iEditLabelItemIndex = pParams->item.iItem;
+
+				return pModel->OnLabelEditStart(); // Return false to allow edition
+			} break;
+		case LVN_ENDLABELEDIT: {
+				NMLVDISPINFO * pParams = (NMLVDISPINFO*)pParameters;
+
+				if ( pParams->item.pszText == NULL ) {
+					Bool bHandled = pModel->OnLabelEditCancel();
+
+					m_hEditLabelHandle = NULL;
+					m_iEditLabelItemIndex = INVALID_OFFSET;
+
+					return bHandled;
+				} else {
+					Bool bAllowModification = pModel->OnLabelEditEnd( pParams->item.pszText );
+
+					m_hEditLabelHandle = NULL;
+					m_iEditLabelItemIndex = INVALID_OFFSET;
+
+					SetWindowLongPtr( (HWND)m_hHandle, DWLP_MSGRESULT, (LONG_PTR)(bAllowModification ? TRUE : FALSE) );
+					return true;
+				}
+			} break;
+
+		
 
 		//case LVN_MARQUEEBEGIN: return pModel->OnSelectionBoxStart(); break;
 

@@ -172,6 +172,29 @@ Void WinGUITextEdit::HideBalloonTip()
 
 /////////////////////////////////////////////////////////////////////////////////
 
+Void WinGUITextEdit::_CreateFromHandle( Void * hHandle )
+{
+	DebugAssert( m_hHandle == NULL );
+
+	m_pModel = NULL;
+	m_pParent = NULL;
+
+	m_hHandle = hHandle;
+
+	m_iResourceID = INVALID_OFFSET;
+}
+Void WinGUITextEdit::_Release()
+{
+	DebugAssert( m_hHandle != NULL );
+
+	m_pModel = NULL;
+	m_pParent = NULL;
+
+	m_hHandle = NULL;
+
+	m_iResourceID = INVALID_OFFSET;
+}
+
 Void WinGUITextEdit::_Create()
 {
 	DebugAssert( m_hHandle == NULL );

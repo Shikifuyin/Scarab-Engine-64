@@ -68,6 +68,8 @@ typedef struct _wingui_textedit_parameters {
 class WinGUITextEditModel;
 class WinGUITextEdit;
 
+class WinGUITable;
+
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUITextEditModel class
 class WinGUITextEditModel : public WinGUIControlModel
@@ -130,6 +132,11 @@ public:
 	Void HideBalloonTip();
 
 private:
+	// WinGUITable Helper
+	friend class WinGUITable;
+	Void _CreateFromHandle( Void * hHandle );
+	Void _Release();
+
 	// Create/Destroy Interface
 	virtual Void _Create();
 	virtual Void _Destroy();

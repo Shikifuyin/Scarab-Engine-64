@@ -43,7 +43,8 @@ WinGUIElement::WinGUIElement( WinGUIElement * pParent, WinGUIElementModel * pMod
 {
 	// Link with Model
 	m_pModel = pModel;
-	m_pModel->m_pController = this;
+	if ( m_pModel != NULL )
+		m_pModel->m_pController = this;
 
 	// Parent Link
 	m_pParent = pParent;
@@ -52,7 +53,9 @@ WinGUIElement::WinGUIElement( WinGUIElement * pParent, WinGUIElementModel * pMod
 	m_hHandle = NULL;
 
 	// Pick Resource Identifier
-	m_iResourceID = m_pModel->m_iResourceID;
+	m_iResourceID = INVALID_OFFSET;
+	if ( m_pModel != NULL )
+		m_iResourceID = m_pModel->m_iResourceID;
 }
 WinGUIElement::~WinGUIElement()
 {

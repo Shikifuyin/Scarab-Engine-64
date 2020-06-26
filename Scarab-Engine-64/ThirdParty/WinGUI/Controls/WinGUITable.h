@@ -24,6 +24,7 @@
 // Includes
 #include "../WinGUIControl.h"
 
+#include "WinGUITextEdit.h"
 #include "../Tools/WinGUIImageList.h"
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +48,8 @@ enum WinGUITableTextAlign {
 
 // Icons Alignment
 enum WinGUITableIconsAlign {
-	WINGUI_TABLE_ICONS_ALIGN_TOP = 0,
+	WINGUI_TABLE_ICONS_ALIGN_DEFAULT = 0,
+	WINGUI_TABLE_ICONS_ALIGN_TOP,
 	WINGUI_TABLE_ICONS_ALIGN_LEFT
 };
 
@@ -61,76 +63,36 @@ enum WinGUITableTileSize {
 
 // Creation Parameters
 typedef struct _wingui_table_parameters {
-	Bool bMakeVirtualTable; // When managing large amount of data (large = millions of items)
-	Bool bHeadersInAllViews;
-	WinGUITableViewMode iViewMode;
-	
-	Bool bStaticColumnHeaders; // Only when bHeadersInAllViews = true
-	Bool bSnapColumnsWidth;    //
-	Bool bAutoSizeColumns;     // Otherwise, Detailed View only
+	Bool bVirtualTable;
 
-	Bool bEditableLabels;
+	Bool bHasBackBuffer;
+	Bool bHasSharedImageLists;
+
+	WinGUITableViewMode iViewMode;
+	Bool bGroupMode;
+	Bool bHasHeadersInAllViews;
+
+	Bool bHasColumnHeaders;
+	Bool bHasStaticColumnHeaders;
+	Bool bHasDraggableColumnHeaders;
+	Bool bHasIconColumnOverflowButton;
+
+	Bool bHasCheckBoxes;
+	Bool bHasIconLabels;
+	Bool bHasEditableLabels;
+	Bool bHasSubItemImages;
 
 	Bool bSingleItemSelection;
-	Bool bAlwaysShowSelection;
-	Bool bBorderSelection;
+	Bool bIconSimpleSelection;
 
-	Bool bSortAscending;  // Those cannot be used
-	Bool bSortDescending; // with virtual tables
+	Bool bAutoSortAscending;
+	Bool bAutoSortDescending;
 
-	Bool bAddCheckBoxes;
-	Bool bAutoCheckOnSelect;
+	Bool bHasHotTrackingSingleClick;
+	Bool bHasHotTrackingDoubleClick;
+	Bool bHasHotTrackingSelection;
 
-	Bool bHandleInfoTips;
-
-	Bool bHotTrackingSingleClick;
-	Bool bHotTrackingDoubleClick;
-	Bool bHotTrackSelection; // Requires bHotTrackingSingleClick or bHotTrackingDoubleClick
-	Bool bUnderlineHot;      // Requires bHotTrackingSingleClick or bHotTrackingDoubleClick
-	Bool bUnderlineCold;     // Requires bHotTrackingDoubleClick
-
-	Bool bSharedImageList;
-	Bool bUseBackBuffer; // Reduces Flickering
-	Bool bTransparentBackground;
-	Bool bTransparentShadowText;
-
-	union {
-		// Nothing Specific to List Mode
-
-		struct _iconsmode {
-			WinGUITableIconsAlign iAlign;
-			Bool bAutoArrange;
-			Bool bHideLabels;
-			Bool bNoLabelWrap;
-			Bool bColumnOverflow; // Only when bHeadersInAllViews = true
-			Bool bJustifiedColumns;
-			Bool bSnapToGrid;
-			Bool bSimpleSelection;
-		} hIconsMode;
-
-		struct _smalliconsmode {
-			WinGUITableIconsAlign iAlign;
-			Bool bAutoArrange;
-			Bool bHideLabels;
-			Bool bNoLabelWrap;
-			Bool bColumnOverflow; // Only when bHeadersInAllViews = true
-			Bool bJustifiedColumns;
-			Bool bSnapToGrid;
-			Bool bSimpleSelection;
-		} hSmallIconsMode;
-
-		struct _detailedmode {
-			Bool bNoColumnHeaders;
-			Bool bHeaderDragNDrop;
-			Bool bFullRowSelection;
-			Bool bShowGridLines;
-			Bool bSubItemImages;
-		} hDetailedMode;
-
-		struct _tilesmode {
-			Bool bColumnOverflow; // Only when bHeadersInAllViews = true
-		} hTilesMode;
-	};
+	Bool bHasInfoTips;
 } WinGUITableParameters;
 
 // Column Infos
@@ -278,6 +240,28 @@ typedef struct _wingui_table_hittest_results {
 	Bool bOnFooter;
 } WinGUITableHitTestResult;
 
+// Search Options
+enum WinGUITableSearchSpatialDirection {
+	WINGUI_TABLE_SEARCH_SPATIAL_UP = 0,
+	WINGUI_TABLE_SEARCH_SPATIAL_DOWN,
+	WINGUI_TABLE_SEARCH_SPATIAL_LEFT,
+	WINGUI_TABLE_SEARCH_SPATIAL_RIGHT
+};
+
+typedef struct _wingui_table_search_options {
+	Bool bSpatialSearch;
+
+	Bool bReverseSearch;                                 // Regular Search : Toward decreasing indices
+	WinGUITableSearchSpatialDirection iSpatialDirection; // Spatial Search : UP, DOWN, LEFT, RIGHT
+
+	Bool bSameGroup;
+	Bool bVisible;
+	Bool bHasFocus;
+	Bool bSelected;
+	Bool bCutMarked;
+	Bool bDropHighlight;
+} WinGUITableSearchOptions;
+
 // Comparators
 // Beware f***in Win32 has reverse convention from us : -1 when A#B ordered and +1 when B#A ...
 typedef Int (__stdcall * WinGUITableGroupComparator)( Int iGroupIDA, Int iGroupIDB, Void * pUserData );
@@ -298,10 +282,27 @@ public:
 	// Creation Parameters
 	inline const WinGUITableParameters * GetCreationParameters() const;
 
-	// Content Data (Must-Implement)
-	virtual UInt GetItemCount() const = 0;
-
 	// Events
+	virtual Bool OnFocusGained() { return false; }
+	virtual Bool OnFocusLost() { return false; }
+
+	virtual Bool OnColumnHeaderClick( UInt iIndex ) { return false; }
+
+	virtual Bool OnAddItem( UInt iItemIndex ) { return false; }
+	virtual Bool OnRemoveItem( UInt iItemIndex, Void * pItemData ) { return false; } // Do NOT add/remove/rearrange items while handling this event !
+	virtual Bool OnRemoveAllItems() { return true; }                                 // Return false to receive subsequent OnRemoveItem events
+
+	virtual Bool OnScrollStart( const WinGUIPoint & hScrollPos ) { return false; }
+	virtual Bool OnScrollEnd( const WinGUIPoint & hScrollPos ) { return false; }
+
+	virtual Bool OnDragLeftStart( UInt iItemIndex ) { return false; }
+	virtual Bool OnDragRightStart( UInt iItemIndex ) { return false; }
+
+	virtual Bool OnLabelEditStart() { return false; }                          // Return true to cancel edition, Use GetEditItemLabel / ReleaseEditItemLabel here
+	virtual Bool OnLabelEditEnd( const GChar * strNewLabel ) { return true; }  // Return true to allow the modification
+	virtual Bool OnLabelEditCancel() { return false; }
+
+	
 
 protected:
 	WinGUITableParameters m_hCreationParameters;
@@ -326,6 +327,12 @@ public:
 
 	Void SetAllocatedItemCount( UInt iPreAllocatedItemCount );
 
+	inline Bool HasBackBuffer() const;
+	Void UseBackBuffer( Bool bEnable );
+
+	inline Bool HasSharedImageLists() const;
+	Void UseSharedImageLists( Bool bEnable );
+
 	Void ForceRedraw( UInt iFirstItem, UInt iLastItem, Bool bImmediate );
 
 	//ListView_GetCallbackMask
@@ -341,20 +348,67 @@ public:
 	inline Bool HasHeadersInAllViews() const;
 	Void ToggleHeadersInAllViews( Bool bEnable );
 
+	// Options //////////////////////////////////////////////////////////////////
+	inline Bool HasColumnHeaders() const;
+	Void ToggleColumnHeaders( Bool bEnable ); // Detailed View only
+
+	inline Bool HasStaticColumnHeaders() const;
+	Void ToggleStaticColumnHeaders( Bool bEnable );
+
+	inline Bool HasDraggableColumnHeaders() const;
+	Void ToggleDraggableColumnHeaders( Bool bEnable );
+
+	inline Bool HasIconColumnOverflowButton() const;
+	Void ToggleIconColumnOverflowButton( Bool bEnable ); // Only when HeadersInAllViews in Icon/Tile View
+
 	inline Bool HasCheckBoxes() const;
 	Void ToggleCheckBoxes( Bool bEnable );
 	Void ToggleAutoCheckOnSelect( Bool bEnable );
 
+	inline Bool HasIconLabels() const;
+	Void ToggleIconLabels( Bool bEnable );
+	Void PreventIconLabelWrap( Bool bEnable );
+
 	inline Bool HasEditableLabels() const;
 	Void ToggleEditableLabels( Bool bEnable );
 
+	inline Bool HasSubItemImages() const;
+	Void ToggleSubItemImages( Bool bEnable );
+
+	inline Bool HasSingleItemSelection() const;
+	Void ToggleSingleItemSelection( Bool bEnable );
+
+	inline Bool HasIconSimpleSelection() const;
+	Void ToggleIconSimpleSelection( Bool bEnable );
+
+	inline Bool IsAutoSorted() const;
+	inline Bool IsAutoSortedAscending() const;
+	inline Bool IsAutoSortedDescending() const;
+	Void ToggleAutoSorting( Bool bEnable, Bool bAscendingElseDescending ); // Not with virtual tables
+
+	inline Bool HasHotTracking() const;
+	inline Bool IsHotTrackingSingleClick() const;
+	inline Bool IsHotTrackingDoubleClick() const;
+	inline Bool HasHotTrackingSelection() const;
+	Void ToggleHotTracking( Bool bEnable, Bool bUseSingleClick );
+	Void ToggleHotTrackingSelection( Bool bEnable );
+	Void ToggleHotTrackingUnderline( Bool bEnable, Bool bUnderlineHotElseCold );
+
+	inline Bool HasInfoTips() const;
+	Void ToggleInfoTips( Bool bEnable );
+
 	// Visual Settings //////////////////////////////////////////////////////////
+	Void ToggleTransparentBackground( Bool bEnable );
+	Void ShowGridLines( Bool bEnable ); // Detailed View only
+
 	UInt GetBackgroundColor() const;
 	Void SetBackgroundColor( UInt iColor );
 
-	//Bool GetBackgroundImage( WinGUIBitmap * outImage,  ) const; // ListView_GetBkImage
-	Void SetBackgroundImage( const WinGUIBitmap * pImage, const WinGUIPointF & hRelativePos, Bool bUseTiling );
+	Void GetBackgroundImage( WinGUIBitmap * outImage, WinGUIPointF * outRelativePos, Bool * outIsTiled ) const; // Caller doesn't take ownership of the background image (considered shared) !
+	Void SetBackgroundImage( const WinGUIBitmap * pImage, const WinGUIPointF & hRelativePos, Bool bUseTiling ); // Caller retains ownership of the background image !
 	Void RemoveBackgroundImage();
+
+	Void ToggleTransparentShadowText( Bool bEnable ); // Requires Transparent Background
 
 	UInt GetTextBackgroundColor() const;
 	Void SetTextBackgroundColor( UInt iColor );
@@ -362,6 +416,19 @@ public:
 	UInt GetTextColor() const;
 	Void SetTextColor( UInt iColor );
 
+	Void AutoSizeColumns( Bool bEnable );
+	Void SnapColumnWidths( Bool bEnable );
+	Void JustifyIconColumns( Bool bEnable );
+
+	Void SetIconAlignment( WinGUITableIconsAlign iAlign );
+	Void SnapIconsToGrid( Bool bEnable );
+	Void AutoArrangeIcons( Bool bEnable );
+
+	Void ToggleAlwaysShowSelection( Bool bEnable );
+	Void ToggleFullRowSelection( Bool bEnable );
+
+	Bool HasBorderSelection() const;
+	Void ToggleBorderSelection( Bool bEnable );
 	UInt GetBorderSelectionColor() const;
 	Void SetBorderSelectionColor( UInt iColor );
 
@@ -446,6 +513,15 @@ public:
 	Void RemoveItem( UInt iItemIndex );
 	Void RemoveAllItems();
 
+	Void GetItemLabelText( GChar * outLabelText, UInt iMaxLength, UInt iItemIndex, UInt iSubItemIndex );
+	Void SetItemLabelText( UInt iItemIndex, UInt iSubItemIndex, GChar * strLabelText );
+
+	UInt GetItemIcon( UInt iItemIndex, UInt iSubItemIndex );
+	Void SetItemIcon( UInt iItemIndex, UInt iSubItemIndex, UInt iIconIndex );
+
+	Void * GetItemData( UInt iItemIndex );
+	Void SetItemData( UInt iItemIndex, Void * pData );
+
 	UInt GetSelectedItemCount() const;
 	UInt GetMultiSelectMark() const;
 	Void SetMultiSelectMark( UInt iItemIndex );
@@ -460,14 +536,18 @@ public:
 	UInt AssignItemID( UInt iItemIndex );
 	UInt GetItemFromID( UInt iUniqueID );
 
-	Void SetItemLabelText( UInt iItemIndex, UInt iSubItemIndex, GChar * strLabelText );
-
-	//Void * EditItemLabelStart( UInt iIndex ); // Table must have focus for this !
-	Void EditItemLabelCancel();
-	//ListView_GetEditControl
-
 	Void UpdateItem( UInt iItemIndex );
 
+	// Item Label Edition ///////////////////////////////////////////////////////
+	inline Bool IsEditingItemLabel( UInt * outItemIndex = NULL ) const;
+
+	Void GetEditItemLabel( WinGUITextEdit * outTextEdit );
+	Void ReleaseEditItemLabel( WinGUITextEdit * pTextEdit );
+
+	Void EditItemLabelStart( WinGUITextEdit * outTextEdit, UInt iItemIndex );
+	Void EditItemLabelEnd( WinGUITextEdit * pTextEdit );
+	Void EditItemLabelCancel( WinGUITextEdit * pTextEdit );
+	
 	// Group Operations /////////////////////////////////////////////////////////
 	Bool HasGroup( UInt iGroupID ) const;
 
@@ -493,20 +573,17 @@ public:
 
 	UInt SearchItem( const GChar * strLabel, Bool bExact, UInt iStartIndex, Bool bWrapAround ) const;
 	UInt SearchItem( Void * pUserData, UInt iStartIndex, Bool bWrapAround ) const;
-	UInt SearchItem( const WinGUIPoint * pPoint, KeyCode iDirection, UInt iStartIndex, Bool bWrapAround ) const; // Only in Icon views
+	UInt SearchItem( const WinGUIPoint * pPoint, WinGUITableSearchSpatialDirection iSpatialDirection, UInt iStartIndex, Bool bWrapAround ) const; // Only in Icon views
 
-	UInt SearchNextItem( UInt iStartIndex, Bool bReverse, Bool bSameGroup, Bool bVisible, Bool bHasFocus, Bool bSelected, Bool bCutMarked, Bool bDropHighlight ) const;
-	UInt SearchNextItem( UInt iStartIndex, KeyCode iDirection, Bool bSameGroup, Bool bVisible, Bool bHasFocus, Bool bSelected, Bool bCutMarked, Bool bDropHighlight ) const;
-
-	UInt SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, Bool bReverse, Bool bSameGroup, Bool bVisible, Bool bHasFocus, Bool bSelected, Bool bCutMarked, Bool bDropHighlight ) const;
-	UInt SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, KeyCode iDirection, Bool bSameGroup, Bool bVisible, Bool bHasFocus, Bool bSelected, Bool bCutMarked, Bool bDropHighlight ) const;
+	UInt SearchNextItem( UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const;
+	UInt SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const;
 
 	// Sorting Operations ///////////////////////////////////////////////////////
 	Void SortGroups( WinGUITableGroupComparator pfComparator, Void * pUserData );
 	Void SortItemsByIndex( WinGUITableItemComparator pfComparator, Void * pUserData );
 	Void SortItemsByData( WinGUITableItemComparator pfComparator, Void * pUserData );
 
-	//ListView_Arrange()
+	Void ArrangeIcons( WinGUITableIconsAlign iAlign, Bool bSnapToGrid ); // WINGUI_TABLE_ICONS_ALIGN_LEFT when SnapToGrid = true
 
 	// Hot Tracking /////////////////////////////////////////////////////////////
 	UInt GetHotItem() const;
@@ -515,76 +592,24 @@ public:
 	UInt GetHoverTime() const;         // in milliseconds
 	Void SetHoverTime( UInt iTimeMS ); // in milliseconds
 
-	//ListView_GetHotCursor
-	//ListView_SetHotCursor
+	Void GetHotCursor( WinGUICursor * outCursor ) const; // Always Shared
+	Void SetHotCursor( const WinGUICursor * pCursor );   // Caller retains ownership of the cursor
 
 	// Work Areas ///////////////////////////////////////////////////////////////
-	//ListView_GetNumberOfWorkAreas
-	//ListView_GetWorkAreas
-	//ListView_SetWorkAreas
+	UInt GetMaxWorkAreasCount() const;
+	UInt GetWorkAreasCount() const;
+
+	Void GetWorkAreas( WinGUIRectangle * outWorkAreas, UInt iMaxCount ) const;
+	Void SetWorkAreas( const WinGUIRectangle * arrWorkAreas, UInt iCount );
 
 	// Drag & Drop //////////////////////////////////////////////////////////////
-	//ListView_CreateDragImage
+	Void CreateDragImageList( WinGUIImageList * outDragImageList, WinGUIPoint * outInitialPosition, UInt iItemIndex ); // Caller takes ownership
 
-	// Tool/Info Tips ///////////////////////////////////////////////////////////
+	// Info/Tool Tips ///////////////////////////////////////////////////////////
 	Void SetInfoTip( UInt iItemIndex, UInt iSubItemIndex, GChar * strInfoText );
 
 	//ListView_GetToolTips
 	//ListView_SetToolTips
-	
-
-
-	
-
-		// HeadersInAllViews or Detailed View
-	Void ToggleStaticColumnHeaders( Bool bEnable );
-	Void SnapColumnWidths( Bool bEnable );
-	Void AutoSizeColumns( Bool bEnable );
-
-
-	
-
-	Void ToggleSingleItemSelection( Bool bEnable );
-
-	Void AlwaysShowSelection( Bool bEnable );
-
-	Void ToggleBorderSelection( Bool bEnable );
-	
-	Void ToggleSorting( Bool bEnable, Bool bAscendingElseDescending ); // Not with virtual tables
-
-	
-
-	Void ToggleInfoTips( Bool bEnable );
-
-	Void ToggleHotTracking( Bool bEnable, Bool bUseSingleClick );
-	Void ToggleHotTrackSelection( Bool bEnable );
-	Void ToggleHotUnderline( Bool bEnable );
-	Void ToggleColdUnderline( Bool bEnable ); // Requires DblClick HotTracking
-
-	Void UseSharedImageLists( Bool bEnable );
-	Void UseBackBuffering( Bool bEnable );
-	Void UseTransparentBackground( Bool bEnable );
-	Void UseTransparentShadowText( Bool bEnable );
-
-		// Icon Modes
-	Void SetIconAlignment( WinGUITableIconsAlign iAlign );
-	Void ToggleAutoArrangeIcons( Bool bEnable );
-	Void HideIconLabels( Bool bEnable );
-	Void PreventIconLabelWrap( Bool bEnable );
-	Void ToggleIconColumnOverflowButton( Bool bEnable ); // Only when HeadersInAllViews
-	Void JustifyIconColumns( Bool bEnable );
-	Void ToggleIconSnapToGrid( Bool bEnable );
-	Void UseIconSimpleSelection( Bool bEnable );
-
-		// Detailed Mode / HeadersInAllViews
-	Void ToggleColumnHeaders( Bool bEnable );
-	Void ToggleHeaderDragNDrop( Bool bEnable );
-	Void ToggleFullRowSelection( Bool bEnable );
-	Void ShowGridLines( Bool bEnable );
-	Void ToggleSubItemImages( Bool bEnable );
-
-
-
 
 private:
 	// Helpers
@@ -610,14 +635,41 @@ private:
 	// Event Dispatch
 	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters );
 
-	// State
+	// State (Track the most important ones)
 	Bool m_bVirtualTable;
+
+	Bool m_bHasBackBuffer;
+	Bool m_bHasSharedImageLists;
+
 	WinGUITableViewMode m_iViewMode;
 	Bool m_bGroupMode;
-
 	Bool m_bHasHeadersInAllViews;
+
+	Bool m_bHasColumnHeaders;
+	Bool m_bHasStaticColumnHeaders;
+	Bool m_bHasDraggableColumnHeaders;
+	Bool m_bHasIconColumnOverflowButton;
+
 	Bool m_bHasCheckBoxes;
+	Bool m_bHasIconLabels;
 	Bool m_bHasEditableLabels;
+	Bool m_bHasSubItemImages;
+
+	Bool m_bSingleItemSelection;
+	Bool m_bIconSimpleSelection;
+
+	Bool m_bAutoSortAscending;
+	Bool m_bAutoSortDescending;
+
+	Bool m_bHasHotTrackingSingleClick;
+	Bool m_bHasHotTrackingDoubleClick;
+	Bool m_bHasHotTrackingSelection;
+
+	Bool m_bHasInfoTips;
+
+	// Edit Label Management
+	Void * m_hEditLabelHandle; // HWND
+	UInt m_iEditLabelItemIndex;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

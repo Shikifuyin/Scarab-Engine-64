@@ -868,7 +868,7 @@ Void WinGUITable::GetSubItemRect( WinGUIRectangle * outRectangle, UInt iItemInde
 	DebugAssert( iCode != LVIR_SELECTBOUNDS ); // Both combined = LVIR_SELECTBOUNDS, NOT ALLOWED HERE
 
 	RECT hRect;
-	ListView_GetSubItemRect( hHandle, iItemIndex, (1 + iSubItemIndex), iCode, &hRect );
+	ListView_GetSubItemRect( hHandle, iItemIndex, iSubItemIndex, iCode, &hRect );
 
 	outRectangle->iLeft = hRect.left;
 	outRectangle->iTop = hRect.top;
@@ -891,7 +891,7 @@ Void WinGUITable::GetSubItemRect( WinGUIRectangle * outRectangle, UInt iGroupInd
 	hItemIndex.iItem = iItemIndex;
 
 	RECT hRect;
-	ListView_GetItemIndexRect( hHandle, &hItemIndex, (1 + iSubItemIndex), iCode, &hRect );
+	ListView_GetItemIndexRect( hHandle, &hItemIndex, iSubItemIndex, iCode, &hRect );
 
 	outRectangle->iLeft = hRect.left;
 	outRectangle->iTop = hRect.top;
@@ -1012,7 +1012,7 @@ Void WinGUITable::HitTest( WinGUITableHitTestResult * outResult, const WinGUIPoi
 
 	outResult->iGroupIndex = hHitTestInfos.iGroup;
 	outResult->iItemIndex = hHitTestInfos.iItem;
-	outResult->iSubItemIndex = ( hHitTestInfos.iSubItem - 1 );
+	outResult->iSubItemIndex = hHitTestInfos.iSubItem;
 
 	outResult->bOutsideAbove = ( (hHitTestInfos.flags & LVHT_ABOVE) != 0 );
 	outResult->bOutsideBelow = ( (hHitTestInfos.flags & LVHT_BELOW) != 0 );
@@ -1043,10 +1043,10 @@ Void WinGUITable::Scroll( Int iScrollH, Int iScrollV )
 	HWND hHandle = (HWND)m_hHandle;
 	ListView_Scroll( hHandle, iScrollH, iScrollV );
 }
-Void WinGUITable::ScrollToItem( UInt iIndex, Bool bAllowPartial )
+Void WinGUITable::ScrollToItem( UInt iItemIndex, Bool bAllowPartial )
 {
 	HWND hHandle = (HWND)m_hHandle;
-	ListView_EnsureVisible( hHandle, iIndex, bAllowPartial ? TRUE : FALSE );
+	ListView_EnsureVisible( hHandle, iItemIndex, bAllowPartial ? TRUE : FALSE );
 }
 
 // Column Operations ////////////////////////////////////////////////////////////
@@ -1083,7 +1083,7 @@ Void WinGUITable::GetColumn( WinGUITableColumnInfos * outInfos, UInt iIndex ) co
 	hColumnInfos.pszText = outInfos->strHeaderText;
 	hColumnInfos.cchTextMax = 64;
 
-	ListView_GetColumn( hHandle, (1 + iIndex), &hColumnInfos );
+	ListView_GetColumn( hHandle, iIndex, &hColumnInfos );
 
 	_Convert_ColumnInfos( outInfos, &hColumnInfos );
 }
@@ -1169,9 +1169,7 @@ Void WinGUITable::GetItem( WinGUITableItemInfos * outItemInfos, UInt iItemIndex,
 	hItemInfos.stateMask = 0xffffffff;
 
 	hItemInfos.iItem = iItemIndex;
-	hItemInfos.iSubItem = 0;
-	if ( iSubItemIndex != INVALID_OFFSET )
-		hItemInfos.iSubItem = ( 1 + iSubItemIndex );
+	hItemInfos.iSubItem = iSubItemIndex;
 
 	hItemInfos.pszText = outItemInfos->strLabelText;
 	hItemInfos.cchTextMax = 64;
@@ -1243,7 +1241,7 @@ Void WinGUITable::SetSubItem( UInt iItemIndex, UInt iSubItemIndex, const WinGUIT
 	_Convert_ItemInfos( &hItemInfos, pItemInfos );
 
 	hItemInfos.iItem = iItemIndex;
-	hItemInfos.iSubItem = ( 1 + iSubItemIndex );
+	hItemInfos.iSubItem = iSubItemIndex;
 
 	ListView_SetItem( hHandle, &hItemInfos );
 }
@@ -1261,34 +1259,17 @@ Void WinGUITable::RemoveAllItems()
 Void WinGUITable::GetItemLabelText( GChar * outLabelText, UInt iMaxLength, UInt iItemIndex, UInt iSubItemIndex )
 {
 	HWND hHandle = (HWND)m_hHandle;
-
-	if ( iSubItemIndex == INVALID_OFFSET )
-		iSubItemIndex = 0;
-	else
-		++iSubItemIndex;
-
 	ListView_GetItemText( hHandle, iItemIndex, iSubItemIndex, outLabelText, iMaxLength );
 }
 Void WinGUITable::SetItemLabelText( UInt iItemIndex, UInt iSubItemIndex, GChar * strLabelText )
 {
 	HWND hHandle = (HWND)m_hHandle;
-
-	if ( iSubItemIndex == INVALID_OFFSET )
-		iSubItemIndex = 0;
-	else
-		++iSubItemIndex;
-
 	ListView_SetItemText( hHandle, iItemIndex, iSubItemIndex, strLabelText );
 }
 
 UInt WinGUITable::GetItemIcon( UInt iItemIndex, UInt iSubItemIndex )
 {
 	HWND hHandle = (HWND)m_hHandle;
-
-	if ( iSubItemIndex == INVALID_OFFSET )
-		iSubItemIndex = 0;
-	else
-		++iSubItemIndex;
 
 	LVITEM hItemInfos;
 	hItemInfos.mask = LVIF_IMAGE;
@@ -1303,11 +1284,6 @@ UInt WinGUITable::GetItemIcon( UInt iItemIndex, UInt iSubItemIndex )
 Void WinGUITable::SetItemIcon( UInt iItemIndex, UInt iSubItemIndex, UInt iIconIndex )
 {
 	HWND hHandle = (HWND)m_hHandle;
-
-	if ( iSubItemIndex == INVALID_OFFSET )
-		iSubItemIndex = 0;
-	else
-		++iSubItemIndex;
 
 	LVITEM hItemInfos;
 	hItemInfos.mask = LVIF_IMAGE;
@@ -1350,6 +1326,24 @@ UInt WinGUITable::GetSelectedItemCount() const
 	HWND hHandle = (HWND)m_hHandle;
 	return ListView_GetSelectedCount( hHandle );
 }
+UInt WinGUITable::GetSelectedItems( UInt * outItemIndices, UInt iMaxIndices ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	UInt iItemCount = 0;
+	UInt iFlags = LVNI_ALL | LVNI_SELECTED;
+
+	UInt iResult = ListView_GetNextItem( hHandle, -1, iFlags );
+	while( iResult != INVALID_OFFSET ) {
+		if ( iItemCount >= iMaxIndices )
+			break;
+		outItemIndices[iItemCount++] = iResult;
+		iResult = ListView_GetNextItem( hHandle, iResult, iFlags );
+	}
+
+	return iItemCount;
+}
+
 UInt WinGUITable::GetMultiSelectMark() const
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -1637,6 +1631,21 @@ Void WinGUITable::RemoveAllGroups()
 	ListView_RemoveAllGroups( hHandle );
 }
 
+Void WinGUITable::ExpandGroup( UInt iGroupID )
+{
+	DebugAssert( m_bGroupMode );
+
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_SetGroupState( hHandle, iGroupID, LVGS_COLLAPSED, 0 );
+}
+Void WinGUITable::CollapseGroup( UInt iGroupID )
+{
+	DebugAssert( m_bGroupMode );
+
+	HWND hHandle = (HWND)m_hHandle;
+	ListView_SetGroupState( hHandle, iGroupID, LVGS_COLLAPSED, LVGS_COLLAPSED );
+}
+
 UInt WinGUITable::GetFocusedGroup() const
 {
 	DebugAssert( m_bGroupMode );
@@ -1696,45 +1705,50 @@ Void WinGUITable::GetIncrementalSearchString( GChar * outSearchString ) const
 	ListView_GetISearchString( hHandle, outSearchString );
 }
 
-UInt WinGUITable::SearchItem( const GChar * strLabel, Bool bExact, UInt iStartIndex, Bool bWrapAround ) const
+UInt WinGUITable::SearchItem( const GChar * strLabel, UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
 
 	LVFINDINFO hInfos;
-	hInfos.flags = LVFI_STRING;
-	if ( !bExact )
-		hInfos.flags |= LVFI_PARTIAL;
-	if ( bWrapAround )
-		hInfos.flags |= LVFI_WRAP;
 	hInfos.psz = strLabel;
 
+	switch( hSearchOptions.iMode ) {
+		case WINGUI_TABLE_SEARCH_STRING:    hInfos.flags = LVFI_STRING; break;
+		case WINGUI_TABLE_SEARCH_SUBSTRING: hInfos.flags = LVFI_STRING | LVFI_PARTIAL; break;
+		default: DebugAssert(false); break;
+	}
+	if ( hSearchOptions.bWrapAround )
+		hInfos.flags |= LVFI_WRAP;
+
 	return ListView_FindItem( hHandle, ((Int)iStartIndex) - 1, &hInfos );
 }
-UInt WinGUITable::SearchItem( Void * pUserData, UInt iStartIndex, Bool bWrapAround ) const
+UInt WinGUITable::SearchItem( Void * pUserData, UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
 
 	LVFINDINFO hInfos;
-	hInfos.flags = LVFI_PARAM;
-	if ( bWrapAround )
-		hInfos.flags |= LVFI_WRAP;
 	hInfos.lParam = (LPARAM)pUserData;
+	hInfos.flags = LVFI_PARAM;
+
+	DebugAssert( hSearchOptions.iMode == WINGUI_TABLE_SEARCH_USERDATA );
+	if ( hSearchOptions.bWrapAround )
+		hInfos.flags |= LVFI_WRAP;
 
 	return ListView_FindItem( hHandle, ((Int)iStartIndex) - 1, &hInfos );
 }
-UInt WinGUITable::SearchItem( const WinGUIPoint * pPoint, WinGUITableSearchSpatialDirection iSpatialDirection, UInt iStartIndex, Bool bWrapAround ) const
+UInt WinGUITable::SearchItem( const WinGUIPoint * pPoint, UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const
 {
 	DebugAssert( m_iViewMode == WINGUI_TABLE_VIEW_ICONS || m_iViewMode == WINGUI_TABLE_VIEW_ICONS_SMALL );
 
 	HWND hHandle = (HWND)m_hHandle;
 
 	LVFINDINFO hInfos;
-	hInfos.flags = LVFI_NEARESTXY;
-	if ( bWrapAround )
-		hInfos.flags |= LVFI_WRAP;
 	hInfos.pt.x = pPoint->iX;
 	hInfos.pt.y = pPoint->iY;
-	switch( iSpatialDirection ) {
+	hInfos.flags = LVFI_NEARESTXY;
+
+	DebugAssert( hSearchOptions.iMode == WINGUI_TABLE_SEARCH_SPATIAL );
+	switch( hSearchOptions.iSpatialDirection ) {
 		case WINGUI_TABLE_SEARCH_SPATIAL_UP:    hInfos.vkDirection = VK_UP; break;
 		case WINGUI_TABLE_SEARCH_SPATIAL_DOWN:  hInfos.vkDirection = VK_DOWN; break;
 		case WINGUI_TABLE_SEARCH_SPATIAL_LEFT:  hInfos.vkDirection = VK_LEFT; break;
@@ -1745,7 +1759,7 @@ UInt WinGUITable::SearchItem( const WinGUIPoint * pPoint, WinGUITableSearchSpati
 	return ListView_FindItem( hHandle, ((Int)iStartIndex) - 1, &hInfos );
 }
 
-UInt WinGUITable::SearchNextItem( UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const
+UInt WinGUITable::SearchNextItem( UInt iStartIndex, const WinGUITableSearchNextOptions & hSearchOptions ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
 
@@ -1779,7 +1793,7 @@ UInt WinGUITable::SearchNextItem( UInt iStartIndex, const WinGUITableSearchOptio
 
 	return ListView_GetNextItem( hHandle, ((Int)iStartIndex) - 1, iFlags );
 }
-UInt WinGUITable::SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const
+UInt WinGUITable::SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, const WinGUITableSearchNextOptions & hSearchOptions ) const
 {
 	HWND hHandle = (HWND)m_hHandle;
 
@@ -1982,9 +1996,7 @@ Void WinGUITable::SetInfoTip( UInt iItemIndex, UInt iSubItemIndex, GChar * strIn
 	hInfoTip.cbSize = sizeof(LVSETINFOTIP);
 	hInfoTip.dwFlags = 0;
 	hInfoTip.iItem = iItemIndex;
-	hInfoTip.iSubItem = 0;
-	if ( iSubItemIndex != INVALID_OFFSET )
-		hInfoTip.iSubItem = ( 1 + iSubItemIndex );
+	hInfoTip.iSubItem = iSubItemIndex;
 	hInfoTip.pszText = strInfoText;
 
 	ListView_SetInfoTip( hHandle, &hInfoTip );
@@ -1997,7 +2009,7 @@ Void WinGUITable::_Convert_ColumnInfos( WinGUITableColumnInfos * outColumnInfos,
 	const LVCOLUMN * pDesc = (const LVCOLUMN *)pColumnInfos;
 
 	outColumnInfos->iOrderIndex = pDesc->iOrder;
-	outColumnInfos->iSubItemIndex = ( pDesc->iSubItem - 1 );
+	outColumnInfos->iSubItemIndex = pDesc->iSubItem;
 
 	switch( pDesc->fmt & LVCFMT_JUSTIFYMASK ) {
 		case LVCFMT_LEFT:   outColumnInfos->iRowsTextAlign = WINGUI_TABLE_TEXT_ALIGN_LEFT; break;
@@ -2025,7 +2037,7 @@ Void WinGUITable::_Convert_ColumnInfos( Void * outColumnInfos, const WinGUITable
 	LVCOLUMN * outDesc = (LVCOLUMN*)outColumnInfos;
 
 	outDesc->iOrder = pColumnInfos->iOrderIndex;
-	outDesc->iSubItem = ( 1 + pColumnInfos->iSubItemIndex );
+	outDesc->iSubItem = pColumnInfos->iSubItemIndex;
 
 	outDesc->pszText = pColumnInfos->strHeaderText;
 	outDesc->cchTextMax = 64;
@@ -2163,98 +2175,101 @@ Void WinGUITable::_Convert_GroupInfos( Void * outGroupInfos, const WinGUITableGr
 		outDesc->state |= LVGS_HIDDEN;
 }
 
+Void WinGUITable::_Convert_ItemState( WinGUITableItemState * outItemState, UInt iItemState ) const
+{
+	outItemState->iOverlayImage = ( iItemState & LVIS_OVERLAYMASK ) >> 8;
+	outItemState->iStateImage = ( iItemState & LVIS_STATEIMAGEMASK ) >> 12;
+
+	outItemState->bHasFocus = ( (iItemState & LVIS_FOCUSED) != 0 );
+	outItemState->bSelected = ( (iItemState & LVIS_SELECTED) != 0 );
+
+	outItemState->bCutMarked = ( (iItemState & LVIS_CUT) != 0 );
+	outItemState->bDropHighlight = ( (iItemState & LVIS_DROPHILITED) != 0 );
+}
+Void WinGUITable::_Convert_ItemState( UInt * outItemState, const WinGUITableItemState * pItemState ) const
+{
+	*outItemState = 0;
+
+	*outItemState |= ( (pItemState->iOverlayImage & 0x0f) << 8 );
+	*outItemState |= ( (pItemState->iStateImage & 0x0f) << 12 );
+
+	if ( pItemState->bHasFocus )
+		*outItemState |= LVIS_FOCUSED;
+	if ( pItemState->bSelected )
+		*outItemState |= LVIS_SELECTED;
+
+	if ( pItemState->bCutMarked )
+		*outItemState |= LVIS_CUT;
+	if ( pItemState->bDropHighlight )
+		*outItemState |= LVIS_DROPHILITED;
+}
+
+Void WinGUITable::_Convert_ItemColumnInfos( WinGUITableItemColumnInfos * outItemColumnInfos, UInt iColumn, Int iColFormat ) const
+{
+	outItemColumnInfos->iColumnIndex = iColumn;
+
+	outItemColumnInfos->bLineBreak = ( (iColFormat & LVCFMT_LINE_BREAK) != 0 );
+	outItemColumnInfos->bFill = ( (iColFormat & LVCFMT_FILL) != 0 );
+	outItemColumnInfos->bAllowWrap = ( (iColFormat & LVCFMT_WRAP) != 0 );
+	outItemColumnInfos->bNoTitle = ( (iColFormat & LVCFMT_NO_TITLE) != 0 );
+}
+Void WinGUITable::_Convert_ItemColumnInfos( UInt * outColumn, Int * outColFormat, const WinGUITableItemColumnInfos * pItemColumnInfos ) const
+{
+	*outColumn = pItemColumnInfos->iColumnIndex;
+
+	*outColFormat = 0;
+	if ( pItemColumnInfos->bLineBreak )
+		*outColFormat |= LVCFMT_LINE_BREAK;
+	if ( pItemColumnInfos->bFill )
+		*outColFormat |= LVCFMT_FILL;
+	if ( pItemColumnInfos->bAllowWrap )
+		*outColFormat |= LVCFMT_WRAP;
+	if ( pItemColumnInfos->bNoTitle )
+		*outColFormat |= LVCFMT_NO_TITLE;
+}
+
 Void WinGUITable::_Convert_ItemInfos( WinGUITableItemInfos * outItemInfos, const Void * pItemInfos ) const
 {
 	const LVITEM * pDesc = (const LVITEM *)pItemInfos;
 
-	outItemInfos->bIsSubItem = ( pDesc->iSubItem != 0 );
 	outItemInfos->iItemIndex = pDesc->iItem;
-	outItemInfos->iSubItemIndex = INVALID_OFFSET;
-	if ( outItemInfos->bIsSubItem )
-		outItemInfos->iSubItemIndex = ( pDesc->iSubItem - 1 );
+	outItemInfos->iSubItemIndex = pDesc->iSubItem;
 
-	outItemInfos->iParentGroupID = pDesc->iGroupId;
-
-	outItemInfos->pUserData = (Void*)( pDesc->lParam );
-
-	outItemInfos->iColumnCount = pDesc->cColumns;
-	for ( UInt i = 0; i < pDesc->cColumns; ++i ) {
-		outItemInfos->arrColumns[i].iIndex = ( pDesc->puColumns[i] - 1 );
-		outItemInfos->arrColumns[i].bLineBreak = ( (pDesc->piColFmt[i] & LVCFMT_LINE_BREAK) != 0 );
-		outItemInfos->arrColumns[i].bFill = ( (pDesc->piColFmt[i] & LVCFMT_FILL) != 0 );
-		outItemInfos->arrColumns[i].bAllowWrap = ( (pDesc->piColFmt[i] & LVCFMT_WRAP) != 0 );
-		outItemInfos->arrColumns[i].bNoTitle = ( (pDesc->piColFmt[i] & LVCFMT_NO_TITLE) != 0 );
-	}
+	outItemInfos->iGroupID = pDesc->iGroupId;
 
 	outItemInfos->iIndentDepth = pDesc->iIndent;
 
+	//outItemInfos->strLabelText = pDesc->pszText;
 	outItemInfos->iIconImage = pDesc->iImage;
-	outItemInfos->iOverlayImage = ( pDesc->state & LVIS_OVERLAYMASK ) >> 8;
-	if ( outItemInfos->iOverlayImage == 0 )
-		outItemInfos->iOverlayImage = INVALID_OFFSET;
-	else
-		--(outItemInfos->iOverlayImage);
-	outItemInfos->iStateImage = ( pDesc->state & LVIS_STATEIMAGEMASK ) >> 12;
-	if ( outItemInfos->iStateImage == 0 )
-		outItemInfos->iStateImage = INVALID_OFFSET;
-	else
-		--(outItemInfos->iStateImage);
+	outItemInfos->pItemData = (Void*)( pDesc->lParam );
 
-	outItemInfos->bHasFocus = ( (pDesc->state & LVIS_FOCUSED) != 0 );
-	outItemInfos->bSelected = ( (pDesc->state & LVIS_SELECTED) != 0 );
+	_Convert_ItemState( &(outItemInfos->hState), pDesc->state );
 
-	outItemInfos->bCutMarked = ( (pDesc->state & LVIS_CUT) != 0 );
-	outItemInfos->bDropHighlight = ( (pDesc->state & LVIS_DROPHILITED) != 0 );
+	outItemInfos->iColumnCount = pDesc->cColumns;
+	for( UInt i = 0; i < pDesc->cColumns; ++i )
+		_Convert_ItemColumnInfos( outItemInfos->arrColumns + i, pDesc->puColumns[i], pDesc->piColFmt[i] );
 }
 Void WinGUITable::_Convert_ItemInfos( Void * outItemInfos, const WinGUITableItemInfos * pItemInfos ) const
 {
 	LVITEM * outDesc = (LVITEM*)outItemInfos;
 
 	outDesc->iItem = pItemInfos->iItemIndex;
-	outDesc->iSubItem = 0;
-	if ( pItemInfos->bIsSubItem )
-		outDesc->iSubItem = ( 1 + pItemInfos->iSubItemIndex );
+	outDesc->iSubItem = pItemInfos->iSubItemIndex;
 
-	outDesc->iGroupId = pItemInfos->iParentGroupID;
-
-	outDesc->pszText = pItemInfos->strLabelText;
-	outDesc->cchTextMax = 64;
-
-	outDesc->lParam = (LPARAM)( pItemInfos->pUserData );
-
-	outDesc->cColumns = pItemInfos->iColumnCount;
-	for ( UInt i = 0; i < pItemInfos->iColumnCount; ++i ) {
-		outDesc->puColumns[i] = ( 1 + pItemInfos->arrColumns[i].iIndex );
-		outDesc->piColFmt[i] = 0;
-		if ( pItemInfos->arrColumns[i].bLineBreak )
-			outDesc->piColFmt[i] |= LVCFMT_LINE_BREAK;
-		if ( pItemInfos->arrColumns[i].bFill )
-			outDesc->piColFmt[i] |= LVCFMT_FILL;
-		if ( pItemInfos->arrColumns[i].bAllowWrap )
-			outDesc->piColFmt[i] |= LVCFMT_WRAP;
-		if ( pItemInfos->arrColumns[i].bNoTitle )
-			outDesc->piColFmt[i] |= LVCFMT_NO_TITLE;
-	}
+	outDesc->iGroupId = pItemInfos->iGroupID;
 
 	outDesc->iIndent = pItemInfos->iIndentDepth;
 
+	outDesc->pszText = pItemInfos->strLabelText;
+	outDesc->cchTextMax = 64;
 	outDesc->iImage = pItemInfos->iIconImage;
+	outDesc->lParam = (LPARAM)( pItemInfos->pItemData );
 
-	outDesc->state = 0;
-	if ( pItemInfos->iOverlayImage != INVALID_OFFSET )
-		outDesc->state |= ( ((1 + pItemInfos->iOverlayImage) & 0x0f) << 8 );
-	if ( pItemInfos->iStateImage != INVALID_OFFSET )
-		outDesc->state |= ( ((1 + pItemInfos->iStateImage) & 0x0f) << 12 );
+	_Convert_ItemState( &(outDesc->state), &(pItemInfos->hState) );
 
-	if ( pItemInfos->bHasFocus )
-		outDesc->state |= LVIS_FOCUSED;
-	if ( pItemInfos->bSelected )
-		outDesc->state |= LVIS_SELECTED;
-
-	if ( pItemInfos->bCutMarked )
-		outDesc->state |= LVIS_CUT;
-	if ( pItemInfos->bDropHighlight )
-		outDesc->state |= LVIS_DROPHILITED;
+	outDesc->cColumns = pItemInfos->iColumnCount;
+	for( UInt i = 0; i < pItemInfos->iColumnCount; ++i )
+		_Convert_ItemColumnInfos( outDesc->puColumns + i, outDesc->piColFmt + i, pItemInfos->arrColumns + i );
 }
 
 Void WinGUITable::_Convert_TileInfos( WinGUITableTileInfos * outTileInfos, const Void * pTileInfos ) const
@@ -2264,13 +2279,8 @@ Void WinGUITable::_Convert_TileInfos( WinGUITableTileInfos * outTileInfos, const
 	outTileInfos->iItemIndex = pDesc->iItem;
 
 	outTileInfos->iColumnCount = pDesc->cColumns;
-	for ( UInt i = 0; i < pDesc->cColumns; ++i ) {
-		outTileInfos->arrColumns[i].iIndex = ( pDesc->puColumns[i] - 1 );
-		outTileInfos->arrColumns[i].bLineBreak = ( (pDesc->piColFmt[i] & LVCFMT_LINE_BREAK) != 0 );
-		outTileInfos->arrColumns[i].bFill = ( (pDesc->piColFmt[i] & LVCFMT_FILL) != 0 );
-		outTileInfos->arrColumns[i].bAllowWrap = ( (pDesc->piColFmt[i] & LVCFMT_WRAP) != 0 );
-		outTileInfos->arrColumns[i].bNoTitle = ( (pDesc->piColFmt[i] & LVCFMT_NO_TITLE) != 0 );
-	}
+	for( UInt i = 0; i < pDesc->cColumns; ++i )
+		_Convert_ItemColumnInfos( outTileInfos->arrColumns + i, pDesc->puColumns[i], pDesc->piColFmt[i] );
 }
 Void WinGUITable::_Convert_TileInfos( Void * outTileInfos, const WinGUITableTileInfos * pTileInfos ) const
 {
@@ -2279,18 +2289,8 @@ Void WinGUITable::_Convert_TileInfos( Void * outTileInfos, const WinGUITableTile
 	outDesc->iItem = pTileInfos->iItemIndex;
 
 	outDesc->cColumns = pTileInfos->iColumnCount;
-	for ( UInt i = 0; i < pTileInfos->iColumnCount; ++i ) {
-		outDesc->puColumns[i] = ( 1 + pTileInfos->arrColumns[i].iIndex );
-		outDesc->piColFmt[i] = 0;
-		if ( pTileInfos->arrColumns[i].bLineBreak )
-			outDesc->piColFmt[i] |= LVCFMT_LINE_BREAK;
-		if ( pTileInfos->arrColumns[i].bFill )
-			outDesc->piColFmt[i] |= LVCFMT_FILL;
-		if ( pTileInfos->arrColumns[i].bAllowWrap )
-			outDesc->piColFmt[i] |= LVCFMT_WRAP;
-		if ( pTileInfos->arrColumns[i].bNoTitle )
-			outDesc->piColFmt[i] |= LVCFMT_NO_TITLE;
-	}
+	for( UInt i = 0; i < pTileInfos->iColumnCount; ++i )
+		_Convert_ItemColumnInfos( outDesc->puColumns + i, outDesc->piColFmt + i, pTileInfos->arrColumns + i );
 }
 
 Void WinGUITable::_Convert_TileMetrics( WinGUITableTileMetrics * outTileMetrics, const Void * pTileMetrics ) const
@@ -2504,42 +2504,68 @@ Bool WinGUITable::_DispatchEvent( Int iNotificationCode, Void * pParameters )
     // Get Model
 	WinGUITableModel * pModel = (WinGUITableModel*)m_pModel;
 
-	// LVN_COLUMNDROPDOWN      // When using a HeaderControl as child of the listview ...
-	// LVN_COLUMNOVERFLOWCLICK // When using a HeaderControl as child of the listview ...
-
 	// Dispatch Event to the Model
 	switch( iNotificationCode ) {
+		// Focus
 		case NM_SETFOCUS:  return pModel->OnFocusGained(); break;
 		case NM_KILLFOCUS: return pModel->OnFocusLost(); break;
 
-		//case LVN_KEYDOWN: return pModel->OnKeyPress(); break;
-		//case NM_RETURN:   return pModel->OnKeyPressEnter(); break;
-
-		//case NM_CLICK:   return pModel->OnClickLeftItem(); break;
-		//case NM_RCLICK:  return pModel->OnClickRightItem(); break;
-		//case NM_DBLCLK:  return pModel->OnDblClickLeftItem(); break;
-		//case NM_RDBLCLK: return pModel->OnDblClickRightItem(); break;
-		//case NM_HOVER:   return pModel->OnHoverItem(); break;
-
-		// Column Headers Interactions
-		case LVN_COLUMNCLICK: {
-				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
-				return pModel->OnColumnHeaderClick( pParams->iSubItem );
+		// Keyboard
+		case LVN_KEYDOWN: {
+				NMLVKEYDOWN * pParams = (NMLVKEYDOWN*)pParameters;
+				KeyCode iKey = KeyCodeFromWin32[pParams->wVKey];
+				return pModel->OnKeyPress( iKey );
 			} break;
-		//case LVN_LINKCLICK:   return pModel->OnClickLink(); break;
+		case NM_RETURN: return pModel->OnKeyPressEnter(); break;
 
-		// Item Interactions
-		case LVN_INSERTITEM: {
-				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
-				return pModel->OnAddItem( pParams->iItem );
+		// Mouse
+		case NM_CLICK: {
+				NMITEMACTIVATE * pParams = (NMITEMACTIVATE*)pParameters;
+
+				WinGUIPoint hMousePosition;
+				hMousePosition.iX = pParams->ptAction.x;
+				hMousePosition.iY = pParams->ptAction.y;
+
+				return pModel->OnClickLeft( pParams->iItem, pParams->iSubItem, hMousePosition );
 			} break;
-		case LVN_DELETEITEM: {
-				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
-				return pModel->OnRemoveItem( pParams->iItem, (Void*)(pParams->lParam) );
+		case NM_RCLICK: {
+				NMITEMACTIVATE * pParams = (NMITEMACTIVATE*)pParameters;
+
+				WinGUIPoint hMousePosition;
+				hMousePosition.iX = pParams->ptAction.x;
+				hMousePosition.iY = pParams->ptAction.y;
+
+				return pModel->OnClickRight( pParams->iItem, pParams->iSubItem, hMousePosition );
 			} break;
-		case LVN_DELETEALLITEMS: {
-				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
-				return pModel->OnRemoveAllItems(); // return false to receive subsequent LVN_DELETEITEM notifications
+		case NM_DBLCLK: {
+				NMITEMACTIVATE * pParams = (NMITEMACTIVATE*)pParameters;
+
+				WinGUIPoint hMousePosition;
+				hMousePosition.iX = pParams->ptAction.x;
+				hMousePosition.iY = pParams->ptAction.y;
+
+				return pModel->OnDblClickLeft( pParams->iItem, pParams->iSubItem, hMousePosition );
+			} break;
+		case NM_RDBLCLK: {
+				NMITEMACTIVATE * pParams = (NMITEMACTIVATE*)pParameters;
+
+				WinGUIPoint hMousePosition;
+				hMousePosition.iX = pParams->ptAction.x;
+				hMousePosition.iY = pParams->ptAction.y;
+
+				return pModel->OnDblClickRight( pParams->iItem, pParams->iSubItem, hMousePosition );
+			} break;
+		case NM_HOVER: {
+				// Must be an old message, mouse position is not provided
+				POINT hPt;
+				GetCursorPos( &hPt );
+				ScreenToClient( (HWND)m_hHandle, &hPt );
+
+				WinGUIPoint hMousePosition;
+				hMousePosition.iX = hPt.x;
+				hMousePosition.iY = hPt.y;
+
+				return pModel->OnHover( hMousePosition );
 			} break;
 
 		// Scrolling
@@ -2558,14 +2584,95 @@ Bool WinGUITable::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 				return pModel->OnScrollEnd( hScrollPoint );
 			} break;
 
-		// Drag & Drop
-		case LVN_BEGINDRAG: {
-				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
-				return pModel->OnDragLeftStart( pParams->iItem );
+		// Empty Table Text
+		case LVN_GETEMPTYMARKUP: {
+				NMLVEMPTYMARKUP * pParams = (NMLVEMPTYMARKUP*)pParameters;
+				Bool bCentered = false;
+				Bool bSetMarkup = pModel->OnRequestEmptyText( pParams->szMarkup, L_MAX_URL_LENGTH, &bCentered );
+				pParams->dwFlags = bCentered ? EMF_CENTERED : 0;
+				return bSetMarkup;
 			} break;
-		case LVN_BEGINRDRAG: {
+
+		// Column Headers Interactions
+		case LVN_COLUMNCLICK: {
 				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
-				return pModel->OnDragRightStart( pParams->iItem );
+				return pModel->OnColumnHeaderClick( pParams->iSubItem );
+			} break;
+
+		// Item Interactions
+		case LVN_INSERTITEM: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+				return pModel->OnAddItem( pParams->iItem );
+			} break;
+		case LVN_DELETEITEM: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+				return pModel->OnRemoveItem( pParams->iItem, (Void*)(pParams->lParam) );
+			} break;
+		case LVN_DELETEALLITEMS: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+				return pModel->OnRemoveAllItems(); // return false to receive subsequent LVN_DELETEITEM notifications
+			} break;
+
+		case LVN_ITEMACTIVATE: {
+				NMITEMACTIVATE * pParams = (NMITEMACTIVATE*)pParameters;
+
+				WinGUITableItemState hOldState;
+				_Convert_ItemState( &hOldState, pParams->uOldState );
+				WinGUITableItemState hNewState;
+				_Convert_ItemState( &hNewState, pParams->uNewState );
+
+				WinGUIPoint hHotPoint;
+				hHotPoint.iX = pParams->ptAction.x;
+				hHotPoint.iY = pParams->ptAction.y;
+
+				Bool bShiftPressed = ( (pParams->uKeyFlags & LVKF_SHIFT) != 0 );
+				Bool bCtrlPressed = ( (pParams->uKeyFlags & LVKF_CONTROL) != 0 );
+				Bool bAltPressed = ( (pParams->uKeyFlags & LVKF_ALT) != 0 );
+
+				return pModel->OnItemActivation( pParams->iItem, hOldState, hNewState, hHotPoint, bShiftPressed, bCtrlPressed, bAltPressed );
+			} break;
+
+		case LVN_ITEMCHANGING: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+
+				WinGUITableItemState hOldState;
+				_Convert_ItemState( &hOldState, pParams->uOldState );
+				WinGUITableItemState hNewState;
+				_Convert_ItemState( &hNewState, pParams->uNewState );
+
+				WinGUIPoint hHotPoint;
+				hHotPoint.iX = pParams->ptAction.x;
+				hHotPoint.iY = pParams->ptAction.y;
+
+				return pModel->OnItemChanging( pParams->iItem, pParams->iSubItem, (Void*)(pParams->lParam), hOldState, hNewState, hHotPoint ); // return false to allow the change
+			} break;
+		case LVN_ITEMCHANGED: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+
+				WinGUITableItemState hOldState;
+				_Convert_ItemState( &hOldState, pParams->uOldState );
+				WinGUITableItemState hNewState;
+				_Convert_ItemState( &hNewState, pParams->uNewState );
+
+				WinGUIPoint hHotPoint;
+				hHotPoint.iX = pParams->ptAction.x;
+				hHotPoint.iY = pParams->ptAction.y;
+
+				return pModel->OnItemChanged( pParams->iItem, pParams->iSubItem, (Void*)(pParams->lParam), hOldState, hNewState, hHotPoint );
+			} break;
+
+		// BoundingBox Selection
+		case LVN_MARQUEEBEGIN: return pModel->OnBoundingBoxSelection(); break; // Return false to allow selection
+
+		// Hot Tracking Selection
+		case LVN_HOTTRACK: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+
+				WinGUIPoint hHotPoint;
+				hHotPoint.iX = pParams->ptAction.x;
+				hHotPoint.iY = pParams->ptAction.y;
+
+				return pModel->OnHotTrackSelection( (UInt*)&(pParams->iItem), pParams->iSubItem, hHotPoint ); // Return false to allow selection
 			} break;
 
 		// Editable Labels
@@ -2598,19 +2705,81 @@ Bool WinGUITable::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 				}
 			} break;
 
-		
+		// Group Interactions
+		case LVN_LINKCLICK: {
+				NMLVLINK * pParams = (NMLVLINK*)pParameters;
+				////////////////////////////////////////////
+				return pModel->OnGroupLinkClick( pParams->iItem, pParams->iSubItem );
+			} break;
 
-		//case LVN_MARQUEEBEGIN: return pModel->OnSelectionBoxStart(); break;
+		// Incremental Search
+		case LVN_INCREMENTALSEARCH: {
+				NMLVFINDITEM * pParams = (NMLVFINDITEM*)pParameters;
 
-		//case LVN_ITEMACTIVATE: return pModel->OnItemActivation(); break;
-		//case LVN_ITEMCHANGED:  return pModel->OnItemChange(); break;
-		//case LVN_ITEMCHANGING: return pModel->OnItemChanging(); break;
+				// Ask for Search Options, Give opportunity for use search
+				UInt iSearchResult = INVALID_OFFSET;
+				UInt iStartItemIndex = 0;
+				WinGUITableSearchOptions hSearchOptions;
+				Bool bUserSearchDone = pModel->OnIncrementalSearch( &iSearchResult, &iStartItemIndex, &hSearchOptions );
 
-		//case LVN_INCREMENTALSEARCH: return pModel->OnSearch(); break;
+				// User has performed the search himself
+				if ( bUserSearchDone ) {
+					pParams->lvfi.flags = LVFI_PARAM;
+					pParams->lvfi.lParam = (LPARAM)iSearchResult;
+					return true;
+				}
 
-		//case LVN_GETEMPTYMARKUP: return pModel->OnGetEmptyMarkup(); break;
-		//case LVN_GETINFOTIP:     return pModel->OnGetInfoTip(); break;
+				// User has set default string search parameters
+				pParams->iStart = ( (Int)iStartItemIndex - 1 );
+				pParams->lvfi.flags = 0;
+				switch( hSearchOptions.iMode ) {
+					case WINGUI_TABLE_SEARCH_STRING:
+						pParams->lvfi.flags = LVFI_STRING;
+						if ( hSearchOptions.bWrapAround )
+							pParams->lvfi.flags |= LVFI_WRAP;
+						break;
+					case WINGUI_TABLE_SEARCH_SUBSTRING:
+						pParams->lvfi.flags = LVFI_STRING | LVFI_PARTIAL;
+						if ( hSearchOptions.bWrapAround )
+							pParams->lvfi.flags |= LVFI_WRAP;
+						break;
+					default: DebugAssert(false); break;
+				}
 
+				return true;
+			} break;
+
+		// Drag & Drop
+		case LVN_BEGINDRAG: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+				return pModel->OnDragLeftStart( pParams->iItem );
+			} break;
+		case LVN_BEGINRDRAG: {
+				NMLISTVIEW * pParams = (NMLISTVIEW*)pParameters;
+				return pModel->OnDragRightStart( pParams->iItem );
+			} break;
+
+		// Info Tips
+		case LVN_GETINFOTIP: {
+				NMLVGETINFOTIP * pParams = (NMLVGETINFOTIP*)pParameters;
+
+				// Retrieve Item Text if needed
+				Bool bFullItemTextVisible = ( (pParams->dwFlags & LVGIT_UNFOLDED) != 0 );
+				if ( !bFullItemTextVisible )
+					GetItemLabelText( pParams->pszText, pParams->cchTextMax, pParams->iItem, 0 );
+
+				// Setup for info tip text append
+				UInt iCurrentLength = StringFn->Length( pParams->pszText );
+				GChar * outAppendText = ( pParams->pszText + iCurrentLength );
+
+				return pModel->OnRequestInfoTip( outAppendText, pParams->cchTextMax - iCurrentLength, pParams->iItem );
+			} break;
+
+		// TODO : Check those when HeaderControl gets implemented
+		// LVN_COLUMNDROPDOWN      // When using a HeaderControl as child of the listview ...
+		// LVN_COLUMNOVERFLOWCLICK // When using a HeaderControl as child of the listview ...
+
+		// TODO : Virtual Tables (Unimplemented yet)
 		//case LVN_GETDISPINFO: return pModel->OnGetDisplayInfo(); break;
 		//case LVN_SETDISPINFO: return pModel->OnSetDisplayInfo(); break;
 

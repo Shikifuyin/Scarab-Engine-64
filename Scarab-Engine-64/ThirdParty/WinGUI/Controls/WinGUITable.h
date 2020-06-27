@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-// Known Bugs : None.
+// Known Bugs : Virtual Tables are not supported yet ...
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -155,36 +155,44 @@ typedef struct _wingui_table_group_infos {
 } WinGUITableGroupInfos;
 
 // Item Infos
-typedef struct _wingui_table_item_infos {
-	Bool bIsSubItem; // Item or SubItem
-	UInt iItemIndex;
-	UInt iSubItemIndex;
-
-	UInt iParentGroupID;
-
-	mutable GChar strLabelText[64];
-	Void * pUserData;
-
-	UInt iColumnCount;
-	struct _column {
-		UInt iIndex;
-		Bool bLineBreak;
-		Bool bFill;
-		Bool bAllowWrap;
-		Bool bNoTitle;
-	} arrColumns[32]; // Ordered
-
-	UInt iIndentDepth; // Invalid for sub items
-
-	UInt iIconImage;
-	UInt iOverlayImage; // Range = [0;14]
-	UInt iStateImage;   // Range = [0;14]
+typedef struct _wingui_table_item_state {
+	UInt iOverlayImage; // Range = [0;15], 0 = No Overlay Image
+	UInt iStateImage;   // Range = [0;15], 0 = No State Image
 
 	Bool bHasFocus;
 	Bool bSelected;
 
 	Bool bCutMarked;     // Item is being cut
 	Bool bDropHighlight; // Item is hovered during drag & drop
+} WinGUITableItemState;
+
+typedef struct _wingui_table_item_column_infos {
+	UInt iColumnIndex; // Column to use for an item or subitem
+	Bool bLineBreak;
+	Bool bFill;
+	Bool bAllowWrap;
+	Bool bNoTitle;
+} WinGUITableItemColumnInfos;
+
+typedef struct _wingui_table_item_infos {
+	UInt iItemIndex;
+	UInt iSubItemIndex; // 0 is the item itself
+
+	UInt iGroupID; // Parent Group, when Groups are enabled
+
+	UInt iIndentDepth; // Only for items
+
+	// Item Data
+	mutable GChar strLabelText[64];
+	UInt iIconImage;  // Valid for subitems if SubItem Images are enabled
+	Void * pItemData; // Only for items
+
+	// Item State, only for items
+	WinGUITableItemState hState;
+
+	// Columns Infos
+	UInt iColumnCount;
+	WinGUITableItemColumnInfos arrColumns[32]; // Ordered
 } WinGUITableItemInfos;
 
 // Tile Infos
@@ -192,13 +200,7 @@ typedef struct _wingui_table_tile_infos {
 	UInt iItemIndex;
 
 	UInt iColumnCount;
-	struct _column {
-		UInt iIndex;
-		Bool bLineBreak;
-		Bool bFill;
-		Bool bAllowWrap;
-		Bool bNoTitle;
-	} arrColumns[32]; // Ordered
+	WinGUITableItemColumnInfos arrColumns[32]; // Ordered
 } WinGUITableTileInfos;
 
 // Tile Metrics
@@ -241,6 +243,12 @@ typedef struct _wingui_table_hittest_results {
 } WinGUITableHitTestResult;
 
 // Search Options
+enum WinGUITableSearchMode {
+	WINGUI_TABLE_SEARCH_STRING = 0,
+	WINGUI_TABLE_SEARCH_SUBSTRING,
+	WINGUI_TABLE_SEARCH_USERDATA,
+	WINGUI_TABLE_SEARCH_SPATIAL
+};
 enum WinGUITableSearchSpatialDirection {
 	WINGUI_TABLE_SEARCH_SPATIAL_UP = 0,
 	WINGUI_TABLE_SEARCH_SPATIAL_DOWN,
@@ -249,10 +257,15 @@ enum WinGUITableSearchSpatialDirection {
 };
 
 typedef struct _wingui_table_search_options {
-	Bool bSpatialSearch;
+	WinGUITableSearchMode iMode;
+	WinGUITableSearchSpatialDirection iSpatialDirection;
+	Bool bWrapAround; // Not used for spatial search
+} WinGUITableSearchOptions;
 
-	Bool bReverseSearch;                                 // Regular Search : Toward decreasing indices
-	WinGUITableSearchSpatialDirection iSpatialDirection; // Spatial Search : UP, DOWN, LEFT, RIGHT
+typedef struct _wingui_table_searchnext_options {
+	Bool bSpatialSearch; // Else, index based
+	WinGUITableSearchSpatialDirection iSpatialDirection;
+	Bool bReverseSearch; // Not used for spatial search
 
 	Bool bSameGroup;
 	Bool bVisible;
@@ -260,7 +273,7 @@ typedef struct _wingui_table_search_options {
 	Bool bSelected;
 	Bool bCutMarked;
 	Bool bDropHighlight;
-} WinGUITableSearchOptions;
+} WinGUITableSearchNextOptions;
 
 // Comparators
 // Beware f***in Win32 has reverse convention from us : -1 when A#B ordered and +1 when B#A ...
@@ -282,27 +295,133 @@ public:
 	// Creation Parameters
 	inline const WinGUITableParameters * GetCreationParameters() const;
 
-	// Events
+	// Focus Events
 	virtual Bool OnFocusGained() { return false; }
 	virtual Bool OnFocusLost() { return false; }
 
-	virtual Bool OnColumnHeaderClick( UInt iIndex ) { return false; }
+	// Keyboard Events
+	virtual Bool OnKeyPress( KeyCode iKey ) { return false; }
+	virtual Bool OnKeyPressEnter() { return false; }
 
-	virtual Bool OnAddItem( UInt iItemIndex ) { return false; }
-	virtual Bool OnRemoveItem( UInt iItemIndex, Void * pItemData ) { return false; } // Do NOT add/remove/rearrange items while handling this event !
-	virtual Bool OnRemoveAllItems() { return true; }                                 // Return false to receive subsequent OnRemoveItem events
+	// Mouse Events
+	virtual Bool OnClickLeft( UInt iItemIndex, UInt iSubItemIndex, const WinGUIPoint & hMousePosition ) {
+		// iItemIndex can be INVALID_OFFSET if the user has not directly clicked the item icon/label
+		// In this case, Use HitTest() to determine where the user actually clicked
+		return false;
+	}
+	virtual Bool OnClickRight( UInt iItemIndex, UInt iSubItemIndex, const WinGUIPoint & hMousePosition ) {
+		// iItemIndex can be INVALID_OFFSET if the user has not directly clicked the item icon/label
+		// In this case, Use HitTest() to determine where the user actually clicked
+		return false;
+	}
+	virtual Bool OnDblClickLeft( UInt iItemIndex, UInt iSubItemIndex, const WinGUIPoint & hMousePosition ) {
+		// iItemIndex can be INVALID_OFFSET if the user has not directly clicked the item icon/label
+		// In this case, Use HitTest() to determine where the user actually clicked
+		return false;
+	}
+	virtual Bool OnDblClickRight( UInt iItemIndex, UInt iSubItemIndex, const WinGUIPoint & hMousePosition ) {
+		// iItemIndex can be INVALID_OFFSET if the user has not directly clicked the item icon/label
+		// In this case, Use HitTest() to determine where the user actually clicked
+		return false;
+	}
+	virtual Bool OnHover( const WinGUIPoint & hMousePosition ) {
+		// Use HitTest() to determine where the mouse actually is
+		return false;
+	}
 
+	// Scrolling Events
 	virtual Bool OnScrollStart( const WinGUIPoint & hScrollPos ) { return false; }
 	virtual Bool OnScrollEnd( const WinGUIPoint & hScrollPos ) { return false; }
 
+	// Empty List Event
+	virtual Bool OnRequestEmptyText( GChar * outMarkupText, UInt iMaxLength, Bool * outCentered ) {
+		// Return true to set the markup text of an empty table
+		StringFn->NCopy( outMarkupText, TEXT("No item to display."), iMaxLength - 1 );
+		*outCentered = true;
+		return true;
+	}
+
+	// Column Events
+	virtual Bool OnColumnHeaderClick( UInt iIndex ) { return false; }
+
+	// Item Events
+	virtual Bool OnAddItem( UInt iItemIndex ) { return false; }
+	virtual Bool OnRemoveItem( UInt iItemIndex, Void * pItemData ) {
+		// Do NOT add/remove/rearrange items while handling this event !
+		return false;
+	}
+	virtual Bool OnRemoveAllItems() {
+		// Return false to receive subsequent OnRemoveItem events
+		return true;
+	}
+
+	virtual Bool OnItemActivation( UInt iItemIndex, const WinGUITableItemState & hOldState, const WinGUITableItemState & hNewState,
+								   const WinGUIPoint & hHotPoint, Bool bShiftPressed, Bool bCtrlPressed, Bool bAltPressed ) {
+		// You should retrieve selected items to perform the proper action(s)
+		// by using GetSelectedItemCount() and GetSelectedItems()
+		return false; // Must return false
+	}
+
+	virtual Bool OnItemChanging( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData,
+							     const WinGUITableItemState & hOldState, const WinGUITableItemState & hNewState,
+								 const WinGUIPoint & hHotPoint ) {
+		// Return false to allow the change
+		return false;
+	}
+	virtual Bool OnItemChanged( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData,
+							    const WinGUITableItemState & hOldState, const WinGUITableItemState & hNewState,
+								const WinGUIPoint & hHotPoint ) {
+		// iItemIndex = INVALID_OFFSET if the change applies to all items
+		return false;
+	}
+
+	// Item Selection Events
+	virtual Bool OnBoundingBoxSelection() {
+		// Return true to prevent selection
+		return false;
+	}
+	virtual Bool OnHotTrackSelection( UInt * inoutSelectItemIndex, UInt iHotSubItemIndex, const WinGUIPoint & hHotPoint ) {
+		// Return true to prevent selection, and/or set inoutSelectItemIndex to INVALID_OFFSET
+		return false;
+	}
+
+	// Item Edition Events
+	virtual Bool OnLabelEditStart() {
+		// Return true to cancel edition, Use GetEditItemLabel / ReleaseEditItemLabel here
+		return false;
+	}
+	virtual Bool OnLabelEditEnd( const GChar * strNewLabel ) {
+		// Return true to allow the modification
+		return true;
+	}  
+	virtual Bool OnLabelEditCancel() { return false; }
+
+	// Group Events
+	virtual Bool OnGroupLinkClick( UInt iItemIndex, UInt iGroupID ) { return false; }
+
+	// Search Events
+	virtual Bool OnIncrementalSearch( UInt * outSearchResult, UInt * outStartIitemIndex, WinGUITableSearchOptions * outSearchOptions ) {
+		// - You can perform the search yourself, using GetIncrementalSearchString()
+		//   In this case, you must return true and set outSearchResult to the result item index
+		// - You can let the default search proceed
+		//   In this case, you must return false and you don't need to use outSearchResult
+		//   You must specify outStartIitemIndex and outSearchOptions to customize the search.
+		//   Search mode must be a string-based search.
+		*outStartIitemIndex = 0;
+		outSearchOptions->iMode = WINGUI_TABLE_SEARCH_SUBSTRING;
+		outSearchOptions->bWrapAround = false;
+		return false;
+	}
+
+	// Drag & Drop Events
 	virtual Bool OnDragLeftStart( UInt iItemIndex ) { return false; }
 	virtual Bool OnDragRightStart( UInt iItemIndex ) { return false; }
 
-	virtual Bool OnLabelEditStart() { return false; }                          // Return true to cancel edition, Use GetEditItemLabel / ReleaseEditItemLabel here
-	virtual Bool OnLabelEditEnd( const GChar * strNewLabel ) { return true; }  // Return true to allow the modification
-	virtual Bool OnLabelEditCancel() { return false; }
-
-	
+	// Info Tips Events
+	virtual Bool OnRequestInfoTip( GChar * outInfoTipText, UInt iMaxLength, UInt iItemIndex ) {
+		StringFn->NCopy( outInfoTipText, TEXT( "\nNo additional information." ), iMaxLength - 1 );
+		return true;
+	}
 
 protected:
 	WinGUITableParameters m_hCreationParameters;
@@ -478,7 +597,7 @@ public:
 
 	// Scroll Operations ////////////////////////////////////////////////////////
 	Void Scroll( Int iScrollH, Int iScrollV );
-	Void ScrollToItem( UInt iIndex, Bool bAllowPartial );
+	Void ScrollToItem( UInt iItemIndex, Bool bAllowPartial );
 
 	// Column Operations ////////////////////////////////////////////////////////
 	UInt GetColumnWidth( UInt iIndex ) const;
@@ -487,7 +606,7 @@ public:
 	Void GetColumnOrder( UInt * outOrderedIndices, UInt iCount ) const;
 	Void SetColumnOrder( const UInt * arrOrderedIndices, UInt iCount );
 
-	// GetColumnCount ?
+	// No GetColumnCount ?
 	Void GetColumn( WinGUITableColumnInfos * outInfos, UInt iIndex ) const;
 
 	Void AddColumn( UInt iIndex, const WinGUITableColumnInfos * pColumnInfos );
@@ -523,6 +642,8 @@ public:
 	Void SetItemData( UInt iItemIndex, Void * pData );
 
 	UInt GetSelectedItemCount() const;
+	UInt GetSelectedItems( UInt * outItemIndices, UInt iMaxIndices ) const;
+
 	UInt GetMultiSelectMark() const;
 	Void SetMultiSelectMark( UInt iItemIndex );
 
@@ -561,6 +682,9 @@ public:
 	Void RemoveGroup( UInt iGroupID );
 	Void RemoveAllGroups();
 
+	Void ExpandGroup( UInt iGroupID );
+	Void CollapseGroup( UInt iGroupID );
+
 	UInt GetFocusedGroup() const; // Returns a Group Index
 
 	// Tile Operations //////////////////////////////////////////////////////////
@@ -571,12 +695,12 @@ public:
 	UInt GetIncrementalSearchStringLength() const;
 	Void GetIncrementalSearchString( GChar * outSearchString ) const; // DANGER ! Get the Length first !
 
-	UInt SearchItem( const GChar * strLabel, Bool bExact, UInt iStartIndex, Bool bWrapAround ) const;
-	UInt SearchItem( Void * pUserData, UInt iStartIndex, Bool bWrapAround ) const;
-	UInt SearchItem( const WinGUIPoint * pPoint, WinGUITableSearchSpatialDirection iSpatialDirection, UInt iStartIndex, Bool bWrapAround ) const; // Only in Icon views
+	UInt SearchItem( const GChar * strLabel, UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const;
+	UInt SearchItem( Void * pUserData, UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const;
+	UInt SearchItem( const WinGUIPoint * pPoint, UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const; // Only in Icon views
 
-	UInt SearchNextItem( UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const;
-	UInt SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, const WinGUITableSearchOptions & hSearchOptions ) const;
+	UInt SearchNextItem( UInt iStartIndex, const WinGUITableSearchNextOptions & hSearchOptions ) const;
+	UInt SearchNextItem( UInt iStartGroupIndex, UInt iStartIndex, const WinGUITableSearchNextOptions & hSearchOptions ) const;
 
 	// Sorting Operations ///////////////////////////////////////////////////////
 	Void SortGroups( WinGUITableGroupComparator pfComparator, Void * pUserData );
@@ -618,6 +742,12 @@ private:
 
 	Void _Convert_GroupInfos( WinGUITableGroupInfos * outGroupInfos, const Void * pGroupInfos ) const; // LVGROUP
 	Void _Convert_GroupInfos( Void * outGroupInfos, const WinGUITableGroupInfos * pGroupInfos ) const;
+
+	Void _Convert_ItemState( WinGUITableItemState * outItemState, UInt iItemState ) const; // LVITEM
+	Void _Convert_ItemState( UInt * outItemState, const WinGUITableItemState * pItemState ) const;
+
+	Void _Convert_ItemColumnInfos( WinGUITableItemColumnInfos * outItemColumnInfos, UInt iColumn, Int iColFormat ) const; // LVITEM, LVTILEINFO
+	Void _Convert_ItemColumnInfos( UInt * outColumn, Int * outColFormat, const WinGUITableItemColumnInfos * pItemColumnInfos ) const;
 
 	Void _Convert_ItemInfos( WinGUITableItemInfos * outItemInfos, const Void * pItemInfos ) const; // LVITEM
 	Void _Convert_ItemInfos( Void * outItemInfos, const WinGUITableItemInfos * pItemInfos ) const;

@@ -43,6 +43,8 @@
 
 #include "Controls/WinGUIComboBox.h"
 
+#include "Controls/WinGUITable.h"
+
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 #define WinGUIFn WinGUI::GetInstance()
@@ -115,7 +117,9 @@ public:
     WinGUIStatic * CreateStatic( WinGUIElement * pParent, WinGUIStaticModel * pModel ) const;
     WinGUITextEdit * CreateTextEdit( WinGUIElement * pParent, WinGUITextEditModel * pModel ) const;
 
-    WinGUIComboBox * CreateComboBox( WinGUIElement * pParent,WinGUIComboBoxModel * pModel ) const;
+    WinGUIComboBox * CreateComboBox( WinGUIElement * pParent, WinGUIComboBoxModel * pModel ) const;
+
+    WinGUITable * CreateTable( WinGUIElement * pParent, WinGUITableModel * pModel ) const;
 
     // Element Removal
     Void DestroyElement( WinGUIElement * pElement ) const;

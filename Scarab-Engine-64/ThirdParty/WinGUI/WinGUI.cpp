@@ -439,6 +439,30 @@ WinGUIComboBox * WinGUI::CreateComboBox( WinGUIElement * pParent, WinGUIComboBox
     return pComboBox;
 }
 
+WinGUITable * WinGUI::CreateTable( WinGUIElement * pParent, WinGUITableModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUITable) );
+    WinGUITable * pTable = new(pMemory) WinGUITable( pParent, pModel );
+
+    ((WinGUIElement*)pTable)->_Create();
+    ((WinGUIElement*)pTable)->_ApplyDefaultFont( m_pDefaultFont );
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pTable );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pTable );
+    }
+
+    // Done
+    return pTable;
+}
+
 Void WinGUI::DestroyElement( WinGUIElement * pElement ) const
 {
     // Retrieve Parent

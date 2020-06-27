@@ -40,6 +40,7 @@ WinGUITableModel::WinGUITableModel( Int iResourceID ):
 	m_hCreationParameters.bHasSharedImageLists = false;
 
 	m_hCreationParameters.iViewMode = WINGUI_TABLE_VIEW_LIST;
+	m_hCreationParameters.bGroupMode = false;
 	m_hCreationParameters.bHasHeadersInAllViews = false;
 
 	m_hCreationParameters.bHasColumnHeaders = true;
@@ -2464,7 +2465,7 @@ Void WinGUITable::_Create()
 
     // Window creation
 	m_hHandle = CreateWindowEx (
-		dwStyleEx,
+		0,
 		WC_LISTVIEW,
 		TEXT(""),
 		dwStyle,
@@ -2476,6 +2477,9 @@ Void WinGUITable::_Create()
 		NULL
 	);
 	DebugAssert( m_hHandle != NULL );
+
+	// Apply extended styles after creation
+	ListView_SetExtendedListViewStyle( (HWND)m_hHandle, dwStyleEx );
 
 	// Set Tile Mode after creation
 	if ( m_iViewMode == WINGUI_TABLE_VIEW_TILES )
@@ -2700,7 +2704,7 @@ Bool WinGUITable::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 					m_hEditLabelHandle = NULL;
 					m_iEditLabelItemIndex = INVALID_OFFSET;
 
-					SetWindowLongPtr( (HWND)m_hHandle, DWLP_MSGRESULT, (LONG_PTR)(bAllowModification ? TRUE : FALSE) );
+					SetWindowLongPtr( (HWND)(_GetHandle(m_pParent)), DWLP_MSGRESULT, bAllowModification ? TRUE : FALSE );
 					return true;
 				}
 			} break;

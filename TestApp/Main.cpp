@@ -72,12 +72,14 @@ MyTabsModel::MyTabsModel( MyApplication * pApplication ):
 	m_hCreationParameters.bSingleLine = true;
 	m_hCreationParameters.bFixedWidth = true;
 
-	m_hCreationParameters.iTabCount = 2;
+	m_hCreationParameters.iTabCount = 3;
 
 	StringFn->Copy( m_hCreationParameters.arrTabs[0].strLabel, TEXT("Left Tab") );
 	m_hCreationParameters.arrTabs[0].pUserData = NULL;
-	StringFn->Copy( m_hCreationParameters.arrTabs[1].strLabel, TEXT("Right Tab") );
+	StringFn->Copy( m_hCreationParameters.arrTabs[1].strLabel, TEXT("Center Tab") );
 	m_hCreationParameters.arrTabs[1].pUserData = NULL;
+	StringFn->Copy( m_hCreationParameters.arrTabs[2].strLabel, TEXT("Right Tab") );
+	m_hCreationParameters.arrTabs[2].pUserData = NULL;
 }
 MyTabsModel::~MyTabsModel()
 {
@@ -107,7 +109,8 @@ Bool MyTabsModel::OnSelect()
 	WinGUIContainer * pTabPane = NULL;
 	switch( iSelected ) {
 		case 0: pTabPane = (WinGUIContainer*)( m_pApplication->m_hContainerModelLeft.GetController() ); break;
-		case 1: pTabPane = (WinGUIContainer*)( m_pApplication->m_hContainerModelRight.GetController() ); break;
+		case 1: pTabPane = (WinGUIContainer*)( m_pApplication->m_hContainerModelCenter.GetController() ); break;
+		case 2: pTabPane = (WinGUIContainer*)( m_pApplication->m_hContainerModelRight.GetController() ); break;
 		default: DebugAssert(false); break;
 	}
 
@@ -134,43 +137,6 @@ MyContainerModelLeft::~MyContainerModelLeft()
 }
 
 const WinGUILayout * MyContainerModelLeft::GetLayout() const
-{
-	static WinGUIManualLayout hLayout;
-
-	WinGUITabs * pTabs = (WinGUITabs *)(m_pApplication->m_hTabsModel.GetController());
-
-	WinGUIRectangle hRect;
-	pTabs->GetDisplayArea( &hRect );
-
-	hLayout.UseScalingPosition = false;
-	hLayout.FixedPosition.iX = hRect.iLeft;
-	hLayout.FixedPosition.iY = hRect.iTop;
-
-	hLayout.UseScalingSize = false;
-	hLayout.FixedSize.iX = hRect.iWidth;
-	hLayout.FixedSize.iY = hRect.iHeight;
-
-	return &hLayout;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-// MyContainerModelRight implementation
-MyContainerModelRight::MyContainerModelRight( MyApplication * pApplication ):
-	WinGUIContainerModel(RESID_CONTAINER_RIGHT_TEST)
-{
-	m_pApplication = pApplication;
-
-	StringFn->Copy( m_hCreationParameters.strClassName, TEXT("RightContainer") );
-	m_hCreationParameters.bAllowResizing = false;
-	m_hCreationParameters.bClipChildren = true;
-	m_hCreationParameters.bClipSibblings = true;
-}
-MyContainerModelRight::~MyContainerModelRight()
-{
-	// nothing to do
-}
-
-const WinGUILayout * MyContainerModelRight::GetLayout() const
 {
 	static WinGUIManualLayout hLayout;
 
@@ -371,6 +337,202 @@ const WinGUILayout * MyStaticTextModel::GetLayout() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+// MyContainerModelCenter implementation
+MyContainerModelCenter::MyContainerModelCenter( MyApplication * pApplication ):
+	WinGUIContainerModel(RESID_CONTAINER_CENTER_TEST)
+{
+	m_pApplication = pApplication;
+
+	StringFn->Copy( m_hCreationParameters.strClassName, TEXT("CenterContainer") );
+	m_hCreationParameters.bAllowResizing = false;
+	m_hCreationParameters.bClipChildren = true;
+	m_hCreationParameters.bClipSibblings = true;
+}
+MyContainerModelCenter::~MyContainerModelCenter()
+{
+	// nothing to do
+}
+
+const WinGUILayout * MyContainerModelCenter::GetLayout() const
+{
+	static WinGUIManualLayout hLayout;
+
+	WinGUITabs * pTabs = (WinGUITabs *)(m_pApplication->m_hTabsModel.GetController());
+
+	WinGUIRectangle hRect;
+	pTabs->GetDisplayArea( &hRect );
+
+	hLayout.UseScalingPosition = false;
+	hLayout.FixedPosition.iX = hRect.iLeft;
+	hLayout.FixedPosition.iY = hRect.iTop;
+
+	hLayout.UseScalingSize = false;
+	hLayout.FixedSize.iX = hRect.iWidth;
+	hLayout.FixedSize.iY = hRect.iHeight;
+
+	return &hLayout;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// MyTableModel implementation
+MyTableModel::MyTableModel( MyApplication * pApplication ):
+	WinGUITableModel(RESID_TABLE_TEST)
+{
+	m_pApplication = pApplication;
+
+	m_hCreationParameters.bVirtualTable = false;
+
+	m_hCreationParameters.bHasBackBuffer = false;
+	m_hCreationParameters.bHasSharedImageLists = false;
+
+	m_hCreationParameters.iViewMode = WINGUI_TABLE_VIEW_DETAILED;
+	m_hCreationParameters.bHasHeadersInAllViews = false;
+
+	m_hCreationParameters.bHasColumnHeaders = true;
+	m_hCreationParameters.bHasStaticColumnHeaders = false;
+	m_hCreationParameters.bHasDraggableColumnHeaders = true;
+	m_hCreationParameters.bHasIconColumnOverflowButton = false;
+
+	m_hCreationParameters.bHasCheckBoxes = true;
+	m_hCreationParameters.bHasIconLabels = true;
+	m_hCreationParameters.bHasEditableLabels = true;
+	m_hCreationParameters.bHasSubItemImages = false;
+
+	m_hCreationParameters.bSingleItemSelection = false;
+	m_hCreationParameters.bIconSimpleSelection = false;
+
+	m_hCreationParameters.bAutoSortAscending = false;
+	m_hCreationParameters.bAutoSortDescending = false;
+
+	m_hCreationParameters.bHasHotTrackingSingleClick = true;
+	m_hCreationParameters.bHasHotTrackingDoubleClick = false;
+	m_hCreationParameters.bHasHotTrackingSelection = true;
+
+	m_hCreationParameters.bHasInfoTips = false;
+
+	for( UInt i = 0; i < 4; ++i ) {
+		m_arrColumns[i].iOrderIndex = i;
+		m_arrColumns[i].iSubItemIndex = i;
+
+		StringFn->Format( m_arrColumns[i].strHeaderText, TEXT("Column_%d"), i );
+		m_arrColumns[i].iRowsTextAlign = WINGUI_TABLE_TEXT_ALIGN_LEFT;
+
+		m_arrColumns[i].bHeaderSplitButton = false;
+
+		m_arrColumns[i].bHeaderHasImage = false;
+		m_arrColumns[i].bRowsHaveImages = false;
+		m_arrColumns[i].bIsImageOnRight = false;
+		m_arrColumns[i].iImageListIndex = 0;
+
+		m_arrColumns[i].bFixedWidth = false;
+		m_arrColumns[i].bFixedAspectRatio = false;
+		m_arrColumns[i].iWidth = 100;
+		m_arrColumns[i].iMinWidth = 20;
+		m_arrColumns[i].iDefaultWidth = 100;
+		m_arrColumns[i].iIdealWidth = 150;
+	}
+	for( UInt i = 0; i < 4; ++i ) {
+		m_arrItems[i].iItemIndex = i;
+		m_arrItems[i].iSubItemIndex = 0;
+
+		m_arrItems[i].iGroupID = INVALID_OFFSET;
+
+		m_arrItems[i].iIndentDepth = 0;
+
+		StringFn->Format( m_arrItems[i].strLabelText, TEXT("Item_%d"), i );
+		m_arrItems[i].iIconImage = INVALID_OFFSET;
+		m_arrItems[i].pItemData = NULL;
+
+		m_arrItems[i].hState.iOverlayImage = 0;
+		m_arrItems[i].hState.iStateImage = 0;
+		m_arrItems[i].hState.bHasFocus = false;
+		m_arrItems[i].hState.bSelected = false;
+		m_arrItems[i].hState.bCutMarked = false;
+		m_arrItems[i].hState.bDropHighlight = false;
+
+		m_arrItems[i].iColumnCount = 4;
+		for( UInt j = 0; j < m_arrItems[i].iColumnCount; ++j ) {
+			m_arrItems[i].arrColumns[j].iColumnIndex = j;
+			m_arrItems[i].arrColumns[j].bLineBreak = false;
+			m_arrItems[i].arrColumns[j].bFill = false;
+			m_arrItems[i].arrColumns[j].bAllowWrap = false;
+			m_arrItems[i].arrColumns[j].bNoTitle = false;
+		}
+	}
+}
+MyTableModel::~MyTableModel()
+{
+	// nothing to do
+}
+
+Void MyTableModel::Initialize()
+{
+	WinGUITable * pTable = (WinGUITable*)m_pController;
+
+	pTable->AddColumn( 0, m_arrColumns );
+	pTable->AddColumn( 1, m_arrColumns + 1 );
+	pTable->AddColumn( 2, m_arrColumns + 2 );
+	pTable->AddColumn( 3, m_arrColumns + 3 );
+
+	pTable->AddItem( 0, m_arrItems );
+	pTable->AddItem( 1, m_arrItems + 1 );
+	pTable->AddItem( 2, m_arrItems + 2 );
+	pTable->AddItem( 3, m_arrItems + 3 );
+}
+
+const WinGUILayout * MyTableModel::GetLayout() const
+{
+	static WinGUIManualLayout hLayout;
+
+	hLayout.UseScalingPosition = false;
+	hLayout.FixedPosition.iX = 10;
+	hLayout.FixedPosition.iY = 10;
+
+	hLayout.UseScalingSize = false;
+	hLayout.FixedSize.iX = 640;
+	hLayout.FixedSize.iY = 480;
+
+	return &hLayout;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+// MyContainerModelRight implementation
+MyContainerModelRight::MyContainerModelRight( MyApplication * pApplication ):
+	WinGUIContainerModel(RESID_CONTAINER_RIGHT_TEST)
+{
+	m_pApplication = pApplication;
+
+	StringFn->Copy( m_hCreationParameters.strClassName, TEXT("RightContainer") );
+	m_hCreationParameters.bAllowResizing = false;
+	m_hCreationParameters.bClipChildren = true;
+	m_hCreationParameters.bClipSibblings = true;
+}
+MyContainerModelRight::~MyContainerModelRight()
+{
+	// nothing to do
+}
+
+const WinGUILayout * MyContainerModelRight::GetLayout() const
+{
+	static WinGUIManualLayout hLayout;
+
+	WinGUITabs * pTabs = (WinGUITabs *)(m_pApplication->m_hTabsModel.GetController());
+
+	WinGUIRectangle hRect;
+	pTabs->GetDisplayArea( &hRect );
+
+	hLayout.UseScalingPosition = false;
+	hLayout.FixedPosition.iX = hRect.iLeft;
+	hLayout.FixedPosition.iY = hRect.iTop;
+
+	hLayout.UseScalingSize = false;
+	hLayout.FixedSize.iX = hRect.iWidth;
+	hLayout.FixedSize.iY = hRect.iHeight;
+
+	return &hLayout;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // MyCheckBoxModel implementation
 MyCheckBoxModel::MyCheckBoxModel( MyApplication * pApplication ):
 	WinGUICheckBoxModel(RESID_CHECKBOX_TEST)
@@ -547,6 +709,10 @@ MyApplication::MyApplication():
 	m_hRadioButtonGroup(),
 	m_hStaticTextModel(this),
 
+	m_hContainerModelCenter(this),
+
+	m_hTableModel(this),
+
 	m_hContainerModelRight(this),
 
 	m_hCheckBoxModel(this),
@@ -581,6 +747,13 @@ MyApplication::MyApplication():
 
 	// A Static Text
 	WinGUIFn->CreateStatic( pContainerLeft, &m_hStaticTextModel );
+
+	// Center Container
+	WinGUIContainer * pContainerCenter = WinGUIFn->CreateContainer( pAppWindow, &m_hContainerModelCenter );
+
+	// A Table
+	WinGUITable * pTable = WinGUIFn->CreateTable( pContainerCenter, &m_hTableModel );
+	m_hTableModel.Initialize();
 
 	// Right Container
 	WinGUIContainer * pContainerRight = WinGUIFn->CreateContainer( pAppWindow, &m_hContainerModelRight );

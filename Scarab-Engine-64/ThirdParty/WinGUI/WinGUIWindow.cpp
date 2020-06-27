@@ -337,7 +337,7 @@ UIntPtr __stdcall WinGUIWindow::_MessageCallback_Virtual( Void * hHandle, UInt i
                     if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
                         WinGUIControl * pCallerControl = (WinGUIControl *)pCallerElement;
                         if ( pCallerControl->_DispatchEvent( iNotificationCode, NULL ) )
-                            return 0;
+                            return TRUE;
                     }
                 }
             } break;
@@ -358,7 +358,7 @@ UIntPtr __stdcall WinGUIWindow::_MessageCallback_Virtual( Void * hHandle, UInt i
                     if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
                         WinGUIControl * pCallerControl = (WinGUIControl *)pCallerElement;
                         if ( pCallerControl->_DispatchEvent( iNotificationCode, (Void*)lParam ) )
-                            return 0;
+                            return TRUE;
                     }
                 }
             } break;

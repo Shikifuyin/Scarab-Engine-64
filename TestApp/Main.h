@@ -33,12 +33,16 @@
 #define RESID_RADIOBUTTON_B_TEST 1013
 #define RESID_STATIC_TEXT_TEST 1014
 
-#define RESID_CONTAINER_RIGHT_TEST 1002
+#define RESID_CONTAINER_CENTER_TEST 1002
 
-#define RESID_CHECKBOX_TEST 1020
-#define RESID_TEXTEDIT_TEST 1021
-#define RESID_COMBOBOX_TEST 1022
-#define RESID_STATIC_RECT_TEST 1023
+#define RESID_TABLE_TEST 1020
+
+#define RESID_CONTAINER_RIGHT_TEST 1003
+
+#define RESID_CHECKBOX_TEST 1030
+#define RESID_TEXTEDIT_TEST 1031
+#define RESID_COMBOBOX_TEST 1032
+#define RESID_STATIC_RECT_TEST 1033
 
 // Prototypes
 class MyApplication;
@@ -86,21 +90,6 @@ class MyContainerModelLeft : public WinGUIContainerModel
 public:
 	MyContainerModelLeft( MyApplication * pApplication );
 	~MyContainerModelLeft();
-
-	// Layout
-	virtual const WinGUILayout * GetLayout() const;
-
-private:
-	MyApplication * m_pApplication;
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-// The MyContainerModelRight class
-class MyContainerModelRight : public WinGUIContainerModel
-{
-public:
-	MyContainerModelRight( MyApplication * pApplication );
-	~MyContainerModelRight();
 
 	// Layout
 	virtual const WinGUILayout * GetLayout() const;
@@ -179,6 +168,56 @@ class MyStaticTextModel : public WinGUIStaticModel
 public:
 	MyStaticTextModel( MyApplication * pApplication );
 	~MyStaticTextModel();
+
+	// Layout
+	virtual const WinGUILayout * GetLayout() const;
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The MyContainerModelCenter class
+class MyContainerModelCenter : public WinGUIContainerModel
+{
+public:
+	MyContainerModelCenter( MyApplication * pApplication );
+	~MyContainerModelCenter();
+
+	// Layout
+	virtual const WinGUILayout * GetLayout() const;
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The MyTableModel class
+class MyTableModel : public WinGUITableModel
+{
+public:
+	MyTableModel( MyApplication * pApplication );
+	~MyTableModel();
+
+	Void Initialize();
+
+	// Layout
+	virtual const WinGUILayout * GetLayout() const;
+
+private:
+	MyApplication * m_pApplication;
+
+	WinGUITableColumnInfos m_arrColumns[4];
+	WinGUITableItemInfos m_arrItems[4];
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// The MyContainerModelRight class
+class MyContainerModelRight : public WinGUIContainerModel
+{
+public:
+	MyContainerModelRight( MyApplication * pApplication );
+	~MyContainerModelRight();
 
 	// Layout
 	virtual const WinGUILayout * GetLayout() const;
@@ -282,6 +321,10 @@ public:
     MyRadioButtonModelB m_hRadioButtonModelB;
 	WinGUIRadioButtonGroup m_hRadioButtonGroup;
 	MyStaticTextModel m_hStaticTextModel;
+
+	MyContainerModelCenter m_hContainerModelCenter;
+
+	MyTableModel m_hTableModel;
 
 	MyContainerModelRight m_hContainerModelRight;
 

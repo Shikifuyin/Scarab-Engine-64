@@ -30,6 +30,28 @@
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
+// CallBack Modes
+enum WinGUITableItemCallBackFlags {
+	WINGUI_TABLE_ITEMCALLBACK_LABELS      = 0x01,
+	WINGUI_TABLE_ITEMCALLBACK_IMAGES      = 0x02,
+	WINGUI_TABLE_ITEMCALLBACK_COLUMNS     = 0x04,
+	WINGUI_TABLE_ITEMCALLBACK_GROUPIDS    = 0x08,
+	WINGUI_TABLE_ITEMCALLBACK_INDENTATION = 0x10,
+	WINGUI_TABLE_ITEMCALLBACK_ALL         = 0x1f
+};
+typedef UInt WinGUITableItemCallBackMode;
+
+enum WinGUITableStateCallBackFlags {
+	WINGUI_TABLE_STATECALLBACK_IMAGE_OVERLAY = 0x01,
+	WINGUI_TABLE_STATECALLBACK_IMAGE_STATE   = 0x02,
+	WINGUI_TABLE_STATECALLBACK_SELECTION     = 0x04,
+	WINGUI_TABLE_STATECALLBACK_FOCUS         = 0x08,
+	WINGUI_TABLE_STATECALLBACK_CUTMARK       = 0x10,
+	WINGUI_TABLE_STATECALLBACK_DROPHIGHLIGHT = 0x20,
+	WINGUI_TABLE_STATECALLBACK_ALL           = 0x3f
+};
+typedef UInt WinGUITableStateCallBackMode;
+
 // View Modes
 enum WinGUITableViewMode {
 	WINGUI_TABLE_VIEW_LIST = 0,
@@ -53,20 +75,15 @@ enum WinGUITableIconsAlign {
 	WINGUI_TABLE_ICONS_ALIGN_LEFT
 };
 
-// Tiles Sizing
-enum WinGUITableTileSize {
-	WINGUI_TABLE_TILES_AUTOSIZE = 0,
-	WINGUI_TABLE_TILES_FIXED_WIDTH,
-	WINGUI_TABLE_TILES_FIXED_HEIGHT,
-	WINGUI_TABLE_TILES_FIXED_SIZE
-};
-
 // Creation Parameters
 typedef struct _wingui_table_parameters {
 	Bool bVirtualTable;
 
 	Bool bHasBackBuffer;
 	Bool bHasSharedImageLists;
+
+	WinGUITableItemCallBackMode iItemCallBackMode;
+	WinGUITableStateCallBackMode iStateCallBackMode;
 
 	WinGUITableViewMode iViewMode;
 	Bool bGroupMode;
@@ -94,29 +111,6 @@ typedef struct _wingui_table_parameters {
 
 	Bool bHasInfoTips;
 } WinGUITableParameters;
-
-// Column Infos
-typedef struct _wingui_table_column_infos {
-	UInt iOrderIndex;   // Left to Right Column Order
-	UInt iSubItemIndex; // Assigned Sub Item Index
-
-	mutable GChar strHeaderText[64];
-	WinGUITableTextAlign iRowsTextAlign;
-
-	Bool bHeaderSplitButton;
-
-	Bool bHeaderHasImage;
-	Bool bRowsHaveImages;
-	Bool bIsImageOnRight;
-	UInt iImageListIndex;
-
-	Bool bFixedWidth;
-	Bool bFixedAspectRatio;
-	UInt iWidth;
-	UInt iMinWidth;
-	UInt iDefaultWidth;
-	UInt iIdealWidth;
-} WinGUITableColumnInfos;
 
 // Group Infos
 typedef struct _wingui_table_group_infos {
@@ -166,44 +160,30 @@ typedef struct _wingui_table_item_state {
 	Bool bDropHighlight; // Item is hovered during drag & drop
 } WinGUITableItemState;
 
-typedef struct _wingui_table_item_column_infos {
-	UInt iColumnIndex; // Column to use for an item or subitem
+typedef struct _wingui_table_item_column_format {
 	Bool bLineBreak;
 	Bool bFill;
 	Bool bAllowWrap;
 	Bool bNoTitle;
-} WinGUITableItemColumnInfos;
-
-typedef struct _wingui_table_item_infos {
-	UInt iItemIndex;
-	UInt iSubItemIndex; // 0 is the item itself
-
-	UInt iGroupID; // Parent Group, when Groups are enabled
-
-	UInt iIndentDepth; // Only for items
-
-	// Item Data
-	mutable GChar strLabelText[64];
-	UInt iIconImage;  // Valid for subitems if SubItem Images are enabled
-	Void * pItemData; // Only for items
-
-	// Item State, only for items
-	WinGUITableItemState hState;
-
-	// Columns Infos
-	UInt iColumnCount;
-	WinGUITableItemColumnInfos arrColumns[32]; // Ordered
-} WinGUITableItemInfos;
+} WinGUITableItemColumnFormat;
 
 // Tile Infos
 typedef struct _wingui_table_tile_infos {
 	UInt iItemIndex;
 
 	UInt iColumnCount;
-	WinGUITableItemColumnInfos arrColumns[32]; // Ordered
+	UInt arrColumnIndices[32]; // Ordered
+	WinGUITableItemColumnFormat arrColumnFormats[32]; // Ordered
 } WinGUITableTileInfos;
 
 // Tile Metrics
+enum WinGUITableTileSize {
+	WINGUI_TABLE_TILES_AUTOSIZE = 0,
+	WINGUI_TABLE_TILES_FIXED_WIDTH,
+	WINGUI_TABLE_TILES_FIXED_HEIGHT,
+	WINGUI_TABLE_TILES_FIXED_SIZE
+};
+
 typedef struct _wingui_table_tile_metrics {
 	WinGUITableTileSize iSizeMode;
 	UInt iWidth;
@@ -344,6 +324,44 @@ public:
 	// Column Events
 	virtual Bool OnColumnHeaderClick( UInt iIndex ) { return false; }
 
+	// Group Events
+	virtual Bool OnGroupLinkClick( UInt iItemIndex, UInt iGroupID ) { return false; }
+
+	// Item Callback Events (Must-Implement when using corresponding Callbacks)
+	virtual GChar * OnRequestItemLabel( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return NULL; }
+	virtual Void OnUpdateItemLabel( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, const GChar * strItemLabel ) { }
+
+	virtual UInt OnRequestItemIconImage( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return INVALID_OFFSET; }
+	virtual Void OnUpdateItemIconImage( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, UInt iItemIconImage ) { }
+
+	virtual UInt OnRequestItemGroupID( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return INVALID_OFFSET; }
+	virtual Void OnUpdateItemGroupID( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, UInt iGroupID ) { }
+
+	virtual UInt OnRequestItemIndentation( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return 0; }
+	virtual Void OnUpdateItemIndentation( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, UInt iIndentation ) { }
+
+	virtual UInt OnRequestItemColumnCount( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return 0; }
+	virtual UInt * OnRequestItemColumnIndices( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return NULL; }
+	virtual Void OnUpdateItemColumnIndices( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, const UInt * arrColumnIndices, UInt iColumnCount ) { }
+
+	virtual UInt OnRequestItemOverlayImage( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return 0; }
+	virtual Void OnUpdateItemOverlayImage( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, UInt iItemOverlayImage ) { }
+
+	virtual UInt OnRequestItemStateImage( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return 0; }
+	virtual Void OnUpdateItemStateImage( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, UInt iItemStateImage ) { }
+
+	virtual Bool OnRequestItemFocusState( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return false; }
+	virtual Void OnUpdateItemFocusState( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, Bool bHasFocus ) { }
+
+	virtual Bool OnRequestItemSelectState( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return false; }
+	virtual Void OnUpdateItemSelectState( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, Bool bIsSelected ) { }
+
+	virtual Bool OnRequestItemCutMarkState( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return false; }
+	virtual Void OnUpdateItemCutMarkState( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, Bool bIsCutMarked ) { }
+
+	virtual Bool OnRequestItemDropHighlightState( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData ) { return false; }
+	virtual Void OnUpdateItemDropHighlightState( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, Bool bIsDropHighlighted ) { }
+
 	// Item Events
 	virtual Bool OnAddItem( UInt iItemIndex ) { return false; }
 	virtual Bool OnRemoveItem( UInt iItemIndex, Void * pItemData ) {
@@ -395,9 +413,6 @@ public:
 		return true;
 	}  
 	virtual Bool OnLabelEditCancel() { return false; }
-
-	// Group Events
-	virtual Bool OnGroupLinkClick( UInt iItemIndex, UInt iGroupID ) { return false; }
 
 	// Search Events
 	virtual Bool OnIncrementalSearch( UInt * outSearchResult, UInt * outStartIitemIndex, WinGUITableSearchOptions * outSearchOptions ) {
@@ -452,10 +467,27 @@ public:
 	inline Bool HasSharedImageLists() const;
 	Void UseSharedImageLists( Bool bEnable );
 
-	Void ForceRedraw( UInt iFirstItem, UInt iLastItem, Bool bImmediate );
+	Void GetImageListIcons( WinGUIImageList * outImageList ) const;
+	Void SetImageListIcons( const WinGUIImageList * pImageList );
 
-	//ListView_GetCallbackMask
-	//ListView_SetCallbackMask
+	Void GetImageListSmallIcons( WinGUIImageList * outImageList ) const;
+	Void SetImageListSmallIcons( const WinGUIImageList * pImageList );
+
+	Void GetImageListGroupHeaders( WinGUIImageList * outImageList ) const;
+	Void SetImageListGroupHeaders( const WinGUIImageList * pImageList );
+
+	Void GetImageListStates( WinGUIImageList * outImageList ) const; // Not used when CheckBoxes
+	Void SetImageListStates( const WinGUIImageList * pImageList );   // are enabled
+
+	// Callback Settings ////////////////////////////////////////////////////////
+	inline WinGUITableItemCallBackMode GetItemCallBackMode() const;
+	Void SetItemCallBackMode( WinGUITableItemCallBackMode iMode ); // Table must be empty
+
+	inline WinGUITableStateCallBackMode GetStateCallBackMode() const;
+	Void SetStateCallBackMode( WinGUITableStateCallBackMode iMode ); // Table must be empty
+
+	Void UpdateItem( UInt iItemIndex );
+	Void ForceRedraw( UInt iFirstItem, UInt iLastItem, Bool bImmediate );
 
 	// View Modes ///////////////////////////////////////////////////////////////
 	inline WinGUITableViewMode GetViewMode() const;
@@ -503,7 +535,7 @@ public:
 	inline Bool IsAutoSorted() const;
 	inline Bool IsAutoSortedAscending() const;
 	inline Bool IsAutoSortedDescending() const;
-	Void ToggleAutoSorting( Bool bEnable, Bool bAscendingElseDescending ); // Not with virtual tables
+	Void ToggleAutoSorting( Bool bEnable, Bool bAscendingElseDescending = true ); // Not with virtual tables
 
 	inline Bool HasHotTracking() const;
 	inline Bool IsHotTrackingSingleClick() const;
@@ -546,7 +578,6 @@ public:
 	Void ToggleAlwaysShowSelection( Bool bEnable );
 	Void ToggleFullRowSelection( Bool bEnable );
 
-	Bool HasBorderSelection() const;
 	Void ToggleBorderSelection( Bool bEnable );
 	UInt GetBorderSelectionColor() const;
 	Void SetBorderSelectionColor( UInt iColor );
@@ -555,18 +586,6 @@ public:
 	Void SetInsertionMarkColor( UInt iColor );
 
 	Void GetEmptyText( GChar * outText, UInt iMaxLength ) const;
-
-	Void GetImageListIcons( WinGUIImageList * outImageList ) const;
-	Void SetImageListIcons( const WinGUIImageList * pImageList );
-
-	Void GetImageListSmallIcons( WinGUIImageList * outImageList ) const;
-	Void SetImageListSmallIcons( const WinGUIImageList * pImageList );
-
-	Void GetImageListGroupHeaders( WinGUIImageList * outImageList ) const;
-	Void SetImageListGroupHeaders( const WinGUIImageList * pImageList );
-
-	Void GetImageListStates( WinGUIImageList * outImageList ) const;
-	Void SetImageListStates( const WinGUIImageList * pImageList );
 
 	// Metrics //////////////////////////////////////////////////////////////////
 	Void GetViewOrigin( WinGUIPoint * outOrigin ) const;
@@ -600,75 +619,71 @@ public:
 	Void ScrollToItem( UInt iItemIndex, Bool bAllowPartial );
 
 	// Column Operations ////////////////////////////////////////////////////////
-	UInt GetColumnWidth( UInt iIndex ) const;
-	Void SetColumnWidth( UInt iIndex, UInt iWidth );
+	inline UInt GetColumnCount() const;
+
+	Void AddColumn( UInt iColumnIndex, GChar * strHeaderText, UInt iSubItemIndex, UInt iOrderIndex, UInt iDefaultWidth );
+	Void RemoveColumn( UInt iColumnIndex );
+
+		// Column-SubItem Linkage
+	UInt GetColumnSubItem( UInt iColumnIndex ) const;
+	Void SetColumnSubItem( UInt iColumnIndex, UInt iSubItemIndex );
+
+		// Column Ordering
+	UInt GetColumnOrderIndex( UInt iColumnIndex ) const;
+	Void SetColumnOrderIndex( UInt iColumnIndex, UInt iOrderIndex );
 
 	Void GetColumnOrder( UInt * outOrderedIndices, UInt iCount ) const;
 	Void SetColumnOrder( const UInt * arrOrderedIndices, UInt iCount );
 
-	// No GetColumnCount ?
-	Void GetColumn( WinGUITableColumnInfos * outInfos, UInt iIndex ) const;
+		// Column Header
+	Void GetColumnHeaderText( GChar * outHeaderText, UInt iMaxLength, UInt iColumnIndex ) const;
+	Void SetColumnHeaderText( UInt iColumnIndex, GChar * strHeaderText );
 
-	Void AddColumn( UInt iIndex, const WinGUITableColumnInfos * pColumnInfos );
-	Void SetColumn( UInt iIndex, const WinGUITableColumnInfos * pColumnInfos );
-	Void RemoveColumn( UInt iIndex );
+	Bool HasColumnHeaderImage( UInt iColumnIndex ) const;
+	Void ToggleColumnHeaderImage( UInt iColumnIndex, Bool bEnable );
+	UInt GetColumnHeaderImage( UInt iColumnIndex ) const;
+	Void SetColumnHeaderImage( UInt iColumnIndex, UInt iImageIndex );
 
-	UInt GetSelectedColumn() const;
-	Void SelectColumn( UInt iIndex );
+	Bool HasColumnHeaderSplitButton( UInt iColumnIndex ) const;
+	Void ToggleColumnHeaderSplitButton( UInt iColumnIndex, Bool bEnable );
 
-	// Item Operations //////////////////////////////////////////////////////////
-	Bool IsItemVisible( UInt iItemIndex ) const;
-	UInt GetFirstVisibleItem() const;
-	UInt GetVisibleItemCount() const;
+		// Column Rows
+	WinGUITableTextAlign GetColumnRowTextAlign( UInt iColumnIndex ) const;
+	Void SetColumnRowTextAlign( UInt iColumnIndex, WinGUITableTextAlign iAlign );
 
-	Void SetItemIconPosition( UInt iItemIndex, const WinGUIPoint & hPosition );
+	Bool HasColumnRowImages( UInt iColumnIndex ) const;
+	Void ToggleColumnRowImages( UInt iColumnIndex, Bool bEnable );
 
-	UInt GetItemCount() const;
-	Void GetItem( WinGUITableItemInfos * outItemInfos, UInt iItemIndex, UInt iSubItemIndex ) const;
+	Bool HasColumnRightAlignedRowImages( UInt iColumnIndex ) const;
+	Void ToggleColumnRightAlignedRowImages( UInt iColumnIndex, Bool bEnable );
 
-	Void AddItem( UInt iItemIndex, const WinGUITableItemInfos * pItemInfos );
-	Void SetItem( UInt iItemIndex, const WinGUITableItemInfos * pItemInfos );
-	Void SetSubItem( UInt iItemIndex, UInt iSubItemIndex, const WinGUITableItemInfos * pItemInfos );
-	Void RemoveItem( UInt iItemIndex );
-	Void RemoveAllItems();
+		// Column Widths
+	Bool HasColumnFixedWidth( UInt iColumnIndex ) const;
+	Void ToggleColumnFixedWidth( UInt iColumnIndex, Bool bEnable );
 
-	Void GetItemLabelText( GChar * outLabelText, UInt iMaxLength, UInt iItemIndex, UInt iSubItemIndex );
-	Void SetItemLabelText( UInt iItemIndex, UInt iSubItemIndex, GChar * strLabelText );
-
-	UInt GetItemIcon( UInt iItemIndex, UInt iSubItemIndex );
-	Void SetItemIcon( UInt iItemIndex, UInt iSubItemIndex, UInt iIconIndex );
-
-	Void * GetItemData( UInt iItemIndex );
-	Void SetItemData( UInt iItemIndex, Void * pData );
-
-	UInt GetSelectedItemCount() const;
-	UInt GetSelectedItems( UInt * outItemIndices, UInt iMaxIndices ) const;
-
-	UInt GetMultiSelectMark() const;
-	Void SetMultiSelectMark( UInt iItemIndex );
-
-	UInt GetInsertionMark( Bool * outInsertAfter ) const;
-	UInt GetInsertionMark( Bool * outInsertAfter, const WinGUIPoint & hPoint ) const;
-	Void SetInsertionMark( UInt iItemIndex, Bool bInsertAfter );
-
-	Bool IsItemChecked( UInt iItemIndex ) const;      // Only when using
-	Void CheckItem( UInt iItemIndex, Bool bChecked ); // Checkboxes
-
-	UInt AssignItemID( UInt iItemIndex );
-	UInt GetItemFromID( UInt iUniqueID );
-
-	Void UpdateItem( UInt iItemIndex );
-
-	// Item Label Edition ///////////////////////////////////////////////////////
-	inline Bool IsEditingItemLabel( UInt * outItemIndex = NULL ) const;
-
-	Void GetEditItemLabel( WinGUITextEdit * outTextEdit );
-	Void ReleaseEditItemLabel( WinGUITextEdit * pTextEdit );
-
-	Void EditItemLabelStart( WinGUITextEdit * outTextEdit, UInt iItemIndex );
-	Void EditItemLabelEnd( WinGUITextEdit * pTextEdit );
-	Void EditItemLabelCancel( WinGUITextEdit * pTextEdit );
+	Bool HasColumnFixedRatio( UInt iColumnIndex ) const;
+	Void ToggleColumnFixedRatio( UInt iColumnIndex, Bool bEnable );
 	
+	UInt GetColumnWidth( UInt iColumnIndex ) const;
+	Void SetColumnWidth( UInt iColumnIndex, UInt iWidth );
+
+	UInt GetColumnMinWidth( UInt iColumnIndex ) const;
+	Void SetColumnMinWidth( UInt iColumnIndex, UInt iMinWidth );
+
+	UInt GetColumnDefaultWidth( UInt iColumnIndex ) const;
+	Void SetColumnDefaultWidth( UInt iColumnIndex, UInt iDefaultWidth );
+
+	UInt GetColumnIdealWidth( UInt iColumnIndex ) const;
+	Void SetColumnIdealWidth( UInt iColumnIndex, UInt iIdealWidth );
+
+	UInt GetColumnCurrentWidth( UInt iColumnIndex ) const;
+	Void SetColumnCurrentWidth( UInt iColumnIndex, UInt iCurrentWidth );
+	Void AutoSizeColumnCurrentWidth( UInt iColumnIndex, Bool bFitHeaderText );
+
+		// Selection
+	UInt GetSelectedColumn() const;
+	Void SelectColumn( UInt iColumnIndex );
+
 	// Group Operations /////////////////////////////////////////////////////////
 	Bool HasGroup( UInt iGroupID ) const;
 
@@ -687,6 +702,97 @@ public:
 
 	UInt GetFocusedGroup() const; // Returns a Group Index
 
+	// Item Operations //////////////////////////////////////////////////////////
+	Bool IsItemVisible( UInt iItemIndex ) const;
+	UInt GetFirstVisibleItem() const;
+	UInt GetVisibleItemCount() const;
+
+	Void SetItemIconPosition( UInt iItemIndex, const WinGUIPoint & hPosition );
+
+	UInt GetItemCount() const;
+
+	Void AddItem( UInt iItemIndex );
+	Void RemoveItem( UInt iItemIndex );
+	Void RemoveAllItems();
+
+		// Item/SubItem Properties
+	Void GetItemLabel( GChar * outLabelText, UInt iMaxLength, UInt iItemIndex, UInt iSubItemIndex ) const;
+	Void SetItemLabel( UInt iItemIndex, UInt iSubItemIndex, GChar * strLabelText );
+
+	UInt GetItemIcon( UInt iItemIndex, UInt iSubItemIndex ) const;
+	Void SetItemIcon( UInt iItemIndex, UInt iSubItemIndex, UInt iIconIndex );
+
+		// Item Properties
+	Void * GetItemData( UInt iItemIndex ) const;
+	Void SetItemData( UInt iItemIndex, Void * pData );
+
+	UInt GetItemGroupID( UInt iItemIndex ) const;
+	Void SetItemGroupID( UInt iItemIndex, UInt iGroupID );
+
+	UInt GetItemIndentation( UInt iItemIndex ) const;
+	Void SetItemIndentation( UInt iItemIndex, UInt iIndentation );
+
+		// Item Columns
+	UInt GetItemColumnCount( UInt iItemIndex ) const;
+
+	Void GetItemColumnIndices( UInt * outColumnIndices, UInt iMaxColumns, UInt iItemIndex ) const;
+	Void SetItemColumnIndices( UInt iItemIndex, const UInt * arrColumnIndices, UInt iColumnCount );
+
+	Void GetItemColumnFormats( WinGUITableItemColumnFormat * outColumnFormats, UInt iMaxColumns, UInt iItemIndex ) const;
+	Void SetItemColumnFormats( UInt iItemIndex, const WinGUITableItemColumnFormat * arrColumnFormats, UInt iColumnCount );
+
+		// Item State
+	Void GetItemState( WinGUITableItemState * outItemState, UInt iItemIndex ) const;
+	Void SetItemState( UInt iItemIndex, const WinGUITableItemState * pItemState );
+
+	UInt GetItemOverlayImage( UInt iItemIndex ) const;
+	Void SetItemOverlayImage( UInt iItemIndex, UInt iOverlayImage );
+
+	UInt GetItemStateImage( UInt iItemIndex ) const;
+	Void SetItemStateImage( UInt iItemIndex, UInt iStateImage );
+
+	Bool IsItemFocused( UInt iItemIndex ) const;
+	Void FocusItem( UInt iItemIndex, Bool bHasFocus );
+
+	Bool IsItemSelected( UInt iItemIndex ) const;
+	Void SelectItem( UInt iItemIndex, Bool bSelect );
+
+	Bool IsItemCutMarked( UInt iItemIndex ) const;
+	Void SetItemCutMarked( UInt iItemIndex, Bool bCutMark );
+
+	Bool IsItemDropHighlighted( UInt iItemIndex ) const;
+	Void SetItemDropHighlighted( UInt iItemIndex, Bool bCutMark );
+
+		// Selection
+	UInt GetSelectedItemCount() const;
+	UInt GetSelectedItems( UInt * outItemIndices, UInt iMaxIndices ) const;
+
+	UInt GetMultiSelectMark() const;
+	Void SetMultiSelectMark( UInt iItemIndex );
+
+		// Insertion Mark
+	UInt GetInsertionMark( Bool * outInsertAfter ) const;
+	UInt GetInsertionMark( Bool * outInsertAfter, const WinGUIPoint & hPoint ) const;
+	Void SetInsertionMark( UInt iItemIndex, Bool bInsertAfter );
+
+		// Checkboxes
+	Bool IsItemChecked( UInt iItemIndex ) const;      // Only when using
+	Void CheckItem( UInt iItemIndex, Bool bChecked ); // Checkboxes
+
+		// Item IDs
+	UInt AssignItemID( UInt iItemIndex );
+	UInt GetItemFromID( UInt iUniqueID );
+
+	// Item Label Edition ///////////////////////////////////////////////////////
+	inline Bool IsEditingItemLabel( UInt * outItemIndex = NULL ) const;
+
+	Void GetEditItemLabel( WinGUITextEdit * outTextEdit );
+	Void ReleaseEditItemLabel( WinGUITextEdit * pTextEdit );
+
+	Void EditItemLabelStart( WinGUITextEdit * outTextEdit, UInt iItemIndex );
+	Void EditItemLabelEnd( WinGUITextEdit * pTextEdit );
+	Void EditItemLabelCancel( WinGUITextEdit * pTextEdit );
+	
 	// Tile Operations //////////////////////////////////////////////////////////
 	Void GetTile( WinGUITableTileInfos * outInfos, UInt iItemIndex ) const;
 	Void SetTile( UInt iItemIndex, const WinGUITableTileInfos * pTileInfos );
@@ -737,20 +843,14 @@ public:
 
 private:
 	// Helpers
-	Void _Convert_ColumnInfos( WinGUITableColumnInfos * outColumnInfos, const Void * pColumnInfos ) const; // LVCOLUMN
-	Void _Convert_ColumnInfos( Void * outColumnInfos, const WinGUITableColumnInfos * pColumnInfos ) const;
-
 	Void _Convert_GroupInfos( WinGUITableGroupInfos * outGroupInfos, const Void * pGroupInfos ) const; // LVGROUP
 	Void _Convert_GroupInfos( Void * outGroupInfos, const WinGUITableGroupInfos * pGroupInfos ) const;
 
 	Void _Convert_ItemState( WinGUITableItemState * outItemState, UInt iItemState ) const; // LVITEM
 	Void _Convert_ItemState( UInt * outItemState, const WinGUITableItemState * pItemState ) const;
 
-	Void _Convert_ItemColumnInfos( WinGUITableItemColumnInfos * outItemColumnInfos, UInt iColumn, Int iColFormat ) const; // LVITEM, LVTILEINFO
-	Void _Convert_ItemColumnInfos( UInt * outColumn, Int * outColFormat, const WinGUITableItemColumnInfos * pItemColumnInfos ) const;
-
-	Void _Convert_ItemInfos( WinGUITableItemInfos * outItemInfos, const Void * pItemInfos ) const; // LVITEM
-	Void _Convert_ItemInfos( Void * outItemInfos, const WinGUITableItemInfos * pItemInfos ) const;
+	Void _Convert_ItemColumnFormat( WinGUITableItemColumnFormat * outItemColumnFormat, Int iColFormat ) const; // LVITEM, LVTILEINFO
+	Void _Convert_ItemColumnFormat( Int * outColFormat, const WinGUITableItemColumnFormat * pItemColumnFormat ) const;
 
 	Void _Convert_TileInfos( WinGUITableTileInfos * outTileInfos, const Void * pTileInfos ) const; // LVTILEINFO
 	Void _Convert_TileInfos( Void * outTileInfos, const WinGUITableTileInfos * pTileInfos ) const;
@@ -770,6 +870,9 @@ private:
 
 	Bool m_bHasBackBuffer;
 	Bool m_bHasSharedImageLists;
+
+	WinGUITableItemCallBackMode m_iItemCallBackMode;
+	WinGUITableStateCallBackMode m_iStateCallBackMode;
 
 	WinGUITableViewMode m_iViewMode;
 	Bool m_bGroupMode;
@@ -800,6 +903,9 @@ private:
 	// Edit Label Management
 	Void * m_hEditLabelHandle; // HWND
 	UInt m_iEditLabelItemIndex;
+
+	// Track Column Count
+	UInt m_iColumnCount;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

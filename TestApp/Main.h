@@ -204,11 +204,22 @@ public:
 	// Layout
 	virtual const WinGUILayout * GetLayout() const;
 
+	// Callback Events
+	virtual GChar * OnRequestItemLabel( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData );
+	virtual Void OnUpdateItemLabel( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, const GChar * strItemLabel );
+
 private:
 	MyApplication * m_pApplication;
 
-	WinGUITableColumnInfos m_arrColumns[4];
-	WinGUITableItemInfos m_arrItems[4];
+	struct _column {
+		GChar strLabel[64];
+	} m_arrColumn[4];
+
+	struct _item {
+		struct _subitem {
+			GChar strLabel[64];
+		} arrSubItems[4];
+	} m_arrItems[4];
 };
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -35,6 +35,14 @@ inline Bool WinGUITable::HasSharedImageLists() const {
 	return m_bHasSharedImageLists;
 }
 
+inline WinGUITableItemCallBackMode WinGUITable::GetItemCallBackMode() const {
+	return m_iItemCallBackMode;
+}
+
+inline WinGUITableStateCallBackMode WinGUITable::GetStateCallBackMode() const {
+	return m_iStateCallBackMode;
+}
+
 inline WinGUITableViewMode WinGUITable::GetViewMode() const {
 	return m_iViewMode;
 }
@@ -112,6 +120,10 @@ inline Bool WinGUITable::HasHotTrackingSelection() const {
 
 inline Bool WinGUITable::HasInfoTips() const {
 	return m_bHasInfoTips;
+}
+
+inline UInt WinGUITable::GetColumnCount() const {
+	return m_iColumnCount;
 }
 
 inline Bool WinGUITable::IsEditingItemLabel( UInt * outItemIndex ) const {

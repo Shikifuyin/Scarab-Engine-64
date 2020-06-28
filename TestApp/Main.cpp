@@ -385,7 +385,11 @@ MyTableModel::MyTableModel( MyApplication * pApplication ):
 	m_hCreationParameters.bHasBackBuffer = false;
 	m_hCreationParameters.bHasSharedImageLists = false;
 
+	m_hCreationParameters.iItemCallBackMode = WINGUI_TABLE_ITEMCALLBACK_LABELS;
+	m_hCreationParameters.iStateCallBackMode = 0;
+
 	m_hCreationParameters.iViewMode = WINGUI_TABLE_VIEW_DETAILED;
+	m_hCreationParameters.bGroupMode = false;
 	m_hCreationParameters.bHasHeadersInAllViews = false;
 
 	m_hCreationParameters.bHasColumnHeaders = true;
@@ -404,59 +408,16 @@ MyTableModel::MyTableModel( MyApplication * pApplication ):
 	m_hCreationParameters.bAutoSortAscending = false;
 	m_hCreationParameters.bAutoSortDescending = false;
 
-	m_hCreationParameters.bHasHotTrackingSingleClick = true;
+	m_hCreationParameters.bHasHotTrackingSingleClick = false;
 	m_hCreationParameters.bHasHotTrackingDoubleClick = false;
-	m_hCreationParameters.bHasHotTrackingSelection = true;
+	m_hCreationParameters.bHasHotTrackingSelection = false;
 
 	m_hCreationParameters.bHasInfoTips = false;
 
 	for( UInt i = 0; i < 4; ++i ) {
-		m_arrColumns[i].iOrderIndex = i;
-		m_arrColumns[i].iSubItemIndex = i;
-
-		StringFn->Format( m_arrColumns[i].strHeaderText, TEXT("Column_%d"), i );
-		m_arrColumns[i].iRowsTextAlign = WINGUI_TABLE_TEXT_ALIGN_LEFT;
-
-		m_arrColumns[i].bHeaderSplitButton = false;
-
-		m_arrColumns[i].bHeaderHasImage = false;
-		m_arrColumns[i].bRowsHaveImages = false;
-		m_arrColumns[i].bIsImageOnRight = false;
-		m_arrColumns[i].iImageListIndex = 0;
-
-		m_arrColumns[i].bFixedWidth = false;
-		m_arrColumns[i].bFixedAspectRatio = false;
-		m_arrColumns[i].iWidth = 100;
-		m_arrColumns[i].iMinWidth = 20;
-		m_arrColumns[i].iDefaultWidth = 100;
-		m_arrColumns[i].iIdealWidth = 150;
-	}
-	for( UInt i = 0; i < 4; ++i ) {
-		m_arrItems[i].iItemIndex = i;
-		m_arrItems[i].iSubItemIndex = 0;
-
-		m_arrItems[i].iGroupID = INVALID_OFFSET;
-
-		m_arrItems[i].iIndentDepth = 0;
-
-		StringFn->Format( m_arrItems[i].strLabelText, TEXT("Item_%d"), i );
-		m_arrItems[i].iIconImage = INVALID_OFFSET;
-		m_arrItems[i].pItemData = NULL;
-
-		m_arrItems[i].hState.iOverlayImage = 0;
-		m_arrItems[i].hState.iStateImage = 0;
-		m_arrItems[i].hState.bHasFocus = false;
-		m_arrItems[i].hState.bSelected = false;
-		m_arrItems[i].hState.bCutMarked = false;
-		m_arrItems[i].hState.bDropHighlight = false;
-
-		m_arrItems[i].iColumnCount = 4;
-		for( UInt j = 0; j < m_arrItems[i].iColumnCount; ++j ) {
-			m_arrItems[i].arrColumns[j].iColumnIndex = j;
-			m_arrItems[i].arrColumns[j].bLineBreak = false;
-			m_arrItems[i].arrColumns[j].bFill = false;
-			m_arrItems[i].arrColumns[j].bAllowWrap = false;
-			m_arrItems[i].arrColumns[j].bNoTitle = false;
+		StringFn->Format( m_arrColumn[i].strLabel, TEXT("Column_%d"), i );
+		for( UInt j = 0; j < 4; ++j ) {
+			StringFn->Format( m_arrItems[i].arrSubItems[j].strLabel, TEXT("Item_%d_%d"), i, j );
 		}
 	}
 }
@@ -469,15 +430,17 @@ Void MyTableModel::Initialize()
 {
 	WinGUITable * pTable = (WinGUITable*)m_pController;
 
-	pTable->AddColumn( 0, m_arrColumns );
-	pTable->AddColumn( 1, m_arrColumns + 1 );
-	pTable->AddColumn( 2, m_arrColumns + 2 );
-	pTable->AddColumn( 3, m_arrColumns + 3 );
+	pTable->AddColumn( 0, m_arrColumn[0].strLabel, 0, 0, 100 );
+	pTable->AddColumn( 1, m_arrColumn[1].strLabel, 1, 1, 100 );
+	pTable->AddColumn( 2, m_arrColumn[2].strLabel, 2, 2, 100 );
+	pTable->AddColumn( 3, m_arrColumn[3].strLabel, 3, 3, 100 );
 
-	pTable->AddItem( 0, m_arrItems );
-	pTable->AddItem( 1, m_arrItems + 1 );
-	pTable->AddItem( 2, m_arrItems + 2 );
-	pTable->AddItem( 3, m_arrItems + 3 );
+	pTable->AddItem( 0 );
+	pTable->AddItem( 1 );
+	pTable->AddItem( 2 );
+	pTable->AddItem( 3 );
+
+	pTable->ForceRedraw( 0, 3, true );
 }
 
 const WinGUILayout * MyTableModel::GetLayout() const
@@ -493,6 +456,19 @@ const WinGUILayout * MyTableModel::GetLayout() const
 	hLayout.FixedSize.iY = 480;
 
 	return &hLayout;
+}
+
+GChar * MyTableModel::OnRequestItemLabel( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData )
+{
+	DebugAssert( iItemIndex < 4 );
+	DebugAssert( iSubItemIndex < 4 );
+	return m_arrItems[iItemIndex].arrSubItems[iSubItemIndex].strLabel;
+}
+Void MyTableModel::OnUpdateItemLabel( UInt iItemIndex, UInt iSubItemIndex, Void * pItemData, const GChar * strItemLabel )
+{
+	DebugAssert( iItemIndex < 4 );
+	DebugAssert( iSubItemIndex < 4 );
+	StringFn->NCopy( m_arrItems[iItemIndex].arrSubItems[iSubItemIndex].strLabel, strItemLabel, 63 );
 }
 
 /////////////////////////////////////////////////////////////////////////////////

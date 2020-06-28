@@ -99,6 +99,7 @@ Void WinGUI::CreateAppWindow( WinGUIWindowModel * pModel )
     INITCOMMONCONTROLSEX hICCX;
     hICCX.dwSize = sizeof(INITCOMMONCONTROLSEX);
     hICCX.dwICC = ICC_STANDARD_CLASSES  // Button, Edit, Static, ListBox, ComboBox, ScrollBar
+                | ICC_PROGRESS_CLASS    // Progress Bar
                 | ICC_TAB_CLASSES       // Tabs, Tooltip
                 | ICC_LISTVIEW_CLASSES; // ListView
     InitCommonControlsEx( &hICCX );
@@ -372,6 +373,30 @@ WinGUIGroupBox * WinGUI::CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBox
 
     // Done
     return pGroupBox;
+}
+
+WinGUIProgressBar * WinGUI::CreateProgressBar( WinGUIElement * pParent, WinGUIProgressBarModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIProgressBar) );
+    WinGUIProgressBar * pProgressBar = new(pMemory) WinGUIProgressBar( pParent, pModel );
+
+    ((WinGUIElement*)pProgressBar)->_Create();
+    ((WinGUIElement*)pProgressBar)->_ApplyDefaultFont( m_pDefaultFont );
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pProgressBar );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pProgressBar );
+    }
+
+    // Done
+    return pProgressBar;
 }
 
 WinGUIStatic * WinGUI::CreateStatic( WinGUIElement * pParent, WinGUIStaticModel * pModel ) const

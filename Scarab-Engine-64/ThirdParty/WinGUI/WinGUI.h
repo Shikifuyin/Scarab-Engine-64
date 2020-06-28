@@ -38,6 +38,8 @@
 #include "Controls/WinGUIRadioButton.h"
 #include "Controls/WinGUIGroupBox.h"
 
+#include "Controls/WinGUIProgressBar.h"
+
 #include "Controls/WinGUIStatic.h"
 #include "Controls/WinGUITextEdit.h"
 
@@ -113,6 +115,8 @@ public:
     WinGUICheckBox * CreateCheckBox( WinGUIElement * pParent, WinGUICheckBoxModel * pModel ) const;
     WinGUIRadioButton * CreateRadioButton( WinGUIElement * pParent, WinGUIRadioButtonModel * pModel ) const;
     WinGUIGroupBox * CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const;
+
+    WinGUIProgressBar * CreateProgressBar( WinGUIElement * pParent, WinGUIProgressBarModel * pModel ) const;
 
     WinGUIStatic * CreateStatic( WinGUIElement * pParent, WinGUIStaticModel * pModel ) const;
     WinGUITextEdit * CreateTextEdit( WinGUIElement * pParent, WinGUITextEditModel * pModel ) const;

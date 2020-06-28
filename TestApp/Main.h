@@ -36,6 +36,7 @@
 #define RESID_CONTAINER_CENTER_TEST 1002
 
 #define RESID_TABLE_TEST 1020
+#define RESID_PROGRESSBAR_TEST 1021
 
 #define RESID_CONTAINER_RIGHT_TEST 1003
 
@@ -313,6 +314,21 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
+// The MyProgressBarModel class
+class MyProgressBarModel : public WinGUIProgressBarModel
+{
+public:
+	MyProgressBarModel( MyApplication * pApplication );
+	~MyProgressBarModel();
+
+	// Layout
+	virtual const WinGUILayout * GetLayout() const;
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
 // The MyApplication class
 class MyApplication
 {
@@ -343,4 +359,5 @@ public:
     MyTextEditModel m_hTextEditModel;
     MyComboBoxModel m_hComboBoxModel;
 	MyStaticRectModel m_hStaticRectModel;
+	MyProgressBarModel m_hProgressBarModel;
 };

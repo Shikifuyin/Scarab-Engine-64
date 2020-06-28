@@ -668,6 +668,37 @@ const WinGUILayout * MyStaticRectModel::GetLayout() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+// MyProgressBarModel implementation
+MyProgressBarModel::MyProgressBarModel( MyApplication * pApplication ):
+	WinGUIProgressBarModel(RESID_PROGRESSBAR_TEST)
+{
+	m_pApplication = pApplication;
+
+	m_hCreationParameters.bPendingMode = false;
+	m_hCreationParameters.bSmoothWrap = true;
+	m_hCreationParameters.bVertical = false;
+}
+MyProgressBarModel::~MyProgressBarModel()
+{
+	// nothing to do
+}
+
+const WinGUILayout * MyProgressBarModel::GetLayout() const
+{
+	static WinGUIManualLayout hLayout;
+
+	hLayout.UseScalingPosition = false;
+	hLayout.FixedPosition.iX = 10;
+	hLayout.FixedPosition.iY = 300;
+
+	hLayout.UseScalingSize = false;
+	hLayout.FixedSize.iX = 200;
+	hLayout.FixedSize.iY = 40;
+
+	return &hLayout;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // MyApplication implementation
 MyApplication::MyApplication():
 	m_hAppWindowModel(this),
@@ -686,6 +717,7 @@ MyApplication::MyApplication():
 	m_hContainerModelCenter(this),
 
 	m_hTableModel(this),
+	m_hProgressBarModel(this),
 
 	m_hContainerModelRight(this),
 
@@ -747,6 +779,11 @@ MyApplication::MyApplication():
 	// A Static Rect
 	WinGUIFn->CreateStatic( pContainerRight, &m_hStaticRectModel );
 
+	// A ProgressBar
+	WinGUIProgressBar * pProgressBar = WinGUIFn->CreateProgressBar( pContainerRight, &m_hProgressBarModel );
+	pProgressBar->SetRange( 0, 100 );
+	pProgressBar->SetState( WINGUI_PROGRESSBAR_INPROGRESS );
+
 	// Done
 	pTabs->SelectTab( 0 );
 	pTabs->SwitchSelectedTabPane( pContainerLeft );
@@ -760,6 +797,32 @@ MyApplication::~MyApplication()
 
 /////////////////////////////////////////////////////////////////////////////////
 // Entry Point
+Void MyIdleTime( Void * pUserData )
+{
+	static TimeMeasure iLastTime = 0;
+	static Int iDelta = +1;
+
+	if ( iLastTime == 0 ) {
+		iLastTime = SystemFn->TimeAbsolute( TIMEUNIT_MILLISECONDS );
+		return;
+	}
+
+	MyApplication * pApp = (MyApplication*)pUserData;
+	WinGUIProgressBar * pProgressBar = (WinGUIProgressBar*)( pApp->m_hProgressBarModel.GetController() );
+
+	if ( pProgressBar->GetBarPosition() >= 100 )
+		iDelta = -1;
+	else if ( pProgressBar->GetBarPosition() <= 0 )
+		iDelta = +1;
+
+	TimeMeasure iCurrentTime = SystemFn->TimeAbsolute( TIMEUNIT_MILLISECONDS );
+	TimeMeasure iElapsedTime = iCurrentTime - iLastTime;
+	if ( iElapsedTime > 100.0 ) {
+		pProgressBar->Progress( iDelta );
+		iLastTime = iCurrentTime;
+	}
+}
+
 int APIENTRY wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow )
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
@@ -767,6 +830,6 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
 
     MyApplication hApplication;
 
-    return WinGUIFn->MessageLoop();
+    return WinGUIFn->MessageLoop( MyIdleTime, &hApplication );
 }
 

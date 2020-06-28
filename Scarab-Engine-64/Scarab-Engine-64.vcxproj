@@ -248,6 +248,7 @@
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.h" />
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIComboBox.h" />
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIGroupBox.h" />
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIProgressBar.h" />
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.h" />
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIStatic.h" />
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUITable.h" />
@@ -352,6 +353,7 @@
     <None Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.inl" />
     <None Include="ThirdParty\WinGUI\Controls\WinGUIComboBox.inl" />
     <None Include="ThirdParty\WinGUI\Controls\WinGUIGroupBox.inl" />
+    <None Include="ThirdParty\WinGUI\Controls\WinGUIProgressBar.inl" />
     <None Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.inl" />
     <None Include="ThirdParty\WinGUI\Controls\WinGUIStatic.inl" />
     <None Include="ThirdParty\WinGUI\Controls\WinGUITable.inl" />
@@ -456,6 +458,7 @@
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUICheckBox.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIComboBox.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIGroupBox.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIProgressBar.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIRadioButton.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIStatic.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUITable.cpp" />

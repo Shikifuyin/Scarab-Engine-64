@@ -24,6 +24,8 @@
 // Includes
 #include "../WinGUIControl.h"
 
+#include "../Tools/WinGUIImage.h"
+
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
@@ -143,8 +145,8 @@ public:
 	Void SetText( const GChar * strText );
 
 	// Icon
-	Void * GetIcon() const;       // Returns a HICON
-	Void SetIcon( Void * hIcon ); // HICON Resource
+	Void GetIcon( WinGUIIcon * outIcon ) const;
+	Void SetIcon( WinGUIIcon * pIcon );
 
 private:
 	// Create/Destroy Interface

@@ -24,6 +24,8 @@
 // Includes
 #include "../WinGUIControl.h"
 
+#include "../Tools/WinGUIImageList.h"
+
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
@@ -34,6 +36,25 @@ typedef struct _wingui_button_parameters {
 	Bool bEnableTabStop;
 	Bool bEnableNotify;
 } WinGUIButtonParameters;
+
+// Button states (match image list)
+enum WinGUIButtonState {
+	WINGUI_BUTTON_STATE_NORMAL    = 1,
+	WINGUI_BUTTON_STATE_HOT       = 2,
+	WINGUI_BUTTON_STATE_PRESSED   = 3,
+	WINGUI_BUTTON_STATE_DISABLED  = 4,
+	WINGUI_BUTTON_STATE_DEFAULTED = 5,
+	WINGUI_BUTTON_STATE_STYLUSHOT = 6 // Tablets only
+};
+
+// Image alignment
+enum WinGUIButtonImageAlignment {
+	WINGUI_BUTTON_IMAGE_ALIGN_LEFT = 0,
+	WINGUI_BUTTON_IMAGE_ALIGN_RIGHT,
+	WINGUI_BUTTON_IMAGE_ALIGN_TOP,
+	WINGUI_BUTTON_IMAGE_ALIGN_BOTTOM,
+	WINGUI_BUTTON_IMAGE_ALIGN_CENTER
+};
 
 // Prototypes
 class WinGUIButtonModel;
@@ -76,10 +97,20 @@ public:
 	Void Enable();
 	Void Disable();
 
+	// Metrics
+	Void GetIdealSize( WinGUIPoint * outSize ) const;
+
+	Void GetTextMargin( WinGUIRectangle * outRectMargin ) const;
+	Void SetTextMargin( const WinGUIRectangle & hRectMargin );
+
 	// Label Text
 	UInt GetTextLength() const;
 	Void GetText( GChar * outText, UInt iMaxLength ) const;
 	Void SetText( const GChar * strText );
+
+	// Image List
+	Void GetImageList( WinGUIImageList * outImageList, WinGUIRectangle * outImageMargin, WinGUIButtonImageAlignment * outAlignment ) const;
+	Void SetImageList( const WinGUIImageList * pImageList, const WinGUIRectangle & hImageMargin, WinGUIButtonImageAlignment iAlignment );
 
 private:
 	// Create/Destroy Interface

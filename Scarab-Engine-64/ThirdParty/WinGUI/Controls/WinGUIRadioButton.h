@@ -106,6 +106,12 @@ public:
 	Void Enable();
 	Void Disable();
 
+	// Metrics
+	Void GetIdealSize( WinGUIPoint * outSize ) const;
+
+	Void GetTextMargin( WinGUIRectangle * outRectMargin ) const;
+	Void SetTextMargin( const WinGUIRectangle & hRectMargin );
+
 	// Label Text
 	UInt GetTextLength() const;
 	Void GetText( GChar * outText, UInt iMaxLength ) const;

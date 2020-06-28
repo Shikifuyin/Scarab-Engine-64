@@ -68,6 +68,7 @@ typedef struct _wingui_imagelist_draw_options {
 // Prototypes
 class WinGUIWindow;
 
+class WinGUIButton;
 class WinGUITable;
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -142,6 +143,7 @@ public:
 	Void CombineDragImages( UInt iNewImageIndex, const WinGUIPoint & hNewHotSpot );
 
 private:
+	friend class WinGUIButton;
 	friend class WinGUITable;
 
 	// Helpers

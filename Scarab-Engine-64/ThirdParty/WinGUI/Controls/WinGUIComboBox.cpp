@@ -107,6 +107,17 @@ Void WinGUIComboBox::SetTextLimit( UInt iMaxLength )
 	ComboBox_LimitText( hHandle, iMaxLength );
 }
 
+Void WinGUIComboBox::Expand()
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ComboBox_ShowDropdown( hHandle, TRUE );
+}
+Void WinGUIComboBox::Collapse()
+{
+	HWND hHandle = (HWND)m_hHandle;
+	ComboBox_ShowDropdown( hHandle, FALSE );
+}
+
 UInt WinGUIComboBox::GetItemCount() const
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -333,6 +344,10 @@ Bool WinGUIComboBox::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 		case CBN_SELCHANGE:    return pModel->OnSelectionChange(); break;
 		case CBN_SELENDOK:     return pModel->OnSelectionOK(); break;
 		case CBN_SELENDCANCEL: return pModel->OnSelectionCancel(); break;
+
+		case CBN_DROPDOWN: return pModel->OnExpand(); break;
+		case CBN_CLOSEUP:  return pModel->OnCollapse(); break;
+
 		default: break;
 	}
 

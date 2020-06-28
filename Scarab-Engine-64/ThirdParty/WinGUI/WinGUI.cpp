@@ -141,14 +141,20 @@ Void WinGUI::DestroyAppWindow()
     CoUninitialize();
 }
 
-Int WinGUI::MessageLoop() const
+Int WinGUI::MessageLoop( Void (*pfIdleFunction)(Void*), Void * pUserData ) const
 {
     MSG hMessage;
 
-    while( GetMessage(&hMessage, NULL, 0, 0) )
-    {
-        TranslateMessage( &hMessage );
-		DispatchMessage( &hMessage );
+    while( true ) {
+        if ( PeekMessage(&hMessage, NULL, 0u, 0u, PM_REMOVE) != FALSE ) {
+            if ( hMessage.message == WM_QUIT )
+                break;
+            TranslateMessage( &hMessage );
+		    DispatchMessage( &hMessage );
+        } else {
+            if ( pfIdleFunction != NULL ) 
+                pfIdleFunction( pUserData );
+        }
     }
 
     return (Int)( hMessage.wParam ); // Exit Code from PostQuitMessage

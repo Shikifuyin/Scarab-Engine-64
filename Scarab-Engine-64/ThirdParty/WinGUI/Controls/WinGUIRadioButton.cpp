@@ -90,6 +90,42 @@ Void WinGUIRadioButton::Disable()
 	Button_Enable( (HWND)m_hHandle, FALSE );
 }
 
+Void WinGUIRadioButton::GetIdealSize( WinGUIPoint * outSize ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	SIZE hSize;
+	Button_GetIdealSize( hHandle, &hSize );
+
+	outSize->iX = hSize.cx;
+	outSize->iY = hSize.cy;
+}
+
+Void WinGUIRadioButton::GetTextMargin( WinGUIRectangle * outRectMargin ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	RECT hRect;
+	Button_GetTextMargin( hHandle, &hRect );
+
+	outRectMargin->iLeft = hRect.left;
+	outRectMargin->iTop = hRect.top;
+	outRectMargin->iWidth = ( hRect.right - hRect.left );
+	outRectMargin->iHeight = ( hRect.bottom - hRect.top );
+}
+Void WinGUIRadioButton::SetTextMargin( const WinGUIRectangle & hRectMargin )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	RECT hRect;
+	hRect.left = hRectMargin.iLeft;
+	hRect.top = hRectMargin.iTop;
+	hRect.right = ( hRectMargin.iLeft + hRectMargin.iWidth );
+	hRect.bottom = ( hRectMargin.iTop + hRectMargin.iHeight );
+
+	Button_SetTextMargin( hHandle, &hRect );
+}
+
 UInt WinGUIRadioButton::GetTextLength() const
 {
 	return Button_GetTextLength( (HWND)m_hHandle );

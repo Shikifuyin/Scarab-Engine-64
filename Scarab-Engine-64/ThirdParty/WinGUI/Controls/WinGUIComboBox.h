@@ -82,6 +82,9 @@ public:
 	virtual Bool OnSelectionOK() { return false; }
 	virtual Bool OnSelectionCancel() { return false; }
 
+	virtual Bool OnExpand() { return false; }
+	virtual Bool OnCollapse() { return false; }
+
 protected:
 	WinGUIComboBoxParameters m_hCreationParameters;
 };
@@ -108,6 +111,9 @@ public:
 	Void SetListItemHeight( UInt iHeight );
 
 	Void SetTextLimit( UInt iMaxLength );
+
+	Void Expand();
+	Void Collapse();
 
 	// List
 	UInt GetItemCount() const;

@@ -68,6 +68,42 @@ Void WinGUIButton::Disable()
 	Button_Enable( hHandle, FALSE );
 }
 
+Void WinGUIButton::GetIdealSize( WinGUIPoint * outSize ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	SIZE hSize;
+	Button_GetIdealSize( hHandle, &hSize );
+
+	outSize->iX = hSize.cx;
+	outSize->iY = hSize.cy;
+}
+
+Void WinGUIButton::GetTextMargin( WinGUIRectangle * outRectMargin ) const
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	RECT hRect;
+	Button_GetTextMargin( hHandle, &hRect );
+
+	outRectMargin->iLeft = hRect.left;
+	outRectMargin->iTop = hRect.top;
+	outRectMargin->iWidth = ( hRect.right - hRect.left );
+	outRectMargin->iHeight = ( hRect.bottom - hRect.top );
+}
+Void WinGUIButton::SetTextMargin( const WinGUIRectangle & hRectMargin )
+{
+	HWND hHandle = (HWND)m_hHandle;
+
+	RECT hRect;
+	hRect.left = hRectMargin.iLeft;
+	hRect.top = hRectMargin.iTop;
+	hRect.right = ( hRectMargin.iLeft + hRectMargin.iWidth );
+	hRect.bottom = ( hRectMargin.iTop + hRectMargin.iHeight );
+
+	Button_SetTextMargin( hHandle, &hRect );
+}
+
 UInt WinGUIButton::GetTextLength() const
 {
 	HWND hHandle = (HWND)m_hHandle;
@@ -82,6 +118,57 @@ Void WinGUIButton::SetText( const GChar * strText )
 {
 	HWND hHandle = (HWND)m_hHandle;
 	Button_SetText( hHandle, strText );
+}
+
+Void WinGUIButton::GetImageList( WinGUIImageList * outImageList, WinGUIRectangle * outImageMargin, WinGUIButtonImageAlignment * outAlignment ) const
+{
+	DebugAssert( !(outImageList->IsCreated()) );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	BUTTON_IMAGELIST hImgList;
+	Button_GetImageList( hHandle, &hImgList );
+
+	outImageList->_CreateFromHandle( hImgList.himl );
+
+	outImageMargin->iLeft = hImgList.margin.left;
+	outImageMargin->iTop = hImgList.margin.top;
+	outImageMargin->iWidth = ( hImgList.margin.right - hImgList.margin.left );
+	outImageMargin->iHeight = ( hImgList.margin.bottom - hImgList.margin.top );
+
+	switch( hImgList.uAlign ) {
+		case BUTTON_IMAGELIST_ALIGN_LEFT:   *outAlignment = WINGUI_BUTTON_IMAGE_ALIGN_LEFT; break;
+		case BUTTON_IMAGELIST_ALIGN_RIGHT:  *outAlignment = WINGUI_BUTTON_IMAGE_ALIGN_RIGHT; break;
+		case BUTTON_IMAGELIST_ALIGN_TOP:    *outAlignment = WINGUI_BUTTON_IMAGE_ALIGN_TOP; break;
+		case BUTTON_IMAGELIST_ALIGN_BOTTOM: *outAlignment = WINGUI_BUTTON_IMAGE_ALIGN_BOTTOM; break;
+		case BUTTON_IMAGELIST_ALIGN_CENTER: *outAlignment = WINGUI_BUTTON_IMAGE_ALIGN_CENTER; break;
+		default: DebugAssert(false); break;
+	}
+}
+Void WinGUIButton::SetImageList( const WinGUIImageList * pImageList, const WinGUIRectangle & hImageMargin, WinGUIButtonImageAlignment iAlignment )
+{
+	DebugAssert( pImageList->IsCreated() );
+
+	HWND hHandle = (HWND)m_hHandle;
+
+	BUTTON_IMAGELIST hImgList;
+	hImgList.himl = (HIMAGELIST)( pImageList->m_hHandle );
+
+	hImgList.margin.left = hImageMargin.iLeft;
+	hImgList.margin.top = hImageMargin.iTop;
+	hImgList.margin.right = ( hImageMargin.iLeft + hImageMargin.iWidth );
+	hImgList.margin.bottom = ( hImageMargin.iTop + hImageMargin.iHeight );
+
+	switch( iAlignment ) {
+		case WINGUI_BUTTON_IMAGE_ALIGN_LEFT:   hImgList.uAlign = BUTTON_IMAGELIST_ALIGN_LEFT; break;
+		case WINGUI_BUTTON_IMAGE_ALIGN_RIGHT:  hImgList.uAlign = BUTTON_IMAGELIST_ALIGN_RIGHT; break;
+		case WINGUI_BUTTON_IMAGE_ALIGN_TOP:    hImgList.uAlign = BUTTON_IMAGELIST_ALIGN_TOP; break;
+		case WINGUI_BUTTON_IMAGE_ALIGN_BOTTOM: hImgList.uAlign = BUTTON_IMAGELIST_ALIGN_BOTTOM; break;
+		case WINGUI_BUTTON_IMAGE_ALIGN_CENTER: hImgList.uAlign = BUTTON_IMAGELIST_ALIGN_CENTER; break;
+		default: DebugAssert(false); break;
+	}
+
+	Button_SetImageList( hHandle, &hImgList );
 }
 
 /////////////////////////////////////////////////////////////////////////////////

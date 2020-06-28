@@ -439,8 +439,6 @@ Void MyTableModel::Initialize()
 	pTable->AddItem( 1 );
 	pTable->AddItem( 2 );
 	pTable->AddItem( 3 );
-
-	pTable->ForceRedraw( 0, 3, true );
 }
 
 const WinGUILayout * MyTableModel::GetLayout() const

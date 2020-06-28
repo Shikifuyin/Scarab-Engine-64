@@ -87,15 +87,23 @@ Void WinGUIStatic::SetText( const GChar * strText )
 	Static_SetText( hHandle, strText );
 }
 
-Void * WinGUIStatic::GetIcon() const
+Void WinGUIStatic::GetIcon( WinGUIIcon * outIcon ) const
 {
+	DebugAssert( !(outIcon->IsCreated()) );
+
 	HWND hHandle = (HWND)m_hHandle;
-	return Static_GetIcon( hHandle, NULL );
+
+	HICON hIcon = Static_GetIcon( hHandle, NULL );
+
+	outIcon->_CreateFromHandle( hIcon, true );
 }
-Void WinGUIStatic::SetIcon( Void * hIcon )
+Void WinGUIStatic::SetIcon( WinGUIIcon * pIcon )
 {
+	DebugAssert( pIcon->IsCreated() );
+
 	HWND hHandle = (HWND)m_hHandle;
-	Static_SetIcon( hHandle, (HICON)hIcon );
+
+	Static_SetIcon( hHandle, (HICON)(pIcon->m_hHandle) );
 }
 
 /////////////////////////////////////////////////////////////////////////////////

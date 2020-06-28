@@ -98,7 +98,7 @@ public:
     Void DestroyAppWindow();
 
     // Message Loop
-    Int MessageLoop() const;
+    Int MessageLoop( Void (*pfIdleFunction)(Void*) = NULL, Void * pUserData = NULL ) const;
 
     // Message Boxes
     WinGUIMessageBoxResponse SpawnMessageBox( const GChar * strTitle, const GChar * strText, const WinGUIMessageBoxOptions & hOptions ) const;

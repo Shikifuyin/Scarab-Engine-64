@@ -36,7 +36,6 @@
 #define RESID_CONTAINER_CENTER_TEST 1002
 
 #define RESID_TABLE_TEST 1020
-#define RESID_PROGRESSBAR_TEST 1021
 
 #define RESID_CONTAINER_RIGHT_TEST 1003
 
@@ -44,6 +43,9 @@
 #define RESID_TEXTEDIT_TEST 1031
 #define RESID_COMBOBOX_TEST 1032
 #define RESID_STATIC_RECT_TEST 1033
+#define RESID_PROGRESSBAR_TEST 1034
+
+#define RESID_STATUSBAR_TEST 1004
 
 // Prototypes
 class MyApplication;
@@ -329,6 +331,21 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
+// The MyStatusBarModel class
+class MyStatusBarModel : public WinGUIStatusBarModel
+{
+public:
+	MyStatusBarModel( MyApplication * pApplication );
+	~MyStatusBarModel();
+
+	// Layout
+	virtual const WinGUILayout * GetLayout() const;
+
+private:
+	MyApplication * m_pApplication;
+};
+
+/////////////////////////////////////////////////////////////////////////////////
 // The MyApplication class
 class MyApplication
 {
@@ -360,4 +377,6 @@ public:
     MyComboBoxModel m_hComboBoxModel;
 	MyStaticRectModel m_hStaticRectModel;
 	MyProgressBarModel m_hProgressBarModel;
+
+	MyStatusBarModel m_hStatusBarModel;
 };

@@ -534,6 +534,9 @@
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIProgressBar.h">
       <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIStatusBar.h">
+      <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\System\Platform.inl">
@@ -845,6 +848,9 @@
     <None Include="ThirdParty\WinGUI\Controls\WinGUIProgressBar.inl">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </None>
+    <None Include="ThirdParty\WinGUI\Controls\WinGUIStatusBar.inl">
+      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -1154,6 +1160,9 @@
       <Filter>Source Files\ThirdParty\WinGUI\Tools</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIProgressBar.cpp">
+      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIStatusBar.cpp">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </ClCompile>
   </ItemGroup>

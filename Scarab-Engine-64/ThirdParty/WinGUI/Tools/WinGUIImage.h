@@ -133,6 +133,7 @@ class WinGUIImageList;
 class WinGUIElement;
 
 class WinGUIStatic;
+class WinGUIStatusBar;
 class WinGUITable;
 
 class WinGUI;
@@ -250,6 +251,7 @@ private:
 	friend class WinGUIImageList;
 
 	friend class WinGUIStatic;
+	friend class WinGUIStatusBar;
 
 	// Helpers
 	Void * _GetAppWindowHandle() const;

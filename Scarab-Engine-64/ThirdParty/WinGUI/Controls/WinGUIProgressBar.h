@@ -42,8 +42,8 @@ enum WinGUIProgressBarState {
 };
 
 // Prototypes
-class WinGUIButtonModel;
-class WinGUIButton;
+class WinGUIProgressBarModel;
+class WinGUIProgressBar;
 
 /////////////////////////////////////////////////////////////////////////////////
 // The WinGUIProgressBarModel class

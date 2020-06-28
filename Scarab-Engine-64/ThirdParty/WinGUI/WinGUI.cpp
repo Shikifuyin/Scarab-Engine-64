@@ -99,9 +99,10 @@ Void WinGUI::CreateAppWindow( WinGUIWindowModel * pModel )
     INITCOMMONCONTROLSEX hICCX;
     hICCX.dwSize = sizeof(INITCOMMONCONTROLSEX);
     hICCX.dwICC = ICC_STANDARD_CLASSES  // Button, Edit, Static, ListBox, ComboBox, ScrollBar
-                | ICC_PROGRESS_CLASS    // Progress Bar
+                | ICC_PROGRESS_CLASS    // ProgressBar
+                | ICC_BAR_CLASSES       // ToolBar, StatusBar, TrackBar, Tooltip
                 | ICC_TAB_CLASSES       // Tabs, Tooltip
-                | ICC_LISTVIEW_CLASSES; // ListView
+                | ICC_LISTVIEW_CLASSES; // ListView, HeaderControl
     InitCommonControlsEx( &hICCX );
 
     // Create Default Font
@@ -421,6 +422,29 @@ WinGUIStatic * WinGUI::CreateStatic( WinGUIElement * pParent, WinGUIStaticModel 
 
     // Done
     return pStatic;
+}
+WinGUIStatusBar * WinGUI::CreateStatusBar( WinGUIElement * pParent, WinGUIStatusBarModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIStatusBar) );
+    WinGUIStatusBar * pStatusBar = new(pMemory) WinGUIStatusBar( pParent, pModel );
+
+    ((WinGUIElement*)pStatusBar)->_Create();
+    ((WinGUIElement*)pStatusBar)->_ApplyDefaultFont( m_pDefaultFont );
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pStatusBar );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pStatusBar );
+    }
+
+    // Done
+    return pStatusBar;
 }
 WinGUITextEdit * WinGUI::CreateTextEdit( WinGUIElement * pParent, WinGUITextEditModel * pModel ) const
 {

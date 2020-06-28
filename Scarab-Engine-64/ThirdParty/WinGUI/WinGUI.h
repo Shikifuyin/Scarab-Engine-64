@@ -41,6 +41,7 @@
 #include "Controls/WinGUIProgressBar.h"
 
 #include "Controls/WinGUIStatic.h"
+#include "Controls/WinGUIStatusBar.h"
 #include "Controls/WinGUITextEdit.h"
 
 #include "Controls/WinGUIComboBox.h"
@@ -119,6 +120,7 @@ public:
     WinGUIProgressBar * CreateProgressBar( WinGUIElement * pParent, WinGUIProgressBarModel * pModel ) const;
 
     WinGUIStatic * CreateStatic( WinGUIElement * pParent, WinGUIStaticModel * pModel ) const;
+    WinGUIStatusBar * CreateStatusBar( WinGUIElement * pParent, WinGUIStatusBarModel * pModel ) const;
     WinGUITextEdit * CreateTextEdit( WinGUIElement * pParent, WinGUITextEditModel * pModel ) const;
 
     WinGUIComboBox * CreateComboBox( WinGUIElement * pParent, WinGUIComboBoxModel * pModel ) const;

@@ -699,6 +699,27 @@ const WinGUILayout * MyProgressBarModel::GetLayout() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////
+// MyStatusBarModel implementation
+MyStatusBarModel::MyStatusBarModel( MyApplication * pApplication ):
+	WinGUIStatusBarModel(RESID_STATUSBAR_TEST)
+{
+	m_pApplication = pApplication;
+
+	m_hCreationParameters.bHasSizingGrip = false;
+	m_hCreationParameters.bEnableToolTips = true;
+}
+MyStatusBarModel::~MyStatusBarModel()
+{
+	// nothing to do
+}
+
+const WinGUILayout * MyStatusBarModel::GetLayout() const
+{
+	// No layout
+	return NULL;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // MyApplication implementation
 MyApplication::MyApplication():
 	m_hAppWindowModel(this),
@@ -724,7 +745,9 @@ MyApplication::MyApplication():
 	m_hCheckBoxModel(this),
 	m_hTextEditModel(this),
 	m_hComboBoxModel(this),
-	m_hStaticRectModel(this)
+	m_hStaticRectModel(this),
+
+	m_hStatusBarModel(this)
 {
 	// App Window
 	WinGUIFn->CreateAppWindow( &m_hAppWindowModel );
@@ -783,6 +806,16 @@ MyApplication::MyApplication():
 	WinGUIProgressBar * pProgressBar = WinGUIFn->CreateProgressBar( pContainerRight, &m_hProgressBarModel );
 	pProgressBar->SetRange( 0, 100 );
 	pProgressBar->SetState( WINGUI_PROGRESSBAR_INPROGRESS );
+
+	// A StatusBar
+	WinGUIStatusBar * pStatusBar = WinGUIFn->CreateStatusBar( pAppWindow, &m_hStatusBarModel );
+	UInt arrEdges[2] = { 20, INVALID_OFFSET };
+	pStatusBar->SetMinHeight( 32 );
+	pStatusBar->SetParts( arrEdges, 2 );
+	pStatusBar->SetPartText( 0, TEXT("Ggngngngn !"), WINGUI_STATUSBAR_DRAW_SINKBORDER );
+	pStatusBar->SetPartTipText( 0, TEXT("Nothing Here !") );
+	pStatusBar->SetPartText( 1, TEXT("AAhhhaahh !"), WINGUI_STATUSBAR_DRAW_SINKBORDER );
+	pStatusBar->SetPartTipText( 1, TEXT("Not much more Here !") );
 
 	// Done
 	pTabs->SelectTab( 0 );

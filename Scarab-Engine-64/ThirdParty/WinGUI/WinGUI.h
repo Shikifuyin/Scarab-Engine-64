@@ -31,19 +31,20 @@
 #include "Tools/WinGUIImage.h"
 #include "Tools/WinGUIImageList.h"
 
-#include "Controls/WinGUITabs.h"
+#include "Controls/WinGUIStatic.h"
+#include "Controls/WinGUIGroupBox.h"
+
+#include "Controls/WinGUIStatusBar.h"
+#include "Controls/WinGUIProgressBar.h"
 
 #include "Controls/WinGUIButton.h"
 #include "Controls/WinGUICheckBox.h"
 #include "Controls/WinGUIRadioButton.h"
-#include "Controls/WinGUIGroupBox.h"
+#include "Controls/WinGUISliderBar.h"
 
-#include "Controls/WinGUIProgressBar.h"
+#include "Controls/WinGUITabs.h"
 
-#include "Controls/WinGUIStatic.h"
-#include "Controls/WinGUIStatusBar.h"
 #include "Controls/WinGUITextEdit.h"
-
 #include "Controls/WinGUIComboBox.h"
 
 #include "Controls/WinGUITable.h"
@@ -110,19 +111,20 @@ public:
     WinGUIContainer * CreateContainer( WinGUIElement * pParent, WinGUIContainerModel * pModel ) const;
 
     // Controls
-    WinGUITabs * CreateTabs( WinGUIElement * pParent, WinGUITabsModel * pModel ) const;
+    WinGUIStatic * CreateStatic( WinGUIElement * pParent, WinGUIStaticModel * pModel ) const;
+    WinGUIGroupBox * CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const;
+
+    WinGUIStatusBar * CreateStatusBar( WinGUIElement * pParent, WinGUIStatusBarModel * pModel ) const;
+    WinGUIProgressBar * CreateProgressBar( WinGUIElement * pParent, WinGUIProgressBarModel * pModel ) const;
 
     WinGUIButton * CreateButton( WinGUIElement * pParent, WinGUIButtonModel * pModel ) const;
     WinGUICheckBox * CreateCheckBox( WinGUIElement * pParent, WinGUICheckBoxModel * pModel ) const;
     WinGUIRadioButton * CreateRadioButton( WinGUIElement * pParent, WinGUIRadioButtonModel * pModel ) const;
-    WinGUIGroupBox * CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const;
+    WinGUISliderBar * CreateSliderBar( WinGUIElement * pParent, WinGUISliderBarModel * pModel ) const;
 
-    WinGUIProgressBar * CreateProgressBar( WinGUIElement * pParent, WinGUIProgressBarModel * pModel ) const;
+    WinGUITabs * CreateTabs( WinGUIElement * pParent, WinGUITabsModel * pModel ) const;
 
-    WinGUIStatic * CreateStatic( WinGUIElement * pParent, WinGUIStaticModel * pModel ) const;
-    WinGUIStatusBar * CreateStatusBar( WinGUIElement * pParent, WinGUIStatusBarModel * pModel ) const;
     WinGUITextEdit * CreateTextEdit( WinGUIElement * pParent, WinGUITextEditModel * pModel ) const;
-
     WinGUIComboBox * CreateComboBox( WinGUIElement * pParent, WinGUIComboBoxModel * pModel ) const;
 
     WinGUITable * CreateTable( WinGUIElement * pParent, WinGUITableModel * pModel ) const;

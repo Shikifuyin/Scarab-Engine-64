@@ -259,28 +259,98 @@ WinGUIContainer * WinGUI::CreateContainer( WinGUIElement * pParent, WinGUIContai
     return pContainer;
 }
 
-WinGUITabs * WinGUI::CreateTabs( WinGUIElement * pParent, WinGUITabsModel * pModel ) const
+WinGUIStatic * WinGUI::CreateStatic( WinGUIElement * pParent, WinGUIStaticModel * pModel ) const
 {
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUITabs) );
-    WinGUITabs * pTabs = new(pMemory) WinGUITabs( pParent, pModel );
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIStatic) );
+    WinGUIStatic * pStatic = new(pMemory) WinGUIStatic( pParent, pModel );
 
-    ((WinGUIElement*)pTabs)->_Create();
-    ((WinGUIElement*)pTabs)->_ApplyDefaultFont( m_pDefaultFont );
+    ((WinGUIElement*)pStatic)->_Create();
+    ((WinGUIElement*)pStatic)->_ApplyDefaultFont( m_pDefaultFont );
 
     // Add Child Links to Parent
     if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
         WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
-        pWindow->_AppendChild( pTabs );
+        pWindow->_AppendChild( pStatic );
     } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
         WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
-        pContainer->_AppendChild( pTabs );
+        pContainer->_AppendChild( pStatic );
     }
 
     // Done
-    return pTabs;
+    return pStatic;
+}
+WinGUIGroupBox * WinGUI::CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIGroupBox) );
+    WinGUIGroupBox * pGroupBox = new(pMemory) WinGUIGroupBox( pParent, pModel );
+
+    ((WinGUIElement*)pGroupBox)->_Create();
+    ((WinGUIElement*)pGroupBox)->_ApplyDefaultFont( m_pDefaultFont );
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pGroupBox );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pGroupBox );
+    }
+
+    // Done
+    return pGroupBox;
+}
+
+WinGUIStatusBar * WinGUI::CreateStatusBar( WinGUIElement * pParent, WinGUIStatusBarModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIStatusBar) );
+    WinGUIStatusBar * pStatusBar = new(pMemory) WinGUIStatusBar( pParent, pModel );
+
+    ((WinGUIElement*)pStatusBar)->_Create();
+    ((WinGUIElement*)pStatusBar)->_ApplyDefaultFont( m_pDefaultFont );
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pStatusBar );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pStatusBar );
+    }
+
+    // Done
+    return pStatusBar;
+}
+WinGUIProgressBar * WinGUI::CreateProgressBar( WinGUIElement * pParent, WinGUIProgressBarModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIProgressBar) );
+    WinGUIProgressBar * pProgressBar = new(pMemory) WinGUIProgressBar( pParent, pModel );
+
+    ((WinGUIElement*)pProgressBar)->_Create();
+    ((WinGUIElement*)pProgressBar)->_ApplyDefaultFont( m_pDefaultFont );
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pProgressBar );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pProgressBar );
+    }
+
+    // Done
+    return pProgressBar;
 }
 
 WinGUIButton * WinGUI::CreateButton( WinGUIElement * pParent, WinGUIButtonModel * pModel ) const
@@ -352,100 +422,54 @@ WinGUIRadioButton * WinGUI::CreateRadioButton( WinGUIElement * pParent, WinGUIRa
     // Done
     return pRadioButton;
 }
-WinGUIGroupBox * WinGUI::CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBoxModel * pModel ) const
+WinGUISliderBar * WinGUI::CreateSliderBar( WinGUIElement * pParent, WinGUISliderBarModel * pModel ) const
 {
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIGroupBox) );
-    WinGUIGroupBox * pGroupBox = new(pMemory) WinGUIGroupBox( pParent, pModel );
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUISliderBar) );
+    WinGUISliderBar * pSliderBar = new(pMemory) WinGUISliderBar( pParent, pModel );
 
-    ((WinGUIElement*)pGroupBox)->_Create();
-    ((WinGUIElement*)pGroupBox)->_ApplyDefaultFont( m_pDefaultFont );
+    ((WinGUIElement*)pSliderBar)->_Create();
+    ((WinGUIElement*)pSliderBar)->_ApplyDefaultFont( m_pDefaultFont );
 
     // Add Child Links to Parent
     if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
         WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
-        pWindow->_AppendChild( pGroupBox );
+        pWindow->_AppendChild( pSliderBar );
     } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
         WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
-        pContainer->_AppendChild( pGroupBox );
+        pContainer->_AppendChild( pSliderBar );
     }
 
     // Done
-    return pGroupBox;
+    return pSliderBar;
 }
 
-WinGUIProgressBar * WinGUI::CreateProgressBar( WinGUIElement * pParent, WinGUIProgressBarModel * pModel ) const
+WinGUITabs * WinGUI::CreateTabs( WinGUIElement * pParent, WinGUITabsModel * pModel ) const
 {
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIProgressBar) );
-    WinGUIProgressBar * pProgressBar = new(pMemory) WinGUIProgressBar( pParent, pModel );
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUITabs) );
+    WinGUITabs * pTabs = new(pMemory) WinGUITabs( pParent, pModel );
 
-    ((WinGUIElement*)pProgressBar)->_Create();
-    ((WinGUIElement*)pProgressBar)->_ApplyDefaultFont( m_pDefaultFont );
-
-    // Add Child Links to Parent
-    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
-        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
-        pWindow->_AppendChild( pProgressBar );
-    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
-        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
-        pContainer->_AppendChild( pProgressBar );
-    }
-
-    // Done
-    return pProgressBar;
-}
-
-WinGUIStatic * WinGUI::CreateStatic( WinGUIElement * pParent, WinGUIStaticModel * pModel ) const
-{
-    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
-
-    // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIStatic) );
-    WinGUIStatic * pStatic = new(pMemory) WinGUIStatic( pParent, pModel );
-
-    ((WinGUIElement*)pStatic)->_Create();
-    ((WinGUIElement*)pStatic)->_ApplyDefaultFont( m_pDefaultFont );
+    ((WinGUIElement*)pTabs)->_Create();
+    ((WinGUIElement*)pTabs)->_ApplyDefaultFont( m_pDefaultFont );
 
     // Add Child Links to Parent
     if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
         WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
-        pWindow->_AppendChild( pStatic );
+        pWindow->_AppendChild( pTabs );
     } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
         WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
-        pContainer->_AppendChild( pStatic );
+        pContainer->_AppendChild( pTabs );
     }
 
     // Done
-    return pStatic;
+    return pTabs;
 }
-WinGUIStatusBar * WinGUI::CreateStatusBar( WinGUIElement * pParent, WinGUIStatusBarModel * pModel ) const
-{
-    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
-    // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIStatusBar) );
-    WinGUIStatusBar * pStatusBar = new(pMemory) WinGUIStatusBar( pParent, pModel );
-
-    ((WinGUIElement*)pStatusBar)->_Create();
-    ((WinGUIElement*)pStatusBar)->_ApplyDefaultFont( m_pDefaultFont );
-
-    // Add Child Links to Parent
-    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
-        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
-        pWindow->_AppendChild( pStatusBar );
-    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
-        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
-        pContainer->_AppendChild( pStatusBar );
-    }
-
-    // Done
-    return pStatusBar;
-}
 WinGUITextEdit * WinGUI::CreateTextEdit( WinGUIElement * pParent, WinGUITextEditModel * pModel ) const
 {
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
@@ -469,7 +493,6 @@ WinGUITextEdit * WinGUI::CreateTextEdit( WinGUIElement * pParent, WinGUITextEdit
     // Done
     return pTextEdit;
 }
-
 WinGUIComboBox * WinGUI::CreateComboBox( WinGUIElement * pParent, WinGUIComboBoxModel * pModel ) const
 {
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );

@@ -541,6 +541,30 @@ WinGUITable * WinGUI::CreateTable( WinGUIElement * pParent, WinGUITableModel * p
     return pTable;
 }
 
+WinGUIToolTip * WinGUI::CreateToolTip( WinGUIElement * pParent, WinGUIToolTipModel * pModel ) const
+{
+    DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
+
+    // Create Element
+    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIToolTip) );
+    WinGUIToolTip * pToolTip = new(pMemory) WinGUIToolTip( pParent, pModel );
+
+    ((WinGUIElement*)pToolTip)->_Create();
+    ((WinGUIElement*)pToolTip)->_ApplyDefaultFont( m_pDefaultFont );
+
+    // Add Child Links to Parent
+    if ( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW ) {
+        WinGUIWindow * pWindow = (WinGUIWindow*)pParent;
+        pWindow->_AppendChild( pToolTip );
+    } else if ( pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER ) {
+        WinGUIContainer * pContainer = (WinGUIContainer*)pParent;
+        pContainer->_AppendChild( pToolTip );
+    }
+
+    // Done
+    return pToolTip;
+}
+
 Void WinGUI::DestroyElement( WinGUIElement * pElement ) const
 {
     // Retrieve Parent

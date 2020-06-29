@@ -49,6 +49,8 @@
 
 #include "Controls/WinGUITable.h"
 
+#include "Controls/WinGUIToolTip.h"
+
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 #define WinGUIFn WinGUI::GetInstance()
@@ -128,6 +130,8 @@ public:
     WinGUIComboBox * CreateComboBox( WinGUIElement * pParent, WinGUIComboBoxModel * pModel ) const;
 
     WinGUITable * CreateTable( WinGUIElement * pParent, WinGUITableModel * pModel ) const;
+
+    WinGUIToolTip * CreateToolTip( WinGUIElement * pParent, WinGUIToolTipModel * pModel ) const;
 
     // Element Removal
     Void DestroyElement( WinGUIElement * pElement ) const;

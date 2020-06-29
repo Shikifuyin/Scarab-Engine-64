@@ -256,6 +256,7 @@
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUITable.h" />
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUITabs.h" />
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUITextEdit.h" />
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.h" />
     <ClInclude Include="ThirdParty\WinGUI\Tools\WinGUIImage.h" />
     <ClInclude Include="ThirdParty\WinGUI\Tools\WinGUIImageList.h" />
     <ClInclude Include="ThirdParty\WinGUI\WinGUI.h" />
@@ -363,6 +364,7 @@
     <None Include="ThirdParty\WinGUI\Controls\WinGUITable.inl" />
     <None Include="ThirdParty\WinGUI\Controls\WinGUITabs.inl" />
     <None Include="ThirdParty\WinGUI\Controls\WinGUITextEdit.inl" />
+    <None Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.inl" />
     <None Include="ThirdParty\WinGUI\Tools\WinGUIImage.inl" />
     <None Include="ThirdParty\WinGUI\Tools\WinGUIImageList.inl" />
     <None Include="ThirdParty\WinGUI\WinGUI.inl" />
@@ -470,6 +472,7 @@
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUITable.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUITabs.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUITextEdit.cpp" />
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\Tools\WinGUIImage.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\Tools\WinGUIImageList.cpp" />
     <ClCompile Include="ThirdParty\WinGUI\WinGUI.cpp" />

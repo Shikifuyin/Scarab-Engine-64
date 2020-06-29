@@ -540,6 +540,9 @@
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUISliderBar.h">
       <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.h">
+      <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\System\Platform.inl">
@@ -857,6 +860,9 @@
     <None Include="ThirdParty\WinGUI\Controls\WinGUISliderBar.inl">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </None>
+    <None Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.inl">
+      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -1172,6 +1178,9 @@
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUISliderBar.cpp">
+      <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.cpp">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </ClCompile>
   </ItemGroup>

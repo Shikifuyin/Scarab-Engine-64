@@ -69,6 +69,7 @@ typedef struct _wingui_imagelist_draw_options {
 class WinGUIWindow;
 
 class WinGUIButton;
+class WinGUIComboBox;
 class WinGUITable;
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -144,6 +145,7 @@ public:
 
 private:
 	friend class WinGUIButton;
+	friend class WinGUIComboBox;
 	friend class WinGUITable;
 
 	// Helpers

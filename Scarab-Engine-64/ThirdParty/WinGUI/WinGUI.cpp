@@ -99,6 +99,7 @@ Void WinGUI::CreateAppWindow( WinGUIWindowModel * pModel )
     INITCOMMONCONTROLSEX hICCX;
     hICCX.dwSize = sizeof(INITCOMMONCONTROLSEX);
     hICCX.dwICC = ICC_STANDARD_CLASSES  // Button, Edit, Static, ListBox, ComboBox, ScrollBar
+                | ICC_USEREX_CLASSES    // ComboBoxEx
                 | ICC_PROGRESS_CLASS    // ProgressBar
                 | ICC_BAR_CLASSES       // ToolBar, StatusBar, TrackBar, Tooltip
                 | ICC_TAB_CLASSES       // Tabs, Tooltip

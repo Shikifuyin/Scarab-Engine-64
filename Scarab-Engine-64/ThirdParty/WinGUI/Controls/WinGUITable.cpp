@@ -3315,12 +3315,14 @@ Bool WinGUITable::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 
 				// Request Item Icon Image Index
 				if ( (iMask & LVIF_IMAGE) != 0 ) {
-					pParams->item.iImage = pModel->OnRequestItemIconImage( iItemIndex, iSubItemIndex, pItemData );
+					UInt iImage = pModel->OnRequestItemIconImage( iItemIndex, iSubItemIndex, pItemData );
+					pParams->item.iImage = (iImage != INVALID_OFFSET) ? iImage : I_IMAGENONE;
 				}
 
 				// Request Item GroupID
 				if ( (iMask & LVIF_GROUPID) != 0 ) {
-					pParams->item.iGroupId = pModel->OnRequestItemGroupID( iItemIndex, iSubItemIndex, pItemData );
+					UInt iGroupID = pModel->OnRequestItemGroupID( iItemIndex, iSubItemIndex, pItemData );
+					pParams->item.iGroupId = (iGroupID != INVALID_OFFSET) ? iGroupID : I_GROUPIDNONE;
 				}
 
 				// Request Item Indentation
@@ -3394,12 +3396,14 @@ Bool WinGUITable::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 
 				// Update Item Icon Image Index
 				if ( (iMask & LVIF_IMAGE) != 0 ) {
-					pModel->OnUpdateItemIconImage( iItemIndex, iSubItemIndex, pItemData, pParams->item.iImage );
+					UInt iImage = (pParams->item.iImage != I_IMAGENONE) ? pParams->item.iImage : INVALID_OFFSET;
+					pModel->OnUpdateItemIconImage( iItemIndex, iSubItemIndex, pItemData, iImage );
 				}
 
 				// Update Item GroupID
 				if ( (iMask & LVIF_GROUPID) != 0 ) {
-					pModel->OnUpdateItemGroupID( iItemIndex, iSubItemIndex, pItemData, pParams->item.iGroupId );
+					UInt iGroupId = (pParams->item.iGroupId != I_GROUPIDNONE) ? pParams->item.iGroupId : INVALID_OFFSET;
+					pModel->OnUpdateItemGroupID( iItemIndex, iSubItemIndex, pItemData, iGroupId );
 				}
 
 				// Update Item Indentation

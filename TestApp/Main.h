@@ -281,16 +281,16 @@ public:
 	MyComboBoxModel( MyApplication * pApplication );
 	~MyComboBoxModel();
 
+	Void Initialize();
+
 	// Layout
 	virtual const WinGUILayout * GetLayout() const;
 
-	// Content Data
-	virtual UInt GetItemCount() const						 { return 4; }
-	virtual const GChar * GetItemString( UInt iIndex ) const { DebugAssert( iIndex < 4 ); return m_arrLabels[iIndex]; }
-	virtual Void * GetItemData( UInt iIndex ) const			 { DebugAssert( iIndex < 4 ); return (Void*)(m_arrData[iIndex]); }
-
 	// Events
 	virtual Bool OnSelectionOK();
+
+	// Item Callback Events
+	virtual GChar * OnRequestItemLabel( UInt iItemIndex, Void * pItemData );
 
 private:
 	MyApplication * m_pApplication;

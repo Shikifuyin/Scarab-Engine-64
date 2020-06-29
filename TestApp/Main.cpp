@@ -601,16 +601,36 @@ MyComboBoxModel::MyComboBoxModel( MyApplication * pApplication ):
 	StringFn->Copy( m_arrLabels[3], TEXT("That") );
 	StringFn->Copy( m_arrData[3], TEXT("That Data") );
 
+	m_hCreationParameters.iItemCallBackMode = WINGUI_COMBOBOX_ITEMCALLBACK_LABELS;
+
 	m_hCreationParameters.iType = WINGUI_COMBOBOX_BUTTON;
 	m_hCreationParameters.iCase = WINGUI_COMBOBOX_CASE_BOTH;
 	m_hCreationParameters.iInitialSelectedItem = 0;
 	m_hCreationParameters.bAllowHorizontalScroll = false;
+	m_hCreationParameters.bItemTextEllipsis = true;
+	m_hCreationParameters.bCaseSensitiveSearch = false;
 	m_hCreationParameters.bAutoSort = false;
 	m_hCreationParameters.bEnableTabStop = true;
 }
 MyComboBoxModel::~MyComboBoxModel()
 {
 	// nothing to do
+}
+
+Void MyComboBoxModel::Initialize()
+{
+	WinGUIComboBox * pController = (WinGUIComboBox*)m_pController;
+
+	pController->AddItem( 0 );
+	pController->SetItemData( 0, m_arrData[0] );
+	pController->AddItem( 1 );
+	pController->SetItemData( 1, m_arrData[1] );
+	pController->AddItem( 2 );
+	pController->SetItemData( 2, m_arrData[2] );
+	pController->AddItem( 3 );
+	pController->SetItemData( 3, m_arrData[3] );
+
+	pController->SelectItem( 0 );
 }
 
 const WinGUILayout * MyComboBoxModel::GetLayout() const
@@ -630,10 +650,16 @@ const WinGUILayout * MyComboBoxModel::GetLayout() const
 
 Bool MyComboBoxModel::OnSelectionOK()
 {
-	UInt iSelected = ((WinGUIComboBox*)m_pController)->GetSelectedItem();
-	Void * pData = ((WinGUIComboBox*)m_pController)->GetItemData( iSelected );
+	UInt iSelectedItem = ((WinGUIComboBox*)m_pController)->GetSelectedItem();
+	Void * pData = ((WinGUIComboBox*)m_pController)->GetItemData( iSelectedItem );
 	((WinGUIStatic*)(m_pApplication->m_hStaticTextModel.GetController()))->SetText((const GChar *)pData);
-	return true;
+	return false;
+}
+
+GChar * MyComboBoxModel::OnRequestItemLabel( UInt iItemIndex, Void * pItemData )
+{
+	DebugAssert( iItemIndex < 4 );
+	return m_arrLabels[iItemIndex];
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -798,6 +824,7 @@ MyApplication::MyApplication():
 
 	// A ComboBox
 	WinGUIComboBox * pComboBox = WinGUIFn->CreateComboBox( pContainerRight, &m_hComboBoxModel );
+	m_hComboBoxModel.Initialize();
 
 	// A Static Rect
 	WinGUIFn->CreateStatic( pContainerRight, &m_hStaticRectModel );

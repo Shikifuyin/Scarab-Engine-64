@@ -93,6 +93,9 @@ public:
 	Bool IsVisible() const;
 	Void SetVisible( Bool bVisible );
 
+	// Focus
+	Void GiveFocus();
+
 	// Area access
 	Void GetWindowRect( WinGUIRectangle * outRectangle ) const;
 	Void GetClientRect( WinGUIRectangle * outRectangle ) const;

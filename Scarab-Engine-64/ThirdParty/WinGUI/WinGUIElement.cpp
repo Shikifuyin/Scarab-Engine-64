@@ -79,6 +79,11 @@ Void WinGUIElement::SetVisible( Bool bVisible )
 	}
 }
 
+Void WinGUIElement::GiveFocus()
+{
+	SetFocus( (HWND)m_hHandle );
+}
+
 Void WinGUIElement::GetWindowRect( WinGUIRectangle * outRectangle ) const
 {
 	HWND hHandle = (HWND)m_hHandle;

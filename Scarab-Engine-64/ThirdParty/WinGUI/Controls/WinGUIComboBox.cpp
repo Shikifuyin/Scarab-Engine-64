@@ -589,7 +589,7 @@ Bool WinGUIComboBox::_DispatchEvent( Int iNotificationCode, Void * pParameters )
 
 				// Request Item Label Text
 				if ( (iMask & CBEIF_TEXT) != 0 ) {
-					pParams->ceItem.pszText = pModel->OnRequestItemLabel( iItemIndex, pItemData );
+					pModel->OnRequestItemLabel( pParams->ceItem.pszText, pParams->ceItem.cchTextMax, iItemIndex, pItemData );
 				}
 
 				// Request Item Image Index

@@ -656,10 +656,11 @@ Bool MyComboBoxModel::OnSelectionOK()
 	return false;
 }
 
-GChar * MyComboBoxModel::OnRequestItemLabel( UInt iItemIndex, Void * pItemData )
+Void MyComboBoxModel::OnRequestItemLabel( GChar * outBuffer, UInt iMaxLength, UInt iItemIndex, Void * pItemData )
 {
 	DebugAssert( iItemIndex < 4 );
-	return m_arrLabels[iItemIndex];
+
+	StringFn->NCopy( outBuffer, m_arrLabels[iItemIndex], iMaxLength - 1 );
 }
 
 /////////////////////////////////////////////////////////////////////////////////

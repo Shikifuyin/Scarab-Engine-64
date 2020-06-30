@@ -103,7 +103,7 @@ public:
 	virtual Bool OnEditCancel( const GChar * strEditedText, Bool bTextEditChanged, UInt iSelectedItem ) { return false; } // Return false to allow modification
 
 	// Item Callback Events (Must-Implement when using corresponding Callbacks)
-	virtual GChar * OnRequestItemLabel( UInt iItemIndex, Void * pItemData ) { return NULL; }
+	virtual Void OnRequestItemLabel( GChar * outBuffer, UInt iMaxLength, UInt iItemIndex, Void * pItemData ) { }
 	virtual UInt OnRequestItemImage( UInt iItemIndex, Void * pItemData ) { return INVALID_OFFSET; }
 	virtual UInt OnRequestItemImageSelected( UInt iItemIndex, Void * pItemData ) { return INVALID_OFFSET; }
 	virtual UInt OnRequestItemOverlayImage( UInt iItemIndex, Void * pItemData ) { return INVALID_OFFSET; }

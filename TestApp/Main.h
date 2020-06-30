@@ -290,7 +290,7 @@ public:
 	virtual Bool OnSelectionOK();
 
 	// Item Callback Events
-	virtual GChar * OnRequestItemLabel( UInt iItemIndex, Void * pItemData );
+	virtual Void OnRequestItemLabel( GChar * outBuffer, UInt iMaxLength, UInt iItemIndex, Void * pItemData );
 
 private:
 	MyApplication * m_pApplication;

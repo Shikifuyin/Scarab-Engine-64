@@ -24,7 +24,7 @@ inline Bool HeapAllocator::CheckAddressRange( Void * pMemory ) const {
     Byte * pAddress = (Byte*)pMemory;
     if ( pMemory < m_pHeapMemory )
         return false;
-    if ( pMemory >= m_pHeapMemory + m_iTotalFree )
+    if ( pMemory >= m_pHeapMemory + m_iHeapSize )
         return false;
     return true;
 }

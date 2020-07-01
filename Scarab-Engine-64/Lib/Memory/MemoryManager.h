@@ -37,7 +37,7 @@
 #define MEMORY_MAX_ALLOCATORS 1024
 
 #define MEMORY_CONTEXT_SHARED              (MEMORY_MAX_CONTEXTS + 1)
-#define MEMORY_CONTEXT_SHARED_SCRATCH_SIZE 4194304 // 4 mb
+#define MEMORY_CONTEXT_SHARED_SCRATCH_SIZE 134217728 // 128 mb
 
 // new/new[]/delete/delete[] wrappers
 Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );

@@ -193,6 +193,10 @@ private:
 	virtual Void _Create();
 	virtual Void _Destroy();
 
+	// Sub-Classing (Need to subclass child ComboBox, not the ComboBoxEx !)
+	virtual Void _RegisterSubClass();
+	virtual Void _UnregisterSubClass();
+
 	// Event Dispatch
 	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters );
 

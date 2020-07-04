@@ -132,10 +132,14 @@ Void WinGUIGroupBox::_Create()
 
 	// Done
 	_SaveElementToHandle();
+	_RegisterSubClass();
 }
 Void WinGUIGroupBox::_Destroy()
 {
 	DebugAssert( m_hHandle != NULL );
+
+	// Remove SubClass
+	_UnregisterSubClass();
 
     // Window destruction
 	DestroyWindow( (HWND)m_hHandle );

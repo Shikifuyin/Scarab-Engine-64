@@ -205,16 +205,42 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UIn
         //            return 0;
         //    } break;
         //case WM_LBUTTONDOWN: {
-        //        UInt iX = (UInt)(LOWORD(lParam));
-        //        UInt iY = (UInt)(HIWORD(lParam));
-        //        if ( m_pModel->OnMousePress(iX, iY, KEYCODE_MOUSELEFT) )
-        //            return 0;
+        //        POINT hPt;
+        //        hPt.x = GET_X_LPARAM(lParam);
+        //        hPt.y = GET_Y_LPARAM(lParam);
+
+        //        HWND hChild = ChildWindowFromPoint( (HWND)m_hHandle, hPt );
+        //        if ( hChild == NULL )
+        //            break;
+
+        //        WinGUIElement * pChild = _GetElementFromHandle( hChild );
+        //        if ( pChild != NULL ) {
+        //            WinGUIElementModel * pModel = pChild->GetModel();
+
+        //            WinGUIPoint hPoint;
+        //            hPoint.iX = hPt.x;
+        //            hPoint.iY = hPt.y;
+        //            pModel->OnMousePress( hPoint, KEYCODE_MOUSELEFT );
+        //        }
         //    } break;
         //case WM_RBUTTONDOWN: {
-        //        UInt iX = (UInt)(LOWORD(lParam));
-        //        UInt iY = (UInt)(HIWORD(lParam));
-        //        if ( m_pModel->OnMousePress(iX, iY, KEYCODE_MOUSERIGHT) )
-        //            return 0;
+        //        POINT hPt;
+        //        hPt.x = GET_X_LPARAM(lParam);
+        //        hPt.y = GET_Y_LPARAM(lParam);
+
+        //        HWND hChild = ChildWindowFromPoint( (HWND)m_hHandle, hPt );
+        //        if ( hChild == NULL )
+        //            break;
+
+        //        WinGUIElement * pChild = _GetElementFromHandle( hChild );
+        //        if ( pChild != NULL ) {
+        //            WinGUIElementModel * pModel = pChild->GetModel();
+
+        //            WinGUIPoint hPoint;
+        //            hPoint.iX = hPt.x;
+        //            hPoint.iY = hPt.y;
+        //            pModel->OnMousePress( hPoint, KEYCODE_MOUSERIGHT );
+        //        }
         //    } break;
         //case WM_MBUTTONDOWN: {
         //        UInt iX = (UInt)(LOWORD(lParam));
@@ -230,16 +256,42 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UIn
         //            return 0;
         //    } break;
         //case WM_LBUTTONUP: {
-        //        UInt iX = (UInt)(LOWORD(lParam));
-        //        UInt iY = (UInt)(HIWORD(lParam));
-        //        if ( m_pModel->OnMouseRelease(iX, iY, KEYCODE_MOUSELEFT) )
-        //            return 0;
+        //        POINT hPt;
+        //        hPt.x = GET_X_LPARAM(lParam);
+        //        hPt.y = GET_Y_LPARAM(lParam);
+
+        //        HWND hChild = ChildWindowFromPoint( (HWND)m_hHandle, hPt );
+        //        if ( hChild == NULL )
+        //            break;
+
+        //        WinGUIElement * pChild = _GetElementFromHandle( hChild );
+        //        if ( pChild != NULL ) {
+        //            WinGUIElementModel * pModel = pChild->GetModel();
+
+        //            WinGUIPoint hPoint;
+        //            hPoint.iX = hPt.x;
+        //            hPoint.iY = hPt.y;
+        //            pModel->OnMouseRelease( hPoint, KEYCODE_MOUSELEFT );
+        //        }
         //    } break;
         //case WM_RBUTTONUP: {
-        //        UInt iX = (UInt)(LOWORD(lParam));
-        //        UInt iY = (UInt)(HIWORD(lParam));
-        //        if ( m_pModel->OnMouseRelease(iX, iY, KEYCODE_MOUSERIGHT) )
-        //            return 0;
+        //        POINT hPt;
+        //        hPt.x = GET_X_LPARAM(lParam);
+        //        hPt.y = GET_Y_LPARAM(lParam);
+
+        //        HWND hChild = ChildWindowFromPoint( (HWND)m_hHandle, hPt );
+        //        if ( hChild == NULL )
+        //            break;
+
+        //        WinGUIElement * pChild = _GetElementFromHandle( hChild );
+        //        if ( pChild != NULL ) {
+        //            WinGUIElementModel * pModel = pChild->GetModel();
+
+        //            WinGUIPoint hPoint;
+        //            hPoint.iX = hPt.x;
+        //            hPoint.iY = hPt.y;
+        //            pModel->OnMouseRelease( hPoint, KEYCODE_MOUSERIGHT );
+        //        }
         //    } break;
         //case WM_MBUTTONUP: {
         //        UInt iX = (UInt)(LOWORD(lParam));
@@ -323,7 +375,7 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UIn
 
                     // Dispatch message to the Control
                     if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
-                        WinGUIControl * pCallerControl = (WinGUIControl *)pCallerElement;
+                        WinGUIControl * pCallerControl = (WinGUIControl*)pCallerElement;
                         if ( pCallerControl->_DispatchEvent( iNotificationCode, NULL ) )
                             return TRUE;
                     }
@@ -344,7 +396,7 @@ UIntPtr __stdcall WinGUIContainer::_MessageCallback_Virtual( Void * hHandle, UIn
 
                     // Dispatch message to the Control
                     if ( pCallerElement->GetElementType() == WINGUI_ELEMENT_CONTROL ) {
-                        WinGUIControl * pCallerControl = (WinGUIControl *)pCallerElement;
+                        WinGUIControl * pCallerControl = (WinGUIControl*)pCallerElement;
                         if ( pCallerControl->_DispatchEvent( iNotificationCode, (Void*)lParam ) )
                             return TRUE;
                     }

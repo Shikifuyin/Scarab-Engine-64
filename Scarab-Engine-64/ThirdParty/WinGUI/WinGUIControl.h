@@ -42,8 +42,11 @@ public:
 	WinGUIControlModel( Int iResourceID );
 	virtual ~WinGUIControlModel();
 
-protected:
+	// Events
+	virtual Void OnMousePress( const WinGUIPoint & hPoint, KeyCode iKey )   {}
+	virtual Void OnMouseRelease( const WinGUIPoint & hPoint, KeyCode iKey ) {}
 
+protected:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -60,6 +63,13 @@ public:
 protected:
 	friend class WinGUIWindow;
 	friend class WinGUIContainer;
+
+	// Sub-Classing
+	static UIntPtr __stdcall _SubClassCallback_Static( Void * hHandle, UInt iMessage, UIntPtr wParam, UIntPtr lParam, UIntPtr iSubClassID, UIntPtr iRefData );
+    UIntPtr __stdcall _SubClassCallback_Virtual( Void * hHandle, UInt iMessage, UIntPtr wParam, UIntPtr lParam );
+
+	virtual Void _RegisterSubClass();
+	virtual Void _UnregisterSubClass();
 
 	// Event Dispatch
 	virtual Bool _DispatchEvent( Int iNotificationCode, Void * pParameters ) = 0;

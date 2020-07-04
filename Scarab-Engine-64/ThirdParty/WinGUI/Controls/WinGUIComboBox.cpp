@@ -526,14 +526,29 @@ Void WinGUIComboBox::_Create()
 
 	// Done
 	_SaveElementToHandle();
+	_RegisterSubClass();
 }
 Void WinGUIComboBox::_Destroy()
 {
 	DebugAssert( m_hHandle != NULL );
 
+	// Remove SubClass
+	_UnregisterSubClass();
+
     // Window destruction
 	DestroyWindow( (HWND)m_hHandle );
 	m_hHandle = NULL;
+}
+
+Void WinGUIComboBox::_RegisterSubClass()
+{
+	HWND hComboBoxHandle = (HWND)( SendMessage((HWND)m_hHandle, CBEM_GETCOMBOCONTROL, (WPARAM)0, (LPARAM)0) );
+	SetWindowSubclass( hComboBoxHandle, (SUBCLASSPROC)_SubClassCallback_Static, 0, (DWORD_PTR)this );
+}
+Void WinGUIComboBox::_UnregisterSubClass()
+{
+	HWND hComboBoxHandle = (HWND)( SendMessage((HWND)m_hHandle, CBEM_GETCOMBOCONTROL, (WPARAM)0, (LPARAM)0) );
+	RemoveWindowSubclass( hComboBoxHandle, (SUBCLASSPROC)_SubClassCallback_Static, 0 );
 }
 
 Bool WinGUIComboBox::_DispatchEvent( Int iNotificationCode, Void * pParameters )

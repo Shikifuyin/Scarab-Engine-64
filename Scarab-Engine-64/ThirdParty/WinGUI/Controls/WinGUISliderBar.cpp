@@ -334,10 +334,14 @@ Void WinGUISliderBar::_Create()
 
 	// Done
 	_SaveElementToHandle();
+	_RegisterSubClass();
 }
 Void WinGUISliderBar::_Destroy()
 {
 	DebugAssert( m_hHandle != NULL );
+
+	// Remove SubClass
+	_UnregisterSubClass();
 
     // Window destruction
 	DestroyWindow( (HWND)m_hHandle );

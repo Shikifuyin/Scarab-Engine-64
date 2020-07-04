@@ -287,6 +287,8 @@ public:
 	virtual const WinGUILayout * GetLayout() const;
 
 	// Events
+	virtual Void OnMousePress( const WinGUIPoint & hPoint, KeyCode iKey );
+
 	virtual Bool OnSelectionOK();
 
 	// Item Callback Events

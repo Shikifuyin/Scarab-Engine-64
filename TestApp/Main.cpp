@@ -648,6 +648,12 @@ const WinGUILayout * MyComboBoxModel::GetLayout() const
 	return &hLayout;
 }
 
+Void MyComboBoxModel::OnMousePress( const WinGUIPoint & hPoint, KeyCode iKey )
+{
+	if ( iKey == KEYCODE_MOUSERIGHT )
+		((WinGUIComboBox *)m_pController)->SelectItem( INVALID_OFFSET );
+}
+
 Bool MyComboBoxModel::OnSelectionOK()
 {
 	UInt iSelectedItem = ((WinGUIComboBox*)m_pController)->GetSelectedItem();

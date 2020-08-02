@@ -229,6 +229,12 @@
     <Filter Include="Source Files\ThirdParty\CUDA">
       <UniqueIdentifier>{446c8526-faa1-414f-ba9d-6302b4d05576}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ThirdParty\CUDA\Kernels">
+      <UniqueIdentifier>{cafbf805-b7f6-48f7-bf70-dced454602f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\CUDA\Kernels">
+      <UniqueIdentifier>{0a4b912c-40ed-4e04-a92c-8e4ef9979e51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -874,6 +880,9 @@
     </None>
     <None Include="ThirdParty\CUDA\CUDA.inl">
       <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </None>
+    <None Include="ThirdParty\CUDA\Kernels\Test.cu">
+      <Filter>Source Files\ThirdParty\CUDA\Kernels</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

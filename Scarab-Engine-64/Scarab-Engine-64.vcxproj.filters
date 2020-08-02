@@ -223,6 +223,12 @@
     <Filter Include="Source Files\ThirdParty\WinGUI\Tools">
       <UniqueIdentifier>{89d22077-311b-49e7-b651-cec52d961cba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ThirdParty\CUDA">
+      <UniqueIdentifier>{ca41f7e6-e01d-4451-9c0c-17a6503679a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\CUDA">
+      <UniqueIdentifier>{446c8526-faa1-414f-ba9d-6302b4d05576}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -542,6 +548,9 @@
     </ClInclude>
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.h">
       <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\CUDA.h">
+      <Filter>Header Files\ThirdParty\CUDA</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -863,6 +872,9 @@
     <None Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.inl">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </None>
+    <None Include="ThirdParty\CUDA\CUDA.inl">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -1182,6 +1194,9 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.cpp">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\CUDA.cpp">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -558,6 +558,12 @@
     <ClInclude Include="ThirdParty\CUDA\CUDA.h">
       <Filter>Header Files\ThirdParty\CUDA</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\CUDAMappings.h">
+      <Filter>Header Files\ThirdParty\CUDA</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\CUDABuiltIns.h">
+      <Filter>Header Files\ThirdParty\CUDA</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\System\Platform.inl">
@@ -884,6 +890,12 @@
     <None Include="ThirdParty\CUDA\Kernels\Test.cu">
       <Filter>Source Files\ThirdParty\CUDA\Kernels</Filter>
     </None>
+    <None Include="ThirdParty\CUDA\CUDAMappings.inl">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </None>
+    <None Include="ThirdParty\CUDA\CUDABuiltIns.inl">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -1205,6 +1217,12 @@
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\CUDA\CUDA.cpp">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\CUDAMappings.cpp">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\CUDABuiltIns.cpp">
       <Filter>Source Files\ThirdParty\CUDA</Filter>
     </ClCompile>
   </ItemGroup>

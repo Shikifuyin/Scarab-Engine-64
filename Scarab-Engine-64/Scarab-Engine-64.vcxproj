@@ -209,6 +209,8 @@
     <ClInclude Include="Lib\Memory\MemoryManager.h" />
     <ClInclude Include="Lib\String\PatternMatching.h" />
     <ClInclude Include="ThirdParty\CUDA\CUDA.h" />
+    <ClInclude Include="ThirdParty\CUDA\CUDABuiltIns.h" />
+    <ClInclude Include="ThirdParty\CUDA\CUDAMappings.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.h" />
@@ -321,6 +323,8 @@
     <CudaCompile Include="ThirdParty\CUDA\Kernels\Test.cu">
       <FileType>Document</FileType>
     </CudaCompile>
+    <None Include="ThirdParty\CUDA\CUDABuiltIns.inl" />
+    <None Include="ThirdParty\CUDA\CUDAMappings.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.inl" />
@@ -430,6 +434,8 @@
     <ClCompile Include="Lib\Memory\MemoryManager.cpp" />
     <ClCompile Include="Lib\String\PatternMatching.cpp" />
     <ClCompile Include="ThirdParty\CUDA\CUDA.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\CUDABuiltIns.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\CUDAMappings.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.cpp" />

@@ -54,7 +54,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 11.0.props" />
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 11.4.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -208,9 +208,13 @@
     <ClInclude Include="Lib\Memory\Allocators\StackAllocator.h" />
     <ClInclude Include="Lib\Memory\MemoryManager.h" />
     <ClInclude Include="Lib\String\PatternMatching.h" />
-    <ClInclude Include="ThirdParty\CUDA\CUDA.h" />
+    <ClInclude Include="ThirdParty\CUDA\CUDAAsynchronous.h" />
     <ClInclude Include="ThirdParty\CUDA\CUDABuiltIns.h" />
+    <ClInclude Include="ThirdParty\CUDA\CUDAContext.h" />
+    <ClInclude Include="ThirdParty\CUDA\CUDAGraph.h" />
+    <ClInclude Include="ThirdParty\CUDA\CUDAKernel.h" />
     <ClInclude Include="ThirdParty\CUDA\CUDAMappings.h" />
+    <ClInclude Include="ThirdParty\CUDA\CUDAMemory.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.h" />
@@ -319,12 +323,13 @@
     <None Include="Lib\Memory\Allocators\StackAllocator.inl" />
     <None Include="Lib\Memory\MemoryManager.inl" />
     <None Include="Lib\String\PatternMatching.inl" />
-    <None Include="ThirdParty\CUDA\CUDA.inl" />
-    <CudaCompile Include="ThirdParty\CUDA\Kernels\Test.cu">
-      <FileType>Document</FileType>
-    </CudaCompile>
+    <None Include="ThirdParty\CUDA\CUDAAsynchronous.inl" />
     <None Include="ThirdParty\CUDA\CUDABuiltIns.inl" />
+    <None Include="ThirdParty\CUDA\CUDAContext.inl" />
+    <None Include="ThirdParty\CUDA\CUDAGraph.inl" />
+    <None Include="ThirdParty\CUDA\CUDAKernel.inl" />
     <None Include="ThirdParty\CUDA\CUDAMappings.inl" />
+    <None Include="ThirdParty\CUDA\CUDAMemory.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.inl" />
@@ -433,9 +438,13 @@
     <ClCompile Include="Lib\Memory\Allocators\StackAllocator.cpp" />
     <ClCompile Include="Lib\Memory\MemoryManager.cpp" />
     <ClCompile Include="Lib\String\PatternMatching.cpp" />
-    <ClCompile Include="ThirdParty\CUDA\CUDA.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\CUDAAsynchronous.cpp" />
     <ClCompile Include="ThirdParty\CUDA\CUDABuiltIns.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\CUDAContext.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\CUDAGraph.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\CUDAKernel.cpp" />
     <ClCompile Include="ThirdParty\CUDA\CUDAMappings.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\CUDAMemory.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.cpp" />
@@ -503,6 +512,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 11.0.targets" />
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 11.4.targets" />
   </ImportGroup>
 </Project>

@@ -229,12 +229,6 @@
     <Filter Include="Source Files\ThirdParty\CUDA">
       <UniqueIdentifier>{446c8526-faa1-414f-ba9d-6302b4d05576}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ThirdParty\CUDA\Kernels">
-      <UniqueIdentifier>{cafbf805-b7f6-48f7-bf70-dced454602f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ThirdParty\CUDA\Kernels">
-      <UniqueIdentifier>{0a4b912c-40ed-4e04-a92c-8e4ef9979e51}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -555,13 +549,25 @@
     <ClInclude Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.h">
       <Filter>Header Files\ThirdParty\WinGUI\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\CUDA\CUDA.h">
+    <ClInclude Include="ThirdParty\CUDA\CUDAMemory.h">
+      <Filter>Header Files\ThirdParty\CUDA</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\CUDAAsynchronous.h">
+      <Filter>Header Files\ThirdParty\CUDA</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\CUDAGraph.h">
       <Filter>Header Files\ThirdParty\CUDA</Filter>
     </ClInclude>
     <ClInclude Include="ThirdParty\CUDA\CUDAMappings.h">
       <Filter>Header Files\ThirdParty\CUDA</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\CUDAKernel.h">
+      <Filter>Header Files\ThirdParty\CUDA</Filter>
+    </ClInclude>
     <ClInclude Include="ThirdParty\CUDA\CUDABuiltIns.h">
+      <Filter>Header Files\ThirdParty\CUDA</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\CUDAContext.h">
       <Filter>Header Files\ThirdParty\CUDA</Filter>
     </ClInclude>
   </ItemGroup>
@@ -884,16 +890,25 @@
     <None Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.inl">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </None>
-    <None Include="ThirdParty\CUDA\CUDA.inl">
+    <None Include="ThirdParty\CUDA\CUDAMemory.inl">
       <Filter>Source Files\ThirdParty\CUDA</Filter>
     </None>
-    <None Include="ThirdParty\CUDA\Kernels\Test.cu">
-      <Filter>Source Files\ThirdParty\CUDA\Kernels</Filter>
+    <None Include="ThirdParty\CUDA\CUDAAsynchronous.inl">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </None>
+    <None Include="ThirdParty\CUDA\CUDAGraph.inl">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </None>
+    <None Include="ThirdParty\CUDA\CUDAKernel.inl">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
     </None>
     <None Include="ThirdParty\CUDA\CUDAMappings.inl">
       <Filter>Source Files\ThirdParty\CUDA</Filter>
     </None>
     <None Include="ThirdParty\CUDA\CUDABuiltIns.inl">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </None>
+    <None Include="ThirdParty\CUDA\CUDAContext.inl">
       <Filter>Source Files\ThirdParty\CUDA</Filter>
     </None>
   </ItemGroup>
@@ -1216,13 +1231,25 @@
     <ClCompile Include="ThirdParty\WinGUI\Controls\WinGUIToolTip.cpp">
       <Filter>Source Files\ThirdParty\WinGUI\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\CUDA\CUDA.cpp">
+    <ClCompile Include="ThirdParty\CUDA\CUDAMemory.cpp">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\CUDAAsynchronous.cpp">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\CUDAGraph.cpp">
       <Filter>Source Files\ThirdParty\CUDA</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\CUDA\CUDAMappings.cpp">
       <Filter>Source Files\ThirdParty\CUDA</Filter>
     </ClCompile>
     <ClCompile Include="ThirdParty\CUDA\CUDABuiltIns.cpp">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\CUDAContext.cpp">
+      <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\CUDAKernel.cpp">
       <Filter>Source Files\ThirdParty\CUDA</Filter>
     </ClCompile>
   </ItemGroup>

@@ -28,10 +28,10 @@
 // Memory Space Specifiers
 #define CUDAMEM_DEVICE   __device__
 #define CUDAMEM_CONSTANT __constant__
-#define CUDAMEM_BLOCK    __shared__
+#define CUDAMEM_SHARED   __shared__
 #define CUDAMEM_MANAGED  __managed__
 
-// For most CUDA purposes, avoid using restricted pointer because of register pressure ...
+// For most CUDA purposes, avoid using restricted pointers because of register pressure ...
 //#define CUDAMEM_RESTRICTPTR __restrict__
 
 /////////////////////////////////////////////////////////////////////////////////

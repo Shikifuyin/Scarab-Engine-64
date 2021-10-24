@@ -16,24 +16,6 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
-// CUDAMemoryPosition implementation
-inline CUDAMemoryPosition & CUDAMemoryPosition::operator=( const CUDAMemoryPosition & rhs ) {
-	iX = rhs.iX;
-	iY = rhs.iY;
-	iZ = rhs.iZ;
-	return (*this);
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-// CUDAMemoryRegion implementation
-inline CUDAMemoryRegion & CUDAMemoryRegion::operator=( const CUDAMemoryRegion & rhs ) {
-	iWidth = rhs.iWidth;
-	iHeight = rhs.iHeight;
-	iDepth = rhs.iDepth;
-	return (*this);
-}
-
-/////////////////////////////////////////////////////////////////////////////////
 // CUDAMemory implementation
 inline Bool CUDAMemory::IsAllocated() const {
 	return ( m_pMemory != NULL );

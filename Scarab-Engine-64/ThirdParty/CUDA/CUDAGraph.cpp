@@ -85,6 +85,7 @@ Void CUDANodeMemSet::SetMemSet( CUDAMemory * pDest, const CUDAMemoryPosition & h
 {
 	DebugAssert( m_hNode != NULL );
 	DebugAssert( pDest->IsAllocated() );
+	DebugAssert( pDest->IsValidRegion(hDestPos, hSetRegion) );
 	
 	cudaGraphNode_t hCUDAGraphNode = (cudaGraphNode_t)m_hNode;
 	
@@ -138,6 +139,8 @@ Void CUDANodeMemCopy::SetMemCopy( CUDAMemory * pDest, const CUDAMemory * pSrc, S
 {
 	DebugAssert( m_hNode != NULL );
 	DebugAssert( pDest->IsAllocated() && pSrc->IsAllocated() );
+	DebugAssert( iSize <= pDest->GetSize() );
+	DebugAssert( iSize <= pSrc->GetSize() );
 	
 	cudaGraphNode_t hCUDAGraphNode = (cudaGraphNode_t)m_hNode;
 	
@@ -172,6 +175,8 @@ Void CUDANodeMemCopy::SetMemCopy( CUDAMemory * pDest, const CUDAMemoryPosition &
 {
 	DebugAssert( m_hNode != NULL );
 	DebugAssert( pDest->IsAllocated() && pSrc->IsAllocated() );
+	DebugAssert( pDest->IsValidRegion(hDestPos, hCopyRegion) );
+	DebugAssert( pSrc->IsValidRegion(hSrcPos, hCopyRegion) );
 	
 	cudaGraphNode_t hCUDAGraphNode = (cudaGraphNode_t)m_hNode;
 	
@@ -462,6 +467,7 @@ Void CUDAGraph::CreateNodeMemSet( CUDANodeMemSet * outNode,
 	DebugAssert( m_hGraph != NULL );
 	DebugAssert( outNode->m_hNode == NULL );
 	DebugAssert( pDest->IsAllocated() );
+	DebugAssert( pDest->IsValidRegion(hDestPos, hSetRegion) );
 	
 	cudaGraph_t hCUDAGraph = (cudaGraph_t)m_hGraph;
 
@@ -495,6 +501,8 @@ Void CUDAGraph::CreateNodeMemCopy( CUDANodeMemCopy * outNode,
 	DebugAssert( m_hGraph != NULL );
 	DebugAssert( outNode->m_hNode == NULL );
 	DebugAssert( pDest->IsAllocated() && pSrc->IsAllocated() );
+	DebugAssert( iSize <= pDest->GetSize() );
+	DebugAssert( iSize <= pSrc->GetSize() );
 	
 	cudaGraph_t hCUDAGraph = (cudaGraph_t)m_hGraph;
 
@@ -525,6 +533,8 @@ Void CUDAGraph::CreateNodeMemCopy( CUDANodeMemCopy * outNode,
 	DebugAssert( m_hGraph != NULL );
 	DebugAssert( outNode->m_hNode == NULL );
 	DebugAssert( pDest->IsAllocated() && pSrc->IsAllocated() );
+	DebugAssert( pDest->IsValidRegion(hDestPos, hCopyRegion) );
+	DebugAssert( pSrc->IsValidRegion(hSrcPos, hCopyRegion) );
 	
 	cudaGraph_t hCUDAGraph = (cudaGraph_t)m_hGraph;
 

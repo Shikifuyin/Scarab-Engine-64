@@ -229,6 +229,12 @@
     <Filter Include="Source Files\ThirdParty\CUDA">
       <UniqueIdentifier>{446c8526-faa1-414f-ba9d-6302b4d05576}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ThirdParty\CUDA\BLAS">
+      <UniqueIdentifier>{c76e2373-1e9d-4112-9132-2266db6aef54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\CUDA\BLAS">
+      <UniqueIdentifier>{ef67c299-264e-466e-8e93-3b9f1f57d164}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -569,6 +575,9 @@
     </ClInclude>
     <ClInclude Include="ThirdParty\CUDA\CUDAContext.h">
       <Filter>Header Files\ThirdParty\CUDA</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASContext.h">
+      <Filter>Header Files\ThirdParty\CUDA\BLAS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -911,6 +920,9 @@
     <None Include="ThirdParty\CUDA\CUDAContext.inl">
       <Filter>Source Files\ThirdParty\CUDA</Filter>
     </None>
+    <None Include="ThirdParty\CUDA\BLAS\CUBLASContext.inl">
+      <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -1251,6 +1263,9 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\CUDA\CUDAKernel.cpp">
       <Filter>Source Files\ThirdParty\CUDA</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASContext.cpp">
+      <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -98,32 +98,65 @@ public:
 		// workspace memory for each new graph capturing CUBLAS routines.
 	Void SetMemory( CUDADeviceMemory * pMemory ) const;
 	
-	// Those should NOT be needed, use CUDAMemory/CUDAStream APIs
-	// cublasGetVector(Async), cublasSetVector(Async)
-	// cublasGetMatrix(Async), cublasSetMatrix(Async)
+	// Memory Operations Helpers
+	Void GetVector( CUDAHostMemory * outHostVector, const CUDAMemoryPosition & outHostPosition, UInt iHostIncrement,
+					const CUDADeviceMemory * pDeviceVector, const CUDAMemoryPosition & hDevicePosition, UInt iDeviceIncrement,
+					SizeT iElementCount, CUDAStream * pStream = NULL );
+	Void SetVector( CUDADeviceMemory * outDeviceVector, const CUDAMemoryPosition & outDevicePosition, UInt iDeviceIncrement,
+					const CUDAHostMemory * pHostVector, const CUDAMemoryPosition & hHostPosition, UInt iHostIncrement,
+					SizeT iElementCount, CUDAStream * pStream = NULL );
+
+		// Note : Matrices are always stored column-wise
+	Void GetMatrix( CUDAHostMemory * outHostMatrix, const CUDAMemoryPosition & outHostPosition,
+					const CUDADeviceMemory * pDeviceMatrix, const CUDAMemoryPosition & hDevicePosition,
+					const CUDAMemoryRegion & hCopyRegion, CUDAStream * pStream = NULL );
+	Void SetMatrix( CUDADeviceMemory * outDeviceMatrix, const CUDAMemoryPosition & outDevicePosition,
+					const CUDAHostMemory * pHostMatrix, const CUDAMemoryPosition & hHostPosition,
+					const CUDAMemoryRegion & hCopyRegion, CUDAStream * pStream = NULL );
+
+	// Vector-Scalar Functions
+	template<class T> Void Copy( CUDADeviceMemory * outDeviceVector, const CUDAMemoryPosition & outDevicePosition,
+								 const CUDADeviceMemory * pDeviceVector, const CUDAMemoryPosition & hDevicePosition,
+								 const CUDAMemoryRegion & hRegion );
+	template<class T> inline Void Copy( CUDADeviceMemory * outDeviceVector, const CUDADeviceMemory * pDeviceVector ) const;
+
+	template<class T> Void Swap( CUDADeviceMemory * pDeviceVectorA, const CUDAMemoryPosition & hDevicePositionA,
+								 CUDADeviceMemory * pDeviceVectorB, const CUDAMemoryPosition & hDevicePositionB,
+								 const CUDAMemoryRegion & hRegion );
+	template<class T> inline Void Swap( CUDADeviceMemory * pDeviceVectorA, CUDADeviceMemory * pDeviceVectorB ) const;
+
+	template<class T> SizeT AbsMin( const CUDADeviceMemory * pVector, const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion ) const;
+	template<class T> inline SizeT AbsMin( const CUDADeviceMemory * pVector ) const;
+
+	template<class T> SizeT AbsMax( const CUDADeviceMemory * pVector, const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion ) const;
+	template<class T> inline SizeT AbsMax( const CUDADeviceMemory * pVector ) const;
 	
-	// Vector Functions
-	Int MinAbsFR( const CUDADeviceMemory * pVector ) const;
-	Int MinAbsDR( const CUDADeviceMemory * pVector ) const;
-	Int MinAbsFC( const CUDADeviceMemory * pVector ) const;
-	Int MinAbsDC( const CUDADeviceMemory * pVector ) const;
-	
-	Int MaxAbsFR( const CUDADeviceMemory * pVector ) const;
-	Int MaxAbsDR( const CUDADeviceMemory * pVector ) const;
-	Int MaxAbsFC( const CUDADeviceMemory * pVector ) const;
-	Int MaxAbsDC( const CUDADeviceMemory * pVector ) const;
-	
-	Float SumAbsFR( const CUDADeviceMemory * pVector ) const;
-	Double SumAbsDR( const CUDADeviceMemory * pVector ) const;
-	Float SumAbsFC( const CUDADeviceMemory * pVector ) const;
-	Double SumAbsDC( const CUDADeviceMemory * pVector ) const;
-	
+	template<class T> T AbsSum( const CUDADeviceMemory * pVector, const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion ) const;
+	template<class T> inline T AbsSum( const CUDADeviceMemory * pVector ) const;
+
+	template<class T> T Dot( const CUDADeviceMemory * pVectorA, const CUDAMemoryPosition & hPositionA,
+							 const CUDADeviceMemory * pVectorB, const CUDAMemoryPosition & hPositionB,
+							 const CUDAMemoryRegion & hRegion, Bool bConjugateB = false ) const;
+	template<class T> inline T Dot( const CUDADeviceMemory * pVectorA, const CUDADeviceMemory * pVectorB, Bool bConjugateB = false ) const;
+
+	template<class T> T Norm( const CUDADeviceMemory * pVector, const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion ) const;
+	template<class T> inline T Norm( const CUDADeviceMemory * pVector ) const;
+
+	template<class T> Void Scale( CUDADeviceMemory * pVector, const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion, T fAlpha ) const;
+	template<class T> inline Void Scale( CUDADeviceMemory * pVector, T fAlpha ) const;
+
 		// Y += Alpha * X
-	Void MulAddFR( CUDADeviceMemory * outVectorY, const Void * pAlpha, const CUDADeviceMemory * pVectorX ) const;
-	Void MulAddDR( CUDADeviceMemory * outVectorY, const Void * pAlpha, const CUDADeviceMemory * pVectorX ) const;
-	Void MulAddFC( CUDADeviceMemory * outVectorY, const Void * pAlpha, const CUDADeviceMemory * pVectorX ) const;
-	Void MulAddDC( CUDADeviceMemory * outVectorY, const Void * pAlpha, const CUDADeviceMemory * pVectorX ) const;
-	
+	template<class T> Void MulAdd( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY,
+								   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX,
+								   T fAlpha, const CUDAMemoryRegion & hRegion ) const;
+	template<class T> inline Void MulAdd( CUDADeviceMemory * outVectorY, const CUDADeviceMemory * pVectorX, T fAlpha ) const;
+
+		// Givens Rotations
+	///////////////////////////////////////////
+
+	// Matrix-Vector Functions
+
+
 private:
 	Void * m_hContext;
 };

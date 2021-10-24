@@ -208,6 +208,7 @@
     <ClInclude Include="Lib\Memory\Allocators\StackAllocator.h" />
     <ClInclude Include="Lib\Memory\MemoryManager.h" />
     <ClInclude Include="Lib\String\PatternMatching.h" />
+    <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASContext.h" />
     <ClInclude Include="ThirdParty\CUDA\CUDAAsynchronous.h" />
     <ClInclude Include="ThirdParty\CUDA\CUDABuiltIns.h" />
     <ClInclude Include="ThirdParty\CUDA\CUDAContext.h" />
@@ -323,6 +324,7 @@
     <None Include="Lib\Memory\Allocators\StackAllocator.inl" />
     <None Include="Lib\Memory\MemoryManager.inl" />
     <None Include="Lib\String\PatternMatching.inl" />
+    <None Include="ThirdParty\CUDA\BLAS\CUBLASContext.inl" />
     <None Include="ThirdParty\CUDA\CUDAAsynchronous.inl" />
     <None Include="ThirdParty\CUDA\CUDABuiltIns.inl" />
     <None Include="ThirdParty\CUDA\CUDAContext.inl" />
@@ -438,6 +440,7 @@
     <ClCompile Include="Lib\Memory\Allocators\StackAllocator.cpp" />
     <ClCompile Include="Lib\Memory\MemoryManager.cpp" />
     <ClCompile Include="Lib\String\PatternMatching.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASContext.cpp" />
     <ClCompile Include="ThirdParty\CUDA\CUDAAsynchronous.cpp" />
     <ClCompile Include="ThirdParty\CUDA\CUDABuiltIns.cpp" />
     <ClCompile Include="ThirdParty\CUDA\CUDAContext.cpp" />

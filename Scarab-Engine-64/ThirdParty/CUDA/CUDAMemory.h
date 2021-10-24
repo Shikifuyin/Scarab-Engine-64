@@ -40,7 +40,12 @@ enum CUDAMemoryShape {
 };
 
 typedef struct _cuda_memory_position {
-	inline struct _cuda_memory_position & operator=( const struct _cuda_memory_position & rhs );
+	inline struct _cuda_memory_position & operator=( const struct _cuda_memory_position & rhs ) {
+		iX = rhs.iX;
+		iY = rhs.iY;
+		iZ = rhs.iZ;
+		return (*this);
+	}
 	
 	SizeT iX;
 	SizeT iY;
@@ -48,7 +53,12 @@ typedef struct _cuda_memory_position {
 } CUDAMemoryPosition;
 
 typedef struct _cuda_memory_region {
-	inline struct _cuda_memory_region & operator=( const struct _cuda_memory_region & rhs );
+	inline struct _cuda_memory_region & operator=( const struct _cuda_memory_region & rhs ) {
+		iWidth = rhs.iWidth;
+		iHeight = rhs.iHeight;
+		iDepth = rhs.iDepth;
+		return (*this);
+	}
 	
 	SizeT iWidth;
 	SizeT iHeight;
@@ -92,6 +102,10 @@ public:
 	inline SizeT GetHeight() const;
 	inline SizeT GetDepth() const;
 	inline SizeT GetSize() const;
+
+	Bool IsValidPosition( const CUDAMemoryPosition & hPosition ) const;
+	Bool IsValidRegion( const CUDAMemoryRegion & hRegion ) const;
+	Bool IsValidRegion( const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion ) const;
 	
 	inline Void * GetPointer( UInt iOffset = 0 );
 	inline const Void * GetPointer( UInt iOffset = 0 ) const;
@@ -103,16 +117,16 @@ public:
 	// For instance, you must respect CUDA_HOSTMEMORY_ALLOC_FLAG_WRITE_COMBINED !
 	
 		// Flat Set
-	Void MemSet( Int iValue, SizeT iSize );
+	Void Set( SizeT iSize, Int iValue );
 		// Shaped Set
-	Void MemSet( const CUDAMemoryPosition & hDestPos, const CUDAMemoryRegion & hSetRegion, UInt iValue );
+	Void Set( const CUDAMemoryPosition & hDestPos, const CUDAMemoryRegion & hSetRegion, UInt iValue );
 	
 		// Flat Copy
-	Void MemCopy( const CUDAMemory * pSrc, SizeT iSize );
+	Void Copy( const CUDAMemory * pSrc, SizeT iSize );
 		// Shaped Copy, supports any Shape combinations !
-	Void MemCopy( const CUDAMemoryPosition & hDestPos,
-				  const CUDAMemory * pSrc, const CUDAMemoryPosition & hSrcPos,
-				  const CUDAMemoryRegion & hCopyRegion );
+	Void Copy( const CUDAMemoryPosition & hDestPos,
+			   const CUDAMemory * pSrc, const CUDAMemoryPosition & hSrcPos,
+			   const CUDAMemoryRegion & hCopyRegion );
 	
 protected:
 	friend class CUDAGraph;

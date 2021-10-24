@@ -76,20 +76,68 @@ CUDADeviceID CUDAMemory::GetDeviceID() const
 	return hCUDAPtrAttr.device;
 }
 
+Bool CUDAMemory::IsValidPosition( const CUDAMemoryPosition & hPosition ) const
+{
+	DebugAssert( m_pMemory != NULL );
+
+	switch( m_iShape ) {
+		case CUDA_MEMORY_SHAPE_NONE:
+			return ( hPosition.iX < m_iSize );
+		case CUDA_MEMORY_SHAPE_1D:
+			return ( hPosition.iX < m_iWidth );
+		case CUDA_MEMORY_SHAPE_2D:
+			return ( hPosition.iX < m_iWidth && hPosition.iY < m_iHeight );
+		case CUDA_MEMORY_SHAPE_3D:
+			return ( hPosition.iX < m_iWidth && hPosition.iY < m_iHeight && hPosition.iZ < m_iDepth );
+		default: DebugAssert(false); return false;
+	}
+}
+Bool CUDAMemory::IsValidRegion( const CUDAMemoryRegion & hRegion ) const
+{
+	DebugAssert( m_pMemory != NULL );
+
+	switch( m_iShape ) {
+		case CUDA_MEMORY_SHAPE_NONE:
+			return ( hRegion.iWidth <= m_iSize );
+		case CUDA_MEMORY_SHAPE_1D:
+			return ( hRegion.iWidth <= m_iWidth );
+		case CUDA_MEMORY_SHAPE_2D:
+			return ( hRegion.iWidth <= m_iWidth && hRegion.iHeight <= m_iHeight );
+		case CUDA_MEMORY_SHAPE_3D:
+			return ( hRegion.iWidth <= m_iWidth && hRegion.iHeight <= m_iHeight && hRegion.iDepth <= m_iDepth );
+		default: DebugAssert(false); return false;
+	}
+}
+Bool CUDAMemory::IsValidRegion( const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion ) const
+{
+	DebugAssert( m_pMemory != NULL );
+
+	switch( m_iShape ) {
+		case CUDA_MEMORY_SHAPE_NONE:
+			return ( hPosition.iX + hRegion.iWidth <= m_iSize );
+		case CUDA_MEMORY_SHAPE_1D:
+			return ( hPosition.iX + hRegion.iWidth <= m_iWidth );
+		case CUDA_MEMORY_SHAPE_2D:
+			return ( hPosition.iX + hRegion.iWidth <= m_iWidth && hPosition.iY + hRegion.iHeight <= m_iHeight );
+		case CUDA_MEMORY_SHAPE_3D:
+			return ( hPosition.iX + hRegion.iWidth <= m_iWidth && hPosition.iY + hRegion.iHeight <= m_iHeight && hPosition.iZ + hRegion.iDepth <= m_iDepth );
+		default: DebugAssert(false); return false;
+	}
+}
+
 Void * CUDAMemory::GetPointer( const CUDAMemoryPosition & hPosition )
 {
 	DebugAssert( m_pMemory != NULL );
+	DebugAssert( IsValidPosition(hPosition) );
+
 	switch( m_iShape ) {
 		case CUDA_MEMORY_SHAPE_NONE:
 			return GetPointer( hPosition.iX );
 		case CUDA_MEMORY_SHAPE_1D:
-			DebugAssert( hPosition.iX < m_iWidth );
 			return ((Byte*)m_pMemory) + hPosition.iX * m_iStride;
 		case CUDA_MEMORY_SHAPE_2D:
-			DebugAssert( hPosition.iX < m_iWidth && hPosition.iY < m_iHeight );
 			return ((Byte*)m_pMemory) + hPosition.iY * m_iPitch + hPosition.iX * m_iStride;
 		case CUDA_MEMORY_SHAPE_3D:
-			DebugAssert(  hPosition.iX < m_iWidth &&  hPosition.iY < m_iHeight &&  hPosition.iZ < m_iDepth );
 			return ((Byte*)m_pMemory) +  hPosition.iZ * m_iSlice +  hPosition.iY * m_iPitch +  hPosition.iX * m_iStride;
 		default: DebugAssert(false); return NULL;
 	}
@@ -97,38 +145,36 @@ Void * CUDAMemory::GetPointer( const CUDAMemoryPosition & hPosition )
 const Void * CUDAMemory::GetPointer( const CUDAMemoryPosition & hPosition ) const
 {
 	DebugAssert( m_pMemory != NULL );
+	DebugAssert( IsValidPosition(hPosition) );
+
 	switch( m_iShape ) {
 		case CUDA_MEMORY_SHAPE_NONE:
 			return GetPointer( hPosition.iX );
 		case CUDA_MEMORY_SHAPE_1D:
-			DebugAssert( hPosition.iX < m_iWidth );
 			return ((Byte*)m_pMemory) + hPosition.iX * m_iStride;
 		case CUDA_MEMORY_SHAPE_2D:
-			DebugAssert( hPosition.iX < m_iWidth && hPosition.iY < m_iHeight );
 			return ((Byte*)m_pMemory) + hPosition.iY * m_iPitch + hPosition.iX * m_iStride;
 		case CUDA_MEMORY_SHAPE_3D:
-			DebugAssert(  hPosition.iX < m_iWidth &&  hPosition.iY < m_iHeight &&  hPosition.iZ < m_iDepth );
 			return ((Byte*)m_pMemory) +  hPosition.iZ * m_iSlice +  hPosition.iY * m_iPitch +  hPosition.iX * m_iStride;
 		default: DebugAssert(false); return NULL;
 	}
 }
 
-Void CUDAMemory::MemSet( Int iValue, SizeT iSize )
+Void CUDAMemory::Set( SizeT iSize, Int iValue )
 {
 	// Check State is valid
 	DebugAssert( IsAllocated() );
-	
-	// Check iSize is valid
 	DebugAssert( iSize <= m_iSize );
 	
 	// Perform Set
 	cudaError_t iError = cudaMemset( m_pMemory, iValue, iSize );
 	DebugAssert( iError == cudaSuccess );
 }
-Void CUDAMemory::MemSet( const CUDAMemoryPosition & hDestPos, const CUDAMemoryRegion & hSetRegion, UInt iValue )
+Void CUDAMemory::Set( const CUDAMemoryPosition & hDestPos, const CUDAMemoryRegion & hSetRegion, UInt iValue )
 {
 	// Check State is valid
 	DebugAssert( IsAllocated() );
+	DebugAssert( IsValidRegion(hDestPos, hSetRegion) );
 	
 	// Get Stride
 	SizeT iStride = 1;
@@ -177,12 +223,10 @@ Void CUDAMemory::MemSet( const CUDAMemoryPosition & hDestPos, const CUDAMemoryRe
 	DebugAssert( iError == cudaSuccess );
 }
 
-Void CUDAMemory::MemCopy( const CUDAMemory * pSrc, SizeT iSize )
+Void CUDAMemory::Copy( const CUDAMemory * pSrc, SizeT iSize )
 {
 	// Check States are valid
 	DebugAssert( IsAllocated() && pSrc->IsAllocated() );
-	
-	// Check iSize is valid
 	DebugAssert( iSize <= m_iSize && iSize <= pSrc->m_iSize );
 	
 	// Get Transfer Kind
@@ -192,12 +236,14 @@ Void CUDAMemory::MemCopy( const CUDAMemory * pSrc, SizeT iSize )
 	cudaError_t iError = cudaMemcpy( m_pMemory, pSrc->m_pMemory, iSize, iKind );
 	DebugAssert( iError == cudaSuccess );
 }
-Void CUDAMemory::MemCopy( const CUDAMemoryPosition & hDestPos,
-						  const CUDAMemory * pSrc, const CUDAMemoryPosition & hSrcPos,
-						  const CUDAMemoryRegion & hCopyRegion )
+Void CUDAMemory::Copy( const CUDAMemoryPosition & hDestPos,
+					   const CUDAMemory * pSrc, const CUDAMemoryPosition & hSrcPos,
+					   const CUDAMemoryRegion & hCopyRegion )
 {
 	// Check States are valid
 	DebugAssert( IsAllocated() && pSrc->IsAllocated() );
+	DebugAssert( IsValidRegion(hDestPos, hCopyRegion) );
+	DebugAssert( pSrc->IsValidRegion(hSrcPos, hCopyRegion) );
 	
 	// Get Transfer Kind
 	cudaMemcpyKind iKind = (cudaMemcpyKind)( _GetMemCopyKind(pSrc) );

@@ -165,6 +165,7 @@ public:
 private:
 	friend class CUDAKernel;
 	friend class CUDAGraphInstance;
+	friend class CUBLASContext;
 	
 	Void * m_hStream;
 };

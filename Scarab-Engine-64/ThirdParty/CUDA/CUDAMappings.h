@@ -262,34 +262,6 @@ enum CUDAStreamCaptureStatus {
 extern CUDAStreamCaptureStatus CUDAStreamCaptureStatusFromCUDA[CUDA_STREAM_CAPTURE_STATUS_COUNT];
 extern DWord CUDAStreamCaptureStatusToCUDA[CUDA_STREAM_CAPTURE_STATUS_COUNT];
 
-/////////////////////////////////////////////////////////////////////////////////
-// CUBLAS Context Declarations
-enum CUBLASContextPointerMode {
-	CUBLAS_CONTEXT_POINTER_MODE_HOST = 0,
-	CUBLAS_CONTEXT_POINTER_MODE_DEVICE,
-	CUBLAS_CONTEXT_POINTER_MODE_COUNT
-};
-extern CUBLASContextPointerMode CUBLASContextPointerModeFromCUDA[CUBLAS_CONTEXT_POINTER_MODE_COUNT];
-extern DWord CUBLASContextPointerModeToCUDA[CUBLAS_CONTEXT_POINTER_MODE_COUNT];
-
-enum CUBLASContextPrecisionMode {
-	CUBLAS_CONTEXT_PRECISION_MODE_DEFAULT = 0,
-	CUBLAS_CONTEXT_PRECISION_MODE_PRECISE,
-	CUBLAS_CONTEXT_PRECISION_MODE_TF32
-};
-
-enum CUBLASContextLoggingMode {
-	CUBLAS_CONTEXT_LOGGING_MODE_DISABLED = 0,
-	CUBLAS_CONTEXT_LOGGING_MODE_STDOUT,
-	CUBLAS_CONTEXT_LOGGING_MODE_STDERR,
-	CUBLAS_CONTEXT_LOGGING_MODE_BOTH
-};
-
-
-
-
-
-
 // enum CUDAChannelFormatType {
 	// CUDA_CHANNEL_FORMAT_TYPE_SIGNED = 0,
 	// CUDA_CHANNEL_FORMAT_TYPE_UNSIGNED,
@@ -332,6 +304,38 @@ enum CUBLASContextLoggingMode {
 	// UInt iMipTailFirstLevel;
 	// SizeT iMipTailSize;
 // } CUDAArraySparseProperties;
+
+/////////////////////////////////////////////////////////////////////////////////
+// CUBLAS Context Declarations
+enum CUBLASContextPointerMode {
+	CUBLAS_CONTEXT_POINTER_MODE_HOST = 0,
+	CUBLAS_CONTEXT_POINTER_MODE_DEVICE,
+	CUBLAS_CONTEXT_POINTER_MODE_COUNT
+};
+extern CUBLASContextPointerMode CUBLASContextPointerModeFromCUDA[CUBLAS_CONTEXT_POINTER_MODE_COUNT];
+extern DWord CUBLASContextPointerModeToCUDA[CUBLAS_CONTEXT_POINTER_MODE_COUNT];
+
+enum CUBLASContextPrecisionMode {
+	CUBLAS_CONTEXT_PRECISION_MODE_DEFAULT = 0,
+	CUBLAS_CONTEXT_PRECISION_MODE_PRECISE,
+	CUBLAS_CONTEXT_PRECISION_MODE_TF32
+};
+
+enum CUBLASContextLoggingMode {
+	CUBLAS_CONTEXT_LOGGING_MODE_DISABLED = 0,
+	CUBLAS_CONTEXT_LOGGING_MODE_STDOUT,
+	CUBLAS_CONTEXT_LOGGING_MODE_STDERR,
+	CUBLAS_CONTEXT_LOGGING_MODE_BOTH
+};
+
+enum CUBLASContextTransposeOp {
+	CUBLAS_CONTEXT_TRANSOP_NONE = 0,
+	CUBLAS_CONTEXT_TRANSOP_TRANSPOSE,
+	CUBLAS_CONTEXT_TRANSOP_DAGGER,
+	CUBLAS_CONTEXT_TRANSOP_COUNT
+};
+extern CUBLASContextTransposeOp CUBLASContextTransposeOpFromCUDA[CUBLAS_CONTEXT_TRANSOP_COUNT];
+extern DWord CUBLASContextTransposeOpToCUDA[CUBLAS_CONTEXT_TRANSOP_COUNT];
 
 /////////////////////////////////////////////////////////////////////////////////
 // Backward Includes (Inlines & Templates)

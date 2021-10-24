@@ -145,17 +145,40 @@ public:
 	template<class T> Void Scale( CUDADeviceMemory * pVector, const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion, T fAlpha ) const;
 	template<class T> inline Void Scale( CUDADeviceMemory * pVector, T fAlpha ) const;
 
-		// Y += Alpha * X
+		// Y = Y + Alpha * X
 	template<class T> Void MulAdd( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY,
 								   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX,
 								   T fAlpha, const CUDAMemoryRegion & hRegion ) const;
 	template<class T> inline Void MulAdd( CUDADeviceMemory * outVectorY, const CUDADeviceMemory * pVectorX, T fAlpha ) const;
+
+	template<class T> inline Void Add( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY,
+									   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX,
+									   const CUDAMemoryRegion & hRegion ) const;
+	template<class T> inline Void Add( CUDADeviceMemory * outVectorY, const CUDADeviceMemory * pVectorX ) const;
 
 		// Givens Rotations
 	///////////////////////////////////////////
 
 	// Matrix-Vector Functions
 
+		// Y = Alpha * Op(A) * X + Beta * Y
+	template<class T> Void MulAdd( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY, T fBeta,
+								   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX, T fAlpha,
+								   const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
+								   CUBLASContextTransposeOp iTransOp ) const;
+	template<class T> inline Void MulAdd( CUDADeviceMemory * outVectorY, T fBeta, const CUDADeviceMemory * pVectorX, T fAlpha,
+										  const CUDADeviceMemory * pMatrixA, CUBLASContextTransposeOp iTransOp ) const;
+
+		// Y = Alpha * Op(A) * X + Beta * Y
+		// Banded Matrix are stored column-wise with the following row order :
+		// updiagN, ..., updiag2, updiag1, maindiag, lowdiag1, lowdiag2, ..., lowdiagM
+		// A(i,j) is stored at memory location [K+1+i-j,j] with K = number of upper diagonals
+	template<class T> Void MulAddBanded( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY, T fBeta,
+										 const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX, T fAlpha,
+										 const CUDADeviceMemory * pBandedMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
+										 SizeT iExpandedSizeA, SizeT iLowerDiagsCount, SizeT iUpperDiagsCount, CUBLASContextTransposeOp iTransOp ) const;
+	template<class T> inline Void MulAddBanded( CUDADeviceMemory * outVectorY, T fBeta, const CUDADeviceMemory * pVectorX, T fAlpha,
+												const CUDADeviceMemory * pBandedMatrixA, SizeT iExpandedSizeA, SizeT iLowerDiagsCount, SizeT iUpperDiagsCount, CUBLASContextTransposeOp iTransOp ) const;
 
 private:
 	Void * m_hContext;

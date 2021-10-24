@@ -87,19 +87,6 @@ inline T CUBLASContext::AbsSum( const CUDADeviceMemory * pVector ) const {
 }
 
 template<class T>
-inline Void CUBLASContext::MulAdd( CUDADeviceMemory * outVectorY, const CUDADeviceMemory * pVectorX, T fAlpha ) const {
-	CUDAMemoryPosition hPosition;
-	hPosition.iX = 0;
-	hPosition.iY = 0;
-	hPosition.iY = 0;
-	CUDAMemoryRegion hRegion;
-	hRegion.iWidth = outVectorY->GetWidth();
-	hRegion.iHeight = 0;
-	hRegion.iDepth = 0;
-	MulAdd<T>( outVectorY, hPosition, pVectorX, hPosition, fAlpha, hRegion );
-}
-
-template<class T>
 inline T CUBLASContext::Dot( const CUDADeviceMemory * pVectorA, const CUDADeviceMemory * pVectorB, Bool bConjugateB ) const {
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
@@ -138,3 +125,56 @@ inline Void CUBLASContext::Scale( CUDADeviceMemory * pVector, T fAlpha ) const {
 	Scale<T>( pVector, hPosition, hRegion, fAlpha );
 }
 
+template<class T>
+inline Void CUBLASContext::MulAdd( CUDADeviceMemory * outVectorY, const CUDADeviceMemory * pVectorX, T fAlpha ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iY = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = outVectorY->GetWidth();
+	hRegion.iHeight = 0;
+	hRegion.iDepth = 0;
+	MulAdd<T>( outVectorY, hPosition, pVectorX, hPosition, fAlpha, hRegion );
+}
+
+template<class T>
+inline Void CUBLASContext::Add( CUDADeviceMemory * outVectorY, const CUDADeviceMemory * pVectorX ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iY = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = outVectorY->GetWidth();
+	hRegion.iHeight = 0;
+	hRegion.iDepth = 0;
+	Add<T>( outVectorY, hPosition, pVectorX, hPosition, (T)1, hRegion );
+}
+
+template<class T>
+inline Void CUBLASContext::MulAdd( CUDADeviceMemory * outVectorY, T fBeta, const CUDADeviceMemory * pVectorX, T fAlpha,
+								   const CUDADeviceMemory * pMatrixA, CUBLASContextTransposeOp iTransOp ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iY = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = pMatrixA->GetWidth();
+	hRegion.iHeight = pMatrixA->GetHeight();
+	hRegion.iDepth = 0;
+	MulAdd<T>( outVectorY, hPosition, fBeta, pVectorX, hPosition, fAlpha, pMatrixA, hPosition, hRegion, iTransOp );
+}
+
+template<class T>
+inline Void CUBLASContext::MulAddBanded( CUDADeviceMemory * outVectorY, T fBeta, const CUDADeviceMemory * pVectorX, T fAlpha,
+										 const CUDADeviceMemory * pBandedMatrixA, SizeT iExpandedSizeA, SizeT iLowerDiagsCount, SizeT iUpperDiagsCount, CUBLASContextTransposeOp iTransOp ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iY = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = pBandedMatrixA->GetWidth();
+	hRegion.iHeight = pBandedMatrixA->GetHeight();
+	hRegion.iDepth = 0;
+	MulAddBanded<T>( outVectorY, hPosition, fBeta, pVectorX, hPosition, fAlpha, pBandedMatrixA, hPosition, hRegion, iExpandedSizeA, iLowerDiagsCount, iUpperDiagsCount, iTransOp );
+}

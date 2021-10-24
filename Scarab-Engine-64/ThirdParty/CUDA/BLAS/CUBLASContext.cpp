@@ -1129,3 +1129,437 @@ Void CUBLASContext::MulAdd<cuDoubleComplex>( CUDADeviceMemory * outVectorY, cons
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 }
 
+template<>
+inline Void CUBLASContext::Add<Float>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY,
+									   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX,
+									   const CUDAMemoryRegion & hRegion ) const
+{
+	MulAdd<Float>( outVectorY, outPositionY, pVectorX, hPositionX, 1.0f, hRegion );
+}
+template<>
+inline Void CUBLASContext::Add<Double>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY,
+										const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX,
+										const CUDAMemoryRegion & hRegion ) const
+{
+	MulAdd<Double>( outVectorY, outPositionY, pVectorX, hPositionX, 1.0, hRegion );
+}
+template<>
+inline Void CUBLASContext::Add<cuComplex>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY,
+										   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX,
+										   const CUDAMemoryRegion & hRegion ) const
+{
+	cuComplex fOne;
+	fOne.x = 1.0f;
+	fOne.y = 0.0f;
+
+	MulAdd<cuComplex>( outVectorY, outPositionY, pVectorX, hPositionX, fOne, hRegion );
+}
+template<>
+inline Void CUBLASContext::Add<cuDoubleComplex>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY,
+												 const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX,
+												 const CUDAMemoryRegion & hRegion ) const
+{
+	cuDoubleComplex fOne;
+	fOne.x = 1.0;
+	fOne.y = 0.0;
+
+	MulAdd<cuDoubleComplex>( outVectorY, outPositionY, pVectorX, hPositionX, fOne, hRegion );
+}
+
+template<>
+Void CUBLASContext::MulAdd<Float>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY, Float fBeta,
+								   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX, Float fAlpha,
+								   const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
+								   CUBLASContextTransposeOp iTransOp ) const
+{
+	DebugAssert( m_hContext != NULL );
+
+	DebugAssert( outVectorY->IsAllocated() );
+	DebugAssert( outVectorY->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( outVectorY->GetStride() == sizeof(Float) );
+
+	DebugAssert( pVectorX->IsAllocated() );
+	DebugAssert( pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( pVectorX->GetStride() == sizeof(Float) );
+
+	DebugAssert( pMatrixA->IsAllocated() );
+	DebugAssert( pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( pMatrixA->GetStride() == sizeof(Float) );
+	DebugAssert( pMatrixA->IsValidRegion(hPositionA, hRegionA) );
+
+	CUDAMemoryRegion hRegionX, hRegionY;
+	hRegionX.iWidth = 0;
+	hRegionX.iHeight = 0;
+	hRegionX.iDepth = 0;
+	hRegionY.iWidth = 0;
+	hRegionY.iHeight = 0;
+	hRegionY.iDepth = 0;
+	if ( iTransOp == CUBLAS_CONTEXT_TRANSOP_NONE ) {
+		hRegionX.iWidth = hRegionA.iHeight;
+		hRegionY.iWidth = hRegionA.iWidth;
+	} else {
+		hRegionX.iWidth = hRegionA.iWidth;
+		hRegionY.iWidth = hRegionA.iHeight;
+	}
+	DebugAssert( outVectorY->IsValidRegion(outPositionY, hRegionY) );
+	DebugAssert( pVectorX->IsValidRegion(hPositionX, hRegionX) );
+
+	cublasHandle_t hCUBLASContext = (cublasHandle_t)m_hContext;
+	cublasOperation_t iCUBLASTransposeOp = (cublasOperation_t)( CUBLASContextTransposeOpToCUDA[iTransOp] );
+	
+	cublasStatus_t iError = cublasSgemv( hCUBLASContext, iCUBLASTransposeOp, hRegionA.iWidth, hRegionA.iHeight,
+										 &fAlpha, (const Float *)( pMatrixA->GetPointer(hPositionA) ), pMatrixA->GetWidth(),
+										 (const Float *)( pVectorX->GetPointer(hPositionX) ), pVectorX->GetStride(),
+										 &fBeta, (Float*)( outVectorY->GetPointer(outPositionY) ), outVectorY->GetStride() );
+	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
+}
+template<>
+Void CUBLASContext::MulAdd<Double>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY, Double fBeta,
+									const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX, Double fAlpha,
+									const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
+									CUBLASContextTransposeOp iTransOp ) const
+{
+	DebugAssert( m_hContext != NULL );
+
+	DebugAssert( outVectorY->IsAllocated() );
+	DebugAssert( outVectorY->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( outVectorY->GetStride() == sizeof(Double) );
+
+	DebugAssert( pVectorX->IsAllocated() );
+	DebugAssert( pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( pVectorX->GetStride() == sizeof(Double) );
+
+	DebugAssert( pMatrixA->IsAllocated() );
+	DebugAssert( pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( pMatrixA->GetStride() == sizeof(Double) );
+	DebugAssert( pMatrixA->IsValidRegion(hPositionA, hRegionA) );
+
+	CUDAMemoryRegion hRegionX, hRegionY;
+	hRegionX.iWidth = 0;
+	hRegionX.iHeight = 0;
+	hRegionX.iDepth = 0;
+	hRegionY.iWidth = 0;
+	hRegionY.iHeight = 0;
+	hRegionY.iDepth = 0;
+	if ( iTransOp == CUBLAS_CONTEXT_TRANSOP_NONE ) {
+		hRegionX.iWidth = hRegionA.iHeight;
+		hRegionY.iWidth = hRegionA.iWidth;
+	} else {
+		hRegionX.iWidth = hRegionA.iWidth;
+		hRegionY.iWidth = hRegionA.iHeight;
+	}
+	DebugAssert( outVectorY->IsValidRegion(outPositionY, hRegionY) );
+	DebugAssert( pVectorX->IsValidRegion(hPositionX, hRegionX) );
+
+	cublasHandle_t hCUBLASContext = (cublasHandle_t)m_hContext;
+	cublasOperation_t iCUBLASTransposeOp = (cublasOperation_t)( CUBLASContextTransposeOpToCUDA[iTransOp] );
+	
+	cublasStatus_t iError = cublasDgemv( hCUBLASContext, iCUBLASTransposeOp, hRegionA.iWidth, hRegionA.iHeight,
+										 &fAlpha, (const Double *)( pMatrixA->GetPointer(hPositionA) ), pMatrixA->GetWidth(),
+										 (const Double *)( pVectorX->GetPointer(hPositionX) ), pVectorX->GetStride(),
+										 &fBeta, (Double*)( outVectorY->GetPointer(outPositionY) ), outVectorY->GetStride() );
+	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
+}
+template<>
+Void CUBLASContext::MulAdd<cuComplex>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY, cuComplex fBeta,
+									   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX, cuComplex fAlpha,
+									   const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
+									   CUBLASContextTransposeOp iTransOp ) const
+{
+	DebugAssert( m_hContext != NULL );
+
+	DebugAssert( outVectorY->IsAllocated() );
+	DebugAssert( outVectorY->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( outVectorY->GetStride() == sizeof(cuComplex) );
+
+	DebugAssert( pVectorX->IsAllocated() );
+	DebugAssert( pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( pVectorX->GetStride() == sizeof(cuComplex) );
+
+	DebugAssert( pMatrixA->IsAllocated() );
+	DebugAssert( pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( pMatrixA->GetStride() == sizeof(cuComplex) );
+	DebugAssert( pMatrixA->IsValidRegion(hPositionA, hRegionA) );
+
+	CUDAMemoryRegion hRegionX, hRegionY;
+	hRegionX.iWidth = 0;
+	hRegionX.iHeight = 0;
+	hRegionX.iDepth = 0;
+	hRegionY.iWidth = 0;
+	hRegionY.iHeight = 0;
+	hRegionY.iDepth = 0;
+	if ( iTransOp == CUBLAS_CONTEXT_TRANSOP_NONE ) {
+		hRegionX.iWidth = hRegionA.iHeight;
+		hRegionY.iWidth = hRegionA.iWidth;
+	} else {
+		hRegionX.iWidth = hRegionA.iWidth;
+		hRegionY.iWidth = hRegionA.iHeight;
+	}
+	DebugAssert( outVectorY->IsValidRegion(outPositionY, hRegionY) );
+	DebugAssert( pVectorX->IsValidRegion(hPositionX, hRegionX) );
+
+	cublasHandle_t hCUBLASContext = (cublasHandle_t)m_hContext;
+	cublasOperation_t iCUBLASTransposeOp = (cublasOperation_t)( CUBLASContextTransposeOpToCUDA[iTransOp] );
+	
+	cublasStatus_t iError = cublasCgemv( hCUBLASContext, iCUBLASTransposeOp, hRegionA.iWidth, hRegionA.iHeight,
+										 &fAlpha, (const cuComplex *)( pMatrixA->GetPointer(hPositionA) ), pMatrixA->GetWidth(),
+										 (const cuComplex *)( pVectorX->GetPointer(hPositionX) ), pVectorX->GetStride(),
+										 &fBeta, (cuComplex*)( outVectorY->GetPointer(outPositionY) ), outVectorY->GetStride() );
+	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
+}
+template<>
+Void CUBLASContext::MulAdd<cuDoubleComplex>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY, cuDoubleComplex fBeta,
+											 const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX, cuDoubleComplex fAlpha,
+											 const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
+											 CUBLASContextTransposeOp iTransOp ) const
+{
+	DebugAssert( m_hContext != NULL );
+
+	DebugAssert( outVectorY->IsAllocated() );
+	DebugAssert( outVectorY->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( outVectorY->GetStride() == sizeof(cuDoubleComplex) );
+
+	DebugAssert( pVectorX->IsAllocated() );
+	DebugAssert( pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( pVectorX->GetStride() == sizeof(cuDoubleComplex) );
+
+	DebugAssert( pMatrixA->IsAllocated() );
+	DebugAssert( pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( pMatrixA->GetStride() == sizeof(cuDoubleComplex) );
+	DebugAssert( pMatrixA->IsValidRegion(hPositionA, hRegionA) );
+
+	CUDAMemoryRegion hRegionX, hRegionY;
+	hRegionX.iWidth = 0;
+	hRegionX.iHeight = 0;
+	hRegionX.iDepth = 0;
+	hRegionY.iWidth = 0;
+	hRegionY.iHeight = 0;
+	hRegionY.iDepth = 0;
+	if ( iTransOp == CUBLAS_CONTEXT_TRANSOP_NONE ) {
+		hRegionX.iWidth = hRegionA.iHeight;
+		hRegionY.iWidth = hRegionA.iWidth;
+	} else {
+		hRegionX.iWidth = hRegionA.iWidth;
+		hRegionY.iWidth = hRegionA.iHeight;
+	}
+	DebugAssert( outVectorY->IsValidRegion(outPositionY, hRegionY) );
+	DebugAssert( pVectorX->IsValidRegion(hPositionX, hRegionX) );
+
+	cublasHandle_t hCUBLASContext = (cublasHandle_t)m_hContext;
+	cublasOperation_t iCUBLASTransposeOp = (cublasOperation_t)( CUBLASContextTransposeOpToCUDA[iTransOp] );
+	
+	cublasStatus_t iError = cublasZgemv( hCUBLASContext, iCUBLASTransposeOp, hRegionA.iWidth, hRegionA.iHeight,
+										 &fAlpha, (const cuDoubleComplex *)( pMatrixA->GetPointer(hPositionA) ), pMatrixA->GetWidth(),
+										 (const cuDoubleComplex *)( pVectorX->GetPointer(hPositionX) ), pVectorX->GetStride(),
+										 &fBeta, (cuDoubleComplex*)( outVectorY->GetPointer(outPositionY) ), outVectorY->GetStride() );
+	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
+}
+
+template<>
+Void CUBLASContext::MulAddBanded<Float>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY, Float fBeta,
+										 const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX, Float fAlpha,
+										 const CUDADeviceMemory * pBandedMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
+										 SizeT iExpandedSizeA, SizeT iLowerDiagsCount, SizeT iUpperDiagsCount, CUBLASContextTransposeOp iTransOp ) const
+{
+	DebugAssert( m_hContext != NULL );
+
+	DebugAssert( outVectorY->IsAllocated() );
+	DebugAssert( outVectorY->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( outVectorY->GetStride() == sizeof(Float) );
+
+	DebugAssert( pVectorX->IsAllocated() );
+	DebugAssert( pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( pVectorX->GetStride() == sizeof(Float) );
+
+	DebugAssert( pBandedMatrixA->IsAllocated() );
+	DebugAssert( pBandedMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( pBandedMatrixA->GetStride() == sizeof(Float) );
+	DebugAssert( pBandedMatrixA->IsValidRegion(hPositionA, hRegionA) );
+
+	CUDAMemoryRegion hRegionX, hRegionY;
+	hRegionX.iWidth = 0;
+	hRegionX.iHeight = 0;
+	hRegionX.iDepth = 0;
+	hRegionY.iWidth = 0;
+	hRegionY.iHeight = 0;
+	hRegionY.iDepth = 0;
+	SizeT iRowsA, iColsA;
+	if ( iTransOp == CUBLAS_CONTEXT_TRANSOP_NONE ) {
+		hRegionX.iWidth = hRegionA.iHeight;
+		hRegionY.iWidth = hRegionA.iWidth;
+		iRowsA = iExpandedSizeA;
+		iColsA = hRegionA.iHeight;
+	} else {
+		hRegionX.iWidth = hRegionA.iWidth;
+		hRegionY.iWidth = hRegionA.iHeight;
+		iRowsA = hRegionA.iWidth;
+		iColsA = iExpandedSizeA;
+	}
+	DebugAssert( outVectorY->IsValidRegion(outPositionY, hRegionY) );
+	DebugAssert( pVectorX->IsValidRegion(hPositionX, hRegionX) );
+
+	cublasHandle_t hCUBLASContext = (cublasHandle_t)m_hContext;
+	cublasOperation_t iCUBLASTransposeOp = (cublasOperation_t)( CUBLASContextTransposeOpToCUDA[iTransOp] );
+	
+	cublasStatus_t iError = cublasSgbmv( hCUBLASContext, iCUBLASTransposeOp, iRowsA, iColsA, iLowerDiagsCount, iUpperDiagsCount,
+										 &fAlpha, (const Float *)( pBandedMatrixA->GetPointer(hPositionA) ), pBandedMatrixA->GetWidth(),
+										 (const Float *)( pVectorX->GetPointer(hPositionX) ), pVectorX->GetStride(),
+										 &fBeta, (Float*)( outVectorY->GetPointer(outPositionY) ), outVectorY->GetStride() );
+	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
+}
+template<>
+Void CUBLASContext::MulAddBanded<Double>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY, Double fBeta,
+										  const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX, Double fAlpha,
+										  const CUDADeviceMemory * pBandedMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
+										  SizeT iExpandedSizeA, SizeT iLowerDiagsCount, SizeT iUpperDiagsCount, CUBLASContextTransposeOp iTransOp ) const
+{
+	DebugAssert( m_hContext != NULL );
+
+	DebugAssert( outVectorY->IsAllocated() );
+	DebugAssert( outVectorY->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( outVectorY->GetStride() == sizeof(Double) );
+
+	DebugAssert( pVectorX->IsAllocated() );
+	DebugAssert( pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( pVectorX->GetStride() == sizeof(Double) );
+
+	DebugAssert( pBandedMatrixA->IsAllocated() );
+	DebugAssert( pBandedMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( pBandedMatrixA->GetStride() == sizeof(Double) );
+	DebugAssert( pBandedMatrixA->IsValidRegion(hPositionA, hRegionA) );
+
+	CUDAMemoryRegion hRegionX, hRegionY;
+	hRegionX.iWidth = 0;
+	hRegionX.iHeight = 0;
+	hRegionX.iDepth = 0;
+	hRegionY.iWidth = 0;
+	hRegionY.iHeight = 0;
+	hRegionY.iDepth = 0;
+	SizeT iRowsA, iColsA;
+	if ( iTransOp == CUBLAS_CONTEXT_TRANSOP_NONE ) {
+		hRegionX.iWidth = hRegionA.iHeight;
+		hRegionY.iWidth = hRegionA.iWidth;
+		iRowsA = iExpandedSizeA;
+		iColsA = hRegionA.iHeight;
+	} else {
+		hRegionX.iWidth = hRegionA.iWidth;
+		hRegionY.iWidth = hRegionA.iHeight;
+		iRowsA = hRegionA.iWidth;
+		iColsA = iExpandedSizeA;
+	}
+	DebugAssert( outVectorY->IsValidRegion(outPositionY, hRegionY) );
+	DebugAssert( pVectorX->IsValidRegion(hPositionX, hRegionX) );
+
+	cublasHandle_t hCUBLASContext = (cublasHandle_t)m_hContext;
+	cublasOperation_t iCUBLASTransposeOp = (cublasOperation_t)( CUBLASContextTransposeOpToCUDA[iTransOp] );
+	
+	cublasStatus_t iError = cublasDgbmv( hCUBLASContext, iCUBLASTransposeOp, iRowsA, iColsA, iLowerDiagsCount, iUpperDiagsCount,
+										 &fAlpha, (const Double *)( pBandedMatrixA->GetPointer(hPositionA) ), pBandedMatrixA->GetWidth(),
+										 (const Double *)( pVectorX->GetPointer(hPositionX) ), pVectorX->GetStride(),
+										 &fBeta, (Double*)( outVectorY->GetPointer(outPositionY) ), outVectorY->GetStride() );
+	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
+}
+template<>
+Void CUBLASContext::MulAddBanded<cuComplex>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY, cuComplex fBeta,
+											 const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX, cuComplex fAlpha,
+											 const CUDADeviceMemory * pBandedMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
+											 SizeT iExpandedSizeA, SizeT iLowerDiagsCount, SizeT iUpperDiagsCount, CUBLASContextTransposeOp iTransOp ) const
+{
+	DebugAssert( m_hContext != NULL );
+
+	DebugAssert( outVectorY->IsAllocated() );
+	DebugAssert( outVectorY->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( outVectorY->GetStride() == sizeof(cuComplex) );
+
+	DebugAssert( pVectorX->IsAllocated() );
+	DebugAssert( pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( pVectorX->GetStride() == sizeof(cuComplex) );
+
+	DebugAssert( pBandedMatrixA->IsAllocated() );
+	DebugAssert( pBandedMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( pBandedMatrixA->GetStride() == sizeof(cuComplex) );
+	DebugAssert( pBandedMatrixA->IsValidRegion(hPositionA, hRegionA) );
+
+	CUDAMemoryRegion hRegionX, hRegionY;
+	hRegionX.iWidth = 0;
+	hRegionX.iHeight = 0;
+	hRegionX.iDepth = 0;
+	hRegionY.iWidth = 0;
+	hRegionY.iHeight = 0;
+	hRegionY.iDepth = 0;
+	SizeT iRowsA, iColsA;
+	if ( iTransOp == CUBLAS_CONTEXT_TRANSOP_NONE ) {
+		hRegionX.iWidth = hRegionA.iHeight;
+		hRegionY.iWidth = hRegionA.iWidth;
+		iRowsA = iExpandedSizeA;
+		iColsA = hRegionA.iHeight;
+	} else {
+		hRegionX.iWidth = hRegionA.iWidth;
+		hRegionY.iWidth = hRegionA.iHeight;
+		iRowsA = hRegionA.iWidth;
+		iColsA = iExpandedSizeA;
+	}
+	DebugAssert( outVectorY->IsValidRegion(outPositionY, hRegionY) );
+	DebugAssert( pVectorX->IsValidRegion(hPositionX, hRegionX) );
+
+	cublasHandle_t hCUBLASContext = (cublasHandle_t)m_hContext;
+	cublasOperation_t iCUBLASTransposeOp = (cublasOperation_t)( CUBLASContextTransposeOpToCUDA[iTransOp] );
+	
+	cublasStatus_t iError = cublasCgbmv( hCUBLASContext, iCUBLASTransposeOp, iRowsA, iColsA, iLowerDiagsCount, iUpperDiagsCount,
+										 &fAlpha, (const cuComplex *)( pBandedMatrixA->GetPointer(hPositionA) ), pBandedMatrixA->GetWidth(),
+										 (const cuComplex *)( pVectorX->GetPointer(hPositionX) ), pVectorX->GetStride(),
+										 &fBeta, (cuComplex*)( outVectorY->GetPointer(outPositionY) ), outVectorY->GetStride() );
+	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
+}
+template<>
+Void CUBLASContext::MulAddBanded<cuDoubleComplex>( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY, cuDoubleComplex fBeta,
+												   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX, cuDoubleComplex fAlpha,
+												   const CUDADeviceMemory * pBandedMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
+												   SizeT iExpandedSizeA, SizeT iLowerDiagsCount, SizeT iUpperDiagsCount, CUBLASContextTransposeOp iTransOp ) const
+{
+	DebugAssert( m_hContext != NULL );
+
+	DebugAssert( outVectorY->IsAllocated() );
+	DebugAssert( outVectorY->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( outVectorY->GetStride() == sizeof(cuDoubleComplex) );
+
+	DebugAssert( pVectorX->IsAllocated() );
+	DebugAssert( pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( pVectorX->GetStride() == sizeof(cuDoubleComplex) );
+
+	DebugAssert( pBandedMatrixA->IsAllocated() );
+	DebugAssert( pBandedMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( pBandedMatrixA->GetStride() == sizeof(cuDoubleComplex) );
+	DebugAssert( pBandedMatrixA->IsValidRegion(hPositionA, hRegionA) );
+
+	CUDAMemoryRegion hRegionX, hRegionY;
+	hRegionX.iWidth = 0;
+	hRegionX.iHeight = 0;
+	hRegionX.iDepth = 0;
+	hRegionY.iWidth = 0;
+	hRegionY.iHeight = 0;
+	hRegionY.iDepth = 0;
+	SizeT iRowsA, iColsA;
+	if ( iTransOp == CUBLAS_CONTEXT_TRANSOP_NONE ) {
+		hRegionX.iWidth = hRegionA.iHeight;
+		hRegionY.iWidth = hRegionA.iWidth;
+		iRowsA = iExpandedSizeA;
+		iColsA = hRegionA.iHeight;
+	} else {
+		hRegionX.iWidth = hRegionA.iWidth;
+		hRegionY.iWidth = hRegionA.iHeight;
+		iRowsA = hRegionA.iWidth;
+		iColsA = iExpandedSizeA;
+	}
+	DebugAssert( outVectorY->IsValidRegion(outPositionY, hRegionY) );
+	DebugAssert( pVectorX->IsValidRegion(hPositionX, hRegionX) );
+
+	cublasHandle_t hCUBLASContext = (cublasHandle_t)m_hContext;
+	cublasOperation_t iCUBLASTransposeOp = (cublasOperation_t)( CUBLASContextTransposeOpToCUDA[iTransOp] );
+	
+	cublasStatus_t iError = cublasZgbmv( hCUBLASContext, iCUBLASTransposeOp, iRowsA, iColsA, iLowerDiagsCount, iUpperDiagsCount,
+										 &fAlpha, (const cuDoubleComplex *)( pBandedMatrixA->GetPointer(hPositionA) ), pBandedMatrixA->GetWidth(),
+										 (const cuDoubleComplex *)( pVectorX->GetPointer(hPositionX) ), pVectorX->GetStride(),
+										 &fBeta, (cuDoubleComplex*)( outVectorY->GetPointer(outPositionY) ), outVectorY->GetStride() );
+	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
+}

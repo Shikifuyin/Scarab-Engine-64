@@ -33,6 +33,9 @@
 // Log Callback
 typedef Void (*CUBLASLogCallback)( const Char * strMessage );
 
+// Batched Operations
+#define CUBLAS_BATCH_MAX_COUNT 32768
+
 /////////////////////////////////////////////////////////////////////////////////
 // The CUBLASContext class
 class CUBLASContext
@@ -115,6 +118,7 @@ public:
 					const CUDAMemoryRegion & hCopyRegion, CUDAStream * pStream = NULL );
 
 	// Vector-Scalar Functions //////////////////////////////////////////////////
+
 	template<class T> Void Copy( CUDADeviceMemory * outDeviceVector, const CUDAMemoryPosition & outDevicePosition,
 								 const CUDADeviceMemory * pDeviceVector, const CUDAMemoryPosition & hDevicePosition,
 								 const CUDAMemoryRegion & hRegion );
@@ -151,6 +155,7 @@ public:
 								   T fAlpha, const CUDAMemoryRegion & hRegion ) const;
 	template<class T> inline Void MulAdd( CUDADeviceMemory * outVectorY, const CUDADeviceMemory * pVectorX, T fAlpha ) const;
 
+		// Y = Y + X
 	template<class T> inline Void Add( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY,
 									   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX,
 									   const CUDAMemoryRegion & hRegion ) const;
@@ -160,6 +165,7 @@ public:
 	// cublas<t>rot, cublas<t>rotg, cublas<t>rotm, cublas<t>rotmg
 
 	// Matrix-Vector Functions //////////////////////////////////////////////////
+
 		// X = Op(A) * X
 	template<class T> Void MulTriangular( CUDADeviceMemory * outVectorX, const CUDAMemoryPosition & outPositionX,
 										  const CUDADeviceMemory * pTriangularMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
@@ -274,7 +280,32 @@ public:
 
 	// Matrix-Matrix Functions //////////////////////////////////////////////////
 
+		// C = Alpha * Op(A) * Op(B) + Beta * C
+	template<class T> Void MulAdd( CUDADeviceMemory * outMatrixC, const CUDAMemoryPosition & outPositionC, const CUDAMemoryRegion & outRegionC, T fBeta,
+								   const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA, T fAlpha,
+								   const CUDADeviceMemory * pMatrixB, const CUDAMemoryPosition & hPositionB, const CUDAMemoryRegion & hRegionB,
+								   CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB, Bool bUseComplexGaussReduction = false ) const;
+	template<class T> inline Void MulAdd( CUDADeviceMemory * outMatrixC, T fBeta, const CUDADeviceMemory * pMatrixA, T fAlpha, const CUDADeviceMemory * pMatrixB,
+										  CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB, Bool bUseComplexGaussReduction = false ) const;
 
+		// Ci = Alpha * Op(Ai) * Op(Bi) + Beta * Ci
+		// Matrices are presented in arrays of separated CUDADeviceMemory instances
+		// A specific position can be given for each matrix inside its CUDADeviceMemory instance
+		// Max Batch Count is CUBLAS_BATCH_MAX_COUNT
+	template<class T> Void MulAddBatched( SizeT iBatchCount, CUDADeviceMemory * outMatricesC, const CUDAMemoryPosition * outPositionsC, const CUDAMemoryRegion & outRegionC, T fBeta,
+										  const CUDADeviceMemory * arrMatricesA, const CUDAMemoryPosition * arrPositionsA, const CUDAMemoryRegion & hRegionA, T fAlpha,
+										  const CUDADeviceMemory * arrMatricesB, const CUDAMemoryPosition * arrPositionsB, const CUDAMemoryRegion & hRegionB,
+										  CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB ) const;
+
+		// Ci = Alpha * Op(Ai) * Op(Bi) + Beta * Ci
+		// Matrices are presented in 3D-shaped CUDADeviceMemory instances as lists of matrices
+		// Stride values are in number of elements
+		// Stride values must prevent overlap by being at least larger than a single matrix size (ie. Width * Height)
+		// Batch Count is limited by matrix arrays depth
+	template<class T> Void MulAddStrideBatched( SizeT iBatchCount, CUDADeviceMemory * outMatricesC, const CUDAMemoryPosition & outStartPositionC, const CUDAMemoryRegion & outRegionC, SizeT outStrideC, T fBeta,
+												const CUDADeviceMemory * arrMatricesA, const CUDAMemoryPosition & hStartPositionA, const CUDAMemoryRegion & hRegionA, SizeT iStrideA, T fAlpha,
+												const CUDADeviceMemory * arrMatricesB, const CUDAMemoryPosition & hStartPositionB, const CUDAMemoryRegion & hRegionB, SizeT iStrideB,
+												CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB ) const;
 
 private:
 	Void * m_hContext;

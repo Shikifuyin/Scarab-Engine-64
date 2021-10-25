@@ -290,3 +290,25 @@ inline Void CUBLASContext::SolveTriangularBanded( CUDADeviceMemory * outVectorX,
 	hRegion.iDepth = 0;
 	SolveTriangularBanded<T>( outVectorX, hPosition, pTriangularBandedMatrixA, hPosition, hRegion, iExpandedSizeA, iSubDiagsCount, iFillMode, iTransOp, bMainDiagIsUnity );
 }
+
+template<class T>
+inline Void CUBLASContext::MulAdd( CUDADeviceMemory * outMatrixC, T fBeta, const CUDADeviceMemory * pMatrixA, T fAlpha, const CUDADeviceMemory * pMatrixB,
+								   CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB, Bool bUseComplexGaussReduction ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iZ = 0;
+	CUDAMemoryRegion hRegionA;
+	hRegionA.iWidth = pMatrixA->GetWidth();
+	hRegionA.iHeight = pMatrixA->GetHeight();
+	hRegionA.iDepth = 0;
+	CUDAMemoryRegion hRegionB;
+	hRegionA.iWidth = pMatrixB->GetWidth();
+	hRegionA.iHeight = pMatrixB->GetHeight();
+	hRegionA.iDepth = 0;
+	CUDAMemoryRegion hRegionC;
+	hRegionA.iWidth = outMatrixC->GetWidth();
+	hRegionA.iHeight = outMatrixC->GetHeight();
+	hRegionA.iDepth = 0;
+	MulAdd<T>( outMatrixC, hPosition, hRegionC, fBeta, pMatrixA, hPosition, hRegionA, fAlpha, pMatrixB, hPosition, hRegionB, iTransOpA, iTransOpB, bUseComplexGaussReduction );
+}

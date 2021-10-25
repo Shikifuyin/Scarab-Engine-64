@@ -26,7 +26,7 @@ inline Void CUBLASContext::Copy( CUDADeviceMemory * outDeviceVector, const CUDAD
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = outDeviceVector->GetWidth();
 	hRegion.iHeight = 0;
@@ -39,7 +39,7 @@ inline Void CUBLASContext::Swap( CUDADeviceMemory * pDeviceVectorA, CUDADeviceMe
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = pDeviceVectorA->GetWidth();
 	hRegion.iHeight = 0;
@@ -52,7 +52,7 @@ inline SizeT CUBLASContext::AbsMin( const CUDADeviceMemory * pVector ) const {
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = pVector->GetWidth();
 	hRegion.iHeight = 0;
@@ -65,7 +65,7 @@ inline SizeT CUBLASContext::AbsMax( const CUDADeviceMemory * pVector ) const {
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = pVector->GetWidth();
 	hRegion.iHeight = 0;
@@ -78,7 +78,7 @@ inline T CUBLASContext::AbsSum( const CUDADeviceMemory * pVector ) const {
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = pVector->GetWidth();
 	hRegion.iHeight = 0;
@@ -91,7 +91,7 @@ inline T CUBLASContext::Dot( const CUDADeviceMemory * pVectorA, const CUDADevice
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = pVectorA->GetWidth();
 	hRegion.iHeight = 0;
@@ -104,7 +104,7 @@ inline T CUBLASContext::Norm( const CUDADeviceMemory * pVector ) const {
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = pVector->GetWidth();
 	hRegion.iHeight = 0;
@@ -117,7 +117,7 @@ inline Void CUBLASContext::Scale( CUDADeviceMemory * pVector, T fAlpha ) const {
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = pVector->GetWidth();
 	hRegion.iHeight = 0;
@@ -130,7 +130,7 @@ inline Void CUBLASContext::MulAdd( CUDADeviceMemory * outVectorY, const CUDADevi
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = outVectorY->GetWidth();
 	hRegion.iHeight = 0;
@@ -143,7 +143,7 @@ inline Void CUBLASContext::Add( CUDADeviceMemory * outVectorY, const CUDADeviceM
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = outVectorY->GetWidth();
 	hRegion.iHeight = 0;
@@ -152,12 +152,40 @@ inline Void CUBLASContext::Add( CUDADeviceMemory * outVectorY, const CUDADeviceM
 }
 
 template<class T>
+inline Void CUBLASContext::MulTriangular( CUDADeviceMemory * outVectorX, const CUDADeviceMemory * pTriangularMatrixA,
+										  CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOp, Bool bMainDiagIsUnity ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iZ = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = pTriangularMatrixA->GetWidth();
+	hRegion.iHeight = pTriangularMatrixA->GetHeight();
+	hRegion.iDepth = 0;
+	MulTriangular<T>( outVectorX, hPosition, pTriangularMatrixA, hPosition, hRegion, iFillMode, iTransOp, bMainDiagIsUnity );
+}
+
+template<class T>
+inline Void CUBLASContext::MulTriangularBanded( CUDADeviceMemory * outVectorX, const CUDADeviceMemory * pTriangularBandedMatrixA,
+												SizeT iExpandedSizeA, SizeT iSubDiagsCount, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOp, Bool bMainDiagIsUnity ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iZ = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = pTriangularBandedMatrixA->GetWidth();
+	hRegion.iHeight = pTriangularBandedMatrixA->GetHeight();
+	hRegion.iDepth = 0;
+	MulTriangularBanded<T>( outVectorX, hPosition, pTriangularBandedMatrixA, hPosition, hRegion, iExpandedSizeA, iSubDiagsCount, iFillMode, iTransOp, bMainDiagIsUnity );
+}
+
+template<class T>
 inline Void CUBLASContext::MulAdd( CUDADeviceMemory * outVectorY, T fBeta, const CUDADeviceMemory * pVectorX, T fAlpha,
 								   const CUDADeviceMemory * pMatrixA, CUBLASContextTransposeOp iTransOp ) const {
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = pMatrixA->GetWidth();
 	hRegion.iHeight = pMatrixA->GetHeight();
@@ -166,15 +194,99 @@ inline Void CUBLASContext::MulAdd( CUDADeviceMemory * outVectorY, T fBeta, const
 }
 
 template<class T>
+inline Void CUBLASContext::MulAddSymmetric( CUDADeviceMemory * outVectorY, T fBeta, const CUDADeviceMemory * pVectorX, T fAlpha,
+											const CUDADeviceMemory * pSymmetricMatrixA, CUBLASContextFillMode iFillMode ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iZ = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = pSymmetricMatrixA->GetWidth();
+	hRegion.iHeight = pSymmetricMatrixA->GetHeight();
+	hRegion.iDepth = 0;
+	MulAddSymmetric<T>( outVectorY, hPosition, fBeta, pVectorX, hPosition, fAlpha, pSymmetricMatrixA, hPosition, hRegion, iFillMode );
+}
+
+template<class T>
+inline Void CUBLASContext::MulAddHermitian( CUDADeviceMemory * outVectorY, T fBeta, const CUDADeviceMemory * pVectorX, T fAlpha,
+											const CUDADeviceMemory * pHermitianMatrixA, CUBLASContextFillMode iFillMode ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iZ = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = pHermitianMatrixA->GetWidth();
+	hRegion.iHeight = pHermitianMatrixA->GetHeight();
+	hRegion.iDepth = 0;
+	MulAddHermitian<T>( outVectorY, hPosition, fBeta, pVectorX, hPosition, fAlpha, pHermitianMatrixA, hPosition, hRegion, iFillMode );
+}
+
+template<class T>
 inline Void CUBLASContext::MulAddBanded( CUDADeviceMemory * outVectorY, T fBeta, const CUDADeviceMemory * pVectorX, T fAlpha,
 										 const CUDADeviceMemory * pBandedMatrixA, SizeT iExpandedSizeA, SizeT iLowerDiagsCount, SizeT iUpperDiagsCount, CUBLASContextTransposeOp iTransOp ) const {
 	CUDAMemoryPosition hPosition;
 	hPosition.iX = 0;
 	hPosition.iY = 0;
-	hPosition.iY = 0;
+	hPosition.iZ = 0;
 	CUDAMemoryRegion hRegion;
 	hRegion.iWidth = pBandedMatrixA->GetWidth();
 	hRegion.iHeight = pBandedMatrixA->GetHeight();
 	hRegion.iDepth = 0;
 	MulAddBanded<T>( outVectorY, hPosition, fBeta, pVectorX, hPosition, fAlpha, pBandedMatrixA, hPosition, hRegion, iExpandedSizeA, iLowerDiagsCount, iUpperDiagsCount, iTransOp );
+}
+
+template<class T>
+inline Void CUBLASContext::MulAddSymmetricBanded( CUDADeviceMemory * outVectorY, T fBeta, const CUDADeviceMemory * pVectorX, T fAlpha,
+												  const CUDADeviceMemory * pSymmetricBandedMatrixA, SizeT iExpandedSizeA, SizeT iSubDiagsCount, CUBLASContextFillMode iFillMode ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iZ = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = pSymmetricBandedMatrixA->GetWidth();
+	hRegion.iHeight = pSymmetricBandedMatrixA->GetHeight();
+	hRegion.iDepth = 0;
+	MulAddSymmetricBanded<T>( outVectorY, hPosition, fBeta, pVectorX, hPosition, fAlpha, pSymmetricBandedMatrixA, hPosition, hRegion, iExpandedSizeA, iSubDiagsCount, iFillMode );
+}
+
+template<class T>
+inline Void CUBLASContext::MulAddHermitianBanded( CUDADeviceMemory * outVectorY, T fBeta, const CUDADeviceMemory * pVectorX, T fAlpha,
+												  const CUDADeviceMemory * pHermitianBandedMatrixA, SizeT iExpandedSizeA, SizeT iSubDiagsCount, CUBLASContextFillMode iFillMode ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iZ = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = pHermitianBandedMatrixA->GetWidth();
+	hRegion.iHeight = pHermitianBandedMatrixA->GetHeight();
+	hRegion.iDepth = 0;
+	MulAddHermitianBanded<T>( outVectorY, hPosition, fBeta, pVectorX, hPosition, fAlpha, pHermitianBandedMatrixA, hPosition, hRegion, iExpandedSizeA, iSubDiagsCount, iFillMode );
+}
+
+template<class T>
+inline Void CUBLASContext::SolveTriangular( CUDADeviceMemory * outVectorX, const CUDADeviceMemory * pTriangularMatrixA,
+											CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOp, Bool bMainDiagIsUnity ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iZ = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = pTriangularMatrixA->GetWidth();
+	hRegion.iHeight = pTriangularMatrixA->GetHeight();
+	hRegion.iDepth = 0;
+	SolveTriangular<T>( outVectorX, hPosition, pTriangularMatrixA, hPosition, hRegion, iFillMode, iTransOp, bMainDiagIsUnity );
+}
+
+template<class T>
+inline Void CUBLASContext::SolveTriangularBanded( CUDADeviceMemory * outVectorX, const CUDADeviceMemory * pTriangularBandedMatrixA,
+												  SizeT iExpandedSizeA, SizeT iSubDiagsCount, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOp, Bool bMainDiagIsUnity ) const {
+	CUDAMemoryPosition hPosition;
+	hPosition.iX = 0;
+	hPosition.iY = 0;
+	hPosition.iZ = 0;
+	CUDAMemoryRegion hRegion;
+	hRegion.iWidth = pTriangularBandedMatrixA->GetWidth();
+	hRegion.iHeight = pTriangularBandedMatrixA->GetHeight();
+	hRegion.iDepth = 0;
+	SolveTriangularBanded<T>( outVectorX, hPosition, pTriangularBandedMatrixA, hPosition, hRegion, iExpandedSizeA, iSubDiagsCount, iFillMode, iTransOp, bMainDiagIsUnity );
 }

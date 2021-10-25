@@ -337,6 +337,15 @@ enum CUBLASContextTransposeOp {
 extern CUBLASContextTransposeOp CUBLASContextTransposeOpFromCUDA[CUBLAS_CONTEXT_TRANSOP_COUNT];
 extern DWord CUBLASContextTransposeOpToCUDA[CUBLAS_CONTEXT_TRANSOP_COUNT];
 
+enum CUBLASContextFillMode {
+	CUBLAS_CONTEXT_FILLMODE_LOWER = 0,
+	CUBLAS_CONTEXT_FILLMODE_UPPER,
+	CUBLAS_CONTEXT_FILLMODE_FULL,
+	CUBLAS_CONTEXT_FILLMODE_COUNT
+};
+extern CUBLASContextFillMode CUBLASContextFillModeFromCUDA[CUBLAS_CONTEXT_FILLMODE_COUNT];
+extern DWord CUBLASContextFillModeToCUDA[CUBLAS_CONTEXT_FILLMODE_COUNT];
+
 /////////////////////////////////////////////////////////////////////////////////
 // Backward Includes (Inlines & Templates)
 #include "CUDAMappings.inl"

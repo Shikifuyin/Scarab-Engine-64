@@ -307,6 +307,59 @@ extern DWord CUDAStreamCaptureStatusToCUDA[CUDA_STREAM_CAPTURE_STATUS_COUNT];
 
 /////////////////////////////////////////////////////////////////////////////////
 // CUBLAS Context Declarations
+typedef Float CUDAReal32;
+typedef Double CUDAReal64;
+struct __declspec(align(8)) CUDAComplex32 {
+	CUDAComplex32()
+	{
+		fX = 0.0f;
+		fY = 0.0f;
+	}
+	CUDAComplex32( CUDAReal32 X, CUDAReal32 Y )
+	{
+		fX = X;
+		fY = Y;
+	}
+	~CUDAComplex32() {}
+
+	inline CUDAComplex32 & operator=( const CUDAComplex32 & rhs ) {
+		fX = rhs.fX;
+		fY = rhs.fY;
+		return (*this);
+	}
+
+	Void _ConvertFromCUDA( const Void * pCUDAComplex );
+	Void _ConvertToCUDA( Void * pCUDAComplex ) const;
+
+	CUDAReal32 fX;
+	CUDAReal32 fY;
+};
+struct __declspec(align(16)) CUDAComplex64 {
+	CUDAComplex64()
+	{
+		fX = 0.0;
+		fY = 0.0;
+	}
+	CUDAComplex64( CUDAReal64 X, CUDAReal64 Y )
+	{
+		fX = X;
+		fY = Y;
+	}
+	~CUDAComplex64() {}
+
+	inline CUDAComplex64 & operator=( const CUDAComplex64 & rhs ) {
+		fX = rhs.fX;
+		fY = rhs.fY;
+		return (*this);
+	}
+
+	Void _ConvertFromCUDA( const Void * pCUDAComplex );
+	Void _ConvertToCUDA( Void * pCUDAComplex ) const;
+
+	CUDAReal64 fX;
+	CUDAReal64 fY;
+};
+
 enum CUBLASContextPointerMode {
 	CUBLAS_CONTEXT_POINTER_MODE_HOST = 0,
 	CUBLAS_CONTEXT_POINTER_MODE_DEVICE,

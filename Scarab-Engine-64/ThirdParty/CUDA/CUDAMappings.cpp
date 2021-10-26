@@ -440,6 +440,32 @@ DWord CUDAStreamCaptureStatusToCUDA[CUDA_STREAM_CAPTURE_STATUS_COUNT] = {
 
 /////////////////////////////////////////////////////////////////////////////////
 // CUBLAS Context Definitions
+Void CUDAComplex32::_ConvertFromCUDA( const Void * pCUDAComplex )
+{
+	const cuComplex * pIn = (const cuComplex *)pCUDAComplex;
+	fX = pIn->x;
+	fY = pIn->y;
+}
+Void CUDAComplex32::_ConvertToCUDA( Void * pCUDAComplex ) const
+{
+	cuComplex * pOut = (cuComplex*)pCUDAComplex;
+	pOut->x = fX;
+	pOut->y = fY;
+}
+
+Void CUDAComplex64::_ConvertFromCUDA( const Void * pCUDAComplex )
+{
+	const cuDoubleComplex * pIn = (const cuDoubleComplex *)pCUDAComplex;
+	fX = pIn->x;
+	fY = pIn->y;
+}
+Void CUDAComplex64::_ConvertToCUDA( Void * pCUDAComplex ) const
+{
+	cuDoubleComplex * pOut = (cuDoubleComplex*)pCUDAComplex;
+	pOut->x = fX;
+	pOut->y = fY;
+}
+
 CUBLASContextPointerMode CUBLASContextPointerModeFromCUDA[CUBLAS_CONTEXT_POINTER_MODE_COUNT] = {
 	CUBLAS_CONTEXT_POINTER_MODE_HOST,
 	CUBLAS_CONTEXT_POINTER_MODE_DEVICE

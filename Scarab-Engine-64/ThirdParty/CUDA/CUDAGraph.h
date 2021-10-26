@@ -145,7 +145,7 @@ protected:
 	const CUDAMemory * m_pSrc;
 	
 	Bool m_bIsFlatCopy;
-	union _copy_params {
+	struct _copy_params {
 		struct _copy_params_flat {
 			SizeT iSize;
 		} hFlat;

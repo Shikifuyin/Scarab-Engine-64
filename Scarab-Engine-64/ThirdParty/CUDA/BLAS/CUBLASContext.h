@@ -24,8 +24,9 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "../CUDAMemory.h"
+#include "../CUDAMappings.h"
 #include "../CUDAAsynchronous.h"
+#include "../CUDAMemory.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
@@ -117,61 +118,9 @@ public:
 					const CUDAHostMemory * pHostMatrix, const CUDAMemoryPosition & hHostPosition,
 					const CUDAMemoryRegion & hCopyRegion, CUDAStream * pStream = NULL );
 
-	// Vector-Scalar Functions //////////////////////////////////////////////////
-
-	template<class T> Void Copy( CUDADeviceMemory * outDeviceVector, const CUDAMemoryPosition & outDevicePosition,
-								 const CUDADeviceMemory * pDeviceVector, const CUDAMemoryPosition & hDevicePosition,
-								 const CUDAMemoryRegion & hRegion );
-	template<class T> inline Void Copy( CUDADeviceMemory * outDeviceVector, const CUDADeviceMemory * pDeviceVector ) const;
-
-	template<class T> Void Swap( CUDADeviceMemory * pDeviceVectorA, const CUDAMemoryPosition & hDevicePositionA,
-								 CUDADeviceMemory * pDeviceVectorB, const CUDAMemoryPosition & hDevicePositionB,
-								 const CUDAMemoryRegion & hRegion );
-	template<class T> inline Void Swap( CUDADeviceMemory * pDeviceVectorA, CUDADeviceMemory * pDeviceVectorB ) const;
-
-	template<class T> SizeT AbsMin( const CUDADeviceMemory * pVector, const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion ) const;
-	template<class T> inline SizeT AbsMin( const CUDADeviceMemory * pVector ) const;
-
-	template<class T> SizeT AbsMax( const CUDADeviceMemory * pVector, const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion ) const;
-	template<class T> inline SizeT AbsMax( const CUDADeviceMemory * pVector ) const;
-	
-	template<class T> T AbsSum( const CUDADeviceMemory * pVector, const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion ) const;
-	template<class T> inline T AbsSum( const CUDADeviceMemory * pVector ) const;
-
-	template<class T> T Dot( const CUDADeviceMemory * pVectorA, const CUDAMemoryPosition & hPositionA,
-							 const CUDADeviceMemory * pVectorB, const CUDAMemoryPosition & hPositionB,
-							 const CUDAMemoryRegion & hRegion, Bool bConjugateB = false ) const;
-	template<class T> inline T Dot( const CUDADeviceMemory * pVectorA, const CUDADeviceMemory * pVectorB, Bool bConjugateB = false ) const;
-
-	template<class T> T Norm( const CUDADeviceMemory * pVector, const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion ) const;
-	template<class T> inline T Norm( const CUDADeviceMemory * pVector ) const;
-
-	template<class T> Void Scale( CUDADeviceMemory * pVector, const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion, T fAlpha ) const;
-	template<class T> inline Void Scale( CUDADeviceMemory * pVector, T fAlpha ) const;
-
-		// Y = Y + Alpha * X
-	template<class T> Void MulAdd( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY,
-								   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX,
-								   T fAlpha, const CUDAMemoryRegion & hRegion ) const;
-	template<class T> inline Void MulAdd( CUDADeviceMemory * outVectorY, const CUDADeviceMemory * pVectorX, T fAlpha ) const;
-
-		// Y = Y + X
-	template<class T> inline Void Add( CUDADeviceMemory * outVectorY, const CUDAMemoryPosition & outPositionY,
-									   const CUDADeviceMemory * pVectorX, const CUDAMemoryPosition & hPositionX,
-									   const CUDAMemoryRegion & hRegion ) const;
-	template<class T> inline Void Add( CUDADeviceMemory * outVectorY, const CUDADeviceMemory * pVectorX ) const;
-
-		// Givens Rotations
-	// cublas<t>rot, cublas<t>rotg, cublas<t>rotm, cublas<t>rotmg
 
 	// Matrix-Vector Functions //////////////////////////////////////////////////
 
-		// X = Op(A) * X
-	template<class T> Void MulTriangular( CUDADeviceMemory * outVectorX, const CUDAMemoryPosition & outPositionX,
-										  const CUDADeviceMemory * pTriangularMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA,
-										  CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOp, Bool bMainDiagIsUnity ) const;
-	template<class T> inline Void MulTriangular( CUDADeviceMemory * outVectorX, const CUDADeviceMemory * pTriangularMatrixA,
-												 CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOp, Bool bMainDiagIsUnity ) const;
 
 		// X = Op(A) * X
 		// Banded Matrix is stored column-wise with the following row order :
@@ -274,9 +223,7 @@ public:
 	template<class T> inline Void SolveTriangularBanded( CUDADeviceMemory * outVectorX, const CUDADeviceMemory * pTriangularBandedMatrixA,
 														 SizeT iExpandedSizeA, SizeT iSubDiagsCount, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOp, Bool bMainDiagIsUnity ) const;
 
-		// UNIMPLEMENTED (for now ...) :
-	// Packed versions : cublas<t>spmv, cublas<t>tpmv, cublas<t>tpsv, cublas<t>hpmv
-	// Rank-Update Operations : cublas<t>ger, cublas<t>spr, cublas<t>spr2, cublas<t>syr, cublas<t>syr2, cublas<t>her, cublas<t>her2, cublas<t>hpr, cublas<t>hpr2
+	
 
 	// Matrix-Matrix Functions //////////////////////////////////////////////////
 
@@ -362,6 +309,8 @@ public:
 	// Rank-Update Operations : cublas<t>syrk, cublas<t>syr2k, cublas<t>syrkx, cublas<t>herk, cublas<t>her2k, cublas<t>herkx
 
 private:
+	friend class CUBLASVectorOp;
+
 	Void * m_hContext;
 };
 

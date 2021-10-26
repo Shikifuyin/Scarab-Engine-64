@@ -39,8 +39,22 @@ enum CUDAMemoryShape {
 	CUDA_MEMORY_SHAPE_3D
 };
 
-typedef struct _cuda_memory_position {
-	inline struct _cuda_memory_position & operator=( const struct _cuda_memory_position & rhs ) {
+struct CUDAMemoryPosition {
+	CUDAMemoryPosition()
+	{
+		iX = 0;
+		iY = 0;
+		iZ = 0;
+	}
+	CUDAMemoryPosition( SizeT X, SizeT Y, SizeT Z )
+	{
+		iX = X;
+		iY = Y;
+		iZ = Z;
+	}
+	~CUDAMemoryPosition() {}
+
+	inline CUDAMemoryPosition & operator=( const CUDAMemoryPosition & rhs ) {
 		iX = rhs.iX;
 		iY = rhs.iY;
 		iZ = rhs.iZ;
@@ -50,10 +64,24 @@ typedef struct _cuda_memory_position {
 	SizeT iX;
 	SizeT iY;
 	SizeT iZ;
-} CUDAMemoryPosition;
+};
 
-typedef struct _cuda_memory_region {
-	inline struct _cuda_memory_region & operator=( const struct _cuda_memory_region & rhs ) {
+struct CUDAMemoryRegion {
+	CUDAMemoryRegion()
+	{
+		iWidth = 0;
+		iHeight = 0;
+		iDepth = 0;
+	}
+	CUDAMemoryRegion( SizeT Width, SizeT Height, SizeT Depth )
+	{
+		iWidth = Width;
+		iHeight = Height;
+		iDepth = Depth;
+	}
+	~CUDAMemoryRegion() {}
+
+	inline CUDAMemoryRegion & operator=( const CUDAMemoryRegion & rhs ) {
 		iWidth = rhs.iWidth;
 		iHeight = rhs.iHeight;
 		iDepth = rhs.iDepth;
@@ -63,7 +91,7 @@ typedef struct _cuda_memory_region {
 	SizeT iWidth;
 	SizeT iHeight;
 	SizeT iDepth;
-} CUDAMemoryRegion;
+};
 
 // Prototypes
 class CUDAGraph;

@@ -588,6 +588,12 @@
     <ClInclude Include="ThirdParty\CUDA\CUSolver\CUSolverContextDense.h">
       <Filter>Header Files\ThirdParty\CUDA\CUSolver</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASVectorOp.h">
+      <Filter>Header Files\ThirdParty\CUDA\BLAS</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASMatrixOp.h">
+      <Filter>Header Files\ThirdParty\CUDA\BLAS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThirdParty\System\Platform.inl">
@@ -935,6 +941,12 @@
     <None Include="ThirdParty\CUDA\CUSolver\CUSolverContextDense.inl">
       <Filter>Source Files\ThirdParty\CUDA\CUSolver</Filter>
     </None>
+    <None Include="ThirdParty\CUDA\BLAS\CUBLASVectorOp.inl">
+      <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
+    </None>
+    <None Include="ThirdParty\CUDA\BLAS\CUBLASMatrixOp.inl">
+      <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -1281,6 +1293,12 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\CUDA\CUSolver\CUSolverContextDense.cpp">
       <Filter>Source Files\ThirdParty\CUDA\CUSolver</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASVectorOp.cpp">
+      <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASMatrixOp.cpp">
+      <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

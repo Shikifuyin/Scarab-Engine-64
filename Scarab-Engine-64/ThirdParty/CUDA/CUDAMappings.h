@@ -346,6 +346,14 @@ enum CUBLASContextFillMode {
 extern CUBLASContextFillMode CUBLASContextFillModeFromCUDA[CUBLAS_CONTEXT_FILLMODE_COUNT];
 extern DWord CUBLASContextFillModeToCUDA[CUBLAS_CONTEXT_FILLMODE_COUNT];
 
+enum CUBLASContextSideMode {
+	CUBLAS_CONTEXT_SIDEMODE_LEFT = 0,
+	CUBLAS_CONTEXT_SIDEMODE_RIGHT,
+	CUBLAS_CONTEXT_SIDEMODE_COUNT
+};
+extern CUBLASContextSideMode CUBLASContextSideModeFromCUDA[CUBLAS_CONTEXT_SIDEMODE_COUNT];
+extern DWord CUBLASContextSideModeToCUDA[CUBLAS_CONTEXT_SIDEMODE_COUNT];
+
 /////////////////////////////////////////////////////////////////////////////////
 // Backward Includes (Inlines & Templates)
 #include "CUDAMappings.inl"

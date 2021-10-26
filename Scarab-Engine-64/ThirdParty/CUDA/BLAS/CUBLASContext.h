@@ -34,7 +34,7 @@
 typedef Void (*CUBLASLogCallback)( const Char * strMessage );
 
 // Batched Operations
-#define CUBLAS_BATCH_MAX_COUNT 32768
+#define CUBLAS_BATCH_MAX_COUNT 256
 
 /////////////////////////////////////////////////////////////////////////////////
 // The CUBLASContext class
@@ -280,6 +280,16 @@ public:
 
 	// Matrix-Matrix Functions //////////////////////////////////////////////////
 
+		// C = Alpha * Op(A) * B (CUBLAS_CONTEXT_SIDEMODE_LEFT)
+		// C = Alpha * B * Op(A) (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
+		// To reproduce pure BLAS behaviour, one can pass the same memory for B and C matrices
+	template<class T> Void MulTriangular( CUDADeviceMemory * outMatrixC, const CUDAMemoryPosition & outPositionC, const CUDAMemoryRegion & outRegionC,
+										  const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA, T fAlpha,
+										  const CUDADeviceMemory * pMatrixB, const CUDAMemoryPosition & hPositionB, const CUDAMemoryRegion & hRegionB,
+										  CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOpA, Bool bMainDiagIsUnityA ) const;
+	template<class T> inline Void MulTriangular( CUDADeviceMemory * outMatrixC, const CUDADeviceMemory * pMatrixA, T fAlpha, const CUDADeviceMemory * pMatrixB,
+												 CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOpA, Bool bMainDiagIsUnityA ) const;
+
 		// C = Alpha * Op(A) * Op(B) + Beta * C
 	template<class T> Void MulAdd( CUDADeviceMemory * outMatrixC, const CUDAMemoryPosition & outPositionC, const CUDAMemoryRegion & outRegionC, T fBeta,
 								   const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA, T fAlpha,
@@ -288,10 +298,28 @@ public:
 	template<class T> inline Void MulAdd( CUDADeviceMemory * outMatrixC, T fBeta, const CUDADeviceMemory * pMatrixA, T fAlpha, const CUDADeviceMemory * pMatrixB,
 										  CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB, Bool bUseComplexGaussReduction = false ) const;
 
+		// C = Alpha * A * B + Beta * C (CUBLAS_CONTEXT_SIDEMODE_LEFT)
+		// C = Alpha * B * A + Beta * C (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
+	template<class T> Void MulAddSymmetric( CUDADeviceMemory * outMatrixC, const CUDAMemoryPosition & outPositionC, const CUDAMemoryRegion & outRegionC, T fBeta,
+											const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA, T fAlpha,
+											const CUDADeviceMemory * pMatrixB, const CUDAMemoryPosition & hPositionB, const CUDAMemoryRegion & hRegionB,
+											CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode ) const;
+	template<class T> inline Void MulAddSymmetric( CUDADeviceMemory * outMatrixC, T fBeta, const CUDADeviceMemory * pMatrixA, T fAlpha, const CUDADeviceMemory * pMatrixB,
+												   CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode ) const;
+
+		// C = Alpha * A * B + Beta * C (CUBLAS_CONTEXT_SIDEMODE_LEFT)
+		// C = Alpha * B * A + Beta * C (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
+	template<class T> Void MulAddHermitian( CUDADeviceMemory * outMatrixC, const CUDAMemoryPosition & outPositionC, const CUDAMemoryRegion & outRegionC, T fBeta,
+											const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA, T fAlpha,
+											const CUDADeviceMemory * pMatrixB, const CUDAMemoryPosition & hPositionB, const CUDAMemoryRegion & hRegionB,
+											CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode ) const;
+	template<class T> inline Void MulAddHermitian( CUDADeviceMemory * outMatrixC, T fBeta, const CUDADeviceMemory * pMatrixA, T fAlpha, const CUDADeviceMemory * pMatrixB,
+												   CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode ) const;
+
 		// Ci = Alpha * Op(Ai) * Op(Bi) + Beta * Ci
 		// Matrices are presented in arrays of separated CUDADeviceMemory instances
 		// A specific position can be given for each matrix inside its CUDADeviceMemory instance
-		// Max Batch Count is CUBLAS_BATCH_MAX_COUNT
+		// Max Batch Count is CUBLAS_BATCH_MAX_COUNT, Better for small batch counts
 	template<class T> Void MulAddBatched( SizeT iBatchCount, CUDADeviceMemory * outMatricesC, const CUDAMemoryPosition * outPositionsC, const CUDAMemoryRegion & outRegionC, T fBeta,
 										  const CUDADeviceMemory * arrMatricesA, const CUDAMemoryPosition * arrPositionsA, const CUDAMemoryRegion & hRegionA, T fAlpha,
 										  const CUDADeviceMemory * arrMatricesB, const CUDAMemoryPosition * arrPositionsB, const CUDAMemoryRegion & hRegionB,
@@ -301,11 +329,37 @@ public:
 		// Matrices are presented in 3D-shaped CUDADeviceMemory instances as lists of matrices
 		// Stride values are in number of elements
 		// Stride values must prevent overlap by being at least larger than a single matrix size (ie. Width * Height)
-		// Batch Count is limited by matrix arrays depth
+		// Batch Count is limited by matrix arrays depth, Better for large batch counts
 	template<class T> Void MulAddStrideBatched( SizeT iBatchCount, CUDADeviceMemory * outMatricesC, const CUDAMemoryPosition & outStartPositionC, const CUDAMemoryRegion & outRegionC, SizeT outStrideC, T fBeta,
 												const CUDADeviceMemory * arrMatricesA, const CUDAMemoryPosition & hStartPositionA, const CUDAMemoryRegion & hRegionA, SizeT iStrideA, T fAlpha,
 												const CUDADeviceMemory * arrMatricesB, const CUDAMemoryPosition & hStartPositionB, const CUDAMemoryRegion & hRegionB, SizeT iStrideB,
 												CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB ) const;
+
+		// X = Alpha * Inverse(Op(A)) * X (CUBLAS_CONTEXT_SIDEMODE_LEFT)
+		// X = Alpha * X * Inverse(Op(A)) (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
+		// Solves Triangular System Op(A)*X = Alpha * B, B is given in the X parameter and gets overwritten. (CUBLAS_CONTEXT_SIDEMODE_LEFT)
+		// Solves Triangular System X*Op(A) = Alpha * B, B is given in the X parameter and gets overwritten. (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
+		// Does NOT test for singularity or near-singularity !
+	template<class T> Void SolveTriangular( CUDADeviceMemory * outMatrixX, const CUDAMemoryPosition & outPositionX, const CUDAMemoryRegion & outRegionX,
+											const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA, T fAlpha,
+											CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOpA, Bool bMainDiagIsUnityA ) const;
+	template<class T> inline Void SolveTriangular( CUDADeviceMemory * outMatrixX, const CUDADeviceMemory * pMatrixA, T fAlpha,
+												   CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOpA, Bool bMainDiagIsUnityA ) const;
+
+		// Xi = Alpha * Inverse(Op(Ai)) * Xi (CUBLAS_CONTEXT_SIDEMODE_LEFT)
+		// Xi = Alpha * Xi * Inverse(Op(Ai)) (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
+		// Solves Triangular Systems Op(Ai)*Xi = Alpha * Bi, B is given in the Xi parameter and gets overwritten. (CUBLAS_CONTEXT_SIDEMODE_LEFT)
+		// Solves Triangular Systems Xi*Op(Ai) = Alpha * Bi, B is given in the Xi parameter and gets overwritten. (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
+		// Does NOT test for singularity or near-singularity !
+		// Matrices are presented in arrays of separated CUDADeviceMemory instances
+		// A specific position can be given for each matrix inside its CUDADeviceMemory instance
+		// Max Batch Count is CUBLAS_BATCH_MAX_COUNT, Better for small batch counts
+	template<class T> Void SolveTriangularBatched( SizeT iBatchCount, CUDADeviceMemory * outMatricesX, const CUDAMemoryPosition * outPositionsX, const CUDAMemoryRegion & outRegionX,
+												   const CUDADeviceMemory * arrMatricesA, const CUDAMemoryPosition * arrPositionsA, const CUDAMemoryRegion & hRegionA, T fAlpha,
+												   CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOpA, Bool bMainDiagIsUnityA ) const;
+
+			// UNIMPLEMENTED (for now ...) :
+	// Rank-Update Operations : cublas<t>syrk, cublas<t>syr2k, cublas<t>syrkx, cublas<t>herk, cublas<t>her2k, cublas<t>herkx
 
 private:
 	Void * m_hContext;

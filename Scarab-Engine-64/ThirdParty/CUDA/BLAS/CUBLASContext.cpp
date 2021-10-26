@@ -42,7 +42,7 @@ Void CUBLASContext::Create()
 	cublasHandle_t hCUBLASContext = NULL;
 	
 	cublasStatus_t iError = cublasCreate( &hCUBLASContext );
-	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
+	DebugAssert( iError == CUBLAS_STATUS_SUCCESS && hCUBLASContext != NULL );
 	
 	m_hContext = hCUBLASContext;
 }

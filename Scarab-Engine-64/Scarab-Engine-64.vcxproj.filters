@@ -235,6 +235,12 @@
     <Filter Include="Source Files\ThirdParty\CUDA\BLAS">
       <UniqueIdentifier>{ef67c299-264e-466e-8e93-3b9f1f57d164}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ThirdParty\CUDA\CUSolver">
+      <UniqueIdentifier>{ae7f1f90-5bfe-4363-bfb6-a68dfc78fdcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\CUDA\CUSolver">
+      <UniqueIdentifier>{2835be90-ef5a-43a3-a3d3-21330f1ef636}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\System\Platform.h">
@@ -578,6 +584,9 @@
     </ClInclude>
     <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASContext.h">
       <Filter>Header Files\ThirdParty\CUDA\BLAS</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\CUSolver\CUSolverContextDense.h">
+      <Filter>Header Files\ThirdParty\CUDA\CUSolver</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -923,6 +932,9 @@
     <None Include="ThirdParty\CUDA\BLAS\CUBLASContext.inl">
       <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
     </None>
+    <None Include="ThirdParty\CUDA\CUSolver\CUSolverContextDense.inl">
+      <Filter>Source Files\ThirdParty\CUDA\CUSolver</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThirdParty\System\Platform.cpp">
@@ -1266,6 +1278,9 @@
     </ClCompile>
     <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASContext.cpp">
       <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\CUSolver\CUSolverContextDense.cpp">
+      <Filter>Source Files\ThirdParty\CUDA\CUSolver</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

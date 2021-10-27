@@ -205,6 +205,7 @@ Void CUBLASMatrixVectorOp::MulAdd( T fScaleX, T fScaleY, CUBLASContextTransposeO
 	}
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 }
+
 template<class T>
 Void CUBLASMatrixVectorOp::MulAddSymmetric( T fScaleX, T fScaleY, CUBLASContextFillMode iFillMode )
 {

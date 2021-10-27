@@ -25,11 +25,18 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // CUBLASMatrixMatrixOp implementation
-CUBLASMatrixMatrixOp::CUBLASMatrixMatrixOp( CUBLASContext * pCUBLASContext )
+CUBLASMatrixMatrixOp::CUBLASMatrixMatrixOp( CUBLASContext * pCUBLASContext ):
+	m_hMatrixPositionA(), m_hMatrixRegionA(),
+	m_hMatrixPositionB(), m_hMatrixRegionB(),
+	m_hMatrixPositionC(), m_hMatrixRegionC()
 {
 	DebugAssert( pCUBLASContext != NULL && pCUBLASContext->IsCreated() );
 
 	m_pCUBLASContext = pCUBLASContext;
+
+	m_pMatrixA = NULL;
+	m_pMatrixB = NULL;
+	m_pMatrixC = NULL;
 }
 CUBLASMatrixMatrixOp::~CUBLASMatrixMatrixOp()
 {

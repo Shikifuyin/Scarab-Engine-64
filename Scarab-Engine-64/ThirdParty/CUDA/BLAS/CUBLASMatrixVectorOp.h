@@ -59,10 +59,10 @@ public:
 	template<class T> inline Bool ValidateInputX() const;
 	template<class T> inline Bool ValidateInputXY() const;
 
-	// Operations :
-		// Y = Alpha * Op(A) * X + Beta * Y
+	// Operations
+		// Y = fScaleX * Op(A) * X + fScaleY * Y
 	template<class T> Void MulAdd( T fScaleX, T fScaleY, CUBLASContextTransposeOp iTransOp );
-		// Y = Alpha * A * X + Beta * Y
+		// Y = fScaleX * A * X + fScaleY * Y
 	template<class T> Void MulAddSymmetric( T fScaleX, T fScaleY, CUBLASContextFillMode iFillMode );
 	template<class T> Void MulAddHermitian( T fScaleX, T fScaleY, CUBLASContextFillMode iFillMode );
 
@@ -75,14 +75,14 @@ public:
 	template<class T> Void SolveTriangular( CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOp, Bool bMainDiagIsUnity );
 
 	// Operations : Banded Matrices
-		// Y = Alpha * Op(A) * X + Beta * Y
+		// Y = fScaleX * Op(A) * X + fScaleY * Y
 		// Banded Matrix is stored column-wise with the following row order :
 		// updiagN, ..., updiag2, updiag1, maindiag, lowdiag1, lowdiag2, ..., lowdiagM
 		// A(i,j) is stored at memory location :
 		// [k+i-j,j] with k = number of upper diagonals
 	template<class T> Void MulAddBanded( T fScaleX, T fScaleY, SizeT iExpandedSizeA, SizeT iLowerDiagsCount, SizeT iUpperDiagsCount, CUBLASContextTransposeOp iTransOp );
 
-		// Y = Alpha * A * X + Beta * Y
+		// Y = fScaleX * A * X + fScaleY * Y
 		// Banded Matrix is stored column-wise with the following row order :
 		// Fill Mode Lower : maindiag, subdiag1, subdiag2, ..., subdiagN
 		// Fill Mode Upper : subdiagN, ..., subdiag2, subdiag1, maindiag

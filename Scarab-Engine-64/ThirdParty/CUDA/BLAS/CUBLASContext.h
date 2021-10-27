@@ -124,41 +124,9 @@ public:
 
 	// Matrix-Matrix Functions //////////////////////////////////////////////////
 
-		// C = Alpha * Op(A) * B (CUBLAS_CONTEXT_SIDEMODE_LEFT)
-		// C = Alpha * B * Op(A) (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
-		// To reproduce pure BLAS behaviour, one can pass the same memory for B and C matrices
-	template<class T> Void MulTriangular( CUDADeviceMemory * outMatrixC, const CUDAMemoryPosition & outPositionC, const CUDAMemoryRegion & outRegionC,
-										  const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA, T fAlpha,
-										  const CUDADeviceMemory * pMatrixB, const CUDAMemoryPosition & hPositionB, const CUDAMemoryRegion & hRegionB,
-										  CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOpA, Bool bMainDiagIsUnityA ) const;
-	template<class T> inline Void MulTriangular( CUDADeviceMemory * outMatrixC, const CUDADeviceMemory * pMatrixA, T fAlpha, const CUDADeviceMemory * pMatrixB,
-												 CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOpA, Bool bMainDiagIsUnityA ) const;
 
-		// C = Alpha * Op(A) * Op(B) + Beta * C
-	template<class T> Void MulAdd( CUDADeviceMemory * outMatrixC, const CUDAMemoryPosition & outPositionC, const CUDAMemoryRegion & outRegionC, T fBeta,
-								   const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA, T fAlpha,
-								   const CUDADeviceMemory * pMatrixB, const CUDAMemoryPosition & hPositionB, const CUDAMemoryRegion & hRegionB,
-								   CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB, Bool bUseComplexGaussReduction = false ) const;
-	template<class T> inline Void MulAdd( CUDADeviceMemory * outMatrixC, T fBeta, const CUDADeviceMemory * pMatrixA, T fAlpha, const CUDADeviceMemory * pMatrixB,
-										  CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB, Bool bUseComplexGaussReduction = false ) const;
 
-		// C = Alpha * A * B + Beta * C (CUBLAS_CONTEXT_SIDEMODE_LEFT)
-		// C = Alpha * B * A + Beta * C (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
-	template<class T> Void MulAddSymmetric( CUDADeviceMemory * outMatrixC, const CUDAMemoryPosition & outPositionC, const CUDAMemoryRegion & outRegionC, T fBeta,
-											const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA, T fAlpha,
-											const CUDADeviceMemory * pMatrixB, const CUDAMemoryPosition & hPositionB, const CUDAMemoryRegion & hRegionB,
-											CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode ) const;
-	template<class T> inline Void MulAddSymmetric( CUDADeviceMemory * outMatrixC, T fBeta, const CUDADeviceMemory * pMatrixA, T fAlpha, const CUDADeviceMemory * pMatrixB,
-												   CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode ) const;
 
-		// C = Alpha * A * B + Beta * C (CUBLAS_CONTEXT_SIDEMODE_LEFT)
-		// C = Alpha * B * A + Beta * C (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
-	template<class T> Void MulAddHermitian( CUDADeviceMemory * outMatrixC, const CUDAMemoryPosition & outPositionC, const CUDAMemoryRegion & outRegionC, T fBeta,
-											const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA, T fAlpha,
-											const CUDADeviceMemory * pMatrixB, const CUDAMemoryPosition & hPositionB, const CUDAMemoryRegion & hRegionB,
-											CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode ) const;
-	template<class T> inline Void MulAddHermitian( CUDADeviceMemory * outMatrixC, T fBeta, const CUDADeviceMemory * pMatrixA, T fAlpha, const CUDADeviceMemory * pMatrixB,
-												   CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode ) const;
 
 		// Ci = Alpha * Op(Ai) * Op(Bi) + Beta * Ci
 		// Matrices are presented in arrays of separated CUDADeviceMemory instances
@@ -179,16 +147,7 @@ public:
 												const CUDADeviceMemory * arrMatricesB, const CUDAMemoryPosition & hStartPositionB, const CUDAMemoryRegion & hRegionB, SizeT iStrideB,
 												CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB ) const;
 
-		// X = Alpha * Inverse(Op(A)) * X (CUBLAS_CONTEXT_SIDEMODE_LEFT)
-		// X = Alpha * X * Inverse(Op(A)) (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
-		// Solves Triangular System Op(A)*X = Alpha * B, B is given in the X parameter and gets overwritten. (CUBLAS_CONTEXT_SIDEMODE_LEFT)
-		// Solves Triangular System X*Op(A) = Alpha * B, B is given in the X parameter and gets overwritten. (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
-		// Does NOT test for singularity or near-singularity !
-	template<class T> Void SolveTriangular( CUDADeviceMemory * outMatrixX, const CUDAMemoryPosition & outPositionX, const CUDAMemoryRegion & outRegionX,
-											const CUDADeviceMemory * pMatrixA, const CUDAMemoryPosition & hPositionA, const CUDAMemoryRegion & hRegionA, T fAlpha,
-											CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOpA, Bool bMainDiagIsUnityA ) const;
-	template<class T> inline Void SolveTriangular( CUDADeviceMemory * outMatrixX, const CUDADeviceMemory * pMatrixA, T fAlpha,
-												   CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOpA, Bool bMainDiagIsUnityA ) const;
+
 
 		// Xi = Alpha * Inverse(Op(Ai)) * Xi (CUBLAS_CONTEXT_SIDEMODE_LEFT)
 		// Xi = Alpha * Xi * Inverse(Op(Ai)) (CUBLAS_CONTEXT_SIDEMODE_RIGHT)

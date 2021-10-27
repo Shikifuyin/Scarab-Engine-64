@@ -540,26 +540,26 @@ T CUBLASVectorVectorOp::Dot( Bool bConjugateY ) const
 		case typeid(CUDAComplex32):
 			if ( bConjugateY ) {
 				iError = cublasCdotc( hCUBLASContext, m_hVectorRegion.iWidth,
-									  (const cuComplex *)(m_pVectorX->GetPointer( m_hVectorPositionX )), m_pVectorX->GetStride(),
-									  (const cuComplex *)(m_pVectorY->GetPointer( m_hVectorPositionY )), m_pVectorY->GetStride(),
+									  (const cuComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+									  (const cuComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
 									  &fResult );
 			} else {
 				iError = cublasCdotu( hCUBLASContext, m_hVectorRegion.iWidth,
-									  (const cuComplex *)(m_pVectorX->GetPointer( m_hVectorPositionX )), m_pVectorX->GetStride(),
-									  (const cuComplex *)(m_pVectorY->GetPointer( m_hVectorPositionY )), m_pVectorY->GetStride(),
+									  (const cuComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+									  (const cuComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
 									  &fResult );
 			}
 			break;
 		case typeid(CUDAComplex64):
 			if ( bConjugateY ) {
 				iError = cublasZdotc( hCUBLASContext, m_hVectorRegion.iWidth,
-									  (const cuDoubleComplex *)(m_pVectorX->GetPointer( m_hVectorPositionX )), m_pVectorX->GetStride(),
-									  (const cuDoubleComplex *)(m_pVectorY->GetPointer( m_hVectorPositionY )), m_pVectorY->GetStride(),
+									  (const cuDoubleComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+									  (const cuDoubleComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
 									  &fResult );
 			} else {
 				iError = cublasZdotu( hCUBLASContext, m_hVectorRegion.iWidth,
-									  (const cuDoubleComplex *)(m_pVectorX->GetPointer( m_hVectorPositionX )), m_pVectorX->GetStride(),
-									  (const cuDoubleComplex *)(m_pVectorY->GetPointer( m_hVectorPositionY )), m_pVectorY->GetStride(),
+									  (const cuDoubleComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+									  (const cuDoubleComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
 									  &fResult );
 			}
 			break;

@@ -591,7 +591,10 @@
     <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASVectorOp.h">
       <Filter>Header Files\ThirdParty\CUDA\BLAS</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASMatrixOp.h">
+    <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASMatrixVectorOp.h">
+      <Filter>Header Files\ThirdParty\CUDA\BLAS</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASMatrixMatrixOp.h">
       <Filter>Header Files\ThirdParty\CUDA\BLAS</Filter>
     </ClInclude>
   </ItemGroup>
@@ -944,7 +947,10 @@
     <None Include="ThirdParty\CUDA\BLAS\CUBLASVectorOp.inl">
       <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
     </None>
-    <None Include="ThirdParty\CUDA\BLAS\CUBLASMatrixOp.inl">
+    <None Include="ThirdParty\CUDA\BLAS\CUBLASMatrixVectorOp.inl">
+      <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
+    </None>
+    <None Include="ThirdParty\CUDA\BLAS\CUBLASMatrixMatrixOp.inl">
       <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
     </None>
   </ItemGroup>
@@ -1297,7 +1303,10 @@
     <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASVectorOp.cpp">
       <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASMatrixOp.cpp">
+    <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASMatrixVectorOp.cpp">
+      <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASMatrixMatrixOp.cpp">
       <Filter>Source Files\ThirdParty\CUDA\BLAS</Filter>
     </ClCompile>
   </ItemGroup>

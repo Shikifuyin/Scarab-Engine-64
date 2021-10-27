@@ -209,7 +209,8 @@
     <ClInclude Include="Lib\Memory\MemoryManager.h" />
     <ClInclude Include="Lib\String\PatternMatching.h" />
     <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASContext.h" />
-    <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASMatrixOp.h" />
+    <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASMatrixMatrixOp.h" />
+    <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASMatrixVectorOp.h" />
     <ClInclude Include="ThirdParty\CUDA\BLAS\CUBLASVectorOp.h" />
     <ClInclude Include="ThirdParty\CUDA\CUDAAsynchronous.h" />
     <ClInclude Include="ThirdParty\CUDA\CUDABuiltIns.h" />
@@ -328,7 +329,8 @@
     <None Include="Lib\Memory\MemoryManager.inl" />
     <None Include="Lib\String\PatternMatching.inl" />
     <None Include="ThirdParty\CUDA\BLAS\CUBLASContext.inl" />
-    <None Include="ThirdParty\CUDA\BLAS\CUBLASMatrixOp.inl" />
+    <None Include="ThirdParty\CUDA\BLAS\CUBLASMatrixMatrixOp.inl" />
+    <None Include="ThirdParty\CUDA\BLAS\CUBLASMatrixVectorOp.inl" />
     <None Include="ThirdParty\CUDA\BLAS\CUBLASVectorOp.inl" />
     <None Include="ThirdParty\CUDA\CUDAAsynchronous.inl" />
     <None Include="ThirdParty\CUDA\CUDABuiltIns.inl" />
@@ -447,7 +449,8 @@
     <ClCompile Include="Lib\Memory\MemoryManager.cpp" />
     <ClCompile Include="Lib\String\PatternMatching.cpp" />
     <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASContext.cpp" />
-    <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASMatrixOp.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASMatrixMatrixOp.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASMatrixVectorOp.cpp" />
     <ClCompile Include="ThirdParty\CUDA\BLAS\CUBLASVectorOp.cpp" />
     <ClCompile Include="ThirdParty\CUDA\CUDAAsynchronous.cpp" />
     <ClCompile Include="ThirdParty\CUDA\CUDABuiltIns.cpp" />

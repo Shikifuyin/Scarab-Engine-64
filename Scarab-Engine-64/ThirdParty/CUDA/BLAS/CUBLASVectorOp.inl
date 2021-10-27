@@ -75,7 +75,7 @@ template<class T>
 SizeT CUBLASVectorOp::AbsMin() const
 {
 	DebugAssert( m_pCUBLASContext != NULL );
-	DebugAssert( ValidateInput() );
+	DebugAssert( ValidateInput<T>() );
 	
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
@@ -114,7 +114,7 @@ template<class T>
 SizeT CUBLASVectorOp::AbsMax() const
 {
 	DebugAssert( m_pCUBLASContext != NULL );
-	DebugAssert( ValidateInput() );
+	DebugAssert( ValidateInput<T>() );
 	
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
@@ -153,7 +153,7 @@ template<class T>
 T CUBLASVectorOp::AbsSum() const
 {
 	DebugAssert( m_pCUBLASContext != NULL );
-	DebugAssert( ValidateInput() );
+	DebugAssert( ValidateInput<T>() );
 	
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
@@ -192,7 +192,7 @@ template<class T>
 T CUBLASVectorOp::Norm() const
 {
 	DebugAssert( m_pCUBLASContext != NULL );
-	DebugAssert( ValidateInput() );
+	DebugAssert( ValidateInput<T>() );
 	
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
@@ -231,7 +231,7 @@ template<class T>
 Void CUBLASVectorOp::Scale( T fScale )
 {
 	DebugAssert( m_pCUBLASContext != NULL );
-	DebugAssert( ValidateInput() );
+	DebugAssert( ValidateInput<T>() );
 	
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
@@ -368,7 +368,7 @@ template<class T>
 Void CUBLASVectorVectorOp::Copy()
 {
 	DebugAssert( m_pCUBLASContext != NULL );
-	DebugAssert( ValidateInput() );
+	DebugAssert( ValidateInput<T>() );
 	
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
@@ -403,7 +403,7 @@ template<class T>
 Void CUBLASVectorVectorOp::Swap()
 {
 	DebugAssert( m_pCUBLASContext != NULL );
-	DebugAssert( ValidateInput() );
+	DebugAssert( ValidateInput<T>() );
 	
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
@@ -438,7 +438,7 @@ template<class T>
 Void CUBLASVectorVectorOp::MulAdd( T fScaleX )
 {
 	DebugAssert( m_pCUBLASContext != NULL );
-	DebugAssert( ValidateInput() );
+	DebugAssert( ValidateInput<T>() );
 	
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
@@ -517,7 +517,7 @@ template<class T>
 T CUBLASVectorVectorOp::Dot( Bool bConjugateY ) const
 {
 	DebugAssert( m_pCUBLASContext != NULL );
-	DebugAssert( ValidateInput() );
+	DebugAssert( ValidateInput<T>() );
 	
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	

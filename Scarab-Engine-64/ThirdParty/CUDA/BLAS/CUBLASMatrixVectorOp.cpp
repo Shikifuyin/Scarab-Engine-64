@@ -1,10 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////////
-// File : ThirdParty/CUDA/BLAS/CUBLASMatrixOp.cpp
+// File : ThirdParty/CUDA/BLAS/CUBLASMatrixVectorOp.cpp
 /////////////////////////////////////////////////////////////////////////////////
 // Version : 0.1
 // Status : Alpha
 /////////////////////////////////////////////////////////////////////////////////
-// Description : CUDA BLAS : Matrix Operations
+// Description : CUDA BLAS : Matrix-Vector Operations
 /////////////////////////////////////////////////////////////////////////////////
 // Part of Scarab-Engine, licensed under the
 // Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License
@@ -21,7 +21,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "CUBLASMatrixOp.h"
+#include "CUBLASMatrixVectorOp.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // CUBLASMatrixVectorOp implementation
@@ -41,16 +41,4 @@ CUBLASMatrixVectorOp::~CUBLASMatrixVectorOp()
 	// nothing to do
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-// CUBLASMatrixMatrixOp implementation
-CUBLASMatrixMatrixOp::CUBLASMatrixMatrixOp( CUBLASContext * pCUBLASContext )
-{
-	DebugAssert( pCUBLASContext != NULL && pCUBLASContext->IsCreated() );
-
-	m_pCUBLASContext = pCUBLASContext;
-}
-CUBLASMatrixMatrixOp::~CUBLASMatrixMatrixOp()
-{
-	// nothing to do
-}
 

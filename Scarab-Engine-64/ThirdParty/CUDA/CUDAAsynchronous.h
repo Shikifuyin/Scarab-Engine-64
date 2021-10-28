@@ -166,7 +166,7 @@ private:
 	friend class CUDAKernel;
 	friend class CUDAGraphInstance;
 	friend class CUBLASContext;
-	friend class CUSolverContextDense;
+	friend class CUSolverDenseContext;
 	
 	Void * m_hStream;
 };

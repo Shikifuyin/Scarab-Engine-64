@@ -677,7 +677,7 @@ Void CUBLASMatrixMatrixOp::SolveTriangularBatched( T fScaleA, CUBLASContextSideM
 			arrBatchMatricesC[i] = (T*)( m_pMatrixC[i].GetPointer(m_hMatrixPositionC) );
 		}
 
-		cublasHandle_t hCUBLASContext = (cublasHandle_t)m_pCUBLASContext;
+		cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 		cublasSideMode_t iCUBLASSideMode = (cublasSideMode_t)( CUBLASContextSideModeToCUDA[iSideMode] );
 		cublasFillMode_t iCUBLASFillMode = (cublasFillMode_t)( CUBLASContextFillModeToCUDA[iFillMode] );
 		cublasOperation_t iCUBLASTransposeOpA = (cublasOperation_t)( CUBLASContextTransposeOpToCUDA[iTransOpA] );

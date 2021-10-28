@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////
-// File : ThirdParty/CUDA/CUSolver/CUSolverContextDense.cpp
+// File : ThirdParty/CUDA/CUSolver/CUSolverDenseContext.cpp
 /////////////////////////////////////////////////////////////////////////////////
 // Version : 0.1
 // Status : Alpha
@@ -22,21 +22,21 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "CUSolverContextDense.h"
+#include "CUSolverDenseContext.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-// CUSolverContextDense implementation
-CUSolverContextDense::CUSolverContextDense()
+// CUSolverDenseContext implementation
+CUSolverDenseContext::CUSolverDenseContext()
 {
 	m_hContext = NULL;
 }
-CUSolverContextDense::~CUSolverContextDense()
+CUSolverDenseContext::~CUSolverDenseContext()
 {
 	if ( IsCreated() )
 		Destroy();
 }
 
-Void CUSolverContextDense::Create()
+Void CUSolverDenseContext::Create()
 {
 	DebugAssert( m_hContext == NULL );
 	
@@ -47,7 +47,7 @@ Void CUSolverContextDense::Create()
 	
 	m_hContext = hCUSolverDnContext;
 }
-Void CUSolverContextDense::Destroy()
+Void CUSolverDenseContext::Destroy()
 {
 	DebugAssert( m_hContext != NULL );
 	
@@ -59,7 +59,7 @@ Void CUSolverContextDense::Destroy()
 	m_hContext = NULL;
 }
 
-Void CUSolverContextDense::SetStream( CUDAStream * pStream ) const
+Void CUSolverDenseContext::SetStream( CUDAStream * pStream ) const
 {
 	DebugAssert( m_hContext != NULL );
 

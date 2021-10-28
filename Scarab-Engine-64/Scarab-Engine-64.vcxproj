@@ -219,7 +219,8 @@
     <ClInclude Include="ThirdParty\CUDA\CUDAKernel.h" />
     <ClInclude Include="ThirdParty\CUDA\CUDAMappings.h" />
     <ClInclude Include="ThirdParty\CUDA\CUDAMemory.h" />
-    <ClInclude Include="ThirdParty\CUDA\CUSolver\CUSolverContextDense.h" />
+    <ClInclude Include="ThirdParty\CUDA\CUSolver\CUSolverDenseContext.h" />
+    <ClInclude Include="ThirdParty\CUDA\CUSolver\CUSolverDenseEigenValue.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.h" />
     <ClInclude Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.h" />
@@ -339,7 +340,8 @@
     <None Include="ThirdParty\CUDA\CUDAKernel.inl" />
     <None Include="ThirdParty\CUDA\CUDAMappings.inl" />
     <None Include="ThirdParty\CUDA\CUDAMemory.inl" />
-    <None Include="ThirdParty\CUDA\CUSolver\CUSolverContextDense.inl" />
+    <None Include="ThirdParty\CUDA\CUSolver\CUSolverDenseContext.inl" />
+    <None Include="ThirdParty\CUDA\CUSolver\CUSolverDenseEigenValue.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.inl" />
     <None Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.inl" />
@@ -459,7 +461,8 @@
     <ClCompile Include="ThirdParty\CUDA\CUDAKernel.cpp" />
     <ClCompile Include="ThirdParty\CUDA\CUDAMappings.cpp" />
     <ClCompile Include="ThirdParty\CUDA\CUDAMemory.cpp" />
-    <ClCompile Include="ThirdParty\CUDA\CUSolver\CUSolverContextDense.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\CUSolver\CUSolverDenseContext.cpp" />
+    <ClCompile Include="ThirdParty\CUDA\CUSolver\CUSolverDenseEigenValue.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1Mappings.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\D2D1RenderingContext.cpp" />
     <ClCompile Include="ThirdParty\DirectX11\Direct3D\2D\Resources\D2D1Bitmap.cpp" />

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////////
-// File : ThirdParty/CUDA/CUSolver/CUSolverContextDense.h
+// File : ThirdParty/CUDA/CUSolver/CUSolverDenseContext.h
 /////////////////////////////////////////////////////////////////////////////////
 // Version : 0.1
 // Status : Alpha
@@ -13,30 +13,29 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Known Bugs : None
-// Usage : Users should create one CUSolverContextDense in each calling thread.
-//         CUSolverContextDense lifetime should match its thread's lifetime.
+// Usage : Users should create one CUSolverDenseContext in each calling thread.
+//         CUSolverDenseContext lifetime should match its thread's lifetime.
 /////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////////
 // Header prelude
-#ifndef SCARAB_THIRDPARTY_CUDA_CUSOLVER_CUSOLVERCONTEXTDENSE_H
-#define SCARAB_THIRDPARTY_CUDA_CUSOLVER_CUSOLVERCONTEXTDENSE_H
+#ifndef SCARAB_THIRDPARTY_CUDA_CUSOLVER_CUSOLVERDENSECONTEXT_H
+#define SCARAB_THIRDPARTY_CUDA_CUSOLVER_CUSOLVERDENSECONTEXT_H
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "../CUDAMemory.h"
-#include "../CUDAAsynchronous.h"
+#include "../BLAS/CUBLASContext.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
 
 /////////////////////////////////////////////////////////////////////////////////
-// The CUSolverContextDense class
-class CUSolverContextDense
+// The CUSolverDenseContext class
+class CUSolverDenseContext
 {
 public:
-	CUSolverContextDense();
-    ~CUSolverContextDense();
+	CUSolverDenseContext();
+    ~CUSolverDenseContext();
 	
 	// Deferred Creation/Destruction ////////////////////////////////////////////
 	inline Bool IsCreated() const;
@@ -49,13 +48,15 @@ public:
 
 
 private:
+	friend class CUSolverDenseEigenValue;
+
 	Void * m_hContext;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
 // Backward Includes (Inlines & Templates)
-#include "CUSolverContextDense.inl"
+#include "CUSolverDenseContext.inl"
 
 /////////////////////////////////////////////////////////////////////////////////
 // Header end
-#endif // SCARAB_THIRDPARTY_CUDA_CUSOLVER_CUSOLVERCONTEXTDENSE_H
+#endif // SCARAB_THIRDPARTY_CUDA_CUSOLVER_CUSOLVERDENSECONTEXT_H

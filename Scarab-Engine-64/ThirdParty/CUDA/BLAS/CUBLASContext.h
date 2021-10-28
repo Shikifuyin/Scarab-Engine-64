@@ -119,6 +119,8 @@ public:
 
 private:
 	friend class CUBLASVectorOp;
+	friend class CUBLASMatrixVectorOp;
+	friend class CUBLASMatrixMatrixOp;
 
 	Void * m_hContext;
 };

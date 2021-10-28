@@ -110,59 +110,12 @@ public:
 					const CUDAHostMemory * pHostVector, const CUDAMemoryPosition & hHostPosition, UInt iHostIncrement,
 					SizeT iElementCount, CUDAStream * pStream = NULL );
 
-		// Note : Matrices are always stored column-wise
 	Void GetMatrix( CUDAHostMemory * outHostMatrix, const CUDAMemoryPosition & outHostPosition,
 					const CUDADeviceMemory * pDeviceMatrix, const CUDAMemoryPosition & hDevicePosition,
 					const CUDAMemoryRegion & hCopyRegion, CUDAStream * pStream = NULL );
 	Void SetMatrix( CUDADeviceMemory * outDeviceMatrix, const CUDAMemoryPosition & outDevicePosition,
 					const CUDAHostMemory * pHostMatrix, const CUDAMemoryPosition & hHostPosition,
 					const CUDAMemoryRegion & hCopyRegion, CUDAStream * pStream = NULL );
-
-
-
-	
-
-	// Matrix-Matrix Functions //////////////////////////////////////////////////
-
-
-
-
-
-		// Ci = Alpha * Op(Ai) * Op(Bi) + Beta * Ci
-		// Matrices are presented in arrays of separated CUDADeviceMemory instances
-		// A specific position can be given for each matrix inside its CUDADeviceMemory instance
-		// Max Batch Count is CUBLAS_BATCH_MAX_COUNT, Better for small batch counts
-	template<class T> Void MulAddBatched( SizeT iBatchCount, CUDADeviceMemory * outMatricesC, const CUDAMemoryPosition * outPositionsC, const CUDAMemoryRegion & outRegionC, T fBeta,
-										  const CUDADeviceMemory * arrMatricesA, const CUDAMemoryPosition * arrPositionsA, const CUDAMemoryRegion & hRegionA, T fAlpha,
-										  const CUDADeviceMemory * arrMatricesB, const CUDAMemoryPosition * arrPositionsB, const CUDAMemoryRegion & hRegionB,
-										  CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB ) const;
-
-		// Ci = Alpha * Op(Ai) * Op(Bi) + Beta * Ci
-		// Matrices are presented in 3D-shaped CUDADeviceMemory instances as lists of matrices
-		// Stride values are in number of elements
-		// Stride values must prevent overlap by being at least larger than a single matrix size (ie. Width * Height)
-		// Batch Count is limited by matrix arrays depth, Better for large batch counts
-	template<class T> Void MulAddStrideBatched( SizeT iBatchCount, CUDADeviceMemory * outMatricesC, const CUDAMemoryPosition & outStartPositionC, const CUDAMemoryRegion & outRegionC, SizeT outStrideC, T fBeta,
-												const CUDADeviceMemory * arrMatricesA, const CUDAMemoryPosition & hStartPositionA, const CUDAMemoryRegion & hRegionA, SizeT iStrideA, T fAlpha,
-												const CUDADeviceMemory * arrMatricesB, const CUDAMemoryPosition & hStartPositionB, const CUDAMemoryRegion & hRegionB, SizeT iStrideB,
-												CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB ) const;
-
-
-
-		// Xi = Alpha * Inverse(Op(Ai)) * Xi (CUBLAS_CONTEXT_SIDEMODE_LEFT)
-		// Xi = Alpha * Xi * Inverse(Op(Ai)) (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
-		// Solves Triangular Systems Op(Ai)*Xi = Alpha * Bi, B is given in the Xi parameter and gets overwritten. (CUBLAS_CONTEXT_SIDEMODE_LEFT)
-		// Solves Triangular Systems Xi*Op(Ai) = Alpha * Bi, B is given in the Xi parameter and gets overwritten. (CUBLAS_CONTEXT_SIDEMODE_RIGHT)
-		// Does NOT test for singularity or near-singularity !
-		// Matrices are presented in arrays of separated CUDADeviceMemory instances
-		// A specific position can be given for each matrix inside its CUDADeviceMemory instance
-		// Max Batch Count is CUBLAS_BATCH_MAX_COUNT, Better for small batch counts
-	template<class T> Void SolveTriangularBatched( SizeT iBatchCount, CUDADeviceMemory * outMatricesX, const CUDAMemoryPosition * outPositionsX, const CUDAMemoryRegion & outRegionX,
-												   const CUDADeviceMemory * arrMatricesA, const CUDAMemoryPosition * arrPositionsA, const CUDAMemoryRegion & hRegionA, T fAlpha,
-												   CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOpA, Bool bMainDiagIsUnityA ) const;
-
-			// UNIMPLEMENTED (for now ...) :
-	// Rank-Update Operations : cublas<t>syrk, cublas<t>syr2k, cublas<t>syrkx, cublas<t>herk, cublas<t>her2k, cublas<t>herkx
 
 private:
 	friend class CUBLASVectorOp;

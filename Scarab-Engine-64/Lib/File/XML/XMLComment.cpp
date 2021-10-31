@@ -77,7 +77,8 @@ Void XMLComment::DeleteComment( UInt iIndex, UInt iLength )
 XMLNode * XMLComment::_Clone( Bool /*bRecursive*/ ) const
 {
     // Create clone
-    XMLComment * pClone = New() XMLComment( (const GChar *)m_strComment );
+    XMLComment * pClone;
+    New( XMLComment, pClone, XMLComment((const GChar *)m_strComment) );
 
     // Done
     return pClone;

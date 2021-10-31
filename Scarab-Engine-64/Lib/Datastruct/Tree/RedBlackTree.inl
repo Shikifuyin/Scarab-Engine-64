@@ -154,7 +154,8 @@ Bool RedBlackTree<T>::Insert( const T & rItem, Iterator * outItem )
     }
 
     // Build new node
-    RedBlackNode * pNewNode = New(m_iAllocatorID, m_iMemoryContextID) RedBlackNode();
+    RedBlackNode * pNewNode;
+    New( RedBlackNode, pNewNode, RedBlackNode(), m_iAllocatorID, m_iMemoryContextID );
 
     pNewNode->pParent = pParentNode;
     pNewNode->pChild[RBTREE_CHILD_LEFT] = RBTREE_LEAF;

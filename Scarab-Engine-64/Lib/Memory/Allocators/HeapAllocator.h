@@ -144,14 +144,14 @@ public:
 
 private:
     // Internal constants
-    const UInt AlignUnit;             // Size of an AU, must be power of 2
-    const UInt AlignUnitShift;        // Shift-size of an AU, 2^Shift = Size
-    const AUSize ChunkHeadAUSize;     // Size of ChunkHead, in AUs
-    const AUSize ChunkHeapNodeAUSize; // Size of ChunkHeapNode, in AUs
-    const AUSize ChunkListNodeAUSize; // Size of ChunkListNode, in AUs
-	const AUSize DummyChunkAUSize;
-	const SizeT DummyChunkByteSize;
-	const AUSize MinimalChunkAUSize;
+    UInt AlignUnit;             // Size of an AU, must be power of 2
+    UInt AlignUnitShift;        // Shift-size of an AU, 2^Shift = Size
+    AUSize ChunkHeadAUSize;     // Size of ChunkHead, in AUs
+    AUSize ChunkHeapNodeAUSize; // Size of ChunkHeapNode, in AUs
+    AUSize ChunkListNodeAUSize; // Size of ChunkListNode, in AUs
+	AUSize DummyChunkAUSize;
+	SizeT DummyChunkByteSize;
+	AUSize MinimalChunkAUSize;
 
     // AU helpers
     inline AUSize _AU_ConvertSize( SizeT iSize ) const;

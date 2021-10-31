@@ -77,7 +77,8 @@ Void XMLText::DeleteText( UInt iIndex, UInt iLength )
 XMLNode * XMLText::_Clone( Bool /*bRecursive*/ ) const
 {
     // Create clone
-    XMLText * pClone = New() XMLText( (const GChar *)m_strText );
+    XMLText * pClone;
+    New( XMLText, pClone, XMLText((const GChar *)m_strText) );
 
     // Done
     return pClone;

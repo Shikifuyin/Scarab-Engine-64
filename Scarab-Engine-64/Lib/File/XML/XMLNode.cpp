@@ -75,7 +75,7 @@ XMLAttribute * XMLNode::CreateAttribute( const GChar * strName, const GChar * st
 
     _AttributeMap::Iterator itAttribute = m_mapAttributes.Get( strName );
     if ( itAttribute.IsNull() ) {
-        pAttribute = New() XMLAttribute( strName, strValue );
+        New( XMLAttribute, pAttribute, XMLAttribute(strName, strValue) );
 
         Bool bInserted = m_mapAttributes.Insert( pAttribute->GetName(), pAttribute );
         Assert( bInserted );
@@ -775,7 +775,8 @@ Bool XMLNode::_WriteCallback_XML( const GChar * str, Void * pUserData )
 XMLNode * XMLNode::_Clone( Bool bRecursive ) const
 {
     // Create clone
-    XMLNode * pClone = New() XMLNode( XML_NODE, m_strTagName );
+    XMLNode * pClone;
+    New( XMLNode, pClone, XMLNode(XML_NODE, m_strTagName) );
 
     if ( m_bIsNode )
         pClone->_MakeNode();
@@ -1297,7 +1298,8 @@ Bool XMLNode::_Parse_NodeContent( XMLToken * pOverflowToken, GChar * pOverflowCh
         *pOverflowToken = iToken;
 
         // Create child
-        XMLNode * pChild = New() XMLNode( XML_NODE, TEXT("_xmlnew") );
+        XMLNode * pChild;
+        New( XMLNode, pChild, XMLNode(XML_NODE, TEXT("_xmlnew")) );
 
         // Recurse on child
         bContinue = pChild->_Parse( pOverflowToken, pOverflowChar, pfCallback, pUserData );
@@ -1314,7 +1316,8 @@ Bool XMLNode::_Parse_NodeContent( XMLToken * pOverflowToken, GChar * pOverflowCh
     // Comment case
     if ( iToken == XMLTOKEN_COMMENT_START ) {
         // Create child
-        XMLComment * pChild = New() XMLComment();
+        XMLComment * pChild;
+        New( XMLComment, pChild, XMLComment() );
 
         // Extract Comment
         Array<GChar> * pComment = pChild->EditComment();
@@ -1370,7 +1373,8 @@ Bool XMLNode::_Parse_NodeContent( XMLToken * pOverflowToken, GChar * pOverflowCh
 
     // Text case
         // Create child
-    XMLText * pChild = New() XMLText();
+    XMLText * pChild;
+    New( XMLText, pChild, XMLText() );
 
         // Extract text
     Array<GChar> * pText = pChild->EditText();

@@ -17,17 +17,17 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Wrappers
-inline _dat * _dat_get_ptr() {
-    static _dat _dat_values = { NULL, 0, INVALID_OFFSET, INVALID_OFFSET };
-    return &(_dat_values);
-}
-inline Void _dat_save( const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ) {
-    _dat * pDAT = _dat_get_ptr();
-    pDAT->strFile = strFile;
-    pDAT->iLine = iLine;
-    pDAT->iAllocatorID = iAllocatorID;
-    pDAT->iContextID = iContextID;
-}
+//inline _dat * _dat_get_ptr() {
+//    static _dat _dat_values = { NULL, 0, INVALID_OFFSET, INVALID_OFFSET };
+//    return &(_dat_values);
+//}
+//inline Void _dat_save( const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ) {
+//    _dat * pDAT = _dat_get_ptr();
+//    pDAT->strFile = strFile;
+//    pDAT->iLine = iLine;
+//    pDAT->iAllocatorID = iAllocatorID;
+//    pDAT->iContextID = iContextID;
+//}
 
 /////////////////////////////////////////////////////////////////////////////////
 // MemoryManager implementation

@@ -21,39 +21,39 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // We do some shady things in here ... Those are all intentional !
-#pragma warning(disable:4291) // no matching delete operator for MemoryAllocator
+//#pragma warning(disable:4291) // no matching delete operator for MemoryAllocator
 #pragma warning(disable:4302) // type cast truncation (pointer to UInt)
 #pragma warning(disable:4311) // type cast pointer truncation (pointer to UInt)
 #pragma warning(disable:4312) // type cast to greater size (UInt to pointer)
 
 /////////////////////////////////////////////////////////////////////////////////
 // Wrappers
-Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
-{
-    return MemoryFn->Allocate( iSize, false, strFile, iLine, iAllocatorID, iContextID );
-}
-Void * operator new[] ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
-{
-    return MemoryFn->Allocate( iSize, true, strFile, iLine, iAllocatorID, iContextID );
-}
-Void operator delete ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
-{
-    MemoryFn->Free( pMemory, false, strFile, iLine, iAllocatorID, iContextID );
-}
-Void operator delete[] ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
-{
-    MemoryFn->Free( pMemory, true, strFile, iLine, iAllocatorID, iContextID );
-}
-Void operator delete ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ )
-{
-    _dat * pDAT = _dat_get_ptr();
-    MemoryFn->Free( pMemory, false, pDAT->strFile, pDAT->iLine, pDAT->iAllocatorID, pDAT->iContextID );
-}
-Void operator delete[] ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ )
-{
-    _dat * pDAT = _dat_get_ptr();
-    MemoryFn->Free( pMemory, true, pDAT->strFile, pDAT->iLine, pDAT->iAllocatorID, pDAT->iContextID );
-}
+//Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
+//{
+//    return MemoryFn->Allocate( iSize, false, strFile, iLine, iAllocatorID, iContextID );
+//}
+//Void * operator new[] ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
+//{
+//    return MemoryFn->Allocate( iSize, true, strFile, iLine, iAllocatorID, iContextID );
+//}
+//Void operator delete ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
+//{
+//    MemoryFn->Free( pMemory, false, strFile, iLine, iAllocatorID, iContextID );
+//}
+//Void operator delete[] ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID )
+//{
+//    MemoryFn->Free( pMemory, true, strFile, iLine, iAllocatorID, iContextID );
+//}
+//Void operator delete ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ )
+//{
+//    _dat * pDAT = _dat_get_ptr();
+//    MemoryFn->Free( pMemory, false, pDAT->strFile, pDAT->iLine, pDAT->iAllocatorID, pDAT->iContextID );
+//}
+//Void operator delete[] ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ )
+//{
+//    _dat * pDAT = _dat_get_ptr();
+//    MemoryFn->Free( pMemory, true, pDAT->strFile, pDAT->iLine, pDAT->iAllocatorID, pDAT->iContextID );
+//}
 
 /////////////////////////////////////////////////////////////////////////////////
 // MemoryManager implementation
@@ -220,20 +220,20 @@ MemoryAllocatorID MemoryManager::_MemoryAllocator_Create( MemoryContextID iConte
     switch( iType ) {
         case ALLOCATOR_STACK: {
             Assert( iBlockSize == 0 );
-            Void * pMemory = m_hStackFactory.Allocate(0);
-            StackAllocator * pStack = new(pMemory) StackAllocator( pContext, iAllocatorID, strName, iSize );
+            StackAllocator * pStack = (StackAllocator*)( m_hStackFactory.Allocate(0) );
+            *pStack = StackAllocator( pContext, iAllocatorID, strName, iSize );
             pContext->arrAllocators[iAllocatorID] = pStack;
         } break;
         case ALLOCATOR_POOL: {
             Assert( iBlockSize != 0 );
-            Void * pMemory = m_hPoolFactory.Allocate(0);
-            PoolAllocator * pPool = new(pMemory) PoolAllocator( pContext, iAllocatorID, strName, iBlockSize, iSize );
+            PoolAllocator * pPool = (PoolAllocator*)( m_hPoolFactory.Allocate(0) );
+            *pPool = PoolAllocator( pContext, iAllocatorID, strName, iBlockSize, iSize );
             pContext->arrAllocators[iAllocatorID] = pPool;
         } break;
         case ALLOCATOR_HEAP: {
             Assert( iBlockSize == 0 );
-            Void * pMemory = m_hHeapFactory.Allocate(0);
-            HeapAllocator * pHeap = new(pMemory) HeapAllocator( pContext, iAllocatorID, strName, iSize );
+            HeapAllocator * pHeap = (HeapAllocator*)( m_hHeapFactory.Allocate(0) );
+            *pHeap = HeapAllocator( pContext, iAllocatorID, strName, iSize );
             pContext->arrAllocators[iAllocatorID] = pHeap;
         } break;
         default: Assert( false ); break;
@@ -251,16 +251,13 @@ Void MemoryManager::_MemoryAllocator_Destroy( MemoryContextID iContextID, Memory
     // Cleanup Allocator
     switch( pAllocator->GetType() ) {
         case ALLOCATOR_STACK:
-            delete pAllocator;
-            m_hStackFactory.Free( (Byte*)pAllocator );
+            m_hStackFactory.Free( pAllocator );
             break;
         case ALLOCATOR_POOL:
-            delete pAllocator;
-            m_hPoolFactory.Free( (Byte*)pAllocator );
+            m_hPoolFactory.Free( pAllocator );
             break;
         case ALLOCATOR_HEAP:
-            delete pAllocator;
-            m_hHeapFactory.Free( (Byte*)pAllocator );
+            m_hHeapFactory.Free( pAllocator );
             break;
         default: Assert(false); return;
     }

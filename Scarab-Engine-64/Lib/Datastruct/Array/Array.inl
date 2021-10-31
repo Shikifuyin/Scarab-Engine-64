@@ -49,7 +49,7 @@ Void Array<T>::Create()
 
     m_iBufferSize = m_iPageSize;
 
-    m_arrBuffer = New(m_iAllocatorID, m_iMemoryContextID) T[m_iBufferSize];
+    NewArray( T, m_arrBuffer, m_iBufferSize, m_iAllocatorID, m_iMemoryContextID );
 
     m_iNextFree = 0;
 }
@@ -60,7 +60,7 @@ Void Array<T>::Destroy()
 
     m_iBufferSize = 0;
 
-    DeleteA( m_arrBuffer, m_iAllocatorID, m_iMemoryContextID );
+    DeleteArray( m_arrBuffer, m_iAllocatorID, m_iMemoryContextID );
     m_arrBuffer = NULL;
 
 	m_iNextFree = INVALID_OFFSET;
@@ -525,7 +525,8 @@ Bool Array<T>::_ArrayResize( UInt iAlignedSize, Bool bKeepData )
     if ( m_iBufferSize == iAlignedSize )
         return false;
 
-    T * pNewBuffer = New(m_iAllocatorID, m_iMemoryContextID) T[iAlignedSize];
+    T * pNewBuffer;
+    NewArray( T, pNewBuffer, iAlignedSize, m_iAllocatorID, m_iMemoryContextID );
 
     if ( bKeepData ) {
         if ( iAlignedSize <= m_iBufferSize )
@@ -534,7 +535,7 @@ Bool Array<T>::_ArrayResize( UInt iAlignedSize, Bool bKeepData )
             MemCopy( pNewBuffer, m_arrBuffer, m_iBufferSize * sizeof(T) );
     }
 
-    DeleteA( m_arrBuffer, m_iAllocatorID, m_iMemoryContextID );
+    DeleteArray( m_arrBuffer, m_iAllocatorID, m_iMemoryContextID );
 
     m_iBufferSize = iAlignedSize;
     m_arrBuffer = pNewBuffer;

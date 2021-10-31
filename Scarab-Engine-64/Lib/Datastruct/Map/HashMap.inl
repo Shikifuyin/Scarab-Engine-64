@@ -48,7 +48,7 @@ Void HashMap<Key,T>::Create()
 
     m_iTableSize = m_iPageSize;
 
-    m_arrTable = New(m_iAllocatorID, m_iMemoryContextID) HashMapNode[m_iTableSize];
+    NewArray( HashMapNode, m_arrTable, m_iTableSize, m_iAllocatorID, m_iMemoryContextID );
 
     for( UInt i = 0; i < m_iTableSize; ++i ) {
         m_arrTable[i].bAllocated = false;
@@ -64,7 +64,7 @@ Void HashMap<Key,T>::Destroy()
 {
     Assert( m_arrTable != NULL );
 
-    DeleteA( m_arrTable, m_iAllocatorID, m_iMemoryContextID );
+    DeleteArray( m_arrTable, m_iAllocatorID, m_iMemoryContextID );
 
 	m_iTableSize = 0;
     m_arrTable = NULL;
@@ -282,7 +282,7 @@ Void HashMap<Key,T>::_GrowPage()
     // Allocate a new one
     m_iTableSize += m_iPageSize;
 
-    m_arrTable = New(m_iAllocatorID, m_iMemoryContextID) HashMapNode[m_iTableSize];
+    NewArray( HashMapNode, m_arrTable, m_iTableSize, m_iAllocatorID, m_iMemoryContextID );
 
     for( UInt i = 0; i < m_iTableSize; ++i ) {
         m_arrTable[i].pPrev = NULL;
@@ -326,5 +326,5 @@ Void HashMap<Key,T>::_GrowPage()
     m_pEnd = pNode;
 
     // Done
-    DeleteA( pOldTable, m_iAllocatorID, m_iMemoryContextID );
+    DeleteArray( pOldTable, m_iAllocatorID, m_iMemoryContextID );
 }

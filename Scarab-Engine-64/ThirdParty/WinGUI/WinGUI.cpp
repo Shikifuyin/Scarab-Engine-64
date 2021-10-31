@@ -90,8 +90,8 @@ Void WinGUI::CreateAppWindow( WinGUIWindowModel * pModel )
     CoInitialize(NULL);
 
     // Create App Window
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIWindow) );
-    m_pAppWindow = new(pMemory) WinGUIWindow( pModel );
+    m_pAppWindow = (WinGUIWindow*)( SystemFn->MemAlloc(sizeof(WinGUIWindow)) );
+    *m_pAppWindow = WinGUIWindow( pModel );
 
     m_pAppWindow->_Create();
 
@@ -241,8 +241,8 @@ WinGUIContainer * WinGUI::CreateContainer( WinGUIElement * pParent, WinGUIContai
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIContainer) );
-    WinGUIContainer * pContainer = new(pMemory) WinGUIContainer( pParent, pModel );
+    WinGUIContainer * pContainer = (WinGUIContainer*)( SystemFn->MemAlloc(sizeof(WinGUIContainer)) );
+    *pContainer = WinGUIContainer( pParent, pModel );
 
     ((WinGUIElement*)pContainer)->_Create();
     ((WinGUIElement*)pContainer)->_ApplyDefaultFont( m_pDefaultFont );
@@ -265,8 +265,8 @@ WinGUIStatic * WinGUI::CreateStatic( WinGUIElement * pParent, WinGUIStaticModel 
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIStatic) );
-    WinGUIStatic * pStatic = new(pMemory) WinGUIStatic( pParent, pModel );
+    WinGUIStatic * pStatic = (WinGUIStatic*)( SystemFn->MemAlloc(sizeof(WinGUIStatic)) );
+    *pStatic = WinGUIStatic( pParent, pModel );
 
     ((WinGUIElement*)pStatic)->_Create();
     ((WinGUIElement*)pStatic)->_ApplyDefaultFont( m_pDefaultFont );
@@ -288,8 +288,8 @@ WinGUIGroupBox * WinGUI::CreateGroupBox( WinGUIElement * pParent, WinGUIGroupBox
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIGroupBox) );
-    WinGUIGroupBox * pGroupBox = new(pMemory) WinGUIGroupBox( pParent, pModel );
+    WinGUIGroupBox * pGroupBox = (WinGUIGroupBox*)( SystemFn->MemAlloc(sizeof(WinGUIGroupBox)) );
+    *pGroupBox = WinGUIGroupBox( pParent, pModel );
 
     ((WinGUIElement*)pGroupBox)->_Create();
     ((WinGUIElement*)pGroupBox)->_ApplyDefaultFont( m_pDefaultFont );
@@ -312,8 +312,8 @@ WinGUIStatusBar * WinGUI::CreateStatusBar( WinGUIElement * pParent, WinGUIStatus
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIStatusBar) );
-    WinGUIStatusBar * pStatusBar = new(pMemory) WinGUIStatusBar( pParent, pModel );
+    WinGUIStatusBar * pStatusBar = (WinGUIStatusBar*)( SystemFn->MemAlloc(sizeof(WinGUIStatusBar)) );
+    *pStatusBar = WinGUIStatusBar( pParent, pModel );
 
     ((WinGUIElement*)pStatusBar)->_Create();
     ((WinGUIElement*)pStatusBar)->_ApplyDefaultFont( m_pDefaultFont );
@@ -335,8 +335,8 @@ WinGUIProgressBar * WinGUI::CreateProgressBar( WinGUIElement * pParent, WinGUIPr
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIProgressBar) );
-    WinGUIProgressBar * pProgressBar = new(pMemory) WinGUIProgressBar( pParent, pModel );
+    WinGUIProgressBar * pProgressBar = (WinGUIProgressBar*)( SystemFn->MemAlloc(sizeof(WinGUIProgressBar)) );
+    *pProgressBar = WinGUIProgressBar( pParent, pModel );
 
     ((WinGUIElement*)pProgressBar)->_Create();
     ((WinGUIElement*)pProgressBar)->_ApplyDefaultFont( m_pDefaultFont );
@@ -359,8 +359,8 @@ WinGUIButton * WinGUI::CreateButton( WinGUIElement * pParent, WinGUIButtonModel 
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIButton) );
-    WinGUIButton * pButton = new(pMemory) WinGUIButton( pParent, pModel );
+    WinGUIButton * pButton = (WinGUIButton*)( SystemFn->MemAlloc(sizeof(WinGUIButton)) );
+    *pButton = WinGUIButton( pParent, pModel );
 
     ((WinGUIElement*)pButton)->_Create();
     ((WinGUIElement*)pButton)->_ApplyDefaultFont( m_pDefaultFont );
@@ -382,8 +382,8 @@ WinGUICheckBox * WinGUI::CreateCheckBox( WinGUIElement * pParent, WinGUICheckBox
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUICheckBox) );
-    WinGUICheckBox * pCheckBox = new(pMemory) WinGUICheckBox( pParent, pModel );
+    WinGUICheckBox * pCheckBox = (WinGUICheckBox*)( SystemFn->MemAlloc(sizeof(WinGUICheckBox)) );
+    *pCheckBox = WinGUICheckBox( pParent, pModel );
 
     ((WinGUIElement*)pCheckBox)->_Create();
     ((WinGUIElement*)pCheckBox)->_ApplyDefaultFont( m_pDefaultFont );
@@ -405,8 +405,8 @@ WinGUIRadioButton * WinGUI::CreateRadioButton( WinGUIElement * pParent, WinGUIRa
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIRadioButton) );
-    WinGUIRadioButton * pRadioButton = new(pMemory) WinGUIRadioButton( pParent, pModel );
+    WinGUIRadioButton * pRadioButton = (WinGUIRadioButton*)( SystemFn->MemAlloc(sizeof(WinGUIRadioButton)) );
+    *pRadioButton = WinGUIRadioButton( pParent, pModel );
 
     ((WinGUIElement*)pRadioButton)->_Create();
     ((WinGUIElement*)pRadioButton)->_ApplyDefaultFont( m_pDefaultFont );
@@ -428,8 +428,8 @@ WinGUISliderBar * WinGUI::CreateSliderBar( WinGUIElement * pParent, WinGUISlider
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUISliderBar) );
-    WinGUISliderBar * pSliderBar = new(pMemory) WinGUISliderBar( pParent, pModel );
+    WinGUISliderBar * pSliderBar = (WinGUISliderBar*)( SystemFn->MemAlloc(sizeof(WinGUISliderBar)) );
+    *pSliderBar = WinGUISliderBar( pParent, pModel );
 
     ((WinGUIElement*)pSliderBar)->_Create();
     ((WinGUIElement*)pSliderBar)->_ApplyDefaultFont( m_pDefaultFont );
@@ -452,8 +452,8 @@ WinGUITabs * WinGUI::CreateTabs( WinGUIElement * pParent, WinGUITabsModel * pMod
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUITabs) );
-    WinGUITabs * pTabs = new(pMemory) WinGUITabs( pParent, pModel );
+    WinGUITabs * pTabs = (WinGUITabs*)( SystemFn->MemAlloc(sizeof(WinGUITabs)) );
+    *pTabs = WinGUITabs( pParent, pModel );
 
     ((WinGUIElement*)pTabs)->_Create();
     ((WinGUIElement*)pTabs)->_ApplyDefaultFont( m_pDefaultFont );
@@ -476,8 +476,8 @@ WinGUITextEdit * WinGUI::CreateTextEdit( WinGUIElement * pParent, WinGUITextEdit
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUITextEdit) );
-    WinGUITextEdit * pTextEdit = new(pMemory) WinGUITextEdit( pParent, pModel );
+    WinGUITextEdit * pTextEdit = (WinGUITextEdit*)( SystemFn->MemAlloc(sizeof(WinGUITextEdit)) );
+    *pTextEdit = WinGUITextEdit( pParent, pModel );
 
     ((WinGUIElement*)pTextEdit)->_Create();
     ((WinGUIElement*)pTextEdit)->_ApplyDefaultFont( m_pDefaultFont );
@@ -499,8 +499,8 @@ WinGUIComboBox * WinGUI::CreateComboBox( WinGUIElement * pParent, WinGUIComboBox
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIComboBox) );
-    WinGUIComboBox * pComboBox = new(pMemory) WinGUIComboBox( pParent, pModel );
+    WinGUIComboBox * pComboBox = (WinGUIComboBox*)( SystemFn->MemAlloc(sizeof(WinGUIComboBox)) );
+    *pComboBox = WinGUIComboBox( pParent, pModel );
 
     ((WinGUIElement*)pComboBox)->_Create();
     ((WinGUIElement*)pComboBox)->_ApplyDefaultFont( m_pDefaultFont );
@@ -523,8 +523,8 @@ WinGUITable * WinGUI::CreateTable( WinGUIElement * pParent, WinGUITableModel * p
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUITable) );
-    WinGUITable * pTable = new(pMemory) WinGUITable( pParent, pModel );
+    WinGUITable * pTable = (WinGUITable*)( SystemFn->MemAlloc(sizeof(WinGUITable)) );
+    *pTable = WinGUITable( pParent, pModel );
 
     ((WinGUIElement*)pTable)->_Create();
     ((WinGUIElement*)pTable)->_ApplyDefaultFont( m_pDefaultFont );
@@ -547,8 +547,8 @@ WinGUIToolTip * WinGUI::CreateToolTip( WinGUIElement * pParent, WinGUIToolTipMod
     DebugAssert( pParent->GetElementType() == WINGUI_ELEMENT_WINDOW || pParent->GetElementType() == WINGUI_ELEMENT_CONTAINER );
 
     // Create Element
-    Void * pMemory = SystemFn->MemAlloc( sizeof(WinGUIToolTip) );
-    WinGUIToolTip * pToolTip = new(pMemory) WinGUIToolTip( pParent, pModel );
+    WinGUIToolTip * pToolTip = (WinGUIToolTip*)( SystemFn->MemAlloc(sizeof(WinGUIToolTip)) );
+    *pToolTip = WinGUIToolTip( pParent, pModel );
 
     ((WinGUIElement*)pToolTip)->_Create();
     ((WinGUIElement*)pToolTip)->_ApplyDefaultFont( m_pDefaultFont );

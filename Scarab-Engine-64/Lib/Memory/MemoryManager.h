@@ -39,46 +39,77 @@
 #define MEMORY_CONTEXT_SHARED              (MEMORY_MAX_CONTEXTS + 1)
 #define MEMORY_CONTEXT_SHARED_SCRATCH_SIZE 134217728 // 128 mb
 
+// Macro interface
+    // New( ClassName, VariableName, ConstructorCall, iAllocatorID, iContextID )
+#define New(...)                                                                 VARIADIC_MACRO( _New, __VA_ARGS__ )
+#define _New_2( _class_name, _var_name )                                         _New_3( _class_name, _var_name, _class_name() )
+#define _New_3( _class_name, _var_name, _ctor_call )                             _New_4( _class_name, _var_name, _ctor_call, 0 )
+#define _New_4( _class_name, _var_name, _ctor_call, _allocator_id )              _New_5( _class_name, _var_name, _ctor_call, _allocator_id, MEMORY_CONTEXT_SHARED )
+#define _New_5( _class_name, _var_name, _ctor_call, _allocator_id, _context_id ) \
+    _var_name = (_class_name*)( MemoryFn->Allocate(sizeof(_class_name), false, TEXT(__FILE__), __LINE__, _allocator_id, _context_id) ); \
+    *_var_name = _ctor_call;
+
+    // NewArray( ClassName, VariableName, ArraySize, iAllocatorID, iContextID )
+#define NewArray(...)                                                                  VARIADIC_MACRO( _NewArray, __VA_ARGS__ )
+#define _NewArray_3( _class_name, _var_name, _array_size )                             _NewArray_4( _class_name, _var_name, _array_size, 0 )
+#define _NewArray_4( _class_name, _var_name, _array_size, _allocator_id )              _NewArray_5( _class_name, _var_name, _array_size, _allocator_id, MEMORY_CONTEXT_SHARED )
+#define _NewArray_5( _class_name, _var_name, _array_size, _allocator_id, _context_id ) \
+    _var_name = (_class_name*)( MemoryFn->Allocate((_array_size)*sizeof(_class_name), true, TEXT(__FILE__), __LINE__, _allocator_id, _context_id) );
+
+    // Delete( VariableName, iAllocatorID, iContextID )
+#define Delete(...)                                        VARIADIC_MACRO( _Delete, __VA_ARGS__ )
+#define _Delete_1( _var_name )                             _Delete_2( _var_name, 0 )
+#define _Delete_2( _var_name, _allocator_id )              _Delete_3( _var_name, _allocator_id, MEMORY_CONTEXT_SHARED )
+#define _Delete_3( _var_name, _allocator_id, _context_id ) \
+    MemoryFn->Free( _var_name, false, TEXT(__FILE__), __LINE__, _allocator_id, _context_id );
+
+    // DeleteArray( VariableName, iAllocatorID, iContextID )
+#define DeleteArray(...)                                        VARIADIC_MACRO( _DeleteArray, __VA_ARGS__ )
+#define _DeleteArray_1( _var_name )                             _DeleteArray_2( _var_name, 0 )
+#define _DeleteArray_2( _var_name, _allocator_id )              _DeleteArray_3( _var_name, _allocator_id, MEMORY_CONTEXT_SHARED )
+#define _DeleteArray_3( _var_name, _allocator_id, _context_id ) \
+    MemoryFn->Free( _var_name, true, TEXT(__FILE__), __LINE__, _allocator_id, _context_id );
+
 // new/new[]/delete/delete[] wrappers
-Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
-Void * operator new[] ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
-Void operator delete ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );   // Required if constructor throws
-Void operator delete[] ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ); // an exception ...
-Void operator delete ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ );
-Void operator delete[] ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ );
+//Void * operator new ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
+//Void * operator new[] ( SizeT iSize, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
+//Void operator delete ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );   // Required if constructor throws
+//Void operator delete[] ( Void * pMemory, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID ); // an exception ...
+//Void operator delete ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ );
+//Void operator delete[] ( Void * pMemory /*, const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID*/ );
 
 // Work-around trick to pass arguments to delete, which has no placement syntax
-typedef struct _delete_argument_trick {
-    const GChar * strFile;
-    UInt iLine;
-    MemoryAllocatorID iAllocatorID;
-    MemoryContextID iContextID;
-} _dat;
-inline _dat * _dat_get_ptr();
-Void _dat_save( const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
+//typedef struct _delete_argument_trick {
+//    const GChar * strFile;
+//    UInt iLine;
+//    MemoryAllocatorID iAllocatorID;
+//    MemoryContextID iContextID;
+//} _dat;
+//inline _dat * _dat_get_ptr();
+//Void _dat_save( const GChar * strFile, UInt iLine, MemoryAllocatorID iAllocatorID, MemoryContextID iContextID );
 
 // Macro interface
-#define New(...)                             VARIADIC_MACRO( _New, __VA_ARGS__ )
-#define _New_0()                             _New_1( 0 )
-#define _New_1( _allocator_id )              _New_2( _allocator_id, MEMORY_CONTEXT_SHARED )
-#define _New_2( _allocator_id, _context_id ) \
-    new( TEXT(__FILE__), __LINE__, _allocator_id, _context_id )
-
-#define Delete(...)                                       VARIADIC_MACRO( _Delete, __VA_ARGS__ )
-#define _Delete_1( _pointer )                             _Delete_2( _pointer, 0 )
-#define _Delete_2( _pointer, _allocator_id )              _Delete_3( _pointer, _allocator_id, MEMORY_CONTEXT_SHARED )
-#define _Delete_3( _pointer, _allocator_id, _context_id ) { \
-    _dat_save( TEXT(__FILE__), __LINE__, _allocator_id, _context_id ); \
-    delete _pointer; \
-}
-
-#define DeleteA(...)                                       VARIADIC_MACRO( _DeleteA, __VA_ARGS__ )
-#define _DeleteA_1( _pointer )                             _DeleteA_2( _pointer, 0 )
-#define _DeleteA_2( _pointer, _allocator_id )              _DeleteA_3( _pointer, _allocator_id, MEMORY_CONTEXT_SHARED )
-#define _DeleteA_3( _pointer, _allocator_id, _context_id ) { \
-    _dat_save( TEXT(__FILE__), __LINE__, _allocator_id, _context_id ); \
-    delete[] _pointer; \
-}
+//#define New(...)                             VARIADIC_MACRO( _New, __VA_ARGS__ )
+//#define _New_0()                             _New_1( 0 )
+//#define _New_1( _allocator_id )              _New_2( _allocator_id, MEMORY_CONTEXT_SHARED )
+//#define _New_2( _allocator_id, _context_id ) \
+//    new( TEXT(__FILE__), __LINE__, _allocator_id, _context_id )
+//
+//#define Delete(...)                                       VARIADIC_MACRO( _Delete, __VA_ARGS__ )
+//#define _Delete_1( _pointer )                             _Delete_2( _pointer, 0 )
+//#define _Delete_2( _pointer, _allocator_id )              _Delete_3( _pointer, _allocator_id, MEMORY_CONTEXT_SHARED )
+//#define _Delete_3( _pointer, _allocator_id, _context_id ) { \
+//    _dat_save( TEXT(__FILE__), __LINE__, _allocator_id, _context_id ); \
+//    delete _pointer; \
+//}
+//
+//#define DeleteA(...)                                       VARIADIC_MACRO( _DeleteA, __VA_ARGS__ )
+//#define _DeleteA_1( _pointer )                             _DeleteA_2( _pointer, 0 )
+//#define _DeleteA_2( _pointer, _allocator_id )              _DeleteA_3( _pointer, _allocator_id, MEMORY_CONTEXT_SHARED )
+//#define _DeleteA_3( _pointer, _allocator_id, _context_id ) { \
+//    _dat_save( TEXT(__FILE__), __LINE__, _allocator_id, _context_id ); \
+//    delete[] _pointer; \
+//}
 
 /////////////////////////////////////////////////////////////////////////////////
 // The MemoryManager class
@@ -174,3 +205,4 @@ private:
 /////////////////////////////////////////////////////////////////////////////////
 // Header end
 #endif // SCARAB_LIB_MEMORY_MEMORYMANAGER_H
+

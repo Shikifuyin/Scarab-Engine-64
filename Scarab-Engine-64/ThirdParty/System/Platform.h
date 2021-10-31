@@ -260,30 +260,36 @@ typedef Byte * VArgPtr;
 /////////////////////////////////////////////////////////////////////////////////
 // Variadic Macros : Default parameters / Overloading !
 // This is a piece of preprocessor art !
-// Supports up to 8 arguments ... More than enough !
+// Supports up to 16 arguments ... More than enough !
 
     // Internals
-#define _VARIADIC_MACRO_COLLAPSE( _f0, _f1, _f2, _f3, _f4, _f5, _f6, _f7, _f8, ... ) \
-    _f8
+#define _VARIADIC_MACRO_EXPAND(_arg_) \
+    _arg_
+#define _VARIADIC_MACRO_CONCAT(A, B) \
+    A ## B
+#define _VARIADIC_MACRO_AUGMENT(...) \
+    _unused_, __VA_ARGS__
 
-#define _VARIADIC_MACRO_RECOMPOSE( _args_with_parentheses ) \
-    _VARIADIC_MACRO_COLLAPSE _args_with_parentheses
+#define _VARIADIC_MACRO_COUNT_SEQUENCE(_1_, _2_, _3_, _4_, _5_, _6_, _7_, _8_, _9_, _10_, _11_, _12_, _13_, _14_, _15_, _16_, _17_, _count_, ...) \
+    _count_
+#define _VARIADIC_MACRO_COUNT(...) \
+    _VARIADIC_MACRO_EXPAND( _VARIADIC_MACRO_COUNT_SEQUENCE(__VA_ARGS__, \
+        16, 15, 14, 13, 12, \
+        11, 10, 9, 8, \
+        7, 6, 5, 4, \
+        3, 2, 1, 0 \
+    ) )
 
-#define _VARIADIC_MACRO_PICK_FROM_ARGCOUNT( F, ... ) \
-    _VARIADIC_MACRO_RECOMPOSE (( \
-        __VA_ARGS__, \
-        F##_8, F##_7, F##_6, F##_5, F##_4, F##_3, F##_2, F##_1, \
-    ))
+#define _VARIADIC_MACRO_SELECT( _macro_base_name, _count ) \
+    _VARIADIC_MACRO_CONCAT( _macro_base_name ## _, _count )
 
-#define _VARIADIC_MACRO_NOARG_EXPAND(F) \
-    ,,,,,,,,F##_0
+    // Counts the number of arguments given
+#define VARIADIC_MACRO_COUNT(...) \
+    _VARIADIC_MACRO_COUNT(_VARIADIC_MACRO_AUGMENT(__VA_ARGS__))
 
-#define _VARIADIC_MACRO_SELECTOR( F, ... ) \
-    _VARIADIC_MACRO_PICK_FROM_ARGCOUNT( F, _VARIADIC_MACRO_NOARG_EXPAND __VA_ARGS__ (F) )
-
-    // Main Macro
-#define VARIADIC_MACRO( F, ... ) \
-    _VARIADIC_MACRO_SELECTOR( F, __VA_ARGS__ ) (__VA_ARGS__)
+    // Selects a macro with formatted name based on argument count
+#define VARIADIC_MACRO( _macro_base_name, ... ) \
+    _VARIADIC_MACRO_EXPAND( _VARIADIC_MACRO_SELECT(_macro_base_name, VARIADIC_MACRO_COUNT(__VA_ARGS__)) (__VA_ARGS__) )
 
     // Usage
 //#define my_var_macro(...)           VARIADIC_MACRO( basename, __VA_ARGS__ )

@@ -43,7 +43,8 @@ XMLDocument::~XMLDocument()
 XMLNode * XMLDocument::_Clone( Bool bRecursive ) const
 {
     // Create clone
-    XMLDocument * pClone = New() XMLDocument( m_strTagName, m_strVersion, m_strEncoding );
+    XMLDocument * pClone;
+    New( XMLDocument, pClone, XMLDocument(m_strTagName, m_strVersion, m_strEncoding) );
 
     // Copy attributes
     _AttributeMap::Iterator itAttribute = m_mapAttributes.Begin();

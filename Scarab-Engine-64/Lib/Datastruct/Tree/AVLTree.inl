@@ -231,7 +231,7 @@ Bool AVLTree<T>::_rec_Insert( AVLNode ** ppNode, AVLTreeHeightChange & heightCha
 {
     // End of sub-tree, insert here
 	if ( *ppNode == NULL ) {
-        *ppNode = New(m_iAllocatorID, m_iMemoryContextID) AVLNode();
+        New( AVLNode, *ppNode, AVLNode(), m_iAllocatorID, m_iMemoryContextID );
 
         (*ppNode)->pChild[AVLTREE_CHILD_LEFT] = NULL;
         (*ppNode)->pChild[AVLTREE_CHILD_RIGHT] = NULL;

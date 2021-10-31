@@ -44,18 +44,18 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Memory Allocation
-Void * operator new( SizeT iSize, Void * pAddress )
-{
-    return pAddress;
-}
-Void operator delete( Void * pAddress, Void * )
-{
-    SystemFn->MemFree( pAddress );
-}
-Void operator delete[]( Void * pAddress, Void * )
-{
-    SystemFn->MemFree( pAddress );
-}
+//Void * operator new( SizeT iSize, Void * pAddress )
+//{
+//    return pAddress;
+//}
+//Void operator delete( Void * pAddress, Void * )
+//{
+//    SystemFn->MemFree( pAddress );
+//}
+//Void operator delete[]( Void * pAddress, Void * )
+//{
+//    SystemFn->MemFree( pAddress );
+//}
 
 /////////////////////////////////////////////////////////////////////////////////
 // Internal Helpers

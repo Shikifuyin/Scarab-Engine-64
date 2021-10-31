@@ -37,9 +37,9 @@
 #define SystemFn System::GetInstance()
 
 // Memory Allocation ////////////////////////////////////////////////////////////
-Void * operator new( SizeT iSize, Void * pAddress );
-Void operator delete( Void * pAddress, Void * );   // Required if constructor
-Void operator delete[]( Void * pAddress, Void * ); // throws an exception
+//Void * operator new( SizeT iSize, Void * pAddress );
+//Void operator delete( Void * pAddress, Void * );   // Required if constructor
+//Void operator delete[]( Void * pAddress, Void * ); // throws an exception
 // Can't do placement delete, call destructor explicitely !
 
 // Time /////////////////////////////////////////////////////////////////////////

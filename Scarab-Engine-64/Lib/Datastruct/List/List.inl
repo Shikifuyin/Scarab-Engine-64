@@ -88,7 +88,8 @@ inline typename List<T>::Iterator List<T>::End() const {
 template<typename T>
 Void List<T>::Push( const T & rItem )
 {
-	ListNode * pNewNode = New(m_iAllocatorID, m_iMemoryContextID) ListNode();
+	ListNode * pNewNode;
+	New( ListNode, pNewNode, ListNode(), m_iAllocatorID, m_iMemoryContextID );
 
     pNewNode->pNext = NULL;
     pNewNode->pPrev = NULL;
@@ -124,7 +125,8 @@ Void List<T>::Pop( T & outItem )
 template<typename T>
 Void List<T>::Unshift( const T & rItem )
 {
-	ListNode * pNewNode = New(m_iAllocatorID, m_iMemoryContextID) ListNode();
+	ListNode * pNewNode;
+	New( ListNode, pNewNode, ListNode(), m_iAllocatorID, m_iMemoryContextID );
 
     pNewNode->pNext = NULL;
     pNewNode->pPrev = NULL;
@@ -162,7 +164,8 @@ Void List<T>::Insert( Iterator & iAt, const T & rItem )
 {
     Assert( !( iAt.IsNull() ) );
 
-	ListNode * pNewNode = New(m_iAllocatorID, m_iMemoryContextID) ListNode();
+	ListNode * pNewNode;
+	New( ListNode, pNewNode, ListNode(), m_iAllocatorID, m_iMemoryContextID );
 
     pNewNode->pNext = NULL;
     pNewNode->pPrev = NULL;

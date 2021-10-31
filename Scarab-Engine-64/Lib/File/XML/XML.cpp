@@ -32,13 +32,15 @@ XMLManager::~XMLManager()
 
 XMLDocument * XMLManager::CreateDocument( const GChar * strTagName, const GChar * strVersion, const GChar * strEncoding )
 {
-    XMLDocument * pDocument = New() XMLDocument( strTagName, strVersion, strEncoding );
+    XMLDocument * pDocument;
+    New( XMLDocument, pDocument,  XMLDocument(strTagName, strVersion, strEncoding) );
 
     return pDocument;
 }
 XMLDocument * XMLManager::CreateDocument( const GChar * strFile )
 {
-    XMLDocument * pDocument = New() XMLDocument( TEXT("_xmlnew"), XML_VERSION, XML_ENCODING_DEFAULT );
+    XMLDocument * pDocument;
+    New( XMLDocument, pDocument,  XMLDocument(TEXT("_xmlnew"), XML_VERSION, XML_ENCODING_DEFAULT) );
 
     Bool bValid = pDocument->Parse( strFile );
     Assert( bValid );
@@ -47,7 +49,8 @@ XMLDocument * XMLManager::CreateDocument( const GChar * strFile )
 }
 XMLDocument * XMLManager::CreateDocumentXML( const GChar * strXML )
 {
-    XMLDocument * pDocument = New() XMLDocument( TEXT("_xmlnew"), XML_VERSION, XML_ENCODING_DEFAULT );
+    XMLDocument * pDocument;
+    New( XMLDocument, pDocument,  XMLDocument(TEXT("_xmlnew"), XML_VERSION, XML_ENCODING_DEFAULT) );
 
     Bool bValid = pDocument->ParseXML( strXML );
     Assert( bValid );
@@ -62,7 +65,8 @@ Void XMLManager::DestroyDocument( XMLDocument * pDocument )
 
 XMLNode * XMLManager::CreateNode( const GChar * strTagName, Bool bLeaf )
 {
-    XMLNode * pNode = New() XMLNode( XML_NODE, strTagName );
+    XMLNode * pNode;
+    New( XMLNode, pNode, XMLNode(XML_NODE, strTagName) );
 
     if ( bLeaf )
         pNode->_MakeLeaf();
@@ -73,20 +77,23 @@ XMLNode * XMLManager::CreateNode( const GChar * strTagName, Bool bLeaf )
 }
 XMLComment * XMLManager::CreateComment( const GChar * strComment )
 {
-    XMLComment * pComment = New() XMLComment( strComment );
+    XMLComment * pComment;
+    New( XMLComment, pComment, XMLComment(strComment) );
 
     return pComment;
 }
 XMLText * XMLManager::CreateText( const GChar * strText )
 {
-    XMLText * pText = New() XMLText( strText );
+    XMLText * pText;
+    New( XMLText, pText, XMLText(strText) );
 
     return pText;
 }
 
 XMLNode * XMLManager::CreateNode( const GChar * strFile )
 {
-    XMLNode * pNode = New() XMLNode( XML_NODE, TEXT("_xmlnew") );
+    XMLNode * pNode;
+    New( XMLNode, pNode, XMLNode(XML_NODE, TEXT("_xmlnew")) );
 
     Bool bValid = pNode->Parse( strFile );
     Assert( bValid );
@@ -95,7 +102,8 @@ XMLNode * XMLManager::CreateNode( const GChar * strFile )
 }
 XMLNode * XMLManager::CreateNodeXML( const GChar * strXML )
 {
-    XMLNode * pNode = New() XMLNode( XML_NODE, TEXT("_xmlnew") );
+    XMLNode * pNode;
+    New( XMLNode, pNode, XMLNode(XML_NODE, TEXT("_xmlnew")) );
 
     Bool bValid = pNode->ParseXML( strXML );
     Assert( bValid );

@@ -275,7 +275,7 @@ Void CUSolverDenseEigenValue::Prepare()
 	}
 
 	DebugAssert( !(m_hWorkspace.IsAllocated()) );
-	m_hWorkspace.Allocate( sizeof(T), iWorkspaceSize );
+	m_hWorkspace.Allocate1D( sizeof(T), iWorkspaceSize );
 
 	m_iSolverState = CUSOLVER_DENSE_EIGENVALUE_STATE_READY;
 }

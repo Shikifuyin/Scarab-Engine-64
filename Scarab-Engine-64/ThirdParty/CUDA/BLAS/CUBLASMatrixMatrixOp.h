@@ -36,22 +36,19 @@ public:
 	~CUBLASMatrixMatrixOp();
 
 	// Input : Matrix A
-	inline Void SetMatrixA( const CUDADeviceMemory * pMatrix );
+	inline Void SetMatrixA( const CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition = NULL, const CUDAMemoryRegion * pRegion = NULL );
 	inline Void SetMatrixPositionA( const CUDAMemoryPosition * pPosition = NULL );
 	inline Void SetMatrixRegionA( const CUDAMemoryRegion * pRegion = NULL );
-	inline Void SetMatrixA( const CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition = NULL, const CUDAMemoryRegion * pRegion = NULL );
 
 	// Input : Matrix B
-	inline Void SetMatrixB( const CUDADeviceMemory * pMatrix );
+	inline Void SetMatrixB( const CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition = NULL, const CUDAMemoryRegion * pRegion = NULL );
 	inline Void SetMatrixPositionB( const CUDAMemoryPosition * pPosition = NULL );
 	inline Void SetMatrixRegionB( const CUDAMemoryRegion * pRegion = NULL );
-	inline Void SetMatrixB( const CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition = NULL, const CUDAMemoryRegion * pRegion = NULL );
 
 	// Output : Matrix C
-	inline Void SetMatrixC( CUDADeviceMemory * pMatrix );
+	inline Void SetMatrixC( CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition = NULL, const CUDAMemoryRegion * pRegion = NULL );
 	inline Void SetMatrixPositionC( const CUDAMemoryPosition * pPosition = NULL );
 	inline Void SetMatrixRegionC( const CUDAMemoryRegion * pRegion = NULL );
-	inline Void SetMatrixC( CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition = NULL, const CUDAMemoryRegion * pRegion = NULL );
 
 	inline CUDADeviceMemory * GetMatrixC( CUDAMemoryPosition * outPosition = NULL, CUDAMemoryRegion * outRegion = NULL ) const;
 

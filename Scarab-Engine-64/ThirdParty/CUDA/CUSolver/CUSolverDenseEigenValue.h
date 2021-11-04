@@ -52,19 +52,17 @@ public:
     ~CUSolverDenseEigenValue();
 
 	// Input-Output : Matrix A (Symmetric or Hermitian)
-	inline Void SetMatrixA( CUDADeviceMemory * pMatrix );
+	inline Void SetMatrixA( CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition = NULL, const CUDAMemoryRegion * pRegion = NULL );
 	inline Void SetMatrixPositionA( const CUDAMemoryPosition * pPosition = NULL );
 	inline Void SetMatrixRegionA( const CUDAMemoryRegion * pRegion = NULL );
-	inline Void SetMatrixA( CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition = NULL, const CUDAMemoryRegion * pRegion = NULL );
 
 	inline CUDADeviceMemory * GetMatrixA( CUDAMemoryPosition * outPosition = NULL, CUDAMemoryRegion * outRegion = NULL ) const;
 
 	inline Void SetMatrixFillModeA( CUBLASContextFillMode iFillMode );
 
 	// Output : Vector X
-	inline Void SetVectorX( CUDADeviceMemory * pVector );
-	inline Void SetVectorPositionX( const CUDAMemoryPosition * pPosition = NULL );
 	inline Void SetVectorX( CUDADeviceMemory * pVector, const CUDAMemoryPosition * pPosition = NULL );
+	inline Void SetVectorPositionX( const CUDAMemoryPosition * pPosition = NULL );
 
 	inline CUDADeviceMemory * GetVectorX( CUDAMemoryPosition * outPosition = NULL, CUDAMemoryRegion * outRegion = NULL ) const;
 

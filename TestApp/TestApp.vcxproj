@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -79,14 +79,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Programming\IDE\VisualStudio\Shared\Python37_64\include;D:\Programming\Tools\PyBind11\pybind11-2.8.1\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Programming\IDE\VisualStudio\Shared\Python37_64\libs;$(LibraryPath)</LibraryPath>
-    <TargetName>CUDAPython</TargetName>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\Programming\IDE\VisualStudio\Shared\Python37_64\include;D:\Programming\Tools\PyBind11\pybind11-2.8.1\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Programming\IDE\VisualStudio\Shared\Python37_64\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -135,11 +134,13 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\Scarab-Engine-64\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeTypeInfo>
+      </RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>python37_d.lib;Scarab-Engine-64.lib;cudart.lib;cublas.lib;cusolver.lib;kernel32.lib;user32.lib;gdi32.lib;shell32.lib;ws2_32.lib;Iphlpapi.lib;comctl32.lib;msimg32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Scarab-Engine-64.lib;cudart.lib;cublas.lib;cusolver.lib;kernel32.lib;user32.lib;gdi32.lib;shell32.lib;ws2_32.lib;Iphlpapi.lib;comctl32.lib;msimg32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -154,18 +155,19 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\Scarab-Engine-64\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeTypeInfo>
+      </RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>python37.lib;Scarab-Engine-64.lib;cudart.lib;cublas.lib;cusolver.lib;kernel32.lib;user32.lib;gdi32.lib;shell32.lib;ws2_32.lib;Iphlpapi.lib;comctl32.lib;msimg32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Scarab-Engine-64.lib;cudart.lib;cublas.lib;cusolver.lib;kernel32.lib;user32.lib;gdi32.lib;shell32.lib;ws2_32.lib;Iphlpapi.lib;comctl32.lib;msimg32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CUDAPython.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>

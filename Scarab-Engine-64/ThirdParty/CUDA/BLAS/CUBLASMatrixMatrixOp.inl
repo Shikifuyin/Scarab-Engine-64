@@ -17,11 +17,11 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // CUBLASMatrixMatrixOp implementation
-inline Void CUBLASMatrixMatrixOp::SetMatrixA( const CUDADeviceMemory * pMatrix ) {
+inline Void CUBLASMatrixMatrixOp::SetMatrixA( const CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition, const CUDAMemoryRegion * pRegion ) {
 	DebugAssert( pMatrix != NULL );
 	m_pMatrixA = pMatrix;
-	SetMatrixPositionA();
-	SetMatrixRegionA();
+	SetMatrixPositionA( pPosition );
+	SetMatrixRegionA( pRegion );
 }
 inline Void CUBLASMatrixMatrixOp::SetMatrixPositionA( const CUDAMemoryPosition * pPosition ) {
 	DebugAssert( m_pMatrixA != NULL );
@@ -45,18 +45,12 @@ inline Void CUBLASMatrixMatrixOp::SetMatrixRegionA( const CUDAMemoryRegion * pRe
 	}
 	DebugAssert( m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA ) );
 }
-inline Void CUBLASMatrixMatrixOp::SetMatrixA( const CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition, const CUDAMemoryRegion * pRegion ) {
-	DebugAssert( pMatrix != NULL );
-	m_pMatrixA = pMatrix;
-	SetMatrixPositionA( pPosition );
-	SetMatrixRegionA( pRegion );
-}
 
-inline Void CUBLASMatrixMatrixOp::SetMatrixB( const CUDADeviceMemory * pMatrix ) {
+inline Void CUBLASMatrixMatrixOp::SetMatrixB( const CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition, const CUDAMemoryRegion * pRegion ) {
 	DebugAssert( pMatrix != NULL );
 	m_pMatrixB = pMatrix;
-	SetMatrixPositionB();
-	SetMatrixRegionB();
+	SetMatrixPositionB( pPosition );
+	SetMatrixRegionB( pRegion );
 }
 inline Void CUBLASMatrixMatrixOp::SetMatrixPositionB( const CUDAMemoryPosition * pPosition ) {
 	DebugAssert( m_pMatrixB != NULL );
@@ -80,18 +74,12 @@ inline Void CUBLASMatrixMatrixOp::SetMatrixRegionB( const CUDAMemoryRegion * pRe
 	}
 	DebugAssert( m_pMatrixB->IsValidRegion( m_hMatrixPositionB, m_hMatrixRegionB ) );
 }
-inline Void CUBLASMatrixMatrixOp::SetMatrixB( const CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition, const CUDAMemoryRegion * pRegion ) {
-	DebugAssert( pMatrix != NULL );
-	m_pMatrixB = pMatrix;
-	SetMatrixPositionB( pPosition );
-	SetMatrixRegionB( pRegion );
-}
 
-inline Void CUBLASMatrixMatrixOp::SetMatrixC( CUDADeviceMemory * pMatrix ) {
+inline Void CUBLASMatrixMatrixOp::SetMatrixC( CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition, const CUDAMemoryRegion * pRegion ) {
 	DebugAssert( pMatrix != NULL );
 	m_pMatrixC = pMatrix;
-	SetMatrixPositionC();
-	SetMatrixRegionC();
+	SetMatrixPositionC( pPosition );
+	SetMatrixRegionC( pRegion );
 }
 inline Void CUBLASMatrixMatrixOp::SetMatrixPositionC( const CUDAMemoryPosition * pPosition ) {
 	DebugAssert( m_pMatrixC != NULL );
@@ -114,12 +102,6 @@ inline Void CUBLASMatrixMatrixOp::SetMatrixRegionC( const CUDAMemoryRegion * pRe
 		m_hMatrixRegionC.iDepth = 0;
 	}
 	DebugAssert( m_pMatrixC->IsValidRegion( m_hMatrixPositionC, m_hMatrixRegionC ) );
-}
-inline Void CUBLASMatrixMatrixOp::SetMatrixC( CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition, const CUDAMemoryRegion * pRegion ) {
-	DebugAssert( pMatrix != NULL );
-	m_pMatrixC = pMatrix;
-	SetMatrixPositionC( pPosition );
-	SetMatrixRegionC( pRegion );
 }
 
 inline CUDADeviceMemory * CUBLASMatrixMatrixOp::GetMatrixC( CUDAMemoryPosition * outPosition, CUDAMemoryRegion * outRegion ) const {
@@ -270,38 +252,38 @@ Void CUBLASMatrixMatrixOp::MulAdd( T fScaleA, T fScaleC, CUBLASContextTransposeO
 
 	cublasStatus_t iError;
 	if ( typeid(T) == typeid(CUDAReal32) ) {
-		iError = cublasSgemm( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-							  (const Float *)&fScaleA, (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const Float *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (const Float *)&fScaleC, (Float*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+		iError = cublasSgemm( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+							  (const Float *)&fScaleA, (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const Float *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (const Float *)&fScaleC, (Float*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAReal64) ) {
-		iError = cublasDgemm( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-							  (const Double *)&fScaleA, (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const Double *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (const Double *)&fScaleC, (Double*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+		iError = cublasDgemm( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+							  (const Double *)&fScaleA, (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const Double *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (const Double *)&fScaleC, (Double*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
 		if ( bUseComplexGaussReduction ) {
-			iError = cublasCgemm3m( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-									(const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-									(const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-									(const cuComplex *)&fScaleC, (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+			iError = cublasCgemm3m( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+									(const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+									(const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+									(const cuComplex *)&fScaleC, (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 		} else {
-			iError = cublasCgemm( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-								  (const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-								  (const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-								  (const cuComplex *)&fScaleC, (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+			iError = cublasCgemm( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+								  (const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+								  (const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+								  (const cuComplex *)&fScaleC, (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 		}
 	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
 		if ( bUseComplexGaussReduction ) {
-			iError = cublasZgemm3m( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-									(const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-									(const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-									(const cuDoubleComplex *)&fScaleC, (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+			iError = cublasZgemm3m( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+									(const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+									(const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+									(const cuDoubleComplex *)&fScaleC, (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 		} else {
-			iError = cublasZgemm( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-								  (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-								  (const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-								  (const cuDoubleComplex *)&fScaleC, (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+			iError = cublasZgemm( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+								  (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+								  (const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+								  (const cuDoubleComplex *)&fScaleC, (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 		}
 	} else {
 		DebugAssert( false );
@@ -331,25 +313,25 @@ Void CUBLASMatrixMatrixOp::MulAddSymmetric( T fScaleA, T fScaleC, CUBLASContextS
 
 	cublasStatus_t iError;
 	if ( typeid(T) == typeid(CUDAReal32) ) {
-		iError = cublasSsymm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const Float *)&fScaleA, (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const Float *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (const Float *)&fScaleC, (Float*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+		iError = cublasSsymm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const Float *)&fScaleA, (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const Float *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (const Float *)&fScaleC, (Float*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAReal64) ) {
-		iError = cublasDsymm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const Double *)&fScaleA, (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const Double *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (const Double *)&fScaleC, (Double*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+		iError = cublasDsymm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const Double *)&fScaleA, (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const Double *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (const Double *)&fScaleC, (Double*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
-		iError = cublasCsymm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (const cuComplex *)&fScaleC, (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+		iError = cublasCsymm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (const cuComplex *)&fScaleC, (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
-		iError = cublasZsymm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (const cuDoubleComplex *)&fScaleC, (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+		iError = cublasZsymm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (const cuDoubleComplex *)&fScaleC, (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else {
 		DebugAssert( false );
 	}
@@ -377,15 +359,15 @@ Void CUBLASMatrixMatrixOp::MulAddHermitian( T fScaleA, T fScaleC, CUBLASContextS
 
 	cublasStatus_t iError;
 	if ( typeid(T) == typeid(CUDAComplex32) ) {
-		iError = cublasChemm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (const cuComplex *)&fScaleC, (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+		iError = cublasChemm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (const cuComplex *)&fScaleC, (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
-		iError = cublasZhemm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (const cuDoubleComplex *)&fScaleC, (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+		iError = cublasZhemm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (const cuDoubleComplex *)&fScaleC, (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else {
 		DebugAssert( false );
 	}
@@ -416,28 +398,28 @@ Void CUBLASMatrixMatrixOp::MulTriangular( T fScaleA, CUBLASContextSideMode iSide
 	cublasStatus_t iError;
 	if ( typeid(T) == typeid(CUDAReal32) ) {
 		iError = cublasStrmm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-							  m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const Float *)&fScaleA, (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const Float *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (Float*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+							  (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const Float *)&fScaleA, (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const Float *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (Float*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAReal64) ) {
 		iError = cublasDtrmm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-							  m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const Double *)&fScaleA, (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const Double *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (Double*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+							  (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const Double *)&fScaleA, (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const Double *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (Double*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
 		iError = cublasCtrmm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-							  m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+							  (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
 		iError = cublasZtrmm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-							  m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(),
-							  (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+							  (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ),
+							  (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else {
 		DebugAssert( false );
 	}
@@ -466,24 +448,24 @@ Void CUBLASMatrixMatrixOp::SolveTriangular( T fScaleA, CUBLASContextSideMode iSi
 	cublasStatus_t iError;
 	if ( typeid(T) == typeid(CUDAReal32) ) {
 		iError = cublasStrsm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-							  m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const Float *)&fScaleA, (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (Float*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+							  (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const Float *)&fScaleA, (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (Float*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAReal64) ) {
 		iError = cublasDtrsm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-							  m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const Double *)&fScaleA, (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (Double*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+							  (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const Double *)&fScaleA, (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (Double*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
 		iError = cublasCtrsm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-							  m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+							  (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (cuComplex *)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
 		iError = cublasZtrsm( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-							  m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-							  (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-							  (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth() );
+							  (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+							  (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
+							  (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ) );
 	} else {
 		DebugAssert( false );
 	}
@@ -532,25 +514,25 @@ Void CUBLASMatrixMatrixOp::MulAddBatched( T fScaleA, T fScaleC, CUBLASContextTra
 
 		cublasStatus_t iError;
 		if ( typeid(T) == typeid(CUDAReal32) ) {
-			iError = cublasSgemmStridedBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-												(const Float *)&fScaleA, (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(), m_pMatrixA->GetWidth() * m_hMatrixRegionA.iHeight,
-												(const Float *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(), m_pMatrixB->GetWidth() * m_hMatrixRegionB.iHeight,
-												(const Float *)&fScaleC, (Float*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth(), m_pMatrixC->GetWidth() * m_hMatrixRegionC.iHeight, iBatchCount );
+			iError = cublasSgemmStridedBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+												(const Float *)&fScaleA, (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ), (Int)( m_pMatrixA->GetWidth() * m_hMatrixRegionA.iHeight ),
+												(const Float *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ), (Int)( m_pMatrixB->GetWidth() * m_hMatrixRegionB.iHeight ),
+												(const Float *)&fScaleC, (Float*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ), (Int)( m_pMatrixC->GetWidth() * m_hMatrixRegionC.iHeight ), (Int)iBatchCount );
 		} else if ( typeid(T) == typeid(CUDAReal64) ) {
-			iError = cublasDgemmStridedBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-												(const Double *)&fScaleA, (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(), m_pMatrixA->GetWidth() * m_hMatrixRegionA.iHeight,
-												(const Double *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(), m_pMatrixB->GetWidth() * m_hMatrixRegionB.iHeight,
-												(const Double *)&fScaleC, (Double*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth(), m_pMatrixC->GetWidth() * m_hMatrixRegionC.iHeight, iBatchCount );
+			iError = cublasDgemmStridedBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+												(const Double *)&fScaleA, (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ), (Int)( m_pMatrixA->GetWidth() * m_hMatrixRegionA.iHeight ),
+												(const Double *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ), (Int)( m_pMatrixB->GetWidth() * m_hMatrixRegionB.iHeight ),
+												(const Double *)&fScaleC, (Double*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ), (Int)( m_pMatrixC->GetWidth() * m_hMatrixRegionC.iHeight ), (Int)iBatchCount );
 		} else if ( typeid(T) == typeid(CUDAComplex32) ) {
-			iError = cublasCgemmStridedBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-												(const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(), m_pMatrixA->GetWidth() * m_hMatrixRegionA.iHeight,
-												(const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(), m_pMatrixB->GetWidth() * m_hMatrixRegionB.iHeight,
-												(const cuComplex *)&fScaleC, (cuComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth(), m_pMatrixC->GetWidth() * m_hMatrixRegionC.iHeight, iBatchCount );
+			iError = cublasCgemmStridedBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+												(const cuComplex *)&fScaleA, (const cuComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ), (Int)( m_pMatrixA->GetWidth() * m_hMatrixRegionA.iHeight ),
+												(const cuComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ), (Int)( m_pMatrixB->GetWidth() * m_hMatrixRegionB.iHeight ),
+												(const cuComplex *)&fScaleC, (cuComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ), (Int)( m_pMatrixC->GetWidth() * m_hMatrixRegionC.iHeight ), (Int)iBatchCount );
 		} else if ( typeid(T) == typeid(CUDAComplex64) ) {
-			iError = cublasZgemmStridedBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-												(const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(), m_pMatrixA->GetWidth() * m_hMatrixRegionA.iHeight,
-												(const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), m_pMatrixB->GetWidth(), m_pMatrixB->GetWidth() * m_hMatrixRegionB.iHeight,
-												(const cuDoubleComplex *)&fScaleC, (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), m_pMatrixC->GetWidth(), m_pMatrixC->GetWidth() * m_hMatrixRegionC.iHeight, iBatchCount );
+			iError = cublasZgemmStridedBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+												(const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ), (Int)( m_pMatrixA->GetWidth() * m_hMatrixRegionA.iHeight ),
+												(const cuDoubleComplex *)( m_pMatrixB->GetPointer(m_hMatrixPositionB) ), (Int)( m_pMatrixB->GetWidth() ), (Int)( m_pMatrixB->GetWidth() * m_hMatrixRegionB.iHeight ),
+												(const cuDoubleComplex *)&fScaleC, (cuDoubleComplex*)( m_pMatrixC->GetPointer(m_hMatrixPositionC) ), (Int)( m_pMatrixC->GetWidth() ), (Int)( m_pMatrixC->GetWidth() * m_hMatrixRegionC.iHeight ), (Int)iBatchCount );
 		} else {
 			DebugAssert( false );
 		}
@@ -585,25 +567,25 @@ Void CUBLASMatrixMatrixOp::MulAddBatched( T fScaleA, T fScaleC, CUBLASContextTra
 
 		cublasStatus_t iError;
 		if ( typeid(T) == typeid(CUDAReal32) ) {
-			iError = cublasSgemmBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-										 (const Float *)&fScaleA, (const Float * const *)arrBatchMatricesA, iReferenceWidthA,
-										 (const Float * const *)arrBatchMatricesB, iReferenceWidthB,
-										 (const Float *)&fScaleC, (Float * const *)arrBatchMatricesC, iReferenceWidthC, iBatchCount );
+			iError = cublasSgemmBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+										 (const Float *)&fScaleA, (const Float * const *)arrBatchMatricesA, (Int)iReferenceWidthA,
+										 (const Float * const *)arrBatchMatricesB, (Int)iReferenceWidthB,
+										 (const Float *)&fScaleC, (Float * const *)arrBatchMatricesC, (Int)iReferenceWidthC, (Int)iBatchCount );
 		} else if ( typeid(T) == typeid(CUDAReal64) ) {
-			iError = cublasDgemmBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-										 (const Double *)&fScaleA, (const Double * const *)arrBatchMatricesA, iReferenceWidthA,
-										 (const Double * const *)arrBatchMatricesB, iReferenceWidthB,
-										 (const Double *)&fScaleC, (Double * const *)arrBatchMatricesC, iReferenceWidthC, iBatchCount );
+			iError = cublasDgemmBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+										 (const Double *)&fScaleA, (const Double * const *)arrBatchMatricesA, (Int)iReferenceWidthA,
+										 (const Double * const *)arrBatchMatricesB, (Int)iReferenceWidthB,
+										 (const Double *)&fScaleC, (Double * const *)arrBatchMatricesC, (Int)iReferenceWidthC, (Int)iBatchCount );
 		} else if ( typeid(T) == typeid(CUDAComplex32) ) {
-			iError = cublasCgemmBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-										 (const cuComplex *)&fScaleA, (const cuComplex * const *)arrBatchMatricesA, iReferenceWidthA,
-										 (const cuComplex * const *)arrBatchMatricesB, iReferenceWidthB,
-										 (const cuComplex *)&fScaleC, (cuComplex * const *)arrBatchMatricesC, iReferenceWidthC, iBatchCount );
+			iError = cublasCgemmBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+										 (const cuComplex *)&fScaleA, (const cuComplex * const *)arrBatchMatricesA, (Int)iReferenceWidthA,
+										 (const cuComplex * const *)arrBatchMatricesB, (Int)iReferenceWidthB,
+										 (const cuComplex *)&fScaleC, (cuComplex * const *)arrBatchMatricesC, (Int)iReferenceWidthC, (Int)iBatchCount );
 		} else if ( typeid(T) == typeid(CUDAComplex64) ) {
-			iError = cublasZgemmBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, iM, iN, iK,
-										 (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex * const *)arrBatchMatricesA, iReferenceWidthA,
-										 (const cuDoubleComplex * const *)arrBatchMatricesB, iReferenceWidthB,
-										 (const cuDoubleComplex *)&fScaleC, (cuDoubleComplex * const *)arrBatchMatricesC, iReferenceWidthC, iBatchCount );
+			iError = cublasZgemmBatched( hCUBLASContext, iCUBLASTransposeOpA, iCUBLASTransposeOpB, (Int)iM, (Int)iN, (Int)iK,
+										 (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex * const *)arrBatchMatricesA, (Int)iReferenceWidthA,
+										 (const cuDoubleComplex * const *)arrBatchMatricesB, (Int)iReferenceWidthB,
+										 (const cuDoubleComplex *)&fScaleC, (cuDoubleComplex * const *)arrBatchMatricesC, (Int)iReferenceWidthC, (Int)iBatchCount );
 		} else {
 			DebugAssert( false );
 		}
@@ -659,24 +641,24 @@ Void CUBLASMatrixMatrixOp::SolveTriangularBatched( T fScaleA, CUBLASContextSideM
 		cublasStatus_t iError;
 		if ( typeid(T) == typeid(CUDAReal32) ) {
 			iError = cublasStrsmBatched( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-										 m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-										 (const Float *)&fScaleA, (const Float * const *)arrBatchMatricesA, iReferenceWidthA,
-										 (Float * const *)arrBatchMatricesC, iReferenceWidthC, iBatchCount );
+										 (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+										 (const Float *)&fScaleA, (const Float * const *)arrBatchMatricesA, (Int)iReferenceWidthA,
+										 (Float * const *)arrBatchMatricesC, (Int)iReferenceWidthC, (Int)iBatchCount );
 		} else if ( typeid(T) == typeid(CUDAReal64) ) {
 			iError = cublasDtrsmBatched( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-										 m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-										 (const Double *)&fScaleA, (const Double * const *)arrBatchMatricesA, iReferenceWidthA,
-										 (Double * const *)arrBatchMatricesC, iReferenceWidthC, iBatchCount );
+										 (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+										 (const Double *)&fScaleA, (const Double * const *)arrBatchMatricesA, (Int)iReferenceWidthA,
+										 (Double * const *)arrBatchMatricesC, (Int)iReferenceWidthC, (Int)iBatchCount );
 		} else if ( typeid(T) == typeid(CUDAComplex32) ) {
 			iError = cublasCtrsmBatched( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-										 m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-										 (const cuComplex *)&fScaleA, (const cuComplex * const *)arrBatchMatricesA, iReferenceWidthA,
-										 (cuComplex * const *)arrBatchMatricesC, iReferenceWidthC, iBatchCount );
+										 (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+										 (const cuComplex *)&fScaleA, (const cuComplex * const *)arrBatchMatricesA, (Int)iReferenceWidthA,
+										 (cuComplex * const *)arrBatchMatricesC, (Int)iReferenceWidthC, (Int)iBatchCount );
 		} else if ( typeid(T) == typeid(CUDAComplex64) ) {
 			iError = cublasZtrsmBatched( hCUBLASContext, iCUBLASSideMode, iCUBLASFillMode, iCUBLASTransposeOpA, bMainDiagIsUnityA ? CUBLAS_DIAG_UNIT : CUBLAS_DIAG_NON_UNIT,
-										 m_hMatrixRegionC.iWidth, m_hMatrixRegionC.iHeight,
-										 (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex * const *)arrBatchMatricesA, iReferenceWidthA,
-										 (cuDoubleComplex * const *)arrBatchMatricesC, iReferenceWidthC, iBatchCount );
+										 (Int)( m_hMatrixRegionC.iWidth ), (Int)( m_hMatrixRegionC.iHeight ),
+										 (const cuDoubleComplex *)&fScaleA, (const cuDoubleComplex * const *)arrBatchMatricesA, (Int)iReferenceWidthA,
+										 (cuDoubleComplex * const *)arrBatchMatricesC, (Int)iReferenceWidthC, (Int)iBatchCount );
 		} else {
 			DebugAssert( false );
 		}

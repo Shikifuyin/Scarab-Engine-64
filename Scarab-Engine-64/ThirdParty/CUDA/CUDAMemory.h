@@ -205,15 +205,15 @@ public:
 	inline Bool IsWrappedReadOnly() const; // Wrapped as Read-Only
 	
 	Void Allocate( SizeT iSize, UInt iHostMemoryAllocFlags = CUDA_HOSTMEMORY_ALLOC_FLAG_DEFAULT );
-	Void Allocate( SizeT iElementSize, SizeT iWidth, UInt iHostMemoryAllocFlags = CUDA_HOSTMEMORY_ALLOC_FLAG_DEFAULT );
-	Void Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight, UInt iHostMemoryAllocFlags = CUDA_HOSTMEMORY_ALLOC_FLAG_DEFAULT );
-	Void Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, UInt iHostMemoryAllocFlags = CUDA_HOSTMEMORY_ALLOC_FLAG_DEFAULT );
+	Void Allocate1D( SizeT iElementSize, SizeT iWidth, UInt iHostMemoryAllocFlags = CUDA_HOSTMEMORY_ALLOC_FLAG_DEFAULT );
+	Void Allocate2D( SizeT iElementSize, SizeT iWidth, SizeT iHeight, UInt iHostMemoryAllocFlags = CUDA_HOSTMEMORY_ALLOC_FLAG_DEFAULT );
+	Void Allocate3D( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, UInt iHostMemoryAllocFlags = CUDA_HOSTMEMORY_ALLOC_FLAG_DEFAULT );
 	Void Free();
 	
 	Void Wrap( Void * pSystemMemory, SizeT iSize, UInt iHostMemoryWrapFlags = CUDA_HOSTMEMORY_WRAP_FLAG_DEFAULT );
-	Void Wrap( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, UInt iHostMemoryWrapFlags = CUDA_HOSTMEMORY_WRAP_FLAG_DEFAULT );
-	Void Wrap( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, SizeT iHeight, UInt iHostMemoryWrapFlags = CUDA_HOSTMEMORY_WRAP_FLAG_DEFAULT );
-	Void Wrap( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, UInt iHostMemoryWrapFlags = CUDA_HOSTMEMORY_WRAP_FLAG_DEFAULT );
+	Void Wrap1D( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, UInt iHostMemoryWrapFlags = CUDA_HOSTMEMORY_WRAP_FLAG_DEFAULT );
+	Void Wrap2D( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, SizeT iHeight, UInt iHostMemoryWrapFlags = CUDA_HOSTMEMORY_WRAP_FLAG_DEFAULT );
+	Void Wrap3D( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, UInt iHostMemoryWrapFlags = CUDA_HOSTMEMORY_WRAP_FLAG_DEFAULT );
 	Void UnWrap();
 
 	template<class T> const T & Read( const CUDAMemoryPosition & hPosition ) const;
@@ -244,9 +244,9 @@ public:
 	inline virtual Bool IsManagedMemory() const;
 	
 	Void Allocate( SizeT iSize );
-	Void Allocate( SizeT iElementSize, SizeT iWidth );
-	Void Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight );
-	Void Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth );
+	Void Allocate1D( SizeT iElementSize, SizeT iWidth );
+	Void Allocate2D( SizeT iElementSize, SizeT iWidth, SizeT iHeight );
+	Void Allocate3D( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth );
 	Void Free();
 	
 protected:
@@ -269,9 +269,9 @@ public:
 	inline virtual Bool IsManagedMemory() const;
 	
 	Void Allocate( SizeT iSize, Bool bAttachHost = false );
-	Void Allocate( SizeT iElementSize, SizeT iWidth, Bool bAttachHost = false );
-	Void Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight, Bool bAttachHost = false );
-	Void Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, Bool bAttachHost = false );
+	Void Allocate1D( SizeT iElementSize, SizeT iWidth, Bool bAttachHost = false );
+	Void Allocate2D( SizeT iElementSize, SizeT iWidth, SizeT iHeight, Bool bAttachHost = false );
+	Void Allocate3D( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, Bool bAttachHost = false );
 	Void Free();
 	
 protected:

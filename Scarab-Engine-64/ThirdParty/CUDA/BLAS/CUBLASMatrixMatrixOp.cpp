@@ -17,11 +17,11 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Third-Party Includes
+#include <typeinfo>
 #include <cublas_v2.h>
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#pragma warning(disable:4244) // Conversion to smaller type
 #pragma warning(disable:4739) // Reference exceed storage space
 #include "CUBLASMatrixMatrixOp.h"
 

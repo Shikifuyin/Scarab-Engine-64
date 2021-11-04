@@ -231,6 +231,7 @@ Void CUDAMemory::Copy( const CUDAMemory * pSrc, SizeT iSize )
 {
 	// Check States are valid
 	DebugAssert( IsAllocated() && pSrc->IsAllocated() );
+	DebugAssert( m_iShape == CUDA_MEMORY_SHAPE_NONE && pSrc->m_iShape == CUDA_MEMORY_SHAPE_NONE );
 	DebugAssert( iSize <= m_iSize && iSize <= pSrc->m_iSize );
 	
 	// Get Transfer Kind
@@ -287,13 +288,13 @@ Void CUDAMemory::Copy( const CUDAMemoryPosition & hDestPos,
 		if ( m_iShape == CUDA_MEMORY_SHAPE_2D )
 			iDestPitch = m_iPitch;
 		else
-			iDestPitch = iStride * hCopyRegion.iWidth;
+			iDestPitch = iCopyWidth;
 		
 		UInt iSrcPitch = 0;
 		if ( pSrc->m_iShape == CUDA_MEMORY_SHAPE_2D )
-			iSrcPitch = m_iPitch;
+			iSrcPitch = pSrc->m_iPitch;
 		else
-			iSrcPitch = iStride * hCopyRegion.iWidth;
+			iSrcPitch = iCopyWidth;
 		
 		// Perform Copy
 		cudaError_t iError = cudaMemcpy2D( pDestMemory, iDestPitch, pSrcMemory, iSrcPitch, iCopyWidth, hCopyRegion.iHeight, iKind );
@@ -456,7 +457,7 @@ Void CUDAHostMemory::Allocate( SizeT iSize, UInt iHostMemoryAllocFlags )
 	m_bIsWrapped = false;
 	m_iHostMemoryWrapFlags = 0;
 }
-Void CUDAHostMemory::Allocate( SizeT iElementSize, SizeT iWidth, UInt iHostMemoryAllocFlags )
+Void CUDAHostMemory::Allocate1D( SizeT iElementSize, SizeT iWidth, UInt iHostMemoryAllocFlags )
 {
 	DebugAssert( m_pMemory == NULL );
 	
@@ -483,7 +484,7 @@ Void CUDAHostMemory::Allocate( SizeT iElementSize, SizeT iWidth, UInt iHostMemor
 	m_bIsWrapped = false;
 	m_iHostMemoryWrapFlags = 0;
 }
-Void CUDAHostMemory::Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight, UInt iHostMemoryAllocFlags )
+Void CUDAHostMemory::Allocate2D( SizeT iElementSize, SizeT iWidth, SizeT iHeight, UInt iHostMemoryAllocFlags )
 {
 	DebugAssert( m_pMemory == NULL );
 	
@@ -510,7 +511,7 @@ Void CUDAHostMemory::Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight, 
 	m_bIsWrapped = false;
 	m_iHostMemoryWrapFlags = 0;
 }
-Void CUDAHostMemory::Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, UInt iHostMemoryAllocFlags )
+Void CUDAHostMemory::Allocate3D( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, UInt iHostMemoryAllocFlags )
 {
 	DebugAssert( m_pMemory == NULL );
 	
@@ -588,7 +589,7 @@ Void CUDAHostMemory::Wrap( Void * pSystemMemory, SizeT iSize, UInt iHostMemoryWr
 	m_bIsWrapped = true;
 	m_iHostMemoryWrapFlags = iHostMemoryWrapFlags;
 }
-Void CUDAHostMemory::Wrap( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, UInt iHostMemoryWrapFlags )
+Void CUDAHostMemory::Wrap1D( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, UInt iHostMemoryWrapFlags )
 {
 	DebugAssert( m_pMemory == NULL );
 	
@@ -614,7 +615,7 @@ Void CUDAHostMemory::Wrap( Void * pSystemMemory, SizeT iElementSize, SizeT iWidt
 	m_bIsWrapped = true;
 	m_iHostMemoryWrapFlags = iHostMemoryWrapFlags;
 }
-Void CUDAHostMemory::Wrap( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, SizeT iHeight, UInt iHostMemoryWrapFlags )
+Void CUDAHostMemory::Wrap2D( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, SizeT iHeight, UInt iHostMemoryWrapFlags )
 {
 	DebugAssert( m_pMemory == NULL );
 	
@@ -640,7 +641,7 @@ Void CUDAHostMemory::Wrap( Void * pSystemMemory, SizeT iElementSize, SizeT iWidt
 	m_bIsWrapped = true;
 	m_iHostMemoryWrapFlags = iHostMemoryWrapFlags;
 }
-Void CUDAHostMemory::Wrap( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, UInt iHostMemoryWrapFlags )
+Void CUDAHostMemory::Wrap3D( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, UInt iHostMemoryWrapFlags )
 {
 	DebugAssert( m_pMemory == NULL );
 	
@@ -759,15 +760,15 @@ Void CUDADeviceMemory::Allocate( SizeT iSize )
 	m_iDepth = 0;
 	m_iSize = iSize;
 }
-Void CUDADeviceMemory::Allocate( SizeT iElementSize, SizeT iWidth )
+Void CUDADeviceMemory::Allocate1D( SizeT iElementSize, SizeT iWidth )
 {
 	DebugAssert( m_pMemory == NULL );
 	
 	cudaPitchedPtr hPitchedDeviceMemory;
 	cudaExtent hExtent;
 	hExtent.width = iElementSize * iWidth;
-	hExtent.height = 0;
-	hExtent.depth = 0;
+	hExtent.height = 1;
+	hExtent.depth = 1;
 	
 	cudaError_t iError = cudaMalloc3D( &hPitchedDeviceMemory, hExtent );
 	DebugAssert( iError == cudaSuccess && hPitchedDeviceMemory.ptr != NULL );
@@ -785,7 +786,7 @@ Void CUDADeviceMemory::Allocate( SizeT iElementSize, SizeT iWidth )
 	m_iDepth = 0;
 	m_iSize = hPitchedDeviceMemory.pitch;
 }
-Void CUDADeviceMemory::Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight )
+Void CUDADeviceMemory::Allocate2D( SizeT iElementSize, SizeT iWidth, SizeT iHeight )
 {
 	DebugAssert( m_pMemory == NULL );
 	
@@ -793,7 +794,7 @@ Void CUDADeviceMemory::Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight
 	cudaExtent hExtent;
 	hExtent.width = iElementSize * iWidth;
 	hExtent.height = iHeight;
-	hExtent.depth = 0;
+	hExtent.depth = 1;
 	
 	cudaError_t iError = cudaMalloc3D( &hPitchedDeviceMemory, hExtent );
 	DebugAssert( iError == cudaSuccess && hPitchedDeviceMemory.ptr != NULL );
@@ -811,7 +812,7 @@ Void CUDADeviceMemory::Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight
 	m_iDepth = 0;
 	m_iSize = m_iPitch * iHeight;
 }
-Void CUDADeviceMemory::Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth )
+Void CUDADeviceMemory::Allocate3D( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth )
 {
 	DebugAssert( m_pMemory == NULL );
 	
@@ -899,7 +900,7 @@ Void CUDAManagedMemory::Allocate( SizeT iSize, Bool bAttachHost )
 	m_iDepth = 0;
 	m_iSize = iSize;
 }
-Void CUDAManagedMemory::Allocate( SizeT iElementSize, SizeT iWidth, Bool bAttachHost )
+Void CUDAManagedMemory::Allocate1D( SizeT iElementSize, SizeT iWidth, Bool bAttachHost )
 {
 	DebugAssert( m_pMemory == NULL );
 	
@@ -926,7 +927,7 @@ Void CUDAManagedMemory::Allocate( SizeT iElementSize, SizeT iWidth, Bool bAttach
 	m_iDepth = 0;
 	m_iSize = iSize;
 }
-Void CUDAManagedMemory::Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight, Bool bAttachHost )
+Void CUDAManagedMemory::Allocate2D( SizeT iElementSize, SizeT iWidth, SizeT iHeight, Bool bAttachHost )
 {
 	DebugAssert( m_pMemory == NULL );
 	
@@ -953,7 +954,7 @@ Void CUDAManagedMemory::Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeigh
 	m_iDepth = 0;
 	m_iSize = iSize;
 }
-Void CUDAManagedMemory::Allocate( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, Bool bAttachHost )
+Void CUDAManagedMemory::Allocate3D( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, Bool bAttachHost )
 {
 	DebugAssert( m_pMemory == NULL );
 	

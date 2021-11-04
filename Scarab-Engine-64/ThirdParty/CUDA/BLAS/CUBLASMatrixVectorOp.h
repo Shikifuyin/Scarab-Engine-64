@@ -36,22 +36,19 @@ public:
 	~CUBLASMatrixVectorOp();
 
 	// Input : Matrix A
-	inline Void SetMatrixA( const CUDADeviceMemory * pMatrix );
+	inline Void SetMatrixA( const CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition = NULL, const CUDAMemoryRegion * pRegion = NULL );
 	inline Void SetMatrixPositionA( const CUDAMemoryPosition * pPosition = NULL );
 	inline Void SetMatrixRegionA( const CUDAMemoryRegion * pRegion = NULL );
-	inline Void SetMatrixA( const CUDADeviceMemory * pMatrix, const CUDAMemoryPosition * pPosition = NULL, const CUDAMemoryRegion * pRegion = NULL );
 
 	// Input-Output : Vector X
-	inline Void SetVectorX( CUDADeviceMemory * pVector );
-	inline Void SetVectorPositionX( const CUDAMemoryPosition * pPosition = NULL );
 	inline Void SetVectorX( CUDADeviceMemory * pVector, const CUDAMemoryPosition * pPosition = NULL );
+	inline Void SetVectorPositionX( const CUDAMemoryPosition * pPosition = NULL );
 
 	inline CUDADeviceMemory * GetVectorX( CUDAMemoryPosition * outPosition = NULL, CUDAMemoryRegion * outRegion = NULL ) const;
 
 	// Input-Output : Vector Y
-	inline Void SetVectorY( CUDADeviceMemory * pVector );
-	inline Void SetVectorPositionY( const CUDAMemoryPosition * pPosition = NULL );
 	inline Void SetVectorY( CUDADeviceMemory * pVector, const CUDAMemoryPosition * pPosition = NULL );
+	inline Void SetVectorPositionY( const CUDAMemoryPosition * pPosition = NULL );
 
 	inline CUDADeviceMemory * GetVectorY( CUDAMemoryPosition * outPosition = NULL, CUDAMemoryRegion * outRegion = NULL ) const;
 

@@ -17,12 +17,12 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Third-Party Includes
+#include <typeinfo>
 #include <cuda_runtime.h>
 #include <cusolverDn.h>
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#pragma warning(disable:4244) // Conversion to smaller type
 #pragma warning(disable:4739) // Reference exceed storage space
 #include "CUSolverDenseEigenValue.h"
 

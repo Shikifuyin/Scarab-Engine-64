@@ -72,7 +72,5 @@ Void CUSolverDenseContext::SetStream( CUDAStream * pStream ) const
 	
 	cusolverStatus_t iError = cusolverDnSetStream( hCUSolverDnContext, hCUDAStream );
 	DebugAssert( iError == CUSOLVER_STATUS_SUCCESS );
-
-	syevjInfo_t a;
 }
 

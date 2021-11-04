@@ -119,6 +119,7 @@ public:
 
 private:
 	friend class CUBLASVectorOp;
+	friend class CUBLASVectorVectorOp;
 	friend class CUBLASMatrixVectorOp;
 	friend class CUBLASMatrixMatrixOp;
 

@@ -107,6 +107,25 @@ inline Bool CUDAHostMemory::IsWrappedReadOnly() const {
 	return ( (m_iHostMemoryWrapFlags & CUDA_HOSTMEMORY_WRAP_FLAG_READONLY) != 0 );
 }
 
+template<class T>
+const T & CUDAHostMemory::Read( const CUDAMemoryPosition & hPosition ) const
+{
+	DebugAssert( IsAllocated() );
+	DebugAssert( IsValidPosition(hPosition) );
+	DebugAssert( m_iStride == sizeof(T) );
+	T * pValue = (T*)( GetPointer(hPosition) );
+	return *pValue;
+}
+template<class T>
+Void CUDAHostMemory::Write( const CUDAMemoryPosition & hPosition, const T & hValue )
+{
+	DebugAssert( IsAllocated() );
+	DebugAssert( IsValidPosition(hPosition) );
+	DebugAssert( m_iStride == sizeof(T) );
+	T * pValue = (T*)( GetPointer(hPosition) );
+	*pValue = hValue;
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 // CUDADeviceMemory implementation
 inline Bool CUDADeviceMemory::IsHostMemory() const {

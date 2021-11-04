@@ -42,7 +42,6 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "CUDABuiltins.h"
 #include "CUDAMappings.h"
 
 #include "CUDAAsynchronous.h"
@@ -51,21 +50,22 @@
 // Constants definitions
 #define CUDAKERNEL_MAX_PARAMETERS 8
 
-typedef struct _cuda_kernel_dimension {
-	inline struct _cuda_kernel_dimension & operator=( const struct _cuda_kernel_dimension & rhs ) {
-		iX = rhs.iX;
-		iY = rhs.iY;
-		iZ = rhs.iZ;
-		return (*this);
+struct CUDAKernelDimension {
+	CUDAKernelDimension()
+	{
+		iX = 0;
+		iY = 0;
+		iZ = 0;
 	}
-	
-	UInt iX;
-	UInt iY;
-	UInt iZ;
-} CUDAKernelDimension;
+	CUDAKernelDimension( UInt X, UInt Y, UInt Z )
+	{
+		iX = X;
+		iY = Y;
+		iZ = Z;
+	}
+	~CUDAKernelDimension() {}
 
-typedef struct _cuda_kernel_index {
-	inline struct _cuda_kernel_index & operator=( const struct _cuda_kernel_index & rhs ) {
+	inline CUDAKernelDimension & operator=( const CUDAKernelDimension & rhs ) {
 		iX = rhs.iX;
 		iY = rhs.iY;
 		iZ = rhs.iZ;
@@ -75,7 +75,34 @@ typedef struct _cuda_kernel_index {
 	UInt iX;
 	UInt iY;
 	UInt iZ;
-} CUDAKernelIndex;
+};
+
+struct CUDAKernelIndex {
+	CUDAKernelIndex()
+	{
+		iX = 0;
+		iY = 0;
+		iZ = 0;
+	}
+	CUDAKernelIndex( UInt X, UInt Y, UInt Z )
+	{
+		iX = X;
+		iY = Y;
+		iZ = Z;
+	}
+	~CUDAKernelIndex() {}
+
+	inline CUDAKernelIndex & operator=( const CUDAKernelIndex & rhs ) {
+		iX = rhs.iX;
+		iY = rhs.iY;
+		iZ = rhs.iZ;
+		return (*this);
+	}
+	
+	UInt iX;
+	UInt iY;
+	UInt iZ;
+};
 
 // Prototypes
 class CUDAGraph;

@@ -24,6 +24,10 @@
 #include "CUDAMemory.h"
 
 /////////////////////////////////////////////////////////////////////////////////
+// Compiler directives
+#pragma warning(disable:4244) // Conversion to smaller type
+
+/////////////////////////////////////////////////////////////////////////////////
 // CUDAMemory implementation
 CUDAMemory::CUDAMemory()
 {
@@ -170,7 +174,7 @@ Void CUDAMemory::Set( SizeT iSize, Int iValue )
 	cudaError_t iError = cudaMemset( m_pMemory, iValue, iSize );
 	DebugAssert( iError == cudaSuccess );
 }
-Void CUDAMemory::Set( const CUDAMemoryPosition & hDestPos, const CUDAMemoryRegion & hSetRegion, UInt iValue )
+Void CUDAMemory::Set( const CUDAMemoryPosition & hDestPos, const CUDAMemoryRegion & hSetRegion, Int iValue )
 {
 	// Check State is valid
 	DebugAssert( IsAllocated() );

@@ -82,28 +82,24 @@ SizeT CUBLASVectorOp::AbsMin() const
 	Int iResult = INVALID_OFFSET;
 	
 	cublasStatus_t iError;
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32):
-			iError = cublasIsamin( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const Float *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &iResult );
-			break;
-		case typeid(CUDAReal64):
-			iError = cublasIdamin( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const Double *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &iResult );
-			break;
-		case typeid(CUDAComplex32):
-			iError = cublasIcamin( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &iResult );
-			break;
-		case typeid(CUDAComplex64):
-			iError = cublasIzamin( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &iResult );
-			break;
-		default: DebugAssert(false); break;
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		iError = cublasIsamin( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const Float *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   &iResult );
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		iError = cublasIdamin( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const Double *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   &iResult );
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		iError = cublasIcamin( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   &iResult );
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		iError = cublasIzamin( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   &iResult );
+	} else {
+		DebugAssert( false );
 	}
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS && iResult != INVALID_OFFSET );
 	
@@ -121,28 +117,24 @@ SizeT CUBLASVectorOp::AbsMax() const
 	Int iResult = INVALID_OFFSET;
 	
 	cublasStatus_t iError;
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32):
-			iError = cublasIsamax( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const Float *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &iResult );
-			break;
-		case typeid(CUDAReal64):
-			iError = cublasIdamax( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const Double *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &iResult );
-			break;
-		case typeid(CUDAComplex32):
-			iError = cublasIcamax( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &iResult );
-			break;
-		case typeid(CUDAComplex64):
-			iError = cublasIzamax( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &iResult );
-			break;
-		default: DebugAssert(false); break;
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		iError = cublasIsamax( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const Float *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   &iResult );
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		iError = cublasIdamax( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const Double *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   &iResult );
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		iError = cublasIcamax( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   &iResult );
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		iError = cublasIzamax( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   &iResult );
+	} else {
+		DebugAssert( false );
 	}
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS && iResult != INVALID_OFFSET );
 	
@@ -160,28 +152,24 @@ T CUBLASVectorOp::AbsSum() const
 	T fResult;
 	
 	cublasStatus_t iError;
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32):
-			iError = cublasSasum( hCUBLASContext, m_hVectorRegion.iWidth,
-								  (const Float *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								  &fResult );
-			break;
-		case typeid(CUDAReal64):
-			iError = cublasDasum( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const Double *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &fResult );
-			break;
-		case typeid(CUDAComplex32):
-			iError = cublasScasum( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &(fResult.fX) );
-			break;
-		case typeid(CUDAComplex64):
-			iError = cublasDzasum( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &(fResult.fX) );
-			break;
-		default: DebugAssert(false); break;
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		iError = cublasSasum( hCUBLASContext, m_hVectorRegion.iWidth,
+							  (const Float *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							  (Float*)&fResult );
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		iError = cublasDasum( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const Double *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   (Double*)&fResult );
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		iError = cublasScasum( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   (Float*)&( ((CUDAComplex32*)&fResult)->fX ) );
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		iError = cublasDzasum( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   (Double*)&( ((CUDAComplex64*)&fResult)->fX ) );
+	} else {
+		DebugAssert( false );
 	}
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 	
@@ -199,28 +187,24 @@ T CUBLASVectorOp::Norm() const
 	T fResult;
 	
 	cublasStatus_t iError;
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32):
-			iError = cublasSnrm2( hCUBLASContext, m_hVectorRegion.iWidth,
-								  (const Float *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								  &fResult );
-			break;
-		case typeid(CUDAReal64):
-			iError = cublasDnrm2( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const Double *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &fResult );
-			break;
-		case typeid(CUDAComplex32):
-			iError = cublasScnrm2( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &(fResult.fX) );
-			break;
-		case typeid(CUDAComplex64):
-			iError = cublasDznrm2( hCUBLASContext, m_hVectorRegion.iWidth,
-								   (const cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
-								   &(fResult.fX) );
-			break;
-		default: DebugAssert(false); break;
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		iError = cublasSnrm2( hCUBLASContext, m_hVectorRegion.iWidth,
+							  (const Float *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							  (Float*)&fResult );
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		iError = cublasDnrm2( hCUBLASContext, m_hVectorRegion.iWidth,
+							  (const Double *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							  (Double*)&fResult );
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		iError = cublasScnrm2( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   (Float*)&( ((CUDAComplex32*)&fResult)->fX ) );
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		iError = cublasDznrm2( hCUBLASContext, m_hVectorRegion.iWidth,
+							   (const cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride(),
+							   (Double*)&( ((CUDAComplex64*)&fResult)->fX ) );
+	} else {
+		DebugAssert( false );
 	}
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 	
@@ -235,41 +219,33 @@ Void CUBLASVectorOp::Scale( T fScale )
 	
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
-	T fResult;
-	
 	cublasStatus_t iError;
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32):
-			iError = cublasSscal( hCUBLASContext, m_hVectorRegion.iWidth, &fScale,
-								  (Float *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
-			break;
-		case typeid(CUDAReal64):
-			iError = cublasDscal( hCUBLASContext, m_hVectorRegion.iWidth, &fScale,
-								  (Double *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
-			break;
-		case typeid(CUDAComplex32):
-			if ( fScale.fY == 0.0f ) {
-				iError = cublasCsscal( hCUBLASContext, m_hVectorRegion.iWidth, &(fScale.fX),
-									   (cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
-			} else {
-				iError = cublasCscal( hCUBLASContext, m_hVectorRegion.iWidth, (const cuComplex *)( &fScale ),
-									  (cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
-			}
-			break;
-		case typeid(CUDAComplex64):
-			if ( fScale.fY == 0.0 ) {
-				iError = cublasZdscal( hCUBLASContext, m_hVectorRegion.iWidth, &(fScale.fX),
-									   (cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
-			} else {
-				iError = cublasZscal( hCUBLASContext, m_hVectorRegion.iWidth, (const cuDoubleComplex *)( &fScale ),
-									  (cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
-			}
-			break;
-		default: DebugAssert(false); break;
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		iError = cublasSscal( hCUBLASContext, m_hVectorRegion.iWidth, (const Float *)&fScale,
+							  (Float *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		iError = cublasDscal( hCUBLASContext, m_hVectorRegion.iWidth, (const Double *)&fScale,
+							  (Double *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		if ( ((CUDAComplex32*)&fScale)->fY == 0.0f ) {
+			iError = cublasCsscal( hCUBLASContext, m_hVectorRegion.iWidth, (const Float *)&( ((CUDAComplex32*)&fScale)->fX ),
+								   (cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
+		} else {
+			iError = cublasCscal( hCUBLASContext, m_hVectorRegion.iWidth, (const cuComplex *)( &fScale ),
+								  (cuComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
+		}
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		if ( ((CUDAComplex64*)&fScale)->fY == 0.0 ) {
+			iError = cublasZdscal( hCUBLASContext, m_hVectorRegion.iWidth, (const Double *)&( ((CUDAComplex64*)&fScale)->fX ),
+								   (cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
+		} else {
+			iError = cublasZscal( hCUBLASContext, m_hVectorRegion.iWidth, (const cuDoubleComplex *)( &fScale ),
+								  (cuDoubleComplex *)( m_pVector->GetPointer(m_hVectorPosition) ), m_pVector->GetStride() );
+		}
+	} else {
+		DebugAssert( false );
 	}
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
-	
-	return fResult;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -373,28 +349,24 @@ Void CUBLASVectorVectorOp::Copy()
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
 	cublasStatus_t iError;
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32):
-			iError = cublasScopy( hCUBLASContext, m_hVectorRegion.iWidth,
-								  (const Float *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (Float*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		case typeid(CUDAReal64):
-			iError = cublasDcopy( hCUBLASContext, m_hVectorRegion.iWidth,
-								  (const Double *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (Double*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		case typeid(CUDAComplex32):
-			iError = cublasCcopy( hCUBLASContext, m_hVectorRegion.iWidth,
-								  (const cuComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (cuComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		case typeid(CUDAComplex64):
-			iError = cublasZcopy( hCUBLASContext, m_hVectorRegion.iWidth,
-								  (const cuDoubleComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (cuDoubleComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		default: DebugAssert(false); break;
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		iError = cublasScopy( hCUBLASContext, m_hVectorRegion.iWidth,
+							  (const Float *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (Float*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		iError = cublasDcopy( hCUBLASContext, m_hVectorRegion.iWidth,
+							  (const Double *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (Double*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		iError = cublasCcopy( hCUBLASContext, m_hVectorRegion.iWidth,
+							  (const cuComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (cuComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		iError = cublasZcopy( hCUBLASContext, m_hVectorRegion.iWidth,
+							  (const cuDoubleComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (cuDoubleComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else {
+		DebugAssert( false );
 	}
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 }
@@ -408,28 +380,24 @@ Void CUBLASVectorVectorOp::Swap()
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
 	cublasStatus_t iError;
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32):
-			iError = cublasSswap( hCUBLASContext, m_hVectorRegion.iWidth,
-								  (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (Float*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		case typeid(CUDAReal64):
-			iError = cublasDswap( hCUBLASContext, m_hVectorRegion.iWidth,
-								  (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (Double*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		case typeid(CUDAComplex32):
-			iError = cublasCswap( hCUBLASContext, m_hVectorRegion.iWidth,
-								  (cuComplex*)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (cuComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		case typeid(CUDAComplex64):
-			iError = cublasZswap( hCUBLASContext, m_hVectorRegion.iWidth,
-								  (cuDoubleComplex*)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (cuDoubleComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		default: DebugAssert(false); break;
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		iError = cublasSswap( hCUBLASContext, m_hVectorRegion.iWidth,
+							  (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (Float*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		iError = cublasDswap( hCUBLASContext, m_hVectorRegion.iWidth,
+							  (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (Double*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		iError = cublasCswap( hCUBLASContext, m_hVectorRegion.iWidth,
+							  (cuComplex*)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (cuComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		iError = cublasZswap( hCUBLASContext, m_hVectorRegion.iWidth,
+							  (cuDoubleComplex*)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (cuDoubleComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else {
+		DebugAssert( false );
 	}
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 }
@@ -443,74 +411,54 @@ Void CUBLASVectorVectorOp::MulAdd( T fScaleX )
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	
 	cublasStatus_t iError;
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32):
-			iError = cublasSaxpy( hCUBLASContext, m_hVectorRegion.iWidth, &fScaleX,
-								  (const Float *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (Float*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		case typeid(CUDAReal64):
-			iError = cublasDaxpy( hCUBLASContext, m_hVectorRegion.iWidth, &fScaleX,
-								  (const Double *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (Double*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		case typeid(CUDAComplex32):
-			iError = cublasCaxpy( hCUBLASContext, m_hVectorRegion.iWidth, (const cuComplex *)( &fScaleX ),
-								  (const cuComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (cuComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		case typeid(CUDAComplex64):
-			iError = cublasZaxpy( hCUBLASContext, m_hVectorRegion.iWidth, (const cuDoubleComplex *)( &fScaleX ),
-								  (const cuDoubleComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								  (cuDoubleComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
-			break;
-		default: DebugAssert(false); break;
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		iError = cublasSaxpy( hCUBLASContext, m_hVectorRegion.iWidth, (const Float *)( &fScaleX ),
+							  (const Float *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (Float*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		iError = cublasDaxpy( hCUBLASContext, m_hVectorRegion.iWidth, (const Double *)( &fScaleX ),
+							  (const Double *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (Double*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		iError = cublasCaxpy( hCUBLASContext, m_hVectorRegion.iWidth, (const cuComplex *)( &fScaleX ),
+							  (const cuComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (cuComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		iError = cublasZaxpy( hCUBLASContext, m_hVectorRegion.iWidth, (const cuDoubleComplex *)( &fScaleX ),
+							  (const cuDoubleComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							  (cuDoubleComplex*)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride() );
+	} else {
+		DebugAssert( false );
 	}
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 }
 template<class T>
 inline Void CUBLASVectorVectorOp::Add() {
-	T fOne;
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32) :
-			fOne = 1.0f;
-			break;
-		case typeid(CUDAReal64):
-			fOne = 1.0;
-			break;
-		case typeid(CUDAComplex32):
-			fOne.fX = 1.0f;
-			fOne.fY = 0.0f;
-			break;
-		case typeid(CUDAComplex64):
-			fOne.fX = 1.0;
-			fOne.fY = 0.0;
-			break;
-		default: DebugAssert(false); break;
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		MulAdd<CUDAReal32>( 1.0f );
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		MulAdd<CUDAReal64>( 1.0 );
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		MulAdd<CUDAComplex32>( CUDAComplex32(1.0f,0.0f) );
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		MulAdd<CUDAComplex64>( CUDAComplex64(1.0,0.0) );
+	} else {
+		DebugAssert( false );
 	}
-	MulAdd<T>( fOne );
 }
 template<class T>
 inline Void CUBLASVectorVectorOp::Sub() {
-	T fMinusOne;
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32) :
-			fMinusOne = -1.0f;
-			break;
-		case typeid(CUDAReal64):
-			fMinusOne = -1.0;
-			break;
-		case typeid(CUDAComplex32):
-			fMinusOne.fX = -1.0f;
-			fMinusOne.fY = 0.0f;
-			break;
-		case typeid(CUDAComplex64):
-			fMinusOne.fX = -1.0;
-			fMinusOne.fY = 0.0;
-			break;
-		default: DebugAssert(false); break;
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		MulAdd<CUDAReal32>( -1.0f );
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		MulAdd<CUDAReal64>( -1.0 );
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		MulAdd<CUDAComplex32>( CUDAComplex32(-1.0f,0.0f) );
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		MulAdd<CUDAComplex64>( CUDAComplex64(-1.0,0.0) );
+	} else {
+		DebugAssert( false );
 	}
-	MulAdd<T>( fMinusOne );
 }
 
 template<class T>
@@ -524,46 +472,42 @@ T CUBLASVectorVectorOp::Dot( Bool bConjugateY ) const
 	T fResult;
 
 	cublasStatus_t iError;
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32):
-			iError = cublasSdot( hCUBLASContext, m_hVectorRegion.iWidth,
-								 (const Float *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								 (const Float *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
-								 &fResult );
-			break;
-		case typeid(CUDAReal64):
-			iError = cublasDdot( hCUBLASContext, m_hVectorRegion.iWidth,
-								 (const Double *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-								 (const Double *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
-								 &fResult );
-			break;
-		case typeid(CUDAComplex32):
-			if ( bConjugateY ) {
-				iError = cublasCdotc( hCUBLASContext, m_hVectorRegion.iWidth,
-									  (const cuComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-									  (const cuComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
-									  &fResult );
-			} else {
-				iError = cublasCdotu( hCUBLASContext, m_hVectorRegion.iWidth,
-									  (const cuComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-									  (const cuComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
-									  &fResult );
-			}
-			break;
-		case typeid(CUDAComplex64):
-			if ( bConjugateY ) {
-				iError = cublasZdotc( hCUBLASContext, m_hVectorRegion.iWidth,
-									  (const cuDoubleComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-									  (const cuDoubleComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
-									  &fResult );
-			} else {
-				iError = cublasZdotu( hCUBLASContext, m_hVectorRegion.iWidth,
-									  (const cuDoubleComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
-									  (const cuDoubleComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
-									  &fResult );
-			}
-			break;
-		default: DebugAssert(false); break;
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		iError = cublasSdot( hCUBLASContext, m_hVectorRegion.iWidth,
+							 (const Float *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							 (const Float *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
+							 (Float*)&fResult );
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		iError = cublasDdot( hCUBLASContext, m_hVectorRegion.iWidth,
+							 (const Double *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+							 (const Double *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
+							 (Double*)&fResult );
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		if ( bConjugateY ) {
+			iError = cublasCdotc( hCUBLASContext, m_hVectorRegion.iWidth,
+								  (const cuComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+								  (const cuComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
+								  (cuComplex*)&fResult );
+		} else {
+			iError = cublasCdotu( hCUBLASContext, m_hVectorRegion.iWidth,
+								  (const cuComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+								  (const cuComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
+								  (cuComplex*)&fResult );
+		}
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		if ( bConjugateY ) {
+			iError = cublasZdotc( hCUBLASContext, m_hVectorRegion.iWidth,
+								  (const cuDoubleComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+								  (const cuDoubleComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
+								  (cuDoubleComplex*)&fResult );
+		} else {
+			iError = cublasZdotu( hCUBLASContext, m_hVectorRegion.iWidth,
+								  (const cuDoubleComplex *)( m_pVectorX->GetPointer(m_hVectorPositionX) ), m_pVectorX->GetStride(),
+								  (const cuDoubleComplex *)( m_pVectorY->GetPointer(m_hVectorPositionY) ), m_pVectorY->GetStride(),
+								  (cuDoubleComplex*)&fResult );
+		}
+	} else {
+		DebugAssert( false );
 	}
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 

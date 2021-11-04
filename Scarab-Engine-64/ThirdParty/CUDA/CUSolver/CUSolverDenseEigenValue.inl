@@ -108,68 +108,70 @@ template<class T>
 Bool CUSolverDenseEigenValue::ValidateInput() const
 {
 	DebugAssert( m_iSolverState == CUSOLVER_DENSE_EIGENVALUE_STATE_RESET );
-	switch( typeid(T) ) {
-		case typeid(CUDAReal32):
-			return (
-				m_pMatrixA != NULL
-				&& m_pMatrixA->IsAllocated()
-				&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
-				&& m_pMatrixA->GetStride() == sizeof(Float)
-				&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
-				&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
-				&& m_pVectorX != NULL
-				&& m_pVectorX->IsAllocated()
-				&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
-				&& m_pVectorX->GetStride() == sizeof(Float)
-				&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
-				&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
-			);
-		case typeid(CUDAReal64):
-			return (
-				m_pMatrixA != NULL
-				&& m_pMatrixA->IsAllocated()
-				&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
-				&& m_pMatrixA->GetStride() == sizeof(Double)
-				&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
-				&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
-				&& m_pVectorX != NULL
-				&& m_pVectorX->IsAllocated()
-				&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
-				&& m_pVectorX->GetStride() == sizeof(Double)
-				&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
-				&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
-			);
-		case typeid(CUDAComplex32):
-			return (
-				m_pMatrixA != NULL
-				&& m_pMatrixA->IsAllocated()
-				&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
-				&& m_pMatrixA->GetStride() == sizeof(cuComplex)
-				&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
-				&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
-				&& m_pVectorX != NULL
-				&& m_pVectorX->IsAllocated()
-				&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
-				&& m_pVectorX->GetStride() == sizeof(Float)
-				&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
-				&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
-			);
-		case typeid(CUDAComplex64):
-			return (
-				m_pMatrixA != NULL
-				&& m_pMatrixA->IsAllocated()
-				&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
-				&& m_pMatrixA->GetStride() == sizeof(cuDoubleComplex)
-				&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
-				&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
-				&& m_pVectorX != NULL
-				&& m_pVectorX->IsAllocated()
-				&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
-				&& m_pVectorX->GetStride() == sizeof(Double)
-				&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
-				&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
-			);
-		default: DebugAssert(false); break;
+
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		return (
+			m_pMatrixA != NULL
+			&& m_pMatrixA->IsAllocated()
+			&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixA->GetStride() == sizeof(Float)
+			&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
+			&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
+			&& m_pVectorX != NULL
+			&& m_pVectorX->IsAllocated()
+			&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
+			&& m_pVectorX->GetStride() == sizeof(Float)
+			&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
+			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
+		);
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		return (
+			m_pMatrixA != NULL
+			&& m_pMatrixA->IsAllocated()
+			&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixA->GetStride() == sizeof(Double)
+			&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
+			&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
+			&& m_pVectorX != NULL
+			&& m_pVectorX->IsAllocated()
+			&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
+			&& m_pVectorX->GetStride() == sizeof(Double)
+			&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
+			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
+		);
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		return (
+			m_pMatrixA != NULL
+			&& m_pMatrixA->IsAllocated()
+			&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixA->GetStride() == sizeof(cuComplex)
+			&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
+			&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
+			&& m_pVectorX != NULL
+			&& m_pVectorX->IsAllocated()
+			&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
+			&& m_pVectorX->GetStride() == sizeof(Float)
+			&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
+			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
+		);
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		return (
+			m_pMatrixA != NULL
+			&& m_pMatrixA->IsAllocated()
+			&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixA->GetStride() == sizeof(cuDoubleComplex)
+			&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
+			&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
+			&& m_pVectorX != NULL
+			&& m_pVectorX->IsAllocated()
+			&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
+			&& m_pVectorX->GetStride() == sizeof(Double)
+			&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
+			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
+		);
+	} else {
+		DebugAssert( false );
+		return false;
 	}
 }
 
@@ -209,36 +211,32 @@ Void CUSolverDenseEigenValue::Prepare()
 	cusolverStatus_t iError;
 
 	if ( m_iAlgorithm == CUSOLVER_DENSE_EIGENVALUE_ALGORITHM_QR ) {
-		switch( typeid(T) ) {
-			case typeid(CUDAReal32):
-				iError = cusolverDnSsyevd_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-													  m_hMatrixRegionA.iWidth,
-													  (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-													  (const Float *)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-													  &iWorkspaceSize );
-				break;
-			case typeid(CUDAReal64):
-				iError = cusolverDnDsyevd_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-													  m_hMatrixRegionA.iWidth,
-													  (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-													  (const Double *)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-													  &iWorkspaceSize );
-				break;
-			case typeid(CUDAComplex32):
-				iError = cusolverDnCheevd_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-													  m_hMatrixRegionA.iWidth,
-													  (cuComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-													  (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-													  &iWorkspaceSize );
-				break;
-			case typeid(CUDAComplex64):
-				iError = cusolverDnZheevd_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-													  m_hMatrixRegionA.iWidth,
-													  (cuDoubleComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-													  (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-													  &iWorkspaceSize );
-				break;
-			default: DebugAssert(false); break;
+		if ( typeid(T) == typeid(CUDAReal32) ) {
+			iError = cusolverDnSsyevd_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+												  m_hMatrixRegionA.iWidth,
+												  (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+												  (const Float *)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+												  &iWorkspaceSize );
+		} else if ( typeid(T) == typeid(CUDAReal64) ) {
+			iError = cusolverDnDsyevd_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+												  m_hMatrixRegionA.iWidth,
+												  (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+												  (const Double *)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+												  &iWorkspaceSize );
+		} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+			iError = cusolverDnCheevd_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+												  m_hMatrixRegionA.iWidth,
+												  (cuComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+												  (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+												  &iWorkspaceSize );
+		} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+			iError = cusolverDnZheevd_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+												  m_hMatrixRegionA.iWidth,
+												  (cuDoubleComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+												  (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+												  &iWorkspaceSize );
+		} else {
+			DebugAssert( false );
 		}
 		DebugAssert( iError == CUSOLVER_STATUS_SUCCESS && iWorkspaceSize > 0 );
 	} else if ( m_iAlgorithm == CUSOLVER_DENSE_EIGENVALUE_ALGORITHM_JACOBI ) {
@@ -256,36 +254,32 @@ Void CUSolverDenseEigenValue::Prepare()
 
 		m_hJacobiInfos = (Void*)hCUSolverDnSyevjInfo;
 
-		switch( typeid(T) ) {
-			case typeid(CUDAReal32):
-				iError = cusolverDnSsyevj_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-													  m_hMatrixRegionA.iWidth,
-													  (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-													  (const Float *)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-													  &iWorkspaceSize, hCUSolverDnSyevjInfo );
-				break;
-			case typeid(CUDAReal64):
-				iError = cusolverDnDsyevj_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-													  m_hMatrixRegionA.iWidth,
-													  (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-													  (const Double *)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-													  &iWorkspaceSize, hCUSolverDnSyevjInfo );
-				break;
-			case typeid(CUDAComplex32):
-				iError = cusolverDnCheevj_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-													  m_hMatrixRegionA.iWidth,
-													  (cuComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-													  (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-													  &iWorkspaceSize, hCUSolverDnSyevjInfo );
-				break;
-			case typeid(CUDAComplex64):
-				iError = cusolverDnZheevj_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-													  m_hMatrixRegionA.iWidth,
-													  (cuDoubleComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-													  (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-													  &iWorkspaceSize, hCUSolverDnSyevjInfo );
-				break;
-			default: DebugAssert(false); break;
+		if ( typeid(T) == typeid(CUDAReal32) ) {
+			iError = cusolverDnSsyevj_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+												  m_hMatrixRegionA.iWidth,
+												  (const Float *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+												  (const Float *)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+												  &iWorkspaceSize, hCUSolverDnSyevjInfo );
+		} else if ( typeid(T) == typeid(CUDAReal64) ) {
+			iError = cusolverDnDsyevj_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+												  m_hMatrixRegionA.iWidth,
+												  (const Double *)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+												  (const Double *)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+												  &iWorkspaceSize, hCUSolverDnSyevjInfo );
+		} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+			iError = cusolverDnCheevj_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+												  m_hMatrixRegionA.iWidth,
+												  (cuComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+												  (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+												  &iWorkspaceSize, hCUSolverDnSyevjInfo );
+		} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+			iError = cusolverDnZheevj_bufferSize( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+												  m_hMatrixRegionA.iWidth,
+												  (cuDoubleComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+												  (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+												  &iWorkspaceSize, hCUSolverDnSyevjInfo );
+		} else {
+			DebugAssert( false );
 		}
 		DebugAssert( iError == CUSOLVER_STATUS_SUCCESS && iWorkspaceSize > 0 );
 	} else {
@@ -315,69 +309,61 @@ Void CUSolverDenseEigenValue::Solve()
 	cusolverStatus_t iError;
 
 	if ( m_iAlgorithm == CUSOLVER_DENSE_EIGENVALUE_ALGORITHM_QR ) {
-		switch( typeid(T) ) {
-			case typeid(CUDAReal32):
-				iError = cusolverDnSsyevd( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-										   m_hMatrixRegionA.iWidth,
-										   (Float*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-										   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-										   (Float*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult );
-				break;
-			case typeid(CUDAReal64):
-				iError = cusolverDnDsyevd( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-										   m_hMatrixRegionA.iWidth,
-										   (Double*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-										   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-										   (Double*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult );
-				break;
-			case typeid(CUDAComplex32):
-				iError = cusolverDnCheevd( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-										   m_hMatrixRegionA.iWidth,
-										   (cuComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-										   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-										   (cuComplex*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult );
-				break;
-			case typeid(CUDAComplex64):
-				iError = cusolverDnZheevd( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-										   m_hMatrixRegionA.iWidth,
-										   (cuDoubleComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-										   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-										   (cuDoubleComplex*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult );
-				break;
-			default: DebugAssert(false); break;
+		if ( typeid(T) == typeid(CUDAReal32) ) {
+			iError = cusolverDnSsyevd( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+									   m_hMatrixRegionA.iWidth,
+									   (Float*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+									   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+									   (Float*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult );
+		} else if ( typeid(T) == typeid(CUDAReal64) ) {
+			iError = cusolverDnDsyevd( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+									   m_hMatrixRegionA.iWidth,
+									   (Double*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+									   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+									   (Double*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult );
+		} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+			iError = cusolverDnCheevd( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+									   m_hMatrixRegionA.iWidth,
+									   (cuComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+									   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+									   (cuComplex*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult );
+		} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+			iError = cusolverDnZheevd( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+									   m_hMatrixRegionA.iWidth,
+									   (cuDoubleComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+									   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+									   (cuDoubleComplex*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult );
+		} else {
+			DebugAssert( false );
 		}
 		DebugAssert( iError == CUSOLVER_STATUS_SUCCESS && m_iSolverResult >= 0 );
 	} else if ( m_iAlgorithm == CUSOLVER_DENSE_EIGENVALUE_ALGORITHM_JACOBI ) {
-		switch( typeid(T) ) {
-			case typeid(CUDAReal32):
-				iError = cusolverDnSsyevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-										   m_hMatrixRegionA.iWidth,
-										   (Float*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-										   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-										   (Float*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
-				break;
-			case typeid(CUDAReal64):
-				iError = cusolverDnDsyevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-										   m_hMatrixRegionA.iWidth,
-										   (Double*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-										   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-										   (Double*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
-				break;
-			case typeid(CUDAComplex32):
-				iError = cusolverDnCheevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-										   m_hMatrixRegionA.iWidth,
-										   (cuComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-										   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-										   (cuComplex*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
-				break;
-			case typeid(CUDAComplex64):
-				iError = cusolverDnZheevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
-										   m_hMatrixRegionA.iWidth,
-										   (cuDoubleComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
-										   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-										   (cuDoubleComplex*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
-				break;
-			default: DebugAssert(false); break;
+		if ( typeid(T) == typeid(CUDAReal32) ) {
+			iError = cusolverDnSsyevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+									   m_hMatrixRegionA.iWidth,
+									   (Float*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+									   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+									   (Float*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
+		} else if ( typeid(T) == typeid(CUDAReal64) ) {
+			iError = cusolverDnDsyevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+									   m_hMatrixRegionA.iWidth,
+									   (Double*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+									   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+									   (Double*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
+		} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+			iError = cusolverDnCheevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+									   m_hMatrixRegionA.iWidth,
+									   (cuComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+									   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+									   (cuComplex*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
+		} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+			iError = cusolverDnZheevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
+									   m_hMatrixRegionA.iWidth,
+									   (cuDoubleComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), m_pMatrixA->GetWidth(),
+									   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
+									   (cuDoubleComplex*)( m_hWorkspace.GetPointer() ), m_hWorkspace.GetWidth(), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
+		} else {
+			DebugAssert( false );
 		}
 		DebugAssert( iError == CUSOLVER_STATUS_SUCCESS && m_iSolverResult >= 0 );
 	} else {

@@ -24,7 +24,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
-#include "../System/System.h"
+#include "../System/Platform.h"
 
 #include "CUDAAsynchronous.h"
 
@@ -147,7 +147,7 @@ public:
 		// Flat Set
 	Void Set( SizeT iSize, Int iValue );
 		// Shaped Set
-	Void Set( const CUDAMemoryPosition & hDestPos, const CUDAMemoryRegion & hSetRegion, UInt iValue );
+	Void Set( const CUDAMemoryPosition & hDestPos, const CUDAMemoryRegion & hSetRegion, Int iValue );
 	
 		// Flat Copy
 	Void Copy( const CUDAMemory * pSrc, SizeT iSize );
@@ -215,6 +215,9 @@ public:
 	Void Wrap( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, SizeT iHeight, UInt iHostMemoryWrapFlags = CUDA_HOSTMEMORY_WRAP_FLAG_DEFAULT );
 	Void Wrap( Void * pSystemMemory, SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth, UInt iHostMemoryWrapFlags = CUDA_HOSTMEMORY_WRAP_FLAG_DEFAULT );
 	Void UnWrap();
+
+	template<class T> const T & Read( const CUDAMemoryPosition & hPosition ) const;
+	template<class T> Void Write( const CUDAMemoryPosition & hPosition, const T & hValue );
 	
 	// Dangerous for now ...
 	//Void GetMappedDeviceMemory( CUDADeviceMemory * outDeviceMemory ) const;

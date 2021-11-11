@@ -39,6 +39,7 @@ enum CUSolverDenseEigenValueAlgorithm {
 enum CUSolverDenseEigenValueState {
 	CUSOLVER_DENSE_EIGENVALUE_STATE_RESET = 0,
 	CUSOLVER_DENSE_EIGENVALUE_STATE_READY,
+	CUSOLVER_DENSE_EIGENVALUE_STATE_RUNNING,
 	CUSOLVER_DENSE_EIGENVALUE_STATE_SUCCESS,
 	CUSOLVER_DENSE_EIGENVALUE_STATE_FAILED
 };
@@ -80,6 +81,7 @@ public:
 
 	template<class T> Void Prepare();
 	template<class T> Void Solve();
+	Void UpdateStateAfterSync();
 	Void Reset();
 
 	inline UInt GetFailedToConvergeCount() const;
@@ -96,7 +98,6 @@ private:
 
 	CUDADeviceMemory * m_pVectorX;
 	CUDAMemoryPosition m_hVectorPositionX;
-	CUDAMemoryRegion m_hVectorRegionX;
 
 	Bool m_bComputeEigenVectors;
 	CUSolverDenseEigenValueAlgorithm m_iAlgorithm;
@@ -104,10 +105,12 @@ private:
 	UInt m_iJacobiMaxSweeps;
 
 	CUDADeviceMemory m_hWorkspace;
+	SizeT m_iWorkspaceSize;
 	Void * m_hJacobiInfos;
 
 	CUSolverDenseEigenValueState m_iSolverState;
-	Int m_iSolverResult;
+	CUDADeviceMemory m_hDeviceInfo;
+	CUDAHostMemory m_hDeviceInfoSaved;
 };
 
 /////////////////////////////////////////////////////////////////////////////////

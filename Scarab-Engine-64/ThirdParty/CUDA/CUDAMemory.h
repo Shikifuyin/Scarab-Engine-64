@@ -95,7 +95,6 @@ struct CUDAMemoryRegion {
 
 // Prototypes
 class CUDAGraph;
-class CUDAGraphNodeMemSet;
 class CUDAGraphNodeMemCopy;
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -122,15 +121,15 @@ public:
 	inline Bool HasOwnerShip() const;
 	
 	inline CUDAMemoryShape GetShape() const;
-	inline SizeT GetStride() const;
-	inline SizeT GetPitch() const;
-	inline SizeT GetSlice() const;
-	
 	inline SizeT GetWidth() const;
 	inline SizeT GetHeight() const;
 	inline SizeT GetDepth() const;
-	inline SizeT GetSize() const;
 
+	inline SizeT GetStride() const;
+	inline SizeT GetPitch() const;
+	inline SizeT GetSlice() const;
+	inline SizeT GetSize() const;
+	
 	Bool IsValidPosition( const CUDAMemoryPosition & hPosition ) const;
 	Bool IsValidRegion( const CUDAMemoryRegion & hRegion ) const;
 	Bool IsValidRegion( const CUDAMemoryPosition & hPosition, const CUDAMemoryRegion & hRegion ) const;
@@ -138,8 +137,8 @@ public:
 	inline Void * GetPointer( UInt iOffset = 0 );
 	inline const Void * GetPointer( UInt iOffset = 0 ) const;
 	
-	Void * GetPointer( const CUDAMemoryPosition & hPosition );
-	const Void * GetPointer( const CUDAMemoryPosition & hPosition ) const;
+	inline Void * GetPointer( const CUDAMemoryPosition & hPosition );
+	inline const Void * GetPointer( const CUDAMemoryPosition & hPosition ) const;
 	
 	// YOU are responsible for proper behaviour when reading/writing memory !!!
 	// For instance, you must respect CUDA_HOSTMEMORY_ALLOC_FLAG_WRITE_COMBINED !
@@ -158,26 +157,21 @@ public:
 	
 protected:
 	friend class CUDAGraph;
-	friend class CUDANodeMemSet;
 	friend class CUDANodeMemCopy;
 
 	UInt _GetMemCopyKind( const CUDAMemory * pSrc ) const;
-	Void _ConvertCopyParams( Void * outParams,
-							 const CUDAMemoryPosition & hDestPos,
-							 const CUDAMemory * pSrc, const CUDAMemoryPosition & hSrcPos,
-							 const CUDAMemoryRegion & hCopyRegion ) const;
 
 	Bool m_bHasOwnerShip;
 	Void * m_pMemory;
 	
 	CUDAMemoryShape m_iShape;
-	SizeT m_iStride;
-	SizeT m_iPitch;
-	SizeT m_iSlice;
-	
 	SizeT m_iWidth;
 	SizeT m_iHeight;
 	SizeT m_iDepth;
+
+	SizeT m_iStride;
+	SizeT m_iPitch;
+	SizeT m_iSlice;
 	SizeT m_iSize;
 };
 

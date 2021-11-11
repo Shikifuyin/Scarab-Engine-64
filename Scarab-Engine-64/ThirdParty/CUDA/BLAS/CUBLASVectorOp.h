@@ -99,10 +99,6 @@ public:
 
 		// Y = Y + fScaleX * X
 	template<class T> Void MulAdd( T fScaleX );
-		// Y = Y + X
-	template<class T> inline Void Add();
-		// Y = Y - X
-	template<class T> inline Void Sub();
 
 		// X . Y
 	template<class T> T Dot( Bool bConjugateY = false ) const;

@@ -103,12 +103,12 @@ public:
 	Void SetMemory( CUDADeviceMemory * pMemory ) const;
 	
 	// Memory Operations Helpers ////////////////////////////////////////////////
-	Void GetVector( CUDAHostMemory * outHostVector, const CUDAMemoryPosition & outHostPosition, UInt iHostIncrement,
-					const CUDADeviceMemory * pDeviceVector, const CUDAMemoryPosition & hDevicePosition, UInt iDeviceIncrement,
-					SizeT iElementCount, CUDAStream * pStream = NULL );
-	Void SetVector( CUDADeviceMemory * outDeviceVector, const CUDAMemoryPosition & outDevicePosition, UInt iDeviceIncrement,
-					const CUDAHostMemory * pHostVector, const CUDAMemoryPosition & hHostPosition, UInt iHostIncrement,
-					SizeT iElementCount, CUDAStream * pStream = NULL );
+	Void GetVector( CUDAHostMemory * outHostVector, const CUDAMemoryPosition & outHostPosition,
+					const CUDADeviceMemory * pDeviceVector, const CUDAMemoryPosition & hDevicePosition,
+					const CUDAMemoryRegion & hCopyRegion, CUDAStream * pStream = NULL );
+	Void SetVector( CUDADeviceMemory * outDeviceVector, const CUDAMemoryPosition & outDevicePosition,
+					const CUDAHostMemory * pHostVector, const CUDAMemoryPosition & hHostPosition,
+					const CUDAMemoryRegion & hCopyRegion, CUDAStream * pStream = NULL );
 
 	Void GetMatrix( CUDAHostMemory * outHostMatrix, const CUDAMemoryPosition & outHostPosition,
 					const CUDADeviceMemory * pDeviceMatrix, const CUDAMemoryPosition & hDevicePosition,

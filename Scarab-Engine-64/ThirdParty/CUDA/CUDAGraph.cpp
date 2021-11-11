@@ -95,14 +95,10 @@ Void CUDANodeMemSet::SetMemSet( CUDAMemory * pDest, const CUDAMemoryPosition & h
 	
 	cudaMemsetParams hCUDAParams;
 	hCUDAParams.dst = pDest->GetPointer( hDestPos );
-	hCUDAParams.elementSize = 1;
-	if ( pDest->m_iShape >= CUDA_MEMORY_SHAPE_1D )
-		hCUDAParams.elementSize = pDest->m_iStride;
+	hCUDAParams.elementSize = pDest->GetStride();
 	hCUDAParams.width = hSetRegion.iWidth;
 	hCUDAParams.height = hSetRegion.iHeight;
-	hCUDAParams.pitch = hCUDAParams.elementSize * hCUDAParams.width;
-	if ( pDest->m_iShape >= CUDA_MEMORY_SHAPE_2D )
-		hCUDAParams.pitch = pDest->m_iPitch;
+	hCUDAParams.pitch = pDest->GetPitch();
 	hCUDAParams.value = iValue;
 	
 	if ( pInstance != NULL ) {
@@ -143,13 +139,11 @@ Void CUDANodeMemCopy::SetMemCopy( CUDAMemory * pDest, const CUDAMemory * pSrc, S
 {
 	DebugAssert( m_hNode != NULL );
 	DebugAssert( pDest->IsAllocated() && pSrc->IsAllocated() );
+	DebugAssert( pDest->GetShape() == CUDA_MEMORY_SHAPE_NONE && pSrc->GetShape() == CUDA_MEMORY_SHAPE_NONE );
 	DebugAssert( iSize <= pDest->GetSize() );
 	DebugAssert( iSize <= pSrc->GetSize() );
 	
 	cudaGraphNode_t hCUDAGraphNode = (cudaGraphNode_t)m_hNode;
-	
-	// Check iSize is valid
-	DebugAssert( iSize <= pDest->m_iSize && iSize <= pSrc->m_iSize );
 	
 	// Get Transfer Kind
 	cudaMemcpyKind iKind = (cudaMemcpyKind)( pDest->_GetMemCopyKind(pSrc) );
@@ -160,10 +154,10 @@ Void CUDANodeMemCopy::SetMemCopy( CUDAMemory * pDest, const CUDAMemory * pSrc, S
 		
 		cudaGraphExec_t hCUDAGraphInstance = (cudaGraphExec_t)( pInstance->m_hGraphInstance );
 		
-		cudaError_t iError = cudaGraphExecMemcpyNodeSetParams1D( hCUDAGraphInstance, hCUDAGraphNode, pDest->m_pMemory, pSrc->m_pMemory, iSize, iKind );
+		cudaError_t iError = cudaGraphExecMemcpyNodeSetParams1D( hCUDAGraphInstance, hCUDAGraphNode, pDest->GetPointer(), pSrc->GetPointer(), iSize, iKind );
 		DebugAssert( iError == cudaSuccess );
 	} else {
-		cudaError_t iError = cudaGraphMemcpyNodeSetParams1D( hCUDAGraphNode, pDest->m_pMemory, pSrc->m_pMemory, iSize, iKind );
+		cudaError_t iError = cudaGraphMemcpyNodeSetParams1D( hCUDAGraphNode, pDest->GetPointer(), pSrc->GetPointer(), iSize, iKind );
 		DebugAssert( iError == cudaSuccess );
 		
 		m_pDest = pDest;
@@ -181,13 +175,38 @@ Void CUDANodeMemCopy::SetMemCopy( CUDAMemory * pDest, const CUDAMemoryPosition &
 	DebugAssert( pDest->IsAllocated() && pSrc->IsAllocated() );
 	DebugAssert( pDest->IsValidRegion(hDestPos, hCopyRegion) );
 	DebugAssert( pSrc->IsValidRegion(hSrcPos, hCopyRegion) );
+	DebugAssert( pDest->GetStride() == pSrc->GetStride() );
 	
 	cudaGraphNode_t hCUDAGraphNode = (cudaGraphNode_t)m_hNode;
 	
 	// Get Copy parameters
 	cudaMemcpy3DParms hCUDAParams;
-	pDest->_ConvertCopyParams( &hCUDAParams, hDestPos, pSrc, hSrcPos, hCopyRegion );
-	
+	hCUDAParams.kind = (cudaMemcpyKind)( pDest->_GetMemCopyKind(pSrc) );
+	hCUDAParams.dstArray = NULL;
+	hCUDAParams.srcArray = NULL;
+
+	hCUDAParams.extent.width = pDest->GetStride() * hCopyRegion.iWidth;
+	hCUDAParams.extent.height = hCopyRegion.iHeight;
+	hCUDAParams.extent.depth = hCopyRegion.iDepth;
+
+	hCUDAParams.dstPtr.ptr = pDest->GetPointer();
+	hCUDAParams.dstPtr.pitch = pDest->GetPitch();
+	hCUDAParams.dstPtr.xsize = pDest->GetStride() * pDest->GetWidth();
+	hCUDAParams.dstPtr.ysize = pDest->GetHeight();
+
+	hCUDAParams.dstPos.x = hDestPos.iX * pDest->GetStride();
+	hCUDAParams.dstPos.y = hDestPos.iY;
+	hCUDAParams.dstPos.z = hDestPos.iZ;
+
+	hCUDAParams.srcPtr.ptr = (Void*)( pSrc->GetPointer() ); // ptr member should be const ...
+	hCUDAParams.srcPtr.pitch = pSrc->GetPitch();
+	hCUDAParams.srcPtr.xsize = pSrc->GetStride() * pSrc->GetWidth();
+	hCUDAParams.srcPtr.ysize = pSrc->GetHeight();
+
+	hCUDAParams.srcPos.x = hSrcPos.iX * pSrc->GetStride();
+	hCUDAParams.srcPos.y = hSrcPos.iY;
+	hCUDAParams.srcPos.z = hSrcPos.iZ;
+
 	// Setup Copy
 	if ( pInstance != NULL ) {
 		DebugAssert( pInstance->m_hGraphInstance != NULL );
@@ -539,12 +558,37 @@ Void CUDAGraph::CreateNodeMemCopy( CUDANodeMemCopy * outNode,
 	DebugAssert( pDest->IsAllocated() && pSrc->IsAllocated() );
 	DebugAssert( pDest->IsValidRegion(hDestPos, hCopyRegion) );
 	DebugAssert( pSrc->IsValidRegion(hSrcPos, hCopyRegion) );
+	DebugAssert( pDest->GetStride() == pSrc->GetStride() );
 	
 	cudaGraph_t hCUDAGraph = (cudaGraph_t)m_hGraph;
 
 	// Get Copy parameters
 	cudaMemcpy3DParms hCUDAParams;
-	pDest->_ConvertCopyParams( &hCUDAParams, hDestPos, pSrc, hSrcPos, hCopyRegion );
+	hCUDAParams.kind = (cudaMemcpyKind)( pDest->_GetMemCopyKind(pSrc) );
+	hCUDAParams.dstArray = NULL;
+	hCUDAParams.srcArray = NULL;
+
+	hCUDAParams.extent.width = pDest->GetStride() * hCopyRegion.iWidth;
+	hCUDAParams.extent.height = hCopyRegion.iHeight;
+	hCUDAParams.extent.depth = hCopyRegion.iDepth;
+
+	hCUDAParams.dstPtr.ptr = pDest->GetPointer();
+	hCUDAParams.dstPtr.pitch = pDest->GetPitch();
+	hCUDAParams.dstPtr.xsize = pDest->GetStride() * pDest->GetWidth();
+	hCUDAParams.dstPtr.ysize = pDest->GetHeight();
+
+	hCUDAParams.dstPos.x = hDestPos.iX * pDest->GetStride();
+	hCUDAParams.dstPos.y = hDestPos.iY;
+	hCUDAParams.dstPos.z = hDestPos.iZ;
+
+	hCUDAParams.srcPtr.ptr = (Void*)( pSrc->GetPointer() ); // ptr member should be const ...
+	hCUDAParams.srcPtr.pitch = pSrc->GetPitch();
+	hCUDAParams.srcPtr.xsize = pSrc->GetStride() * pSrc->GetWidth();
+	hCUDAParams.srcPtr.ysize = pSrc->GetHeight();
+
+	hCUDAParams.srcPos.x = hSrcPos.iX * pSrc->GetStride();
+	hCUDAParams.srcPos.y = hSrcPos.iY;
+	hCUDAParams.srcPos.z = hSrcPos.iZ;
 	
 	// Setup Copy
 	cudaGraphNode_t hCUDAGraphNode = NULL;

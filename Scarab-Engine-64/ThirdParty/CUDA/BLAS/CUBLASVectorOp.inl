@@ -40,8 +40,8 @@ inline Void CUBLASVectorOp::SetVectorRegion( const CUDAMemoryRegion * pRegion ) 
 		m_hVectorRegion = *pRegion;
 	else {
 		m_hVectorRegion.iWidth = m_pVector->GetWidth();
-		m_hVectorRegion.iHeight = 0;
-		m_hVectorRegion.iDepth = 0;
+		m_hVectorRegion.iHeight = 1;
+		m_hVectorRegion.iDepth = 1;
 	}
 	DebugAssert( m_pVector->IsValidRegion( m_hVectorPosition, m_hVectorRegion ) );
 }
@@ -59,7 +59,7 @@ inline Bool CUBLASVectorOp::ValidateInput() const {
 	return (
 		m_pVector != NULL
 		&& m_pVector->IsAllocated()
-		&& m_pVector->GetShape() == CUDA_MEMORY_SHAPE_1D
+		&& m_pVector->GetShape() >= CUDA_MEMORY_SHAPE_1D
 		&& m_pVector->GetStride() == sizeof(T)
 		&& m_pVector->IsValidRegion( m_hVectorPosition, m_hVectorRegion )
 	);
@@ -301,8 +301,8 @@ inline Void CUBLASVectorVectorOp::SetVectorRegion( const CUDAMemoryRegion * pReg
 		m_hVectorRegion = *pRegion;
 	else {
 		m_hVectorRegion.iWidth = Min<SizeT>( m_pVectorX->GetWidth(), m_pVectorY->GetWidth() );
-		m_hVectorRegion.iHeight = 0;
-		m_hVectorRegion.iDepth = 0;
+		m_hVectorRegion.iHeight = 1;
+		m_hVectorRegion.iDepth = 1;
 	}
 	DebugAssert( m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegion ) );
 	DebugAssert( m_pVectorY->IsValidRegion( m_hVectorPositionY, m_hVectorRegion ) );
@@ -313,12 +313,12 @@ inline Bool CUBLASVectorVectorOp::ValidateInput() const {
 	return (
 		m_pVectorX != NULL
 		&& m_pVectorX->IsAllocated()
-		&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
+		&& m_pVectorX->GetShape() >= CUDA_MEMORY_SHAPE_1D
 		&& m_pVectorX->GetStride() == sizeof(T)
 		&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegion )
 		&& m_pVectorY != NULL
 		&& m_pVectorY->IsAllocated()
-		&& m_pVectorY->GetShape() == CUDA_MEMORY_SHAPE_1D
+		&& m_pVectorY->GetShape() >= CUDA_MEMORY_SHAPE_1D
 		&& m_pVectorY->GetStride() == sizeof(T)
 		&& m_pVectorY->IsValidRegion( m_hVectorPositionY, m_hVectorRegion )
 	);
@@ -415,34 +415,6 @@ Void CUBLASVectorVectorOp::MulAdd( T fScaleX )
 		DebugAssert( false );
 	}
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
-}
-template<class T>
-inline Void CUBLASVectorVectorOp::Add() {
-	if ( typeid(T) == typeid(CUDAReal32) ) {
-		MulAdd<CUDAReal32>( 1.0f );
-	} else if ( typeid(T) == typeid(CUDAReal64) ) {
-		MulAdd<CUDAReal64>( 1.0 );
-	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
-		MulAdd<CUDAComplex32>( CUDAComplex32(1.0f,0.0f) );
-	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
-		MulAdd<CUDAComplex64>( CUDAComplex64(1.0,0.0) );
-	} else {
-		DebugAssert( false );
-	}
-}
-template<class T>
-inline Void CUBLASVectorVectorOp::Sub() {
-	if ( typeid(T) == typeid(CUDAReal32) ) {
-		MulAdd<CUDAReal32>( -1.0f );
-	} else if ( typeid(T) == typeid(CUDAReal64) ) {
-		MulAdd<CUDAReal64>( -1.0 );
-	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
-		MulAdd<CUDAComplex32>( CUDAComplex32(-1.0f,0.0f) );
-	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
-		MulAdd<CUDAComplex64>( CUDAComplex64(-1.0,0.0) );
-	} else {
-		DebugAssert( false );
-	}
 }
 
 template<class T>

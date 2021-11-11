@@ -41,7 +41,7 @@ inline Void CUBLASMatrixVectorOp::SetMatrixRegionA( const CUDAMemoryRegion * pRe
 	else {
 		m_hMatrixRegionA.iWidth = m_pMatrixA->GetWidth();
 		m_hMatrixRegionA.iHeight = m_pMatrixA->GetHeight();
-		m_hMatrixRegionA.iDepth = 0;
+		m_hMatrixRegionA.iDepth = 1;
 	}
 	DebugAssert( m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA ) );
 }
@@ -101,12 +101,12 @@ inline Bool CUBLASMatrixVectorOp::ValidateInputX() const {
 	return (
 		m_pMatrixA != NULL
 		&& m_pMatrixA->IsAllocated()
-		&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+		&& m_pMatrixA->GetShape() >= CUDA_MEMORY_SHAPE_2D
 		&& m_pMatrixA->GetStride() == sizeof(T)
 		&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 		&& m_pVectorX != NULL
 		&& m_pVectorX->IsAllocated()
-		&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
+		&& m_pVectorX->GetShape() >= CUDA_MEMORY_SHAPE_1D
 		&& m_pVectorX->GetStride() == sizeof(T)
 		&& m_pVectorX->IsValidPosition( m_hVectorPositionX )
 	);
@@ -116,17 +116,17 @@ inline Bool CUBLASMatrixVectorOp::ValidateInputXY() const {
 	return (
 		m_pMatrixA != NULL
 		&& m_pMatrixA->IsAllocated()
-		&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+		&& m_pMatrixA->GetShape() >= CUDA_MEMORY_SHAPE_2D
 		&& m_pMatrixA->GetStride() == sizeof(T)
 		&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 		&& m_pVectorX != NULL
 		&& m_pVectorX->IsAllocated()
-		&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
+		&& m_pVectorX->GetShape() >= CUDA_MEMORY_SHAPE_1D
 		&& m_pVectorX->GetStride() == sizeof(T)
 		&& m_pVectorX->IsValidPosition( m_hVectorPositionX )
 		&& m_pVectorY != NULL
 		&& m_pVectorY->IsAllocated()
-		&& m_pVectorY->GetShape() == CUDA_MEMORY_SHAPE_1D
+		&& m_pVectorY->GetShape() >= CUDA_MEMORY_SHAPE_1D
 		&& m_pVectorY->GetStride() == sizeof(T)
 		&& m_pVectorY->IsValidPosition( m_hVectorPositionY )
 	);
@@ -193,9 +193,13 @@ Void CUBLASMatrixVectorOp::MulAddSymmetric( T fScaleX, T fScaleY, CUBLASContextF
 	DebugAssert( ValidateInputXY<T>() );
 	
 	// Specific Input Validation
+	CUDAMemoryRegion hRegionVect;
+	hRegionVect.iWidth = m_hMatrixRegionA.iWidth;
+	hRegionVect.iHeight = 1;
+	hRegionVect.iDepth = 1;
 	DebugAssert( m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight );
-	DebugAssert( m_pVectorX->IsValidRegion(m_hVectorPositionX, m_hMatrixRegionA) );
-	DebugAssert( m_pVectorY->IsValidRegion(m_hVectorPositionY, m_hMatrixRegionA) );
+	DebugAssert( m_pVectorX->IsValidRegion(m_hVectorPositionX, hRegionVect) );
+	DebugAssert( m_pVectorY->IsValidRegion(m_hVectorPositionY, hRegionVect) );
 
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	cublasFillMode_t iCUBLASFillMode = (cublasFillMode_t)( CUBLASContextFillModeToCUDA[iFillMode] );
@@ -233,9 +237,13 @@ Void CUBLASMatrixVectorOp::MulAddHermitian( T fScaleX, T fScaleY, CUBLASContextF
 	DebugAssert( ValidateInputXY<T>() );
 	
 	// Specific Input Validation
+	CUDAMemoryRegion hRegionVect;
+	hRegionVect.iWidth = m_hMatrixRegionA.iWidth;
+	hRegionVect.iHeight = 1;
+	hRegionVect.iDepth = 1;
 	DebugAssert( m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight );
-	DebugAssert( m_pVectorX->IsValidRegion(m_hVectorPositionX, m_hMatrixRegionA) );
-	DebugAssert( m_pVectorY->IsValidRegion(m_hVectorPositionY, m_hMatrixRegionA) );
+	DebugAssert( m_pVectorX->IsValidRegion(m_hVectorPositionX, hRegionVect) );
+	DebugAssert( m_pVectorY->IsValidRegion(m_hVectorPositionY, hRegionVect) );
 
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	cublasFillMode_t iCUBLASFillMode = (cublasFillMode_t)( CUBLASContextFillModeToCUDA[iFillMode] );
@@ -264,8 +272,12 @@ Void CUBLASMatrixVectorOp::MulTriangular( CUBLASContextFillMode iFillMode, CUBLA
 	DebugAssert( ValidateInputX<T>() );
 	
 	// Specific Input Validation
+	CUDAMemoryRegion hRegionVect;
+	hRegionVect.iWidth = m_hMatrixRegionA.iWidth;
+	hRegionVect.iHeight = 1;
+	hRegionVect.iDepth = 1;
 	DebugAssert( m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight );
-	DebugAssert( m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hMatrixRegionA ) );
+	DebugAssert( m_pVectorX->IsValidRegion( m_hVectorPositionX, hRegionVect ) );
 
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	cublasFillMode_t iCUBLASFillMode = (cublasFillMode_t)( CUBLASContextFillModeToCUDA[iFillMode] );
@@ -305,8 +317,12 @@ Void CUBLASMatrixVectorOp::SolveTriangular( CUBLASContextFillMode iFillMode, CUB
 	DebugAssert( ValidateInputX<T>() );
 	
 	// Specific Input Validation
+	CUDAMemoryRegion hRegionVect;
+	hRegionVect.iWidth = m_hMatrixRegionA.iWidth;
+	hRegionVect.iHeight = 1;
+	hRegionVect.iDepth = 1;
 	DebugAssert( m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight );
-	DebugAssert( m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hMatrixRegionA ) );
+	DebugAssert( m_pVectorX->IsValidRegion( m_hVectorPositionX, hRegionVect ) );
 
 	cublasHandle_t hCUBLASContext = (cublasHandle_t)( m_pCUBLASContext->m_hContext );
 	cublasFillMode_t iCUBLASFillMode = (cublasFillMode_t)( CUBLASContextFillModeToCUDA[iFillMode] );
@@ -348,12 +364,12 @@ Void CUBLASMatrixVectorOp::MulAddBanded( T fScaleX, T fScaleY, SizeT iExpandedSi
 	// Specific Input Validation
 	SizeT iRowsA, iColsA;
 	CUDAMemoryRegion hRegionX, hRegionY;
-	hRegionX.iWidth = 0;
-	hRegionX.iHeight = 0;
-	hRegionX.iDepth = 0;
-	hRegionY.iWidth = 0;
-	hRegionY.iHeight = 0;
-	hRegionY.iDepth = 0;
+	hRegionX.iWidth = 1;
+	hRegionX.iHeight = 1;
+	hRegionX.iDepth = 1;
+	hRegionY.iWidth = 1;
+	hRegionY.iHeight = 1;
+	hRegionY.iDepth = 1;
 	if ( iTransOp == CUBLAS_CONTEXT_TRANSOP_NONE ) {
 		iRowsA = iExpandedSizeA;
 		iColsA = m_hMatrixRegionA.iHeight;
@@ -408,8 +424,8 @@ Void CUBLASMatrixVectorOp::MulAddSymmetricBanded( T fScaleX, T fScaleY, SizeT iS
 	// Specific Input Validation
 	CUDAMemoryRegion hRegionVect;
 	hRegionVect.iWidth = m_hMatrixRegionA.iHeight;
-	hRegionVect.iHeight = 0;
-	hRegionVect.iDepth = 0;
+	hRegionVect.iHeight = 1;
+	hRegionVect.iDepth = 1;
 	DebugAssert( (iSubDiagsCount << 1) + 1 == m_hMatrixRegionA.iWidth );
 	DebugAssert( m_pVectorX->IsValidRegion(m_hVectorPositionX, hRegionVect) );
 	DebugAssert( m_pVectorY->IsValidRegion(m_hVectorPositionY, hRegionVect) );
@@ -442,8 +458,8 @@ Void CUBLASMatrixVectorOp::MulAddHermitianBanded( T fScaleX, T fScaleY, SizeT iS
 	// Specific Input Validation
 	CUDAMemoryRegion hRegionVect;
 	hRegionVect.iWidth = m_hMatrixRegionA.iHeight;
-	hRegionVect.iHeight = 0;
-	hRegionVect.iDepth = 0;
+	hRegionVect.iHeight = 1;
+	hRegionVect.iDepth = 1;
 	DebugAssert( (iSubDiagsCount << 1) + 1 == m_hMatrixRegionA.iWidth );
 	DebugAssert( m_pVectorX->IsValidRegion(m_hVectorPositionX, hRegionVect) );
 	DebugAssert( m_pVectorY->IsValidRegion(m_hVectorPositionY, hRegionVect) );
@@ -477,8 +493,8 @@ Void CUBLASMatrixVectorOp::MulTriangularBanded( SizeT iSubDiagsCount, CUBLASCont
 	// Specific Input Validation
 	CUDAMemoryRegion hRegionVect;
 	hRegionVect.iWidth = m_hMatrixRegionA.iHeight;
-	hRegionVect.iHeight = 0;
-	hRegionVect.iDepth = 0;
+	hRegionVect.iHeight = 1;
+	hRegionVect.iDepth = 1;
 	DebugAssert( iSubDiagsCount + 1 == m_hMatrixRegionA.iWidth );
 	DebugAssert( m_pVectorX->IsValidRegion(m_hVectorPositionX, hRegionVect) );
 
@@ -522,8 +538,8 @@ Void CUBLASMatrixVectorOp::SolveTriangularBanded( SizeT iSubDiagsCount, CUBLASCo
 	// Specific Input Validation
 	CUDAMemoryRegion hRegionVect;
 	hRegionVect.iWidth = m_hMatrixRegionA.iHeight;
-	hRegionVect.iHeight = 0;
-	hRegionVect.iDepth = 0;
+	hRegionVect.iHeight = 1;
+	hRegionVect.iDepth = 1;
 	DebugAssert( iSubDiagsCount + 1 == m_hMatrixRegionA.iWidth );
 	DebugAssert( m_pVectorX->IsValidRegion(m_hVectorPositionX, hRegionVect) );
 

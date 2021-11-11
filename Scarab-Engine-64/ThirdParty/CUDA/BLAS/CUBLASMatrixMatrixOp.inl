@@ -41,7 +41,7 @@ inline Void CUBLASMatrixMatrixOp::SetMatrixRegionA( const CUDAMemoryRegion * pRe
 	else {
 		m_hMatrixRegionA.iWidth = m_pMatrixA->GetWidth();
 		m_hMatrixRegionA.iHeight = m_pMatrixA->GetHeight();
-		m_hMatrixRegionA.iDepth = 0;
+		m_hMatrixRegionA.iDepth = 1;
 	}
 	DebugAssert( m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA ) );
 }
@@ -70,7 +70,7 @@ inline Void CUBLASMatrixMatrixOp::SetMatrixRegionB( const CUDAMemoryRegion * pRe
 	else {
 		m_hMatrixRegionB.iWidth = m_pMatrixB->GetWidth();
 		m_hMatrixRegionB.iHeight = m_pMatrixB->GetHeight();
-		m_hMatrixRegionB.iDepth = 0;
+		m_hMatrixRegionB.iDepth = 1;
 	}
 	DebugAssert( m_pMatrixB->IsValidRegion( m_hMatrixPositionB, m_hMatrixRegionB ) );
 }
@@ -99,7 +99,7 @@ inline Void CUBLASMatrixMatrixOp::SetMatrixRegionC( const CUDAMemoryRegion * pRe
 	else {
 		m_hMatrixRegionC.iWidth = m_pMatrixC->GetWidth();
 		m_hMatrixRegionC.iHeight = m_pMatrixC->GetHeight();
-		m_hMatrixRegionC.iDepth = 0;
+		m_hMatrixRegionC.iDepth = 1;
 	}
 	DebugAssert( m_pMatrixC->IsValidRegion( m_hMatrixPositionC, m_hMatrixRegionC ) );
 }
@@ -117,12 +117,12 @@ inline Bool CUBLASMatrixMatrixOp::ValidateInputA() const {
 	return (
 		m_pMatrixA != NULL
 		&& m_pMatrixA->IsAllocated()
-		&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+		&& m_pMatrixA->GetShape() >= CUDA_MEMORY_SHAPE_2D
 		&& m_pMatrixA->GetStride() == sizeof(T)
 		&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 		&& m_pMatrixC != NULL
 		&& m_pMatrixC->IsAllocated()
-		&& m_pMatrixC->GetShape() == CUDA_MEMORY_SHAPE_2D
+		&& m_pMatrixC->GetShape() >= CUDA_MEMORY_SHAPE_2D
 		&& m_pMatrixC->GetStride() == sizeof(T)
 		&& m_pMatrixC->IsValidRegion( m_hMatrixPositionC, m_hMatrixRegionC )
 	);
@@ -132,17 +132,17 @@ inline Bool CUBLASMatrixMatrixOp::ValidateInputAB() const {
 	return (
 		m_pMatrixA != NULL
 		&& m_pMatrixA->IsAllocated()
-		&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+		&& m_pMatrixA->GetShape() >= CUDA_MEMORY_SHAPE_2D
 		&& m_pMatrixA->GetStride() == sizeof(T)
 		&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 		&& m_pMatrixB != NULL
 		&& m_pMatrixB->IsAllocated()
-		&& m_pMatrixB->GetShape() == CUDA_MEMORY_SHAPE_2D
+		&& m_pMatrixB->GetShape() >= CUDA_MEMORY_SHAPE_2D
 		&& m_pMatrixB->GetStride() == sizeof(T)
 		&& m_pMatrixB->IsValidRegion( m_hMatrixPositionB, m_hMatrixRegionB )
 		&& m_pMatrixC != NULL
 		&& m_pMatrixC->IsAllocated()
-		&& m_pMatrixC->GetShape() == CUDA_MEMORY_SHAPE_2D
+		&& m_pMatrixC->GetShape() >= CUDA_MEMORY_SHAPE_2D
 		&& m_pMatrixC->GetStride() == sizeof(T)
 		&& m_pMatrixC->IsValidRegion( m_hMatrixPositionC, m_hMatrixRegionC )
 	);
@@ -154,12 +154,12 @@ inline Bool CUBLASMatrixMatrixOp::ValidateInputBatchedA( SizeT iBatchIndex, Bool
 		return (
 			m_pMatrixA != NULL
 			&& m_pMatrixA->IsAllocated()
-			&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_3D
+			&& m_pMatrixA->GetShape() >= CUDA_MEMORY_SHAPE_3D
 			&& m_pMatrixA->GetStride() == sizeof(T)
 			&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 			&& m_pMatrixC != NULL
 			&& m_pMatrixC->IsAllocated()
-			&& m_pMatrixC->GetShape() == CUDA_MEMORY_SHAPE_3D
+			&& m_pMatrixC->GetShape() >= CUDA_MEMORY_SHAPE_3D
 			&& m_pMatrixC->GetStride() == sizeof(T)
 			&& m_pMatrixC->IsValidRegion( m_hMatrixPositionC, m_hMatrixRegionC )
 		);
@@ -167,12 +167,12 @@ inline Bool CUBLASMatrixMatrixOp::ValidateInputBatchedA( SizeT iBatchIndex, Bool
 		return (
 			m_pMatrixA != NULL
 			&& m_pMatrixA[iBatchIndex].IsAllocated()
-			&& m_pMatrixA[iBatchIndex].GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixA[iBatchIndex].GetShape() >= CUDA_MEMORY_SHAPE_2D
 			&& m_pMatrixA[iBatchIndex].GetStride() == sizeof(T)
 			&& m_pMatrixA[iBatchIndex].IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 			&& m_pMatrixC != NULL
 			&& m_pMatrixC[iBatchIndex].IsAllocated()
-			&& m_pMatrixC[iBatchIndex].GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixC[iBatchIndex].GetShape() >= CUDA_MEMORY_SHAPE_2D
 			&& m_pMatrixC[iBatchIndex].GetStride() == sizeof(T)
 			&& m_pMatrixC[iBatchIndex].IsValidRegion( m_hMatrixPositionC, m_hMatrixRegionC )
 		);
@@ -184,17 +184,17 @@ inline Bool CUBLASMatrixMatrixOp::ValidateInputBatchedAB( SizeT iBatchIndex, Boo
 		return (
 			m_pMatrixA != NULL
 			&& m_pMatrixA->IsAllocated()
-			&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_3D
+			&& m_pMatrixA->GetShape() >= CUDA_MEMORY_SHAPE_3D
 			&& m_pMatrixA->GetStride() == sizeof(T)
 			&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 			&& m_pMatrixB != NULL
 			&& m_pMatrixB->IsAllocated()
-			&& m_pMatrixB->GetShape() == CUDA_MEMORY_SHAPE_3D
+			&& m_pMatrixB->GetShape() >= CUDA_MEMORY_SHAPE_3D
 			&& m_pMatrixB->GetStride() == sizeof(T)
 			&& m_pMatrixB->IsValidRegion( m_hMatrixPositionB, m_hMatrixRegionB )
 			&& m_pMatrixC != NULL
 			&& m_pMatrixC->IsAllocated()
-			&& m_pMatrixC->GetShape() == CUDA_MEMORY_SHAPE_3D
+			&& m_pMatrixC->GetShape() >= CUDA_MEMORY_SHAPE_3D
 			&& m_pMatrixC->GetStride() == sizeof(T)
 			&& m_pMatrixC->IsValidRegion( m_hMatrixPositionC, m_hMatrixRegionC )
 		);
@@ -202,20 +202,48 @@ inline Bool CUBLASMatrixMatrixOp::ValidateInputBatchedAB( SizeT iBatchIndex, Boo
 		return (
 			m_pMatrixA != NULL
 			&& m_pMatrixA[iBatchIndex].IsAllocated()
-			&& m_pMatrixA[iBatchIndex].GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixA[iBatchIndex].GetShape() >= CUDA_MEMORY_SHAPE_2D
 			&& m_pMatrixA[iBatchIndex].GetStride() == sizeof(T)
 			&& m_pMatrixA[iBatchIndex].IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 			&& m_pMatrixB != NULL
 			&& m_pMatrixB[iBatchIndex].IsAllocated()
-			&& m_pMatrixB[iBatchIndex].GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixB[iBatchIndex].GetShape() >= CUDA_MEMORY_SHAPE_2D
 			&& m_pMatrixB[iBatchIndex].GetStride() == sizeof(T)
 			&& m_pMatrixB[iBatchIndex].IsValidRegion( m_hMatrixPositionB, m_hMatrixRegionB )
 			&& m_pMatrixC != NULL
 			&& m_pMatrixC[iBatchIndex].IsAllocated()
-			&& m_pMatrixC[iBatchIndex].GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixC[iBatchIndex].GetShape() >= CUDA_MEMORY_SHAPE_2D
 			&& m_pMatrixC[iBatchIndex].GetStride() == sizeof(T)
 			&& m_pMatrixC[iBatchIndex].IsValidRegion( m_hMatrixPositionC, m_hMatrixRegionC )
 		);
+	}
+}
+
+template<class T>
+Void CUBLASMatrixMatrixOp::Add( T fScaleA )
+{
+	DebugAssert( m_pCUBLASContext != NULL );
+	DebugAssert( ValidateInputA<T>() );
+
+	// Specific Input Validation
+	DebugAssert( m_hMatrixRegionA.iWidth == m_hMatrixRegionC.iWidth );
+	DebugAssert( m_hMatrixRegionA.iHeight == m_hMatrixRegionC.iHeight );
+
+	// Setup a vector-vector operation
+	CUBLASVectorVectorOp hVectorOp( m_pCUBLASContext );
+
+	// Add column by column
+	for ( UInt iColumn = 0; iColumn < m_hMatrixRegionA.iHeight; ++iColumn ) {
+		CUDAMemoryPosition hPosA = m_hMatrixPositionA;
+		CUDAMemoryPosition hPosC = m_hMatrixPositionC;
+		hPosA.iY += iColumn;
+		hPosC.iY += iColumn;
+		CUDAMemoryRegion hRegion = m_hMatrixRegionA;
+		hRegion.iHeight = 1;
+		hVectorOp.SetVectorX( (CUDADeviceMemory*)m_pMatrixA, &hPosA ); // Losing const qualifier is safe here !
+		hVectorOp.SetVectorY( m_pMatrixC, &hPosC );
+		hVectorOp.SetVectorRegion( &hRegion );
+		hVectorOp.MulAdd<T>( fScaleA );
 	}
 }
 

@@ -44,7 +44,7 @@ inline Void CUSolverDenseEigenValue::SetMatrixRegionA( const CUDAMemoryRegion * 
 	else {
 		m_hMatrixRegionA.iWidth = m_pMatrixA->GetWidth();
 		m_hMatrixRegionA.iHeight = m_pMatrixA->GetHeight();
-		m_hMatrixRegionA.iDepth = 0;
+		m_hMatrixRegionA.iDepth = 1;
 	}
 	DebugAssert( m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA ) );
 }
@@ -100,61 +100,57 @@ Bool CUSolverDenseEigenValue::ValidateInput() const
 		return (
 			m_pMatrixA != NULL
 			&& m_pMatrixA->IsAllocated()
-			&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixA->GetShape() >= CUDA_MEMORY_SHAPE_2D
 			&& m_pMatrixA->GetStride() == sizeof(Float)
 			&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
 			&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 			&& m_pVectorX != NULL
 			&& m_pVectorX->IsAllocated()
-			&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
+			&& m_pVectorX->GetShape() >= CUDA_MEMORY_SHAPE_1D
 			&& m_pVectorX->GetStride() == sizeof(Float)
-			&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
-			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
+			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, CUDAMemoryRegion(m_hMatrixRegionA.iWidth,1,1) )
 		);
 	} else if ( typeid(T) == typeid(CUDAReal64) ) {
 		return (
 			m_pMatrixA != NULL
 			&& m_pMatrixA->IsAllocated()
-			&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixA->GetShape() >= CUDA_MEMORY_SHAPE_2D
 			&& m_pMatrixA->GetStride() == sizeof(Double)
 			&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
 			&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 			&& m_pVectorX != NULL
 			&& m_pVectorX->IsAllocated()
-			&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
+			&& m_pVectorX->GetShape() >= CUDA_MEMORY_SHAPE_1D
 			&& m_pVectorX->GetStride() == sizeof(Double)
-			&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
-			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
+			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, CUDAMemoryRegion(m_hMatrixRegionA.iWidth,1,1) )
 		);
 	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
 		return (
 			m_pMatrixA != NULL
 			&& m_pMatrixA->IsAllocated()
-			&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixA->GetShape() >= CUDA_MEMORY_SHAPE_2D
 			&& m_pMatrixA->GetStride() == sizeof(cuComplex)
 			&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
 			&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 			&& m_pVectorX != NULL
 			&& m_pVectorX->IsAllocated()
-			&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
+			&& m_pVectorX->GetShape() >= CUDA_MEMORY_SHAPE_1D
 			&& m_pVectorX->GetStride() == sizeof(Float)
-			&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
-			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
+			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, CUDAMemoryRegion(m_hMatrixRegionA.iWidth,1,1) )
 		);
 	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
 		return (
 			m_pMatrixA != NULL
 			&& m_pMatrixA->IsAllocated()
-			&& m_pMatrixA->GetShape() == CUDA_MEMORY_SHAPE_2D
+			&& m_pMatrixA->GetShape() >= CUDA_MEMORY_SHAPE_2D
 			&& m_pMatrixA->GetStride() == sizeof(cuDoubleComplex)
 			&& m_hMatrixRegionA.iWidth == m_hMatrixRegionA.iHeight
 			&& m_pMatrixA->IsValidRegion( m_hMatrixPositionA, m_hMatrixRegionA )
 			&& m_pVectorX != NULL
 			&& m_pVectorX->IsAllocated()
-			&& m_pVectorX->GetShape() == CUDA_MEMORY_SHAPE_1D
+			&& m_pVectorX->GetShape() >= CUDA_MEMORY_SHAPE_1D
 			&& m_pVectorX->GetStride() == sizeof(Double)
-			&& m_hVectorRegionX.iWidth == m_hMatrixRegionA.iWidth
-			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, m_hVectorRegionX )
+			&& m_pVectorX->IsValidRegion( m_hVectorPositionX, CUDAMemoryRegion(m_hMatrixRegionA.iWidth,1,1) )
 		);
 	} else {
 		DebugAssert( false );
@@ -275,7 +271,8 @@ Void CUSolverDenseEigenValue::Prepare()
 	}
 
 	DebugAssert( !(m_hWorkspace.IsAllocated()) );
-	m_hWorkspace.Allocate1D( sizeof(T), iWorkspaceSize );
+	m_hWorkspace.Allocate( sizeof(T) * iWorkspaceSize );
+	m_iWorkspaceSize = iWorkspaceSize;
 
 	m_iSolverState = CUSOLVER_DENSE_EIGENVALUE_STATE_READY;
 }
@@ -284,10 +281,7 @@ Void CUSolverDenseEigenValue::Solve()
 {
 	DebugAssert( m_pCUSolverDenseContext != NULL );
 	DebugAssert( m_iSolverState == CUSOLVER_DENSE_EIGENVALUE_STATE_READY );
-
-	DebugAssert( m_hWorkspace.IsAllocated() );
-	DebugAssert( m_hWorkspace.GetShape() == CUDA_MEMORY_SHAPE_1D );
-	DebugAssert( m_hWorkspace.GetStride() == sizeof(T) );
+	DebugAssert( m_hWorkspace.IsAllocated() && m_iWorkspaceSize > 0 );
 
 	cusolverDnHandle_t hCUSolverDnContext = (cusolverDnHandle_t)( m_pCUSolverDenseContext->m_hContext );
 	cusolverEigMode_t hCUSolverDnEigMode = m_bComputeEigenVectors ? CUSOLVER_EIG_MODE_VECTOR : CUSOLVER_EIG_MODE_NOVECTOR;
@@ -301,69 +295,70 @@ Void CUSolverDenseEigenValue::Solve()
 									   (Int)( m_hMatrixRegionA.iWidth ),
 									   (Float*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
 									   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-									   (Float*)( m_hWorkspace.GetPointer() ), (Int)( m_hWorkspace.GetWidth() ), &m_iSolverResult );
+									   (Float*)( m_hWorkspace.GetPointer() ), (Int)m_iWorkspaceSize, (int*)( m_hDeviceInfo.GetPointer() ) );
 		} else if ( typeid(T) == typeid(CUDAReal64) ) {
 			iError = cusolverDnDsyevd( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
 									   (Int)( m_hMatrixRegionA.iWidth ),
 									   (Double*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
 									   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-									   (Double*)( m_hWorkspace.GetPointer() ), (Int)( m_hWorkspace.GetWidth() ), &m_iSolverResult );
+									   (Double*)( m_hWorkspace.GetPointer() ), (Int)m_iWorkspaceSize, (int*)( m_hDeviceInfo.GetPointer() ) );
 		} else if ( typeid(T) == typeid(CUDAComplex32) ) {
 			iError = cusolverDnCheevd( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
 									   (Int)( m_hMatrixRegionA.iWidth ),
 									   (cuComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
 									   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-									   (cuComplex*)( m_hWorkspace.GetPointer() ), (Int)( m_hWorkspace.GetWidth() ), &m_iSolverResult );
+									   (cuComplex*)( m_hWorkspace.GetPointer() ), (Int)m_iWorkspaceSize, (int*)( m_hDeviceInfo.GetPointer() ) );
 		} else if ( typeid(T) == typeid(CUDAComplex64) ) {
 			iError = cusolverDnZheevd( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
 									   (Int)( m_hMatrixRegionA.iWidth ),
 									   (cuDoubleComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
 									   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-									   (cuDoubleComplex*)( m_hWorkspace.GetPointer() ), (Int)( m_hWorkspace.GetWidth() ), &m_iSolverResult );
+									   (cuDoubleComplex*)( m_hWorkspace.GetPointer() ), (Int)m_iWorkspaceSize, (int*)( m_hDeviceInfo.GetPointer() ) );
 		} else {
 			DebugAssert( false );
 		}
-		DebugAssert( iError == CUSOLVER_STATUS_SUCCESS && m_iSolverResult >= 0 );
+		DebugAssert( iError == CUSOLVER_STATUS_SUCCESS );
 	} else if ( m_iAlgorithm == CUSOLVER_DENSE_EIGENVALUE_ALGORITHM_JACOBI ) {
 		if ( typeid(T) == typeid(CUDAReal32) ) {
 			iError = cusolverDnSsyevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
 									   (Int)( m_hMatrixRegionA.iWidth ),
 									   (Float*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
 									   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-									   (Float*)( m_hWorkspace.GetPointer() ), (Int)( m_hWorkspace.GetWidth() ), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
+									   (Float*)( m_hWorkspace.GetPointer() ), (Int)m_iWorkspaceSize, (int*)( m_hDeviceInfo.GetPointer() ), (syevjInfo_t)m_hJacobiInfos );
 		} else if ( typeid(T) == typeid(CUDAReal64) ) {
 			iError = cusolverDnDsyevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
 									   (Int)( m_hMatrixRegionA.iWidth ),
 									   (Double*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
 									   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-									   (Double*)( m_hWorkspace.GetPointer() ), (Int)( m_hWorkspace.GetWidth() ), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
+									   (Double*)( m_hWorkspace.GetPointer() ), (Int)m_iWorkspaceSize, (int*)( m_hDeviceInfo.GetPointer() ), (syevjInfo_t)m_hJacobiInfos );
 		} else if ( typeid(T) == typeid(CUDAComplex32) ) {
 			iError = cusolverDnCheevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
 									   (Int)( m_hMatrixRegionA.iWidth ),
 									   (cuComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
 									   (Float*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-									   (cuComplex*)( m_hWorkspace.GetPointer() ), (Int)( m_hWorkspace.GetWidth() ), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
+									   (cuComplex*)( m_hWorkspace.GetPointer() ), (Int)m_iWorkspaceSize, (int*)( m_hDeviceInfo.GetPointer() ), (syevjInfo_t)m_hJacobiInfos );
 		} else if ( typeid(T) == typeid(CUDAComplex64) ) {
 			iError = cusolverDnZheevj( hCUSolverDnContext, hCUSolverDnEigMode, iCUBLASFillMode,
 									   (Int)( m_hMatrixRegionA.iWidth ),
 									   (cuDoubleComplex*)( m_pMatrixA->GetPointer(m_hMatrixPositionA) ), (Int)( m_pMatrixA->GetWidth() ),
 									   (Double*)( m_pVectorX->GetPointer(m_hVectorPositionX) ),
-									   (cuDoubleComplex*)( m_hWorkspace.GetPointer() ), (Int)( m_hWorkspace.GetWidth() ), &m_iSolverResult, (syevjInfo_t)m_hJacobiInfos );
+									   (cuDoubleComplex*)( m_hWorkspace.GetPointer() ), (Int)m_iWorkspaceSize, (int*)( m_hDeviceInfo.GetPointer() ), (syevjInfo_t)m_hJacobiInfos );
 		} else {
 			DebugAssert( false );
 		}
-		DebugAssert( iError == CUSOLVER_STATUS_SUCCESS && m_iSolverResult >= 0 );
+		DebugAssert( iError == CUSOLVER_STATUS_SUCCESS );
 	} else {
 		DebugAssert( false );
 		return;
 	}
 
-	m_iSolverState = (m_iSolverResult == 0) ? CUSOLVER_DENSE_EIGENVALUE_STATE_SUCCESS : CUSOLVER_DENSE_EIGENVALUE_STATE_FAILED;
+	m_iSolverState = CUSOLVER_DENSE_EIGENVALUE_STATE_RUNNING;
 }
 
 inline UInt CUSolverDenseEigenValue::GetFailedToConvergeCount() const {
 	DebugAssert( m_iSolverState == CUSOLVER_DENSE_EIGENVALUE_STATE_FAILED );
-	return (UInt)m_iSolverResult;
+	Int * pDeviceInfos = (Int*)( m_hDeviceInfoSaved.GetPointer() );
+	return (UInt)( *pDeviceInfos );
 }
 inline UInt CUSolverDenseEigenValue::GetJacobiExecutedSweeps() const {
 	DebugAssert( m_iSolverState == CUSOLVER_DENSE_EIGENVALUE_STATE_SUCCESS || m_iSolverState == CUSOLVER_DENSE_EIGENVALUE_STATE_FAILED );

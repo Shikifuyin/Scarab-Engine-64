@@ -30,8 +30,8 @@
 // CUSolverDenseEigenValue implementation
 CUSolverDenseEigenValue::CUSolverDenseEigenValue( CUSolverDenseContext * pCUSolverDenseContext ):
 	m_hMatrixPositionA(), m_hMatrixRegionA(),
-	m_hVectorPositionX(), m_hVectorRegionX(),
-	m_hWorkspace()
+	m_hVectorPositionX(),
+	m_hWorkspace(), m_hDeviceInfo(), m_hDeviceInfoSaved()
 {
 	DebugAssert( pCUSolverDenseContext != NULL && pCUSolverDenseContext->IsCreated() );
 
@@ -47,30 +47,50 @@ CUSolverDenseEigenValue::CUSolverDenseEigenValue( CUSolverDenseContext * pCUSolv
 	m_fJacobiTolerance = 1.0e-8;
 	m_iJacobiMaxSweeps = 100;
 
+	m_iWorkspaceSize = 0;
 	m_hJacobiInfos = NULL;
 
 	m_iSolverState = CUSOLVER_DENSE_EIGENVALUE_STATE_RESET;
-	m_iSolverResult = 0;
+	m_hDeviceInfo.Allocate( sizeof(int) );
+	m_hDeviceInfoSaved.Allocate( sizeof(int) );
 }
 CUSolverDenseEigenValue::~CUSolverDenseEigenValue()
 {
-	if ( m_hWorkspace.IsAllocated() )
+	if ( m_hWorkspace.IsAllocated() ) {
 		m_hWorkspace.Free();
+		m_iWorkspaceSize = 0;
+	}
 
 	if ( m_hJacobiInfos != NULL ) {
 		cusolverStatus_t iError = cusolverDnDestroySyevjInfo( (syevjInfo_t)m_hJacobiInfos );
 		DebugAssert( iError == CUSOLVER_STATUS_SUCCESS );
 		m_hJacobiInfos = NULL;
 	}
+
+	m_hDeviceInfo.Free();
+	m_hDeviceInfoSaved.Free();
 }
 
+Void CUSolverDenseEigenValue::UpdateStateAfterSync()
+{
+	DebugAssert( m_pCUSolverDenseContext != NULL );
+	DebugAssert( m_iSolverState == CUSOLVER_DENSE_EIGENVALUE_STATE_RUNNING );
+
+	m_hDeviceInfoSaved.Copy( &m_hDeviceInfo, sizeof(int) );
+	Int * pDeviceInfos = (Int*)( m_hDeviceInfoSaved.GetPointer() );
+
+	DebugAssert( *pDeviceInfos >= 0 );
+	m_iSolverState = (*pDeviceInfos == 0) ? CUSOLVER_DENSE_EIGENVALUE_STATE_SUCCESS : CUSOLVER_DENSE_EIGENVALUE_STATE_FAILED;
+}
 Void CUSolverDenseEigenValue::Reset()
 {
 	DebugAssert( m_pCUSolverDenseContext != NULL );
 	DebugAssert( m_iSolverState != CUSOLVER_DENSE_EIGENVALUE_STATE_RESET );
 
-	if ( m_hWorkspace.IsAllocated() )
+	if ( m_hWorkspace.IsAllocated() ) {
 		m_hWorkspace.Free();
+		m_iWorkspaceSize = 0;
+	}
 
 	if ( m_hJacobiInfos != NULL ) {
 		cusolverStatus_t iError = cusolverDnDestroySyevjInfo( (syevjInfo_t)m_hJacobiInfos );
@@ -79,7 +99,6 @@ Void CUSolverDenseEigenValue::Reset()
 	}
 
 	m_iSolverState = CUSOLVER_DENSE_EIGENVALUE_STATE_RESET;
-	m_iSolverResult = 0;
 }
 
 

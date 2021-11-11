@@ -154,19 +154,19 @@ Void CUBLASContext::SetMemory( CUDADeviceMemory * pMemory ) const
 	DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 }
 
-Void CUBLASContext::GetVector( CUDAHostMemory * outHostVector, const CUDAMemoryPosition & outHostPosition, UInt iHostIncrement,
-							   const CUDADeviceMemory * pDeviceVector, const CUDAMemoryPosition & hDevicePosition, UInt iDeviceIncrement,
-							   SizeT iElementCount, CUDAStream * pStream )
+Void CUBLASContext::GetVector( CUDAHostMemory * outHostVector, const CUDAMemoryPosition & outHostPosition,
+							   const CUDADeviceMemory * pDeviceVector, const CUDAMemoryPosition & hDevicePosition,
+							   const CUDAMemoryRegion & hCopyRegion, CUDAStream * pStream )
 {
 	DebugAssert( m_hContext != NULL );
 
 	DebugAssert( outHostVector->IsAllocated() );
-	DebugAssert( outHostVector->GetShape() == CUDA_MEMORY_SHAPE_1D );
-	DebugAssert( (outHostPosition.iX + iElementCount * (SizeT)iHostIncrement) <= outHostVector->GetWidth() );
+	DebugAssert( outHostVector->GetShape() >= CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( outHostVector->IsValidRegion(outHostPosition, hCopyRegion) );
 
 	DebugAssert( pDeviceVector->IsAllocated() );
-	DebugAssert( pDeviceVector->GetShape() == CUDA_MEMORY_SHAPE_1D );
-	DebugAssert( (hDevicePosition.iX + iElementCount * (SizeT)iDeviceIncrement) <= pDeviceVector->GetWidth() );
+	DebugAssert( pDeviceVector->GetShape() >= CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( pDeviceVector->IsValidRegion(hDevicePosition, hCopyRegion) );
 
 	DebugAssert( outHostVector->GetStride() == pDeviceVector->GetStride() );
 
@@ -176,30 +176,30 @@ Void CUBLASContext::GetVector( CUDAHostMemory * outHostVector, const CUDAMemoryP
 		DebugAssert( pStream->IsCreated() );
 		cudaStream_t hCUDAStream = (cudaStream_t)( pStream->m_hStream );
 
-		cublasStatus_t iError = cublasGetVectorAsync( (Int)iElementCount, (Int)(pDeviceVector->GetStride()),
-													  pDeviceVector->GetPointer(hDevicePosition), (Int)iDeviceIncrement,
-													  outHostVector->GetPointer(outHostPosition), (Int)iHostIncrement, hCUDAStream );
+		cublasStatus_t iError = cublasGetVectorAsync( (Int)(hCopyRegion.iWidth), (Int)(pDeviceVector->GetStride()),
+													  pDeviceVector->GetPointer(hDevicePosition), 1,
+													  outHostVector->GetPointer(outHostPosition), 1, hCUDAStream );
 		DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 	} else {
-		cublasStatus_t iError = cublasGetVector( (Int)iElementCount, (Int)(pDeviceVector->GetStride()),
-												 pDeviceVector->GetPointer(hDevicePosition), (Int)iDeviceIncrement,
-												 outHostVector->GetPointer(outHostPosition), (Int)iHostIncrement );
+		cublasStatus_t iError = cublasGetVector( (Int)(hCopyRegion.iWidth), (Int)(pDeviceVector->GetStride()),
+												 pDeviceVector->GetPointer(hDevicePosition), 1,
+												 outHostVector->GetPointer(outHostPosition), 1 );
 		DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 	}
 }
-Void CUBLASContext::SetVector( CUDADeviceMemory * outDeviceVector, const CUDAMemoryPosition & outDevicePosition, UInt iDeviceIncrement,
-							   const CUDAHostMemory * pHostVector, const CUDAMemoryPosition & hHostPosition, UInt iHostIncrement,
-							   SizeT iElementCount, CUDAStream * pStream )
+Void CUBLASContext::SetVector( CUDADeviceMemory * outDeviceVector, const CUDAMemoryPosition & outDevicePosition,
+							   const CUDAHostMemory * pHostVector, const CUDAMemoryPosition & hHostPosition,
+							   const CUDAMemoryRegion & hCopyRegion, CUDAStream * pStream )
 {
 	DebugAssert( m_hContext != NULL );
 
 	DebugAssert( outDeviceVector->IsAllocated() );
-	DebugAssert( outDeviceVector->GetShape() == CUDA_MEMORY_SHAPE_1D );
-	DebugAssert( (outDevicePosition.iX + iElementCount * (SizeT)iDeviceIncrement) <= outDeviceVector->GetWidth() );
+	DebugAssert( outDeviceVector->GetShape() >= CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( outDeviceVector->IsValidRegion(outDevicePosition, hCopyRegion) );
 
 	DebugAssert( pHostVector->IsAllocated() );
-	DebugAssert( pHostVector->GetShape() == CUDA_MEMORY_SHAPE_1D );
-	DebugAssert( (hHostPosition.iX + iElementCount * (SizeT)iHostIncrement) <= pHostVector->GetWidth() );
+	DebugAssert( pHostVector->GetShape() >= CUDA_MEMORY_SHAPE_1D );
+	DebugAssert( pHostVector->IsValidRegion(hHostPosition, hCopyRegion) );
 
 	DebugAssert( outDeviceVector->GetStride() == pHostVector->GetStride() );
 
@@ -209,14 +209,14 @@ Void CUBLASContext::SetVector( CUDADeviceMemory * outDeviceVector, const CUDAMem
 		DebugAssert( pStream->IsCreated() );
 		cudaStream_t hCUDAStream = (cudaStream_t)( pStream->m_hStream );
 
-		cublasStatus_t iError = cublasSetVectorAsync( (Int)iElementCount, (Int)(pHostVector->GetStride()),
-													  pHostVector->GetPointer(hHostPosition), (Int)iHostIncrement,
-													  outDeviceVector->GetPointer(outDevicePosition), (Int)iDeviceIncrement, hCUDAStream );
+		cublasStatus_t iError = cublasSetVectorAsync( (Int)(hCopyRegion.iWidth), (Int)(pHostVector->GetStride()),
+													  pHostVector->GetPointer(hHostPosition), 1,
+													  outDeviceVector->GetPointer(outDevicePosition), 1, hCUDAStream );
 		DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 	} else {
-		cublasStatus_t iError = cublasSetVector( (Int)iElementCount, (Int)(pHostVector->GetStride()),
-												 pHostVector->GetPointer(hHostPosition), (Int)iHostIncrement,
-												 outDeviceVector->GetPointer(outDevicePosition), (Int)iDeviceIncrement );
+		cublasStatus_t iError = cublasSetVector( (Int)(hCopyRegion.iWidth), (Int)(pHostVector->GetStride()),
+												 pHostVector->GetPointer(hHostPosition), 1,
+												 outDeviceVector->GetPointer(outDevicePosition), 1 );
 		DebugAssert( iError == CUBLAS_STATUS_SUCCESS );
 	}
 }
@@ -228,11 +228,11 @@ Void CUBLASContext::GetMatrix( CUDAHostMemory * outHostMatrix, const CUDAMemoryP
 	DebugAssert( m_hContext != NULL );
 
 	DebugAssert( outHostMatrix->IsAllocated() );
-	DebugAssert( outHostMatrix->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( outHostMatrix->GetShape() >= CUDA_MEMORY_SHAPE_2D );
 	DebugAssert( outHostMatrix->IsValidRegion(outHostPosition, hCopyRegion) );
 
 	DebugAssert( pDeviceMatrix->IsAllocated() );
-	DebugAssert( pDeviceMatrix->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( pDeviceMatrix->GetShape() >= CUDA_MEMORY_SHAPE_2D );
 	DebugAssert( pDeviceMatrix->IsValidRegion(hDevicePosition, hCopyRegion) );
 
 	DebugAssert( outHostMatrix->GetStride() == pDeviceMatrix->GetStride() );
@@ -261,11 +261,11 @@ Void CUBLASContext::SetMatrix( CUDADeviceMemory * outDeviceMatrix, const CUDAMem
 	DebugAssert( m_hContext != NULL );
 
 	DebugAssert( outDeviceMatrix->IsAllocated() );
-	DebugAssert( outDeviceMatrix->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( outDeviceMatrix->GetShape() >= CUDA_MEMORY_SHAPE_2D );
 	DebugAssert( outDeviceMatrix->IsValidRegion(outDevicePosition, hCopyRegion) );
 
 	DebugAssert( pHostMatrix->IsAllocated() );
-	DebugAssert( pHostMatrix->GetShape() == CUDA_MEMORY_SHAPE_2D );
+	DebugAssert( pHostMatrix->GetShape() >= CUDA_MEMORY_SHAPE_2D );
 	DebugAssert( pHostMatrix->IsValidRegion(hHostPosition, hCopyRegion) );
 
 	DebugAssert( outDeviceMatrix->GetStride() == pHostMatrix->GetStride() );

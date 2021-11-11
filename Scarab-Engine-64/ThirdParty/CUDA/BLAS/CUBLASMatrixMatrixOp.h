@@ -23,6 +23,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 // Includes
 #include "CUBLASContext.h"
+#include "CUBLASVectorOp.h" // Needed for addition
 
 /////////////////////////////////////////////////////////////////////////////////
 // Constants definitions
@@ -60,6 +61,9 @@ public:
 	template<class T> inline Bool ValidateInputBatchedAB( SizeT iBatchIndex, Bool bStripMode ) const;
 
 	// Operations
+		// C = fScaleA * A + C
+	template<class T> Void Add( T fScaleA );
+
 		// C = fScaleA * Op(A) * Op(B) + fScaleC * C
 	template<class T> Void MulAdd( T fScaleA, T fScaleC, CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB, Bool bUseComplexGaussReduction = false );
 

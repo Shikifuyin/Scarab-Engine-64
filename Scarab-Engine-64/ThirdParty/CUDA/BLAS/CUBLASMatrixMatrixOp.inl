@@ -501,6 +501,29 @@ Void CUBLASMatrixMatrixOp::SolveTriangular( T fScaleA, CUBLASContextSideMode iSi
 }
 
 template<class T>
+Void CUBLASMatrixMatrixOp::MulComponent()
+{
+	DebugAssert( m_pCUBLASContext != NULL );
+	DebugAssert( ValidateInputA<T>() );
+
+	// Specific Input Validation
+	DebugAssert( m_hMatrixRegionA.iWidth == m_hMatrixRegionC.iWidth );
+	DebugAssert( m_hMatrixRegionA.iHeight == m_hMatrixRegionC.iHeight );
+
+	if ( typeid(T) == typeid(CUDAReal32) ) {
+		_MulComponentRF_InvokeKernel();
+	} else if ( typeid(T) == typeid(CUDAReal64) ) {
+		_MulComponentRD_InvokeKernel();
+	} else if ( typeid(T) == typeid(CUDAComplex32) ) {
+		_MulComponentCF_InvokeKernel();
+	} else if ( typeid(T) == typeid(CUDAComplex64) ) {
+		_MulComponentCD_InvokeKernel();
+	} else {
+		DebugAssert( false );
+	}
+}
+
+template<class T>
 Void CUBLASMatrixMatrixOp::MulAddBatched( T fScaleA, T fScaleC, CUBLASContextTransposeOp iTransOpA, CUBLASContextTransposeOp iTransOpB, SizeT iBatchCount, Bool bStripMode )
 {
 	DebugAssert( m_pCUBLASContext != NULL );

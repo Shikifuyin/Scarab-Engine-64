@@ -83,6 +83,9 @@ public:
 		// Does NOT test for singularity or near-singularity !
 	template<class T> Void SolveTriangular( T fScaleA, CUBLASContextSideMode iSideMode, CUBLASContextFillMode iFillMode, CUBLASContextTransposeOp iTransOpA, Bool bMainDiagIsUnityA );
 
+		// C = A * C, Component-wise
+	template<class T> Void MulComponent();
+
 	// Operations : Batched
 
 		// Ci = fScaleA * Op(Ai) * Op(Bi) + fScaleC * Ci
@@ -108,6 +111,11 @@ public:
 	// Rank-Update Operations : cublas<t>syrk, cublas<t>syr2k, cublas<t>syrkx, cublas<t>herk, cublas<t>her2k, cublas<t>herkx
 
 private:
+	Void _MulComponentRF_InvokeKernel();
+	Void _MulComponentRD_InvokeKernel();
+	Void _MulComponentCF_InvokeKernel();
+	Void _MulComponentCD_InvokeKernel();
+
 	CUBLASContext * m_pCUBLASContext;
 
 	const CUDADeviceMemory * m_pMatrixA;

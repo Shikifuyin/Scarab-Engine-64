@@ -617,9 +617,9 @@ Void CUDADeviceMemory::Allocate1D( SizeT iElementSize, SizeT iWidth )
 	m_iDepth = 1;
 
 	m_iStride = iElementSize;
-	m_iPitch = hPitchedDeviceMemory.pitch;
+	m_iPitch = m_iStride * m_iWidth;
 	m_iSlice = m_iPitch * m_iHeight;
-	m_iSize = m_iSlice * m_iDepth;
+	m_iSize = hPitchedDeviceMemory.pitch;
 }
 Void CUDADeviceMemory::Allocate2D( SizeT iElementSize, SizeT iWidth, SizeT iHeight )
 {
@@ -643,9 +643,9 @@ Void CUDADeviceMemory::Allocate2D( SizeT iElementSize, SizeT iWidth, SizeT iHeig
 	m_iDepth = 1;
 
 	m_iStride = iElementSize;
-	m_iPitch = hPitchedDeviceMemory.pitch;
+	m_iPitch = m_iStride * m_iWidth;
 	m_iSlice = m_iPitch * m_iHeight;
-	m_iSize = m_iSlice * m_iDepth;
+	m_iSize = hPitchedDeviceMemory.pitch;
 }
 Void CUDADeviceMemory::Allocate3D( SizeT iElementSize, SizeT iWidth, SizeT iHeight, SizeT iDepth )
 {
@@ -669,9 +669,9 @@ Void CUDADeviceMemory::Allocate3D( SizeT iElementSize, SizeT iWidth, SizeT iHeig
 	m_iDepth = iDepth;
 
 	m_iStride = iElementSize;
-	m_iPitch = hPitchedDeviceMemory.pitch;
+	m_iPitch = m_iStride * m_iWidth;
 	m_iSlice = m_iPitch * m_iHeight;
-	m_iSize = m_iSlice * m_iDepth;
+	m_iSize = hPitchedDeviceMemory.pitch;
 }
 Void CUDADeviceMemory::Free()
 {

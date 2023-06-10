@@ -811,13 +811,12 @@ Bool CUDAGraphInstance::Update( CUDAGraph * pGraph ) const
 	cudaGraphExec_t hCUDAGraphInstance = (cudaGraphExec_t)m_hGraphInstance;
 	cudaGraph_t hCUDAGraph = (cudaGraph_t)( pGraph->m_hGraph );
 	
-	cudaGraphNode_t hErrorNode;
-	cudaGraphExecUpdateResult iUpdateResult;
+	cudaGraphExecUpdateResultInfo hUpdateResultInfo;
 	
-	cudaError_t iError = cudaGraphExecUpdate( hCUDAGraphInstance, hCUDAGraph, &hErrorNode, &iUpdateResult );
+	cudaError_t iError = cudaGraphExecUpdate( hCUDAGraphInstance, hCUDAGraph, &hUpdateResultInfo);
 	DebugAssert( iError == cudaSuccess || iError == cudaErrorGraphExecUpdateFailure );
 	
-	return ( iError == cudaSuccess && iUpdateResult == cudaGraphExecUpdateSuccess );
+	return ( iError == cudaSuccess && hUpdateResultInfo.result == cudaGraphExecUpdateSuccess );
 }
 Void CUDAGraphInstance::Update( CUDANodeChildGraph * pNodeChildGraph, CUDAGraph * pChildGraph ) const
 {
